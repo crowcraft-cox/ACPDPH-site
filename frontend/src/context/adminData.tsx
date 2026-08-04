@@ -251,35 +251,41 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     return stored ? JSON.parse(stored) : null;
   });
 
-  // ── Chargement depuis MongoDB Atlas ──────────────────────────────────────
-  const loadFromCloud = useCallback(async () => {
+  // ── Chargement depuis MongoDB Atlas (avec 3 tentatives automatiques) ───────
+  const loadFromCloud = useCallback(async (attempts = 3) => {
     setIsLoading(true);
     setDbError(null);
-    try {
-      const res = await apiFetch<AdminData>('/content');
-      if (res.success && res.data) {
-        setData({ ...res.data, users: res.data.users || [] });
-        setDbConnected(true);
-        setDbError(null);
-        console.log('[BrightAfrican] ✅ Données chargées depuis MongoDB Atlas');
-      } else {
-        setDbConnected(false);
-        setDbError(
-          'Impossible de charger les données depuis la base de données. ' +
-          'Vérifiez que le serveur backend (Render) est en ligne.'
-        );
-        console.error('[BrightAfrican] ❌ Échec du chargement:', res.error);
+
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      try {
+        console.log(`[BrightAfrican] Connexion MongoDB Atlas (tentative ${attempt}/${attempts})...`);
+        const res = await apiFetch<AdminData>('/content');
+        if (res.success && res.data) {
+          setData({ ...res.data, users: res.data.users || [] });
+          setDbConnected(true);
+          setDbError(null);
+          setIsLoading(false);
+          console.log('[BrightAfrican] ✅ Connecté à MongoDB Atlas avec succès !');
+          return;
+        }
+      } catch (err) {
+        console.warn(`[BrightAfrican] ⚠️ Tentative ${attempt}/${attempts} échouée:`, err);
       }
-    } catch (err) {
-      setDbConnected(false);
-      setDbError(
-        'Base de données non accessible. Le serveur backend est peut-être hors ligne. ' +
-        'Cliquez sur "Réessayer" pour tenter une nouvelle connexion.'
-      );
-      console.error('[BrightAfrican] ❌ Backend inaccessible:', err);
-    } finally {
-      setIsLoading(false);
+
+      // Si ce n'est pas la dernière tentative, attendre 4s que le serveur Render sorte de veille
+      if (attempt < attempts) {
+        await new Promise(resolve => setTimeout(resolve, 4000));
+      }
     }
+
+    // Si toutes les tentatives ont échoué
+    setDbConnected(false);
+    setDbError(
+      'La base de données MongoDB Atlas est momentanément inaccessible. ' +
+      'Le serveur backend (Render) met du temps à sortir de veille ou votre réseau est ralenti. ' +
+      'Cliquez sur "Réessayer la connexion" ci-dessous.'
+    );
+    setIsLoading(false);
   }, []);
 
   // Charger au démarrage
