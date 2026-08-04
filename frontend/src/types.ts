@@ -21,16 +21,27 @@ export interface Pillar {
   bulletPoints_en?: string[];
 }
 
+export interface NewsImage {
+  id: string;
+  url: string;
+  caption?: string;
+  caption_en?: string;
+}
+
 export interface NewsArticle {
   id: string;
   title: string;
   title_en?: string;
   excerpt: string;
   excerpt_en?: string;
+  content?: string;
+  content_en?: string;
   date: string;
   category: string;
   category_en?: string;
   color: 'ba-red' | 'ba-green';
+  image?: string;
+  images?: NewsImage[];
 }
 
 export interface ProjectImage {

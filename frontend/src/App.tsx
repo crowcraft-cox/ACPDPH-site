@@ -12,6 +12,7 @@ const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const Safeguarding = lazy(() => import('./pages/Safeguarding'));
 const ActWithUs = lazy(() => import('./pages/ActWithUs'));
 const News = lazy(() => import('./pages/News'));
+const NewsDetail = lazy(() => import('./pages/NewsDetail'));
 const Contact = lazy(() => import('./pages/Contact'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
@@ -54,6 +55,7 @@ function MainLayout() {
             <Route path="/safeguarding" element={<Safeguarding />} />
             <Route path="/act" element={<ActWithUs />} />
             <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
         </Suspense>
