@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAdminData } from '../context/adminData';
 
-/* Renders news article text with [photo:N] inline images */
-function NewsArticleContent({ text, images }: { text: string; images?: { id: string; url: string; caption?: string }[] }) {
+/* Renders article text with [photo:N] inline images — same as ProjectDescription */
+function NewsContent({ text, images }: { text: string; images?: { id: string; url: string; caption?: string }[] }) {
   if (!text) return null;
   const parts = text.split(/(\[photo:\d+\])/g);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {parts.map((part, i) => {
         const match = part.match(/^\[photo:(\d+)\]$/);
         if (match) {
@@ -16,14 +16,14 @@ function NewsArticleContent({ text, images }: { text: string; images?: { id: str
           const photo = images && images[photoIdx];
           if (photo) {
             return (
-              <figure key={i} className="my-8 rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+              <figure key={i} className="my-6 rounded-2xl overflow-hidden shadow-xl border border-white/10">
                 <img
                   src={photo.url}
                   alt={photo.caption || `Photo ${photoIdx + 1}`}
-                  className="w-full max-h-[520px] object-cover"
+                  className="w-full max-h-[480px] object-cover"
                 />
                 {photo.caption && (
-                  <figcaption className="px-4 py-3 text-sm text-center text-gray-300 bg-black/80 backdrop-blur italic">
+                  <figcaption className="px-4 py-2.5 text-sm text-center text-gray-400 bg-black/70 backdrop-blur italic">
                     📷 {photo.caption}
                   </figcaption>
                 )}
@@ -47,7 +47,6 @@ export default function NewsDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data } = useAdminData();
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   const article = data.news.find((n) => n.id === id);
 
@@ -68,140 +67,149 @@ export default function NewsDetail() {
     ? article.images
     : article.image ? [{ id: '0', url: article.image, caption: article.title }] : [];
 
-  const badgeBg = article.color === 'ba-red' ? 'bg-ba-red/10 text-ba-red border-ba-red/30' : 'bg-ba-green/10 text-ba-green border-ba-green/30';
   const mainContent = article.content || article.excerpt;
+  const badgeColor = article.color === 'ba-red' ? 'bg-ba-red' : 'bg-ba-green';
 
   return (
     <div className="min-h-screen">
-      {/* ── HERO COVER ── */}
-      <div className="relative w-full" style={{ height: 'min(65vh, 520px)', marginTop: '80px' }}>
+
+      {/* ── HERO COVER — même structure que ProjectDetail ── */}
+      <div className="relative w-full" style={{ height: 'min(70vh, 560px)', marginTop: '80px' }}>
         {article.image ? (
           <img
             src={article.image}
             alt={article.title}
             className="w-full h-full object-cover"
+            style={{ display: 'block' }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-ba-dark-light to-ba-dark flex items-center justify-center">
-            <span className="text-6xl opacity-40">📰</span>
+          <div className="w-full h-full bg-ba-dark-light flex items-center justify-center">
+            <span className="text-8xl opacity-30">📰</span>
           </div>
         )}
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-ba-dark via-ba-dark/60 to-transparent" />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.72) 100%)' }}
+        />
 
-        {/* Floating Back Button */}
-        <div className="absolute top-6 left-6 z-10">
-          <button
-            onClick={() => navigate('/news')}
-            className="flex items-center gap-2 px-4 py-2 rounded-full glass-card text-white text-sm font-semibold hover:bg-white/20 transition-all backdrop-blur-md border border-white/20 shadow-lg"
-          >
-            ← Retour aux actualités
-          </button>
-        </div>
+        {/* Back Button */}
+        <button
+          onClick={() => navigate('/news')}
+          className="absolute top-6 left-6 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full border border-white/20 transition-all duration-200"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Retour aux actualités
+        </button>
 
-        {/* Hero Title & Meta */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 container-ba">
-          <div className="flex flex-wrap items-center gap-3 mb-4">
-            <span className={`px-4 py-1.5 rounded-full text-xs font-bold border backdrop-blur-md ${badgeBg}`}>
-              {article.category}
-            </span>
-            <span className="text-xs md:text-sm text-gray-300 font-medium">📅 {article.date}</span>
+        {/* Hero Text */}
+        <div className="absolute bottom-0 left-0 right-0 pb-10" style={{ paddingLeft: 'clamp(2rem, 5vw, 4rem)', paddingRight: 'clamp(2rem, 5vw, 4rem)' }}>
+          <div>
+            {/* Badges */}
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${badgeColor} text-white`}>
+                {article.category}
+              </span>
+              <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/10 text-white border border-white/20 backdrop-blur-sm">
+                📅 {article.date}
+              </span>
+            </div>
+
+            <h1 className="font-heading text-3xl md:text-5xl font-bold text-white leading-tight mb-3 drop-shadow-lg">
+              {article.title}
+            </h1>
+
+            {article.excerpt && (
+              <p className="text-white/75 text-base md:text-lg max-w-3xl leading-relaxed line-clamp-2">
+                {article.excerpt}
+              </p>
+            )}
           </div>
-
-          <h1 className="font-heading text-2xl sm:text-3xl md:text-5xl font-extrabold text-white leading-tight max-w-4xl">
-            {article.title}
-          </h1>
         </div>
       </div>
 
-      {/* ── MAIN CONTENT ── */}
-      <div className="container-ba py-12 md:py-16">
-        <div className="max-w-4xl mx-auto">
-          {/* Chapeau / Excerpt Highlight */}
-          {article.excerpt && article.excerpt !== mainContent && (
-            <div className="p-6 md:p-8 rounded-2xl glass-card border-l-4 border-ba-red mb-10 bg-ba-red/5">
-              <p className="text-lg md:text-xl font-medium text-white italic leading-relaxed">
-                "{article.excerpt}"
-              </p>
-            </div>
-          )}
+      {/* ── CONTENT — même structure que ProjectDetail ── */}
+      <div className="container-ba py-16">
+        <div className="w-full">
 
-          {/* Article Full Body (with embedded [photo:X] tags) */}
-          <div className="mb-14">
-            <NewsArticleContent text={mainContent} images={article.images} />
-          </div>
+          {/* Corps de l'article */}
+          <section className="mb-16">
+            <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
+              <span className="w-1 h-8 rounded-full bg-ba-red inline-block" />
+              À propos de cet article
+            </h2>
+            {mainContent ? (
+              <NewsContent text={mainContent} images={article.images} />
+            ) : (
+              <p className="text-ba-text-secondary italic">Aucun contenu disponible pour cet article.</p>
+            )}
+          </section>
 
-          {/* 📸 GALLERY PHOTOS (If article has multiple photos) */}
-          {allPhotos.length > 0 && (
-            <div className="mt-16 pt-10 border-t border-white/10">
-              <h3 className="font-heading text-2xl font-bold mb-6 text-white flex items-center gap-3">
-                <span>📷 Galerie de photos</span>
-                <span className="text-xs px-2.5 py-1 rounded-full bg-white/10 text-ba-text-secondary font-normal">
-                  {allPhotos.length} photo{allPhotos.length > 1 ? 's' : ''}
+          {/* Galerie photos (si plus d'1 photo) — même structure que ProjectDetail */}
+          {allPhotos.length > 1 && (
+            <section className="mb-16">
+              <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
+                <span className="w-1 h-8 rounded-full bg-ba-red inline-block" />
+                Galerie de photos
+                <span className="text-sm font-normal text-ba-text-secondary ml-2">
+                  ({allPhotos.length} photo{allPhotos.length > 1 ? 's' : ''})
                 </span>
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {allPhotos.map((photo, index) => (
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {allPhotos.map((photo, i) => (
                   <div
-                    key={photo.id || index}
-                    onClick={() => setSelectedPhoto(photo.url)}
-                    className="group relative rounded-2xl overflow-hidden glass-card cursor-pointer hover:scale-[1.02] transition-all duration-300 shadow-xl border border-white/10"
-                    style={{ height: '200px' }}
+                    key={photo.id || i}
+                    className="group rounded-2xl overflow-hidden border border-white/10 bg-ba-dark-light shadow-lg"
                   >
-                    <img
-                      src={photo.url}
-                      alt={photo.caption || `Photo ${index + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                      <p className="text-xs text-white font-medium line-clamp-2">
-                        🔍 {photo.caption || `Agrandir photo ${index + 1}`}
-                      </p>
+                    <div className="relative overflow-hidden" style={{ height: '240px' }}>
+                      <img
+                        src={photo.url}
+                        alt={photo.caption || `Photo ${i + 1}`}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <span className="absolute top-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded-md font-medium">
+                        #{i + 1}
+                      </span>
                     </div>
+                    {photo.caption && (
+                      <div className="px-4 py-3 text-sm text-gray-400 italic flex items-center gap-2">
+                        <svg className="w-3.5 h-3.5 text-ba-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                        </svg>
+                        {photo.caption}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
-          {/* Share & Actions Footer */}
-          <div className="mt-16 pt-8 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
-            <button
-              onClick={() => navigate('/news')}
-              className="px-6 py-3 rounded-full glass-card text-white text-sm font-semibold hover:bg-white/20 transition-all border border-white/15"
+          {/* Back CTA — même structure que ProjectDetail */}
+          <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Link
+              to="/news"
+              className="flex items-center gap-2 text-ba-text-secondary hover:text-ba-red transition-colors font-medium"
             >
-              ← Retour à toutes les actualités
-            </button>
-
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+              Toutes les actualités
+            </Link>
             <Link
               to="/act"
-              className="px-6 py-3 rounded-full bg-ba-red text-white text-sm font-bold shadow-lg hover:bg-red-600 transition-all"
+              className="btn btn-primary text-sm"
             >
               Soutenir nos actions →
             </Link>
           </div>
+
         </div>
       </div>
-
-      {/* 🔍 PHOTO LIGHTBOX MODAL */}
-      {selectedPhoto && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
-          onClick={() => setSelectedPhoto(null)}
-        >
-          <div className="relative max-w-5xl max-h-[90vh] overflow-hidden rounded-3xl" onClick={(e) => e.stopPropagation()}>
-            <img src={selectedPhoto} alt="Agrandissement" className="max-w-full max-h-[85vh] object-contain rounded-3xl" />
-            <button
-              onClick={() => setSelectedPhoto(null)}
-              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/70 text-white text-xl flex items-center justify-center hover:bg-red-600 transition-all border border-white/20"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
