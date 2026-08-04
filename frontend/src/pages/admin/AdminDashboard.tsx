@@ -311,69 +311,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Zone de contenu — avec overlay de blocage si DB hors ligne */}
-        <div style={{ position: 'relative', flex: 1, overflow: 'hidden' }}>
-
-          {/* ══ OVERLAY DE BLOCAGE ÉDITION — DB hors ligne ══════════════════
-              Quand la base de données est inaccessible, un voile semi-transparent
-              couvre toute la zone d'édition. L'admin ne peut PAS modifier les données.
-              Il voit un message clair + bouton "Réessayer".
-          ══════════════════════════════════════════════════════════════════════ */}
-          {!isLoading && !dbConnected && (
-            <div style={{
-              position: 'absolute', inset: 0, zIndex: 50,
-              background: 'rgba(10, 15, 30, 0.82)',
-              backdropFilter: 'blur(6px)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              gap: '1.5rem', padding: '2rem',
-            }}>
-              {/* Icône */}
-              <div style={{ width: '5rem', height: '5rem', borderRadius: '50%', background: 'rgba(239,68,68,0.15)', border: '2px solid rgba(239,68,68,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 2.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
-                </svg>
-              </div>
-
-              {/* Titre */}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#F87171', marginBottom: '0.5rem' }}>
-                  🔒 Édition bloquée
-                </div>
-                <div style={{ fontSize: '1rem', fontWeight: 600, color: '#E5E7EB', marginBottom: '0.75rem' }}>
-                  Base de données non accessible
-                </div>
-                <div style={{ fontSize: '0.85rem', color: '#9CA3AF', lineHeight: 1.7, maxWidth: '480px' }}>
-                  Vous ne pouvez <strong style={{ color: '#FCA5A5' }}>pas modifier les données</strong> tant que la connexion à MongoDB Atlas n'est pas rétablie.
-                  Toute modification faite hors ligne serait <strong style={{ color: '#FCA5A5' }}>perdue</strong> à la prochaine actualisation.
-                </div>
-              </div>
-
-              {/* Bouton Réessayer */}
-              <button
-                onClick={retryConnection}
-                style={{
-                  padding: '0.85rem 2rem', borderRadius: '0.75rem',
-                  background: 'linear-gradient(135deg, #EF4444, #DC2626)',
-                  border: 'none', color: '#fff', fontSize: '0.95rem', fontWeight: 700,
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.6rem',
-                  boxShadow: '0 4px 20px rgba(239,68,68,0.4)',
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>
-                Réessayer la connexion
-              </button>
-
-              {/* Info supplémentaire */}
-              <div style={{ fontSize: '0.75rem', color: '#6B7280', textAlign: 'center' }}>
-                Le site public continue d'afficher les dernières données chargées.<br/>
-                Vérifiez que le serveur <strong style={{ color: '#9CA3AF' }}>Render</strong> est bien en ligne.
-              </div>
-            </div>
-          )}
-
+        {/* Content Area */}
         <div className="admin-content">
           {activeSection === 'overview' && (
             <div>
@@ -464,7 +402,6 @@ export default function AdminDashboard() {
           {activeSection === 'newsletter' && <NewsletterManager />}
           {activeSection === 'settings' && <SettingsManager />}
         </div>
-        </div> {/* fin du wrapper relatif (overlay DB) */}
       </div>
     </div>
   );
