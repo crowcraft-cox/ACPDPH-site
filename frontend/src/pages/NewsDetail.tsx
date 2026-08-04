@@ -16,17 +16,15 @@ function NewsContent({ text, images }: { text: string; images?: { id: string; ur
           const photo = images && images[photoIdx];
           if (photo) {
             return (
-              <figure key={i} className="my-6 rounded-2xl overflow-hidden shadow-xl border border-white/10">
+              <figure key={i} className="my-6 rounded-2xl overflow-hidden shadow-xl border border-white/10 relative">
                 <img
                   src={photo.url}
                   alt={photo.caption || `Photo ${photoIdx + 1}`}
                   className="w-full max-h-[480px] object-cover"
                 />
-                {photo.caption && (
-                  <figcaption className="px-4 py-2.5 text-sm text-center text-gray-400 bg-black/70 backdrop-blur italic">
-                    📷 {photo.caption}
-                  </figcaption>
-                )}
+                <span style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.04em', padding: '3px 8px', borderRadius: '6px', fontFamily: "'Outfit', sans-serif" }}>
+                  Bright African · {new Date().getFullYear()}
+                </span>
               </figure>
             );
           }
@@ -171,18 +169,11 @@ export default function NewsDetail() {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <span className="absolute top-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded-md font-medium">
-                        #{i + 1}
+                      {/* Signature Bright African */}
+                      <span style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.04em', padding: '3px 8px', borderRadius: '6px', fontFamily: "'Outfit', sans-serif" }}>
+                        Bright African · {new Date().getFullYear()}
                       </span>
                     </div>
-                    {photo.caption && (
-                      <div className="px-4 py-3 text-sm text-gray-400 italic flex items-center gap-2">
-                        <svg className="w-3.5 h-3.5 text-ba-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                        </svg>
-                        {photo.caption}
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
