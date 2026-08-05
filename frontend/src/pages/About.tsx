@@ -24,7 +24,7 @@ export default function About() {
       </div>
 
       {/* ── HISTORY & CONTEXT ── */}
-      <div style={{ background: '#f9fafb', paddingTop: '4rem', paddingBottom: '4rem' }}>
+      <div style={{ background: '#ffffff', paddingTop: '4rem', paddingBottom: '4rem' }}>
         <div
           ref={historyRef}
           className={`container-ba transition-all duration-700 ${isHistoryVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
@@ -66,7 +66,7 @@ export default function About() {
                   ].map((item) => (
                     <div
                       key={item.label}
-                      style={{ background: '#ffffff', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #E5E7EB' }}
+                      style={{ background: '#F8FAFC', padding: '0.85rem', borderRadius: '0.6rem', border: '1px solid #E2E8F0' }}
                     >
                       <span className="font-semibold block text-ba-red">{item.label}</span>
                       <span style={{ color: '#374151' }}>{item.value}</span>
