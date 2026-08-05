@@ -50,4 +50,15 @@ router.post('/report', safeguardingLimiter, [
   }
 });
 
+// DELETE safeguarding report by ID (Protected Admin Endpoint)
+router.delete('/reports/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await Safeguarding.findByIdAndDelete(id);
+    res.status(200).json({ success: true, message: 'Report deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to delete report.' });
+  }
+});
+
 export default router;

@@ -7,30 +7,41 @@ interface EmailOptions {
   html?: string;
 }
 
-export const sendEmail = async (options: EmailOptions) => {
-  // Use a real SMTP server in production
-  // For development, you can use Ethereal Email (https://ethereal.email)
-  
-  /*
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
+export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
+  try {
+    const host = process.env.SMTP_HOST;
+    const port = parseInt(process.env.SMTP_PORT || '587', 10);
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+
+    // Direct real email transmission via SMTP if configured in Render
+    if (host && user && pass) {
+      const transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465,
+        auth: { user, pass },
+        tls: { rejectUnauthorized: false },
+      });
+
+      const from = process.env.SMTP_FROM || `Bright African ONG <${user}>`;
+
+      await transporter.sendMail({
+        from,
+        to: options.to,
+        subject: options.subject,
+        text: options.text,
+        html: options.html || options.text.replace(/\n/g, '<br/>'),
+      });
+
+      console.log(`[Email Sent] ✅ Real email sent to inbox: ${options.to}`);
+      return true;
+    } else {
+      console.log(`[Email Log] To: ${options.to} | Subject: ${options.subject}`);
+      return true;
     }
-  });
-
-  const mailOptions = {
-    from: process.env.SMTP_FROM || 'noreply@brightafrica.org',
-    to: options.to,
-    subject: options.subject,
-    text: options.text,
-    html: options.html
-  };
-
-  await transporter.sendMail(mailOptions);
-  */
-  
-  console.log(`[Mock Email] Sent to ${options.to} - Subject: ${options.subject}`);
+  } catch (error: any) {
+    console.error('[Email Error]: Failed to send email via SMTP:', error.message);
+    return false;
+  }
 };

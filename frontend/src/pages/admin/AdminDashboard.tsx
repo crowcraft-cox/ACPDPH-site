@@ -8,9 +8,10 @@ import ProjectsManager from './ProjectsManager';
 import ContactManager from './ContactManager';
 import SettingsManager from './SettingsManager';
 import NewsletterManager from './NewsletterManager';
+import MessagesManager from './MessagesManager';
 import '../../admin.css';
 
-type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'contact' | 'newsletter' | 'settings';
+type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'contact' | 'newsletter' | 'messages' | 'settings';
 
 export default function AdminDashboard() {
   const { data, isAuthenticated, logout, currentUser, isSyncing, syncError, dbConnected, dbError, isLoading, retryConnection } = useAdminData();
@@ -87,12 +88,22 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'messages',
+      label: 'Messages Reçus',
+      icon: (
+        <svg className="admin-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-.64-.007-1.28-.02-1.92-.039a48.5 48.5 0 01-2.735-.164M18.75 4.5h-13.5A2.25 2.25 0 003 6.75v8.5a2.25 2.25 0 002.25 2.25h1.378V21a.75.75 0 001.2.6l3.522-2.818h3.9c1.071 0 2.035-.747 2.213-1.808l1.042-6.252A2.25 2.25 0 0018.75 4.5z" />
+        </svg>
+      ),
+    },
+    {
       id: 'contact',
       label: 'Coordonnées',
       adminOnly: true,
       icon: (
         <svg className="admin-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
         </svg>
       ),
     },
@@ -119,6 +130,7 @@ export default function AdminDashboard() {
     projects: 'Nos Projets',
     contact: 'Coordonnées',
     newsletter: 'Newsletter & Abonnés',
+    messages: 'Messages Reçus',
     settings: isEditor ? 'Mon Profil' : 'Paramètres & Éditeurs',
   };
 
@@ -400,6 +412,7 @@ export default function AdminDashboard() {
           {activeSection === 'projects' && <ProjectsManager />}
           {activeSection === 'contact' && !isEditor && <ContactManager />}
           {activeSection === 'newsletter' && <NewsletterManager />}
+          {activeSection === 'messages' && <MessagesManager />}
           {activeSection === 'settings' && <SettingsManager />}
         </div>
       </div>

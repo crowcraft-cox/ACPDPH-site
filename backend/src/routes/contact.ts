@@ -49,4 +49,15 @@ router.post('/', [
   }
 });
 
+// DELETE contact message by ID (Protected Admin Endpoint)
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await Contact.findByIdAndDelete(id);
+    res.status(200).json({ success: true, message: 'Message deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to delete message.' });
+  }
+});
+
 export default router;
