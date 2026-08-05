@@ -244,7 +244,11 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
 
   // ── Auth (sessionStorage uniquement — pas de localStorage) ──
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return sessionStorage.getItem('ba-admin-auth') === 'true';
+    const isAuth = sessionStorage.getItem('ba-admin-auth') === 'true';
+    if (isAuth && !sessionStorage.getItem('ba-admin-token')) {
+      sessionStorage.setItem('ba-admin-token', 'admin-session-active');
+    }
+    return isAuth;
   });
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(() => {
     const stored = sessionStorage.getItem('ba-admin-user');
@@ -364,6 +368,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       setCurrentUser(user);
       sessionStorage.setItem('ba-admin-auth', 'true');
       sessionStorage.setItem('ba-admin-user', JSON.stringify(user));
+      sessionStorage.setItem('ba-admin-token', 'admin-session-active');
       return true;
     }
 
@@ -376,6 +381,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       setCurrentUser(foundUser);
       sessionStorage.setItem('ba-admin-auth', 'true');
       sessionStorage.setItem('ba-admin-user', JSON.stringify(foundUser));
+      sessionStorage.setItem('ba-admin-token', 'admin-session-active');
       return true;
     }
 
