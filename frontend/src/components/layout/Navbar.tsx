@@ -95,25 +95,25 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div
         className={`lg:hidden overflow-hidden transition-all duration-300 bg-white border-t border-gray-100 ${
-          isMobileOpen ? 'max-h-[750px] opacity-100 shadow-xl' : 'max-h-0 opacity-0'
+          isMobileOpen ? 'max-h-[950px] opacity-100 shadow-2xl' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="container-ba py-5 space-y-3.5">
+        <div className="container-ba py-6 space-y-5">
           {navLinks.map(link => (
             <Link
               key={link.path}
               to={link.path}
-              className={`block py-3.5 px-4 rounded-xl text-base font-semibold transition-all ${
+              className={`block py-4 px-5 rounded-2xl text-lg font-bold transition-all border-b border-gray-100/80 last:border-none ${
                 location.pathname === link.path
-                  ? 'bg-ba-red/10 text-ba-red font-bold shadow-sm'
+                  ? 'bg-ba-red/10 text-ba-red font-extrabold shadow-sm'
                   : 'text-gray-800 hover:bg-gray-100'
               }`}
             >
               {link.label}
             </Link>
           ))}
-          <div className="pt-2">
-            <Link to="/act" className="btn btn-red w-full py-3.5 text-base font-bold text-center">
+          <div className="pt-4">
+            <Link to="/act" className="btn btn-red w-full py-4 text-lg font-bold text-center shadow-lg">
               {t.nav.donate}
             </Link>
           </div>
