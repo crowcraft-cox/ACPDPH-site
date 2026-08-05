@@ -304,13 +304,25 @@ export default function MessagesManager() {
                   </div>
                 </div>
 
-                <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', gap: '0.75rem' }}>
+                <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  {/* Gmail Web Compose Button */}
                   <a
-                    href={`mailto:${(selectedMessage as ContactMessage).email}?subject=RE: ${(selectedMessage as ContactMessage).subject}`}
-                    className="admin-btn admin-btn-green"
-                    style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent((selectedMessage as ContactMessage).email)}&su=${encodeURIComponent('RE: ' + (selectedMessage as ContactMessage).subject)}&body=${encodeURIComponent('\n\n-----------------------------------\nMessage d\'origine de ' + (selectedMessage as ContactMessage).name + ' :\n' + (selectedMessage as ContactMessage).message)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="admin-btn admin-btn-red"
+                    style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
                   >
-                    ✉️ Répondre par e-mail
+                    ✉️ Répondre via Gmail
+                  </a>
+
+                  {/* Mailto App Fallback */}
+                  <a
+                    href={`mailto:${(selectedMessage as ContactMessage).email}?subject=${encodeURIComponent('RE: ' + (selectedMessage as ContactMessage).subject)}`}
+                    className="admin-btn admin-btn-ghost"
+                    style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}
+                  >
+                    Client Mail par défaut
                   </a>
                 </div>
               </div>
