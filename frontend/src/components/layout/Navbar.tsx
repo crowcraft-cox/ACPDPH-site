@@ -60,9 +60,12 @@ export default function Navbar() {
           {/* Language Toggle */}
           <button
             onClick={toggleLang}
-            className="px-3 py-1.5 text-xs font-bold rounded-lg border-2 border-gray-200 text-gray-700 hover:border-ba-red transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border-2 border-gray-200 text-gray-700 hover:border-ba-red hover:text-ba-red transition-all"
+            aria-label="Changer de langue"
           >
-            {lang === 'fr' ? '🇬🇧 EN' : '🇫🇷 FR'}
+            <span className={lang === 'fr' ? 'text-ba-red font-extrabold' : 'text-gray-400'}>FR</span>
+            <span className="text-gray-300">/</span>
+            <span className={lang === 'en' ? 'text-ba-red font-extrabold' : 'text-gray-400'}>EN</span>
           </button>
 
           {/* CTA Donate */}

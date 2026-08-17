@@ -318,7 +318,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       console.log('[BrightAfrican] ✅ Données sauvegardées dans MongoDB Atlas');
     } else {
       setSyncError(
-        '⚠️ La sauvegarde a échoué. La base de données est peut-être hors ligne. ' +
+        'La sauvegarde a échoué. La base de données est peut-être hors ligne. ' +
         'Vos modifications sont visibles ici mais ne sont pas encore enregistrées.'
       );
       setDbConnected(false);
@@ -507,8 +507,8 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     if (subscribers.length === 0) return;
     const isProject = params.type === 'PROJECT';
     const subject = isProject
-      ? `📢 Nouveau Projet Déployé : ${params.title}`
-      : `📰 Nouvelle Actualité Publiée : ${params.title}`;
+      ? `Nouveau Projet - ${params.title}`
+      : `Nouvelle Actualité - ${params.title}`;
     const content = isProject
       ? `L'ONG Bright African a le plaisir de vous annoncer le lancement de son nouveau projet : "${params.title}". ${params.excerpt}`
       : `Découvrez la dernière actualité de l'ONG Bright African : "${params.title}". ${params.excerpt}`;

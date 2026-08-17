@@ -26,7 +26,7 @@ export default function Footer() {
         setSubscribed(true);
         setNewsletterMsg({
           type: 'success',
-          text: '✓ Merci ! Votre inscription à la newsletter a été enregistrée avec succès. Vous recevrez nos futurs projets et actualités.',
+          text: 'Merci ! Votre inscription à la newsletter a été enregistrée avec succès. Vous recevrez nos futurs projets et actualités.',
         });
         setEmail('');
       } else {
@@ -70,14 +70,38 @@ export default function Footer() {
             </p>
             {/* Social Links */}
             <div className="flex gap-4 pt-2">
-              {['facebook', 'twitter', 'instagram', 'linkedin'].map(social => (
+              {[
+                {
+                  id: 'facebook',
+                  url: 'https://www.facebook.com/share/1atRhwrxaY/',
+                  label: 'Facebook - ONG Bright African',
+                },
+                {
+                  id: 'twitter',
+                  url: 'https://twitter.com',
+                  label: 'X (Twitter)',
+                },
+                {
+                  id: 'instagram',
+                  url: 'https://instagram.com',
+                  label: 'Instagram',
+                },
+                {
+                  id: 'linkedin',
+                  url: 'https://linkedin.com',
+                  label: 'LinkedIn',
+                },
+              ].map(social => (
                 <a
-                  key={social}
-                  href={`#${social}`}
+                  key={social.id}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-11 h-11 rounded-xl bg-white/10 hover:bg-ba-red flex items-center justify-center transition-all hover:-translate-y-1 text-white"
-                  aria-label={social}
+                  aria-label={social.label}
+                  title={social.label}
                 >
-                  <SocialIcon name={social} />
+                  <SocialIcon name={social.id} />
                 </a>
               ))}
             </div>
@@ -152,7 +176,7 @@ export default function Footer() {
                 disabled={loading}
                 className={`btn btn-red w-full text-base py-3.5 flex items-center justify-center gap-2 ${loading ? 'opacity-60' : ''}`}
               >
-                {loading ? 'Inscription...' : (subscribed ? '✓ Inscription confirmée !' : t.footer.newsletter_submit)}
+                {loading ? 'Inscription...' : (subscribed ? 'Inscription confirmée !' : t.footer.newsletter_submit)}
               </button>
 
               {newsletterMsg && (

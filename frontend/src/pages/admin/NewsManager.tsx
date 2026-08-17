@@ -221,8 +221,10 @@ export default function NewsManager() {
                           <img src={article.image} alt={article.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                       ) : (
-                        <div style={{ width: '56px', height: '42px', borderRadius: '8px', background: '#1E293B', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', fontSize: '0.75rem' }}>
-                          📰
+                        <div style={{ width: '56px', height: '42px', borderRadius: '8px', background: '#1E293B', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B' }}>
+                          <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+                          </svg>
                         </div>
                       )}
                     </td>
@@ -234,7 +236,11 @@ export default function NewsManager() {
                         </div>
                         {photoCount > 0 && (
                           <div style={{ fontSize: '0.7rem', color: '#38BDF8', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                            📷 {photoCount} photo{photoCount > 1 ? 's' : ''}
+                            <svg style={{ width: '12px', height: '12px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                            </svg>
+                            {photoCount} photo{photoCount > 1 ? 's' : ''}
                           </div>
                         )}
                       </div>
@@ -320,20 +326,33 @@ export default function NewsManager() {
                   />
                 </div>
 
-                {/* 📸 PHOTOS (Couverture + Galerie) */}
+                {/* PHOTOS (Couverture + Galerie) */}
                 <div style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '1rem', padding: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                     <div>
-                      <div style={{ fontWeight: 700, color: '#F1F5F9', fontSize: '0.95rem' }}>📸 Photos de l'article</div>
+                      <div style={{ fontWeight: 700, color: '#F1F5F9', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <svg style={{ width: '16px', height: '16px', color: '#94A3B8' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                        </svg>
+                        Photos de l'article
+                      </div>
                       <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
                         Téléchargez la photo de couverture et des photos d'illustration.
                       </div>
                     </div>
 
                     <label style={{ cursor: isUploading ? 'not-allowed' : 'pointer', opacity: isUploading ? 0.6 : 1 }}>
-                      <span className="admin-btn admin-btn-ghost" style={{ fontSize: '0.825rem', padding: '0.4rem 0.85rem' }}>
-                        {isUploading ? 'Compression...' : '➕ Ajouter des photos'}
-                      </span>
+                        <span className="admin-btn admin-btn-ghost" style={{ fontSize: '0.825rem', padding: '0.4rem 0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                          {isUploading ? 'Compression...' : (
+                            <>
+                              <svg style={{ width: '13px', height: '13px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                              </svg>
+                              Ajouter des photos
+                            </>
+                          )}
+                        </span>
                       <input
                         type="file"
                         accept="image/*"
@@ -424,14 +443,17 @@ export default function NewsManager() {
                   )}
                 </div>
 
-                {/* 📝 CONTENU COMPLET avec insertion de photos */}
+                {/* Contenu complet avec insertion de photos */}
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
                     <label className="admin-label" style={{ marginBottom: 0 }}>Texte détaillé de l'article</label>
                     {form.images && form.images.length > 0 && (
-                      <span style={{ fontSize: '0.75rem', color: '#38BDF8' }}>
-                        💡 Utilisez les boutons "+ Insérer [photo:X]" ci-dessus pour afficher une photo entre deux paragraphes.
-                      </span>
+                       <span style={{ fontSize: '0.75rem', color: '#38BDF8', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <svg style={{ width: '12px', height: '12px', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg>
+                        Utilisez les boutons "+ Insérer [photo:X]" ci-dessus pour afficher une photo entre deux paragraphes.
+                       </span>
                     )}
                   </div>
                   <textarea
