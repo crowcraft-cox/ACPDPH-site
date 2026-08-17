@@ -78,8 +78,8 @@ export default function Footer() {
                 },
                 {
                   id: 'twitter',
-                  url: 'https://twitter.com',
-                  label: 'X (Twitter)',
+                  url: 'https://x.com/brightafric',
+                  label: 'X (Twitter) - ONG Bright African',
                 },
                 {
                   id: 'instagram',
