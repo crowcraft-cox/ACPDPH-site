@@ -83,8 +83,8 @@ export default function Footer() {
                 },
                 {
                   id: 'instagram',
-                  url: 'https://instagram.com',
-                  label: 'Instagram',
+                  url: 'https://www.instagram.com/bright_african/',
+                  label: 'Instagram - ONG Bright African',
                 },
                 {
                   id: 'linkedin',
