@@ -82,17 +82,27 @@ export default function Safeguarding() {
       <div className="container-ba">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           {/* Info Side */}
-          <div className="lg:col-span-1 space-y-10">
-            <div className="glass-card p-8 border-l-4 border-ba-red">
-              <h3 className="font-heading font-bold text-xl mb-4 text-ba-red">{t.safeguarding.charter_title}</h3>
-              <p className="text-ba-text-secondary text-sm leading-loose">
+          <div className="lg:col-span-1 space-y-8">
+            <div className="glass-card p-8 rounded-3xl border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300 relative overflow-hidden">
+              <div className="w-10 h-10 rounded-xl bg-ba-red/10 text-ba-red flex items-center justify-center mb-4">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-2.18-7.79l-4.5 1.5A1.5 1.5 0 004.5 4.93v5.67c0 5.48 4.22 10.15 9.5 10.4 5.28-.25 9.5-4.92 9.5-10.4V4.93a1.5 1.5 0 00-.82-1.34l-4.5-1.5a1.5 1.5 0 00-.96 0l-4.5 1.5z" />
+                </svg>
+              </div>
+              <h3 className="font-heading font-bold text-xl mb-3 text-ba-red">{t.safeguarding.charter_title}</h3>
+              <p className="text-ba-text-secondary text-sm leading-relaxed">
                 {t.safeguarding.charter_text}
               </p>
             </div>
             
-            <div className="glass-card p-8 border-l-4 border-ba-green">
-              <h3 className="font-heading font-bold text-xl mb-4 text-ba-green">{t.safeguarding.referent_title}</h3>
-              <p className="text-ba-text-secondary text-sm leading-loose">
+            <div className="glass-card p-8 rounded-3xl border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-green/30 transition-all duration-300 relative overflow-hidden">
+              <div className="w-10 h-10 rounded-xl bg-ba-green/10 text-ba-green flex items-center justify-center mb-4">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+              </div>
+              <h3 className="font-heading font-bold text-xl mb-3 text-ba-green">{t.safeguarding.referent_title}</h3>
+              <p className="text-ba-text-secondary text-sm leading-relaxed">
                 {t.safeguarding.referent_text}
               </p>
             </div>

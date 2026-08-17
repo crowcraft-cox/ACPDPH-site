@@ -31,10 +31,10 @@ export default function News() {
             const photoCount = article.images ? article.images.length : article.image ? 1 : 0;
 
             return (
-              <article key={article.id} className="glass-card group flex flex-col justify-between rounded-3xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden">
+              <article key={article.id} className="glass-card group flex flex-col justify-between rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300">
                 <div>
                   {/* Cover Photo */}
-                  <div className="relative h-52 w-full overflow-hidden rounded-t-3xl">
+                  <div className="relative h-56 w-full overflow-hidden">
                     {article.image ? (
                       <img
                         src={article.image}
@@ -50,17 +50,18 @@ export default function News() {
                     )}
 
                     {photoCount > 1 && (
-                      <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-white flex items-center gap-1.5 border border-white/20">
+                      <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-white flex items-center gap-1.5 border border-white/20">
                         <svg className="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                         </svg>
-                        {photoCount} photos
+                        <span>{photoCount} photos</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="px-6 pt-5 pb-2">
-                    <div className="flex items-center gap-3 mb-3">
+                  {/* Card Body */}
+                  <div className="p-6 pb-2">
+                    <div className="flex items-center justify-between gap-3 mb-3">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${badgeBg}`}>
                         {article.category}
                       </span>
@@ -68,12 +69,12 @@ export default function News() {
                         <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                         </svg>
-                        {article.date}
+                        <span>{article.date}</span>
                       </span>
                     </div>
 
                     <Link to={`/news/${article.id}`}>
-                      <h3 className="font-heading font-bold text-lg mb-2 group-hover:text-ba-red transition-colors line-clamp-2">
+                      <h3 className="font-heading font-bold text-xl mb-3 group-hover:text-ba-red transition-colors line-clamp-2 leading-snug">
                         {article.title}
                       </h3>
                     </Link>
@@ -84,17 +85,19 @@ export default function News() {
                   </div>
                 </div>
 
-                {/* "Lire la suite" Link Fix */}
-                <div className="px-6 pb-6 pt-2">
-                  <Link
-                    to={`/news/${article.id}`}
-                    className={`inline-flex items-center gap-2 text-sm font-bold ${colorClass} group-hover:gap-3 transition-all hover:underline`}
-                  >
-                    {t.news.read_more}
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </Link>
+                {/* Card Footer */}
+                <div className="p-6 pt-0 mt-auto">
+                  <div className="pt-4 border-t border-black/[0.06] dark:border-white/[0.06]">
+                    <Link
+                      to={`/news/${article.id}`}
+                      className="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-ba-red/5 hover:bg-ba-red hover:text-white text-ba-red font-semibold text-sm transition-all duration-300 group/btn"
+                    >
+                      <span>{t.news.read_more}</span>
+                      <svg className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    </Link>
+                  </div>
                 </div>
               </article>
             );

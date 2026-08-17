@@ -251,22 +251,26 @@ function ImpactSection() {
         </div>
       </div>
     </section>
-  );
-}
-
-function CounterCard({ value, label, color, delay }: { value: number; label: string; color: string; delay: number }) {
+  )function CounterCard({ value, label, color, delay }: { value: number; label: string; color: string; delay: number }) {
   const { count, ref } = useCountUp(value, 2500);
+
+  const isRed = color === 'ba-red';
 
   return (
     <div
       ref={ref}
-      className="glass-card p-6 md:p-8 text-center group"
+      className="glass-card rounded-3xl p-6 md:p-8 text-center group relative overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <span className={`font-heading text-3xl md:text-4xl font-bold ${color === 'ba-red' ? 'text-ba-red' : 'text-ba-green'} block mb-2`}>
-        {count.toLocaleString()}+
-      </span>
-      <span className="text-ba-text-secondary text-sm md:text-base">{label}</span>
+      {/* Background ambient glow */}
+      <div className={`absolute -right-8 -bottom-8 w-28 h-28 rounded-full blur-3xl opacity-20 pointer-events-none ${isRed ? 'bg-ba-red' : 'bg-ba-green'}`} />
+
+      <div className="relative z-10 flex flex-col items-center">
+        <span className={`font-heading text-3xl md:text-4xl font-extrabold tracking-tight ${isRed ? 'text-ba-red' : 'text-ba-green'} block mb-2 transition-transform duration-300 group-hover:scale-105`}>
+          {count.toLocaleString()}+
+        </span>
+        <span className="text-ba-text-secondary text-sm md:text-base font-medium">{label}</span>
+      </div>
     </div>
   );
 }
@@ -282,9 +286,12 @@ function PillarsSection() {
   return (
     <section className="section-padding relative">
       <div ref={ref} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        <div className="text-center mb-8">
+        <div className="text-center mb-10 max-w-3xl mx-auto">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-red/10 text-ba-red mb-3">
+            Domaines d'intervention
+          </span>
           <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">{t.pillars.title}</h2>
-          <p className="text-ba-text-secondary text-justify">{t.pillars.subtitle}</p>
+          <p className="text-ba-text-secondary text-base leading-relaxed">{t.pillars.subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -292,25 +299,38 @@ function PillarsSection() {
             <Link
               key={pillar.id || i}
               to="/pillars"
-              className={`glass-card group cursor-pointer flex flex-col bg-gradient-to-br ${pillar.gradient || 'from-red-500/10 to-red-600/5'}`}
+              className="glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
               style={{ animationDelay: `${i * 150}ms` }}
             >
-              <div className="h-52 w-full overflow-hidden relative rounded-t-[1.25rem]">
+              {/* Card Header with Image */}
+              <div className="h-60 w-full overflow-hidden relative">
                 <img 
                   src={pillar.image} 
                   alt={pillar.title} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <h3 className="absolute bottom-6 left-6 md:left-8 right-6 md:right-8 font-heading text-2xl font-bold text-white">{pillar.title}</h3>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                <div className="absolute bottom-5 left-6 right-6 z-10">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white border border-white/20 mb-2">
+                    Pilier #{i + 1}
+                  </span>
+                  <h3 className="font-heading text-2xl font-bold text-white leading-tight">{pillar.title}</h3>
+                </div>
               </div>
-              <div className="px-6 md:px-8 pt-5 pb-6 flex-grow flex flex-col justify-between">
-                <p className="text-ba-text-secondary text-sm leading-relaxed">{pillar.description}</p>
-                <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-ba-red group-hover:translate-x-1 transition-all">
-                  {t.pillars.learn_more}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+
+              {/* Card Body */}
+              <div className="p-6 md:p-8 flex-grow flex flex-col justify-between">
+                <p className="text-ba-text-secondary text-sm md:text-base leading-relaxed mb-6">{pillar.description}</p>
+                
+                {/* Card Footer */}
+                <div className="pt-4 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
+                  <span className="text-xs font-medium text-ba-text-muted">En savoir plus</span>
+                  <div className="flex items-center gap-2 text-sm font-bold text-ba-red group-hover:translate-x-1.5 transition-transform duration-300">
+                    <span>{t.pillars.learn_more}</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </Link>
@@ -330,9 +350,9 @@ function ProjectsPreviewSection() {
   if (projects.length === 0) return null;
 
   const statusBadge: Record<string, string> = {
-    'En cours':         'bg-blue-500/20 text-blue-600',
-    'Achevé':           'bg-emerald-500/20 text-emerald-600',
-    'En planification': 'bg-amber-500/20 text-amber-600',
+    'En cours':         'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
+    'Achevé':           'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+    'En planification': 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
   };
 
   return (
@@ -340,8 +360,11 @@ function ProjectsPreviewSection() {
       <div ref={ref} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-green/10 text-ba-green mb-3">
+              Impact Terrain
+            </span>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-2">Nos Projets</h2>
-            <p className="text-ba-text-secondary text-justify">Découvrez nos actions concrètes déployées sur le terrain à travers le continent africain. Chaque projet reflète notre engagement à transformer durablement les conditions de vie des communautés vulnérables, en apportant des solutions adaptées aux réalités locales dans les domaines de la protection de l'enfance, de la santé, de l'environnement et de la consolidation de la paix.</p>
+            <p className="text-ba-text-secondary max-w-3xl leading-relaxed">Découvrez nos actions concrètes déployées sur le terrain à travers le continent africain pour la protection de l'enfance, la santé, l'éducation et l'environnement.</p>
           </div>
           <Link to="/projects" className="btn btn-outline btn-sm shrink-0">
             Tous les projets
@@ -360,9 +383,10 @@ function ProjectsPreviewSection() {
               <Link
                 key={proj.id || i}
                 to={`/projects/${proj.id}`}
-                className="glass-card group flex flex-col hover:-translate-y-1 transition-all duration-300"
+                className="glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
               >
-                <div className="relative w-full overflow-hidden rounded-t-[1.25rem]" style={{ height: '180px' }}>
+                {/* Cover Thumbnail */}
+                <div className="relative w-full overflow-hidden" style={{ height: '200px' }}>
                   {proj.image ? (
                     <img
                       src={proj.image}
@@ -376,34 +400,45 @@ function ProjectsPreviewSection() {
                       </svg>
                     </div>
                   )}
-                  <div className={`absolute top-3 left-3 ${proj.color || 'bg-ba-red'} text-white text-xs font-bold px-2.5 py-1 rounded-full shadow`}>
+
+                  {/* Type Badge */}
+                  <div className={`absolute top-3 left-3 ${proj.color || 'bg-ba-red'} text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg`}>
                     {proj.type}
                   </div>
                 </div>
 
-                <div className="px-5 pt-4 pb-5 flex flex-col flex-1">
-                  <span className={`self-start text-xs font-semibold px-2 py-0.5 rounded-full mb-2 ${statusBadge[proj.status] || 'bg-gray-500/20 text-gray-500'}`}>
-                    {proj.status}
-                  </span>
-                  <h3 className="font-heading text-base font-bold mb-1 group-hover:text-ba-red transition-colors leading-snug line-clamp-2">
+                {/* Card Body */}
+                <div className="p-5 flex flex-col flex-1">
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${statusBadge[proj.status] || 'bg-gray-500/20 text-gray-400 border border-gray-500/30'}`}>
+                      {proj.status}
+                    </span>
+                    <p className="text-xs text-ba-text-muted flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5 text-ba-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                      </svg>
+                      {proj.location}
+                    </p>
+                  </div>
+
+                  <h3 className="font-heading text-lg font-bold mb-2 group-hover:text-ba-red transition-colors leading-snug line-clamp-2">
                     {proj.title}
                   </h3>
-                  <p className="text-xs text-ba-text-muted flex items-center gap-1 mb-2">
-                    <svg className="w-3 h-3 text-ba-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                    </svg>
-                    {proj.location}
-                  </p>
+
                   {excerpt && (
-                    <p className="text-xs text-ba-text-secondary leading-relaxed line-clamp-2 mb-3 flex-1">{excerpt}</p>
+                    <p className="text-xs text-ba-text-secondary leading-relaxed line-clamp-2 mb-4 flex-1">{excerpt}</p>
                   )}
-                  <span className="mt-auto text-xs font-semibold text-ba-red flex items-center gap-1 group-hover:gap-2 transition-all">
-                    Voir les détails
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                  </span>
+
+                  {/* Card Footer */}
+                  <div className="pt-3 border-t border-black/[0.06] dark:border-white/[0.06] mt-auto flex items-center justify-between">
+                    <span className="text-xs font-semibold text-ba-red flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                      Voir les détails
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    </span>
+                  </div>
                 </div>
               </Link>
             );
@@ -427,8 +462,11 @@ function NewsPreviewSection() {
       <div ref={ref} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 gap-4">
           <div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-red/10 text-ba-red mb-3">
+              Publications Récentes
+            </span>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-2">{t.news.title}</h2>
-            <p className="text-ba-text-secondary text-justify">{t.news.subtitle}</p>
+            <p className="text-ba-text-secondary leading-relaxed">{t.news.subtitle}</p>
           </div>
           <Link to="/news" className="btn btn-outline btn-sm shrink-0">
             {t.news.all_news}
@@ -440,37 +478,65 @@ function NewsPreviewSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {articles.map((article, i) => (
-            <article key={article.id || i} className="glass-card group overflow-visible flex flex-col">
-              <div className={`h-48 bg-gradient-to-br ${article.color === 'ba-red' ? 'from-ba-red/20 to-ba-red/5' : 'from-ba-green/20 to-ba-green/5'} flex items-center justify-center rounded-t-[1.25rem] overflow-hidden`}>
-                <div className={`w-16 h-16 rounded-2xl ${article.color === 'ba-red' ? 'bg-ba-red/20 text-ba-red' : 'bg-ba-green/20 text-ba-green'} flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                  </svg>
+            <Link
+              key={article.id || i}
+              to={`/news/${article.id}`}
+              className="glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
+            >
+              {/* Cover Image or Graphic */}
+              <div className="relative h-48 w-full overflow-hidden">
+                {article.image ? (
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className={`w-full h-full bg-gradient-to-br ${article.color === 'ba-red' ? 'from-ba-red/20 to-ba-red/5' : 'from-ba-green/20 to-ba-green/5'} flex items-center justify-center`}>
+                    <div className={`w-14 h-14 rounded-2xl ${article.color === 'ba-red' ? 'bg-ba-red/20 text-ba-red' : 'bg-ba-green/20 text-ba-green'} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
+                      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Category Pill */}
+                <div className="absolute top-3 left-3">
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-bold border backdrop-blur-md ${article.color === 'ba-red' ? 'bg-ba-red/90 text-white border-ba-red/40' : 'bg-ba-green/90 text-white border-ba-green/40'}`}>
+                    {article.category}
+                  </span>
                 </div>
               </div>
-              <div className="px-6 md:px-8 pt-5 pb-6 flex-grow flex flex-col justify-between">
+
+              {/* Card Body */}
+              <div className="p-6 flex-grow flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${article.color === 'ba-red' ? 'bg-ba-red/10 text-ba-red' : 'bg-ba-green/10 text-ba-green'}`}>
-                      {article.category}
-                    </span>
-                    <span className="text-xs text-ba-text-muted">{article.date}</span>
+                  <div className="flex items-center gap-2 text-xs text-ba-text-muted mb-3">
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                    <span>{article.date}</span>
                   </div>
-                  <h3 className="font-heading font-bold text-xl mb-3 group-hover:text-ba-red transition-colors line-clamp-2 leading-snug">
+
+                  <h3 className="font-heading font-bold text-lg mb-2.5 group-hover:text-ba-red transition-colors line-clamp-2 leading-snug">
                     {article.title}
                   </h3>
-                  <p className="text-ba-text-secondary text-sm leading-relaxed line-clamp-3 mb-6">{article.excerpt}</p>
+
+                  <p className="text-ba-text-secondary text-sm leading-relaxed line-clamp-2 mb-4">{article.excerpt}</p>
                 </div>
-                <div className="pt-2">
-                  <span className="text-sm font-semibold text-ba-red flex items-center gap-2 group-hover:gap-3 transition-all">
+
+                {/* Card Footer */}
+                <div className="pt-3 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
+                  <span className="text-xs font-semibold text-ba-red flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
                     {t.news.read_more}
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </span>
                 </div>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </div>

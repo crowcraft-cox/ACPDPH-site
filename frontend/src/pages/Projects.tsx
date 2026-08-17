@@ -41,10 +41,10 @@ export default function Projects() {
             return (
               <div
                 key={proj.id}
-                className="group flex flex-col glass-card rounded-3xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+                className="group flex flex-col glass-card rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
               >
-                {/* Cover Thumbnail */}
-                <div className="relative w-full overflow-hidden rounded-t-3xl" style={{ height: '220px' }}>
+                {/* Card Header (Cover Image) */}
+                <div className="relative w-full overflow-hidden" style={{ height: '230px' }}>
                   {proj.image ? (
                     <img
                       src={proj.image}
@@ -60,58 +60,60 @@ export default function Projects() {
                   )}
 
                   {/* Type Badge */}
-                  <div className={`absolute top-4 left-4 ${proj.color || 'bg-ba-red'} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg`}>
+                  <div className={`absolute top-4 left-4 ${proj.color || 'bg-ba-red'} text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md`}>
                     {proj.type}
                   </div>
 
                   {/* Photo count badge */}
                   {photoCount > 1 && (
-                    <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur text-white text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md text-white text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1.5 border border-white/20">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
                       </svg>
-                      {photoCount} photos
+                      <span>{photoCount} photos</span>
                     </div>
                   )}
                 </div>
 
                 {/* Card Body */}
-                <div className="flex flex-col flex-1 px-6 pt-5 pb-7">
-                  {/* Status */}
-                  <span className={`self-start text-xs font-semibold px-2.5 py-1 rounded-full mb-3 ${statusBadge[proj.status] || 'bg-gray-500/20 text-gray-300 border border-gray-500/40'}`}>
-                    {proj.status}
-                  </span>
+                <div className="flex flex-col flex-1 p-6">
+                  {/* Status & Location row */}
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusBadge[proj.status] || 'bg-gray-500/20 text-gray-400 border border-gray-500/40'}`}>
+                      {proj.status}
+                    </span>
+                    <p className="text-xs text-ba-text-muted font-medium flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5 text-ba-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                      </svg>
+                      <span>{proj.location}</span>
+                    </p>
+                  </div>
 
                   {/* Title */}
-                  <h3 className="font-heading text-xl font-bold mb-2 group-hover:text-ba-red transition-colors leading-tight">
+                  <h3 className="font-heading text-xl font-bold mb-3 group-hover:text-ba-red transition-colors leading-tight">
                     {proj.title}
                   </h3>
-
-                  {/* Location */}
-                  <p className="text-xs text-ba-text-secondary font-medium mb-3 flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-ba-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                    </svg>
-                    {proj.location}
-                  </p>
 
                   {/* Short Excerpt */}
                   <p className="text-sm text-ba-text-secondary leading-relaxed mb-6 flex-1">
                     {excerpt}
                   </p>
 
-                  {/* CTA */}
-                  <Link
-                    to={`/projects/${proj.id}`}
-                    className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-ba-red hover:text-ba-red/80 group-hover:gap-3 transition-all duration-300"
-                  >
-                    {t.projects.view_details}
-                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                  </Link>
+                  {/* Card Footer */}
+                  <div className="pt-4 border-t border-black/[0.06] dark:border-white/[0.06] mt-auto">
+                    <Link
+                      to={`/projects/${proj.id}`}
+                      className="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-ba-red/5 hover:bg-ba-red hover:text-white text-ba-red font-semibold text-sm transition-all duration-300 group/btn"
+                    >
+                      <span>{t.projects.view_details}</span>
+                      <svg className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    </Link>
+                  </div>
                 </div>
               </div>
             );

@@ -57,7 +57,7 @@ export default function About() {
                 <h4 className="font-heading font-bold text-lg mb-4" style={{ color: '#111827' }}>
                   Fiche d'Identité Statutaire
                 </h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                   {[
                     { label: 'Forme Juridique :', value: 'ONG & ASBL (Loi n° 004/2001)' },
                     { label: 'Date de Création :', value: '1er Janvier 2026 (Durée illimitée)' },
@@ -66,27 +66,26 @@ export default function About() {
                   ].map((item) => (
                     <div
                       key={item.label}
-                      style={{ background: '#F8FAFC', padding: '0.85rem', borderRadius: '0.6rem', border: '1px solid #E2E8F0' }}
+                      className="glass-card p-4 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-slate-50/90 dark:bg-zinc-800/80 hover:border-ba-red/30 transition-all duration-300"
                     >
-                      <span className="font-semibold block text-ba-red">{item.label}</span>
-                      <span style={{ color: '#374151' }}>{item.value}</span>
+                      <span className="font-bold text-xs uppercase tracking-wider block text-ba-red mb-1">{item.label}</span>
+                      <span className="text-ba-text-primary text-sm font-medium">{item.value}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Logo */}
+            {/* Logo Card */}
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-ba-red/20 to-ba-green/20 rounded-3xl transform translate-x-4 translate-y-4" />
               <div
-                className="relative rounded-3xl overflow-hidden aspect-square flex items-center justify-center shadow-xl"
-                style={{ background: '#ffffff', border: '2px solid #E5E7EB' }}
+                className="relative rounded-3xl overflow-hidden aspect-square flex items-center justify-center shadow-xl glass-card border border-black/[0.08] dark:border-white/[0.08] p-8"
               >
                 <img
                   src="/logo.png"
                   alt="Bright African Logo"
-                  className="w-full h-full object-contain p-4 hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
                 />
               </div>
             </div>
@@ -101,6 +100,9 @@ export default function About() {
           className={`container-ba transition-all duration-700 ${isGovVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
         >
           <div className="text-center mb-14">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-red/10 text-ba-red mb-3">
+              Structure & Organisation
+            </span>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4" style={{ color: '#111827' }}>
               {t.about.governance_title}
             </h2>
@@ -108,28 +110,26 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { title: t.about.ag,        desc: t.about.ag_desc,        border: '#DC2626' },
-              { title: t.about.ca,        desc: t.about.ca_desc,        border: '#16A34A' },
-              { title: t.about.bureau,    desc: t.about.bureau_desc,    border: '#DC2626' },
-              { title: t.about.direction, desc: t.about.direction_desc, border: '#16A34A' },
-            ].map((card) => (
+              { title: t.about.ag,        desc: t.about.ag_desc,        color: 'ba-red' },
+              { title: t.about.ca,        desc: t.about.ca_desc,        color: 'ba-green' },
+              { title: t.about.bureau,    desc: t.about.bureau_desc,    color: 'ba-red' },
+              { title: t.about.direction, desc: t.about.direction_desc, color: 'ba-green' },
+            ].map((card, i) => (
               <div
                 key={card.title}
-                className="p-8 text-center shadow-md hover:shadow-xl transition-all flex flex-col justify-between"
-                style={{
-                  background: '#ffffff',
-                  borderRadius: '1rem',
-                  borderTop: `4px solid ${card.border}`,
-                  border: '1px solid #E5E7EB',
-                  borderTopColor: card.border,
-                }}
+                className="glass-card group p-8 rounded-3xl flex flex-col justify-between border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 text-center"
               >
-                <h4 className="font-heading font-bold text-xl mb-4" style={{ color: '#111827' }}>
-                  {card.title}
-                </h4>
-                <p className="text-sm leading-relaxed" style={{ color: '#374151' }}>
-                  {card.desc}
-                </p>
+                <div>
+                  <div className={`w-12 h-12 rounded-2xl mx-auto mb-5 flex items-center justify-center font-bold text-sm ${card.color === 'ba-red' ? 'bg-ba-red/10 text-ba-red' : 'bg-ba-green/10 text-ba-green'} transition-transform duration-300 group-hover:scale-110`}>
+                    0{i + 1}
+                  </div>
+                  <h4 className="font-heading font-bold text-xl mb-4 text-ba-text-primary leading-tight">
+                    {card.title}
+                  </h4>
+                  <p className="text-sm leading-relaxed text-ba-text-secondary">
+                    {card.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
