@@ -251,7 +251,10 @@ function ImpactSection() {
         </div>
       </div>
     </section>
-  )function CounterCard({ value, label, color, delay }: { value: number; label: string; color: string; delay: number }) {
+  );
+}
+
+function CounterCard({ value, label, color, delay }: { value: number; label: string; color: string; delay: number }) {
   const { count, ref } = useCountUp(value, 2500);
 
   const isRed = color === 'ba-red';
