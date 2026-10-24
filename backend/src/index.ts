@@ -47,6 +47,18 @@ app.use('/api/v1/membership', membershipRoutes);
 app.use('/api/v1/newsletter', newsletterRoutes);
 app.use('/api/v1/content', contentRoutes);
 
+// API Root Status & Welcome
+app.get('/', (req, res) => {
+  res.status(200).json({
+    name: 'ACPDPH Backend API',
+    status: 'online',
+    version: '1.0.0',
+    documentation: '/api/v1',
+    health: '/health',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health Check
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date() });
@@ -62,7 +74,8 @@ app.listen(PORT, () => {
   console.log(`[Server] ACPDPH API running on port ${PORT}`);
 
   // Self-ping pour maintenir le serveur actif sur Render (toutes les 10 minutes)
-  const RENDER_URL = 'https://acpdph-api.onrender.com/health';
+  const baseUrl = process.env.RENDER_EXTERNAL_URL || 'https://acpdph-site.onrender.com';
+  const RENDER_URL = `${baseUrl}/health`;
   setInterval(() => {
     fetch(RENDER_URL)
       .then(res => console.log(`[Keep-Alive Ping] ${new Date().toISOString()} - Status: ${res.status}`))
