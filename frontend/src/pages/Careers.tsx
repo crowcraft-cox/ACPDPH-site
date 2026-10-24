@@ -145,16 +145,16 @@ export default function Careers() {
 
       {/* ── CHARTE RECRUTEMENT INCLUSIF ── */}
       <section className="container-ba mb-14">
-        <div className="glass-card rounded-2xl p-6 sm:p-8 bg-blue-50/70 dark:bg-zinc-800 border border-blue-200 dark:border-zinc-700">
+        <div className="card p-6 sm:p-8 border border-blue-200" style={{ background: '#ffffff' }}>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-ba-blue dark:text-blue-300">
+              <span className="text-xs font-bold uppercase tracking-wider text-ba-blue">
                 Politique Institutionnelle d'Inclusion
               </span>
-              <h2 className="font-heading text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="font-heading text-xl sm:text-2xl font-bold" style={{ color: '#111827' }}>
                 Candidatures de Personnes en Situation de Handicap Prioritaires
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 text-sm max-w-3xl leading-relaxed">
+              <p className="text-sm max-w-3xl leading-relaxed" style={{ color: '#6B7280' }}>
                 À compétences égales, l'ACPDPH accorde une priorité absolue aux candidatures de personnes vivant avec un handicap. Nous mettons en place tous les aménagements raisonnables nécessaires lors des entretiens de recrutement et dans l'environnement quotidien de travail.
               </p>
             </div>
@@ -171,7 +171,7 @@ export default function Careers() {
       <section className="container-ba mb-20">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="font-heading text-2xl font-bold text-gray-900 dark:text-white">
+            <h2 className="font-heading text-2xl font-bold" style={{ color: '#111827' }}>
               Postes Actuellement Ouverts
             </h2>
             <p className="text-xs text-gray-500">
@@ -187,7 +187,8 @@ export default function Careers() {
           {JOB_OFFERS.map((job) => (
             <div
               key={job.id}
-              className="job-card glass-card rounded-2xl p-6 sm:p-8 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/30 shadow-xs hover:shadow-md transition-all"
+              className="job-card card card-interactive p-6 sm:p-8"
+              style={{ background: '#ffffff' }}
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
                 <div>
@@ -203,7 +204,7 @@ export default function Careers() {
                       Lieu : {job.location}
                     </span>
                   </div>
-                  <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-gray-900 dark:text-white">
+                  <h3 className="font-heading font-extrabold text-xl sm:text-2xl" style={{ color: '#111827' }}>
                     {job.title}
                   </h3>
                 </div>
@@ -211,7 +212,7 @@ export default function Careers() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setSelectedJob(selectedJob?.id === job.id ? null : job)}
-                    className="px-4 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
+                    className="px-4 py-2 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
                   >
                     {selectedJob?.id === job.id ? 'Masquer la fiche' : 'Voir les détails'}
                   </button>
@@ -228,7 +229,7 @@ export default function Careers() {
                 </div>
               </div>
 
-              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-3">
+              <p className="text-sm leading-relaxed mb-3" style={{ color: '#6B7280' }}>
                 {job.summary}
               </p>
 
@@ -238,12 +239,12 @@ export default function Careers() {
 
               {/* Fiche détaillée dépliée */}
               {selectedJob?.id === job.id && (
-                <div className="mt-6 pt-6 border-t border-gray-100 dark:border-zinc-700 space-y-4 text-xs sm:text-sm">
+                <div className="mt-6 pt-6 border-t border-gray-100 space-y-4 text-xs sm:text-sm">
                   <div>
-                    <h4 className="font-heading font-bold text-gray-900 dark:text-white mb-2">
+                    <h4 className="font-heading font-bold mb-2" style={{ color: '#111827' }}>
                       Missions Principales :
                     </h4>
-                    <ul className="space-y-1.5 list-disc list-inside text-gray-600 dark:text-gray-300">
+                    <ul className="space-y-1.5 list-disc list-inside" style={{ color: '#4B5563' }}>
                       {job.responsibilities.map((resp, idx) => (
                         <li key={idx}>{resp}</li>
                       ))}
@@ -251,10 +252,10 @@ export default function Careers() {
                   </div>
 
                   <div>
-                    <h4 className="font-heading font-bold text-gray-900 dark:text-white mb-2">
+                    <h4 className="font-heading font-bold mb-2" style={{ color: '#111827' }}>
                       Profil & Qualifications Requises :
                     </h4>
-                    <ul className="space-y-1.5 list-disc list-inside text-gray-600 dark:text-gray-300">
+                    <ul className="space-y-1.5 list-disc list-inside" style={{ color: '#4B5563' }}>
                       {job.requirements.map((req, idx) => (
                         <li key={idx}>{req}</li>
                       ))}
@@ -269,7 +270,7 @@ export default function Careers() {
 
       {/* ── FORMULAIRE DE CANDIDATURE ── */}
       <section id="apply-form-section" className="container-ba">
-        <div className="glass-card rounded-3xl p-8 md:p-12 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08] shadow-sm max-w-3xl mx-auto">
+        <div className="card p-6 sm:p-10 max-w-3xl mx-auto" style={{ background: '#ffffff' }}>
           {formSubmitted ? (
             <div className="text-center py-8">
               <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">

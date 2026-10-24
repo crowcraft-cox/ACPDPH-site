@@ -134,11 +134,11 @@ export default function Partners() {
             { value: '25+', label: 'Écoles & Centres affiliés', sub: 'Pour l\'accueil inclusif' },
             { value: '100%', label: 'Redevabilité certifiée', sub: 'Rapports financiers transparents' },
           ].map((stat, i) => (
-            <div key={i} className="glass-card p-6 rounded-2xl bg-white dark:bg-zinc-800 text-center border border-black/[0.08] dark:border-white/[0.08]">
-              <span className="font-heading text-3xl font-extrabold text-ba-blue dark:text-blue-400 block mb-1">
+            <div key={i} className="card-sm p-6 text-center" style={{ background: '#ffffff' }}>
+              <span className="font-heading text-3xl font-extrabold text-ba-blue block mb-1">
                 {stat.value}
               </span>
-              <span className="font-semibold text-xs text-gray-800 dark:text-gray-200 block uppercase tracking-wider">
+              <span className="font-semibold text-xs text-gray-800 block uppercase tracking-wider">
                 {stat.label}
               </span>
               <span className="text-[11px] text-gray-500 block mt-1">
@@ -165,7 +165,7 @@ export default function Partners() {
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-heading font-semibold transition-all cursor-pointer ${
                 selectedFilter === filter.key
                   ? 'bg-ba-blue text-white shadow-xs'
-                  : 'bg-white dark:bg-zinc-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 border border-gray-200 dark:border-zinc-700'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
             >
               {filter.label}
@@ -180,11 +180,12 @@ export default function Partners() {
           {filteredPartners.map((partner) => (
             <div
               key={partner.id}
-              className="partner-card glass-card rounded-2xl p-6 bg-white dark:bg-zinc-800/90 border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+              className="partner-card card card-interactive p-6 flex flex-col justify-between"
+              style={{ background: '#ffffff' }}
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue dark:bg-blue-950 dark:text-blue-300">
+                  <span className="px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue">
                     {partner.role}
                   </span>
                   <span className="text-xs text-gray-400 font-medium">
@@ -192,16 +193,16 @@ export default function Partners() {
                   </span>
                 </div>
 
-                <h3 className="font-heading font-bold text-lg text-gray-900 dark:text-white mb-2.5">
+                <h3 className="font-heading font-bold text-lg mb-2.5" style={{ color: '#111827' }}>
                   {partner.name}
                 </h3>
 
-                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                <p className="text-sm leading-relaxed mb-4" style={{ color: '#6B7280' }}>
                   {partner.description}
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-gray-100 dark:border-zinc-700/60 flex items-center justify-between text-xs text-ba-blue dark:text-blue-300 font-semibold">
+              <div className="card-footer text-xs text-ba-blue font-semibold">
                 <span>Partenariat actif</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -214,7 +215,7 @@ export default function Partners() {
 
       {/* ── SECTION DEVENIR PARTENAIRE ── */}
       <section className="container-ba">
-        <div className="glass-card rounded-3xl p-8 md:p-12 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08] shadow-sm">
+        <div className="card p-6 md:p-10" style={{ background: '#ffffff' }}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
               <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue dark:bg-ba-blue/25 dark:text-blue-300 mb-3 inline-block">

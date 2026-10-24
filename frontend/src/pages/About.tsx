@@ -71,10 +71,10 @@ export default function About() {
                   ].map((item) => (
                     <div
                       key={item.label}
-                      className="glass-card p-4 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-slate-50/90 dark:bg-zinc-800/80 hover:border-ba-blue/30 transition-colors"
+                      className="card-sm p-4 rounded-xl border border-gray-200 bg-white hover:border-ba-blue transition-colors"
                     >
                       <span className="font-bold text-xs uppercase tracking-wider block text-ba-blue mb-1">{item.label}</span>
-                      <span className="text-ba-text-primary text-sm font-medium">{item.value}</span>
+                      <span className="text-gray-900 text-sm font-semibold">{item.value}</span>
                     </div>
                   ))}
                 </div>
@@ -84,7 +84,7 @@ export default function About() {
             {/* Logo Card */}
             <div className="relative">
               <div
-                className="relative rounded-3xl overflow-hidden aspect-square flex items-center justify-center glass-card border border-black/[0.08] dark:border-white/[0.08] p-8"
+                className="relative rounded-2xl overflow-hidden aspect-square flex items-center justify-center card p-8"
               >
                 <img
                   src="/logo_ACPDPH.jpg"
@@ -118,16 +118,16 @@ export default function About() {
             ].map((card, i) => (
               <div
                 key={card.title}
-                className="gov-card glass-card group p-8 rounded-3xl flex flex-col justify-between border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors text-center"
+                className="gov-card card card-interactive group p-6 sm:p-8 flex flex-col justify-between text-center"
               >
                 <div>
-                  <div className="w-12 h-12 rounded-2xl mx-auto mb-5 flex items-center justify-center font-bold text-sm bg-ba-blue/10 text-ba-blue transition-transform duration-200 group-hover:scale-105">
+                  <div className="w-12 h-12 rounded-xl mx-auto mb-5 flex items-center justify-center font-bold text-sm bg-ba-blue/10 text-ba-blue transition-transform duration-200 group-hover:scale-105">
                     0{i + 1}
                   </div>
-                  <h4 className="font-heading font-bold text-xl mb-4 text-ba-text-primary leading-tight">
+                  <h4 className="font-heading font-bold text-lg mb-3 leading-tight" style={{ color: '#111827' }}>
                     {card.title}
                   </h4>
-                  <p className="text-sm leading-relaxed text-ba-text-secondary">
+                  <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
                     {card.desc}
                   </p>
                 </div>

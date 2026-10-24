@@ -106,100 +106,220 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;
 }
 
-/* ===== HeroUI Card System & Glassmorphism ===== */
-.glass {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
 
-.dark .glass {
-  background: rgba(24, 24, 27, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-}
+/* ============================================================
+   SYSTÈME DE CARDS UNIFIÉ — ACPDPH
+   .card             → grande card  (padding 24px, radius 16px)
+   .card-sm          → card compacte (padding 16px 20px, radius 14px)
+   .card-cover       → card avec image couverture (overflow hidden sur image)
+   .card-interactive → card cliquable avec hover translateY(-3px)
+   Alias rétrocompatibles : .glass-card, .heroui-card → mappés sur .card
+   ============================================================ */
 
+/* --- Base commune --- */
+.card,
+.card-sm,
 .glass-card,
 .heroui-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 1.5rem;
-  box-shadow: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #ffffff !important;
+  border: 1px solid #E5E7EB !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   position: relative;
-  /* overflow: hidden est retiré — il coupait le contenu sur mobile */
+  color: #111827;
+  overflow: visible;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s ease,
+              box-shadow 0.22s ease;
 }
 
-/* Les cards qui ont des images en couverture doivent gérer elles-mêmes overflow */
-.glass-card.overflow-hidden,
-.heroui-card.overflow-hidden {
+/* --- Grande card (services, projets, actualités) --- */
+.card,
+.glass-card,
+.heroui-card {
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* --- Card compacte (indicateurs, métriques en ligne) --- */
+.card-sm {
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+/* --- Card avec image de couverture --- */
+.card-cover {
   overflow: hidden;
+  padding: 0;
 }
 
+/* --- États interactifs (liens, boutons, cartes interactives) --- */
+.card-interactive,
+a.card,
+button.card,
+a.card-sm,
+button.card-sm,
+a.glass-card,
+.card-interactive:hover,
+a.card:hover,
+button.card:hover,
+a.card-sm:hover,
+button.card-sm:hover,
+a.glass-card:hover,
+.project-card-item:hover,
+.news-article-card:hover,
+.pillar-card:hover,
+.pillar-row-card:hover,
+.partner-card:hover,
+.team-card:hover,
+.job-card:hover,
+.pub-card:hover,
+.gov-card:hover {
+  cursor: pointer;
+}
+
+.card-interactive:hover,
+a.card:hover,
+button.card:hover,
+a.card-sm:hover,
+button.card-sm:hover,
+a.glass-card:hover,
+.project-card-item:hover,
+.news-article-card:hover,
+.pillar-card:hover,
+.pillar-row-card:hover,
+.partner-card:hover,
+.team-card:hover,
+.job-card:hover,
+.pub-card:hover,
+.gov-card:hover {
+  transform: translateY(-3px);
+  border-color: #1D4ED8 !important;
+  box-shadow: 0 6px 20px rgba(29, 78, 216, 0.12);
+}
+
+/* --- Forcer blanc même si Tailwind dark: est présent --- */
+.dark .card,
+.dark .card-sm,
 .dark .glass-card,
 .dark .heroui-card {
-  background: rgba(24, 24, 27, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: none;
+  background: #ffffff !important;
+  border-color: #E5E7EB !important;
+  color: #111827;
 }
 
-.glass-card:hover,
-.heroui-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(29, 78, 216, 0.35);
-  box-shadow: none;
+/* --- Typographie interne harmonisée --- */
+.card h1, .card h2, .card h3, .card h4,
+.card-sm h1, .card-sm h2, .card-sm h3, .card-sm h4,
+.glass-card h1, .glass-card h2, .glass-card h3, .glass-card h4,
+.heroui-card h1, .heroui-card h2, .heroui-card h3, .heroui-card h4 {
+  color: #111827;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
-.dark .glass-card:hover,
-.dark .heroui-card:hover {
-  box-shadow: none;
-  border-color: rgba(59, 130, 246, 0.4);
+.card p, .card span:not(.badge):not(.btn):not(.card-value):not(.badge-accent),
+.card-sm p, .card-sm span:not(.badge):not(.btn):not(.card-value):not(.badge-accent),
+.glass-card p, .heroui-card p {
+  color: #6B7280;
+  line-height: 1.5;
+  word-break: break-word;
 }
 
-/* Texte blanc quand les cards sont dans une section sombre */
-.bg-ba-dark .glass-card *,
-[style*='background: #111827'] .glass-card *,
-[style*="background: '#111827'"] .glass-card * {
-  --color-ba-text-primary: #f9fafb;
-  --color-ba-text-secondary: #d1d5db;
-  --color-ba-text-muted: #9ca3af;
-}
-
-/* HeroUI Card sub-elements */
-.heroui-card-header {
-  padding: 1.25rem 1.5rem 0.5rem 1.5rem;
+/* --- Pied de card (séparateur) --- */
+.card-footer,
+.heroui-card-footer {
+  border-top: 1px solid #E5E7EB;
+  padding-top: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  z-index: 10;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
+/* --- En-tête de card --- */
+.card-header,
+.heroui-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+/* --- Corps de card --- */
 .heroui-card-body {
-  padding: 1rem 1.5rem;
   flex: 1 1 auto;
 }
 
-.heroui-card-footer {
-  padding: 1rem 1.5rem 1.25rem 1.5rem;
+/* --- Ligne flex interne (label + valeur) --- */
+.card-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  z-index: 10;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
+.card-row .card-label {
+  flex: 1 1 0;
+  min-width: 0;
+  color: #6B7280;
+}
+
+.card-row .card-value {
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: #111827;
+  font-weight: 700;
+}
+
+/* --- Image couverture dans card avec overflow --- */
+.card-cover-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- Badge accent (bleu) --- */
+.card .badge-accent,
+.card-sm .badge-accent,
+.glass-card .badge-accent,
+.heroui-card .badge-accent {
+  background: rgba(29, 78, 216, 0.1);
+  color: #1D4ED8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* --- Rétrocompatibilité : .glass puis .glass-card.overflow-hidden --- */
+.glass {
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+}
+
+.glass-card.overflow-hidden,
+.heroui-card.overflow-hidden,
+.card.overflow-hidden,
+.card-sm.overflow-hidden {
+  overflow: hidden;
+}
+
+/* heroui-blur-footer (conservé pour compat) */
 .heroui-blur-footer {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: rgba(255, 255, 255, 0.8);
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid #E5E7EB;
 }
 
-.dark .heroui-blur-footer {
-  background: rgba(18, 18, 20, 0.8);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Floating Blurred Footer on Cover Cards (HeroUI style) */
+/* heroui-float-footer (conservé pour compat) */
 .heroui-float-footer {
   position: absolute;
   bottom: 0.75rem;
@@ -212,9 +332,9 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
   padding: 0.75rem 1rem;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   z-index: 10;
 }
+
 
 
 /* ===== Gradient Utilities ===== */

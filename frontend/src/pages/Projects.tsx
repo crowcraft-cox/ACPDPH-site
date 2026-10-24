@@ -48,7 +48,7 @@ export default function Projects() {
             return (
               <div
                 key={proj.id}
-                className="project-card-item group flex flex-col glass-card rounded-3xl overflow-hidden border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
+                className="project-card-item group flex flex-col card card-cover card-interactive"
               >
                 {/* Card Header (Cover Image) */}
                 <div className="relative w-full overflow-hidden" style={{ height: '230px' }}>
@@ -59,7 +59,7 @@ export default function Projects() {
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-ba-dark-light text-ba-text-muted">
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
                       <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159" />
                       </svg>
@@ -67,13 +67,13 @@ export default function Projects() {
                   )}
 
                   {/* Type Badge */}
-                  <div className="absolute top-4 left-4 bg-ba-blue text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                  <div className="absolute top-4 left-4 bg-ba-blue text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-xs">
                     {proj.type}
                   </div>
 
                   {/* Photo count badge */}
                   {photoCount > 1 && (
-                    <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md text-white text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1.5 border border-white/20">
+                    <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-md text-white text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1.5 border border-white/20">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
@@ -84,33 +84,33 @@ export default function Projects() {
                 </div>
 
                 {/* Card Body */}
-                <div className="flex flex-col flex-1 p-6">
+                <div className="flex flex-col flex-1 p-6" style={{ background: '#ffffff' }}>
                   {/* Status & Location row */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusBadge[proj.status] || 'bg-gray-500/10 text-gray-400 border border-gray-500/20'}`}>
+                  <div className="card-row mb-3">
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusBadge[proj.status] || 'bg-gray-100 text-gray-700 border border-gray-200'}`}>
                       {proj.status}
                     </span>
-                    <p className="text-xs text-ba-text-muted font-medium flex items-center gap-1">
+                    <span className="text-xs text-gray-500 font-medium flex items-center gap-1">
                       <svg className="w-3.5 h-3.5 text-ba-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                       </svg>
                       <span>{proj.location}</span>
-                    </p>
+                    </span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-heading text-xl font-bold mb-3 group-hover:text-ba-blue transition-colors leading-tight">
+                  <h3 className="font-heading text-xl font-bold mb-3 group-hover:text-ba-blue transition-colors leading-tight" style={{ color: '#111827' }}>
                     {proj.title}
                   </h3>
 
                   {/* Short Excerpt */}
-                  <p className="text-sm text-ba-text-secondary leading-relaxed mb-6 flex-1">
+                  <p className="text-sm leading-relaxed mb-6 flex-1 break-words" style={{ color: '#6B7280' }}>
                     {excerpt}
                   </p>
 
                   {/* Card Footer */}
-                  <div className="pt-4 border-t border-black/[0.06] dark:border-white/[0.06] mt-auto">
+                  <div className="card-footer mt-auto pt-4">
                     <Link
                       to={`/projects/${proj.id}`}
                       className="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-ba-blue/10 hover:bg-ba-blue hover:text-white text-ba-blue font-semibold text-sm transition-colors group/btn"
@@ -134,8 +134,8 @@ export default function Projects() {
         )}
 
         {/* Annual Reports */}
-        <div className="mt-12 bg-ba-surface-elevated dark:bg-ba-dark-light rounded-3xl p-8 md:p-12 border border-black/[0.08] dark:border-white/[0.08]">
-          <h2 className="font-heading text-3xl font-bold mb-8 text-center">{t.projects.annual_reports}</h2>
+        <div className="mt-12 card p-8 md:p-12" style={{ background: '#ffffff' }}>
+          <h2 className="font-heading text-3xl font-bold mb-8 text-center" style={{ color: '#111827' }}>{t.projects.annual_reports}</h2>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
             <p className="text-ba-text-secondary text-lg max-w-2xl text-left leading-relaxed">
               {t.projects.reports_subtitle}

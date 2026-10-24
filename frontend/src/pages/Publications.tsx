@@ -141,7 +141,7 @@ export default function Publications() {
 
       {/* ── RECHERCHE & FILTRES ── */}
       <section className="container-ba mb-12">
-        <div className="glass-card rounded-2xl p-4 sm:p-6 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08] shadow-xs max-w-4xl mx-auto">
+        <div className="card p-4 sm:p-6 shadow-xs max-w-4xl mx-auto" style={{ background: '#ffffff' }}>
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             {/* Champ de recherche */}
             <div className="relative w-full">
@@ -153,7 +153,7 @@ export default function Publications() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Rechercher une publication, une loi, un mot-clé..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-ba-blue focus:outline-none"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 text-sm focus:ring-2 focus:ring-ba-blue focus:outline-none"
               />
               {searchQuery && (
                 <button
@@ -172,7 +172,7 @@ export default function Publications() {
           </div>
 
           {/* Boutons de catégories */}
-          <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-zinc-700">
+          <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100">
             {[
               { key: 'all', label: 'Tous' },
               { key: 'report', label: 'Rapports Annuels' },
@@ -186,7 +186,7 @@ export default function Publications() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-heading font-semibold transition-all cursor-pointer ${
                   activeCategory === tab.key
                     ? 'bg-ba-blue text-white shadow-2xs'
-                    : 'bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 {tab.label}
@@ -200,7 +200,7 @@ export default function Publications() {
       <section className="container-ba">
         {filtered.length === 0 ? (
           <div className="text-center py-16 max-w-md mx-auto">
-            <p className="font-heading font-bold text-gray-900 dark:text-white mb-2">Aucun document ne correspond à votre recherche</p>
+            <p className="font-heading font-bold text-gray-900 mb-2">Aucun document ne correspond à votre recherche</p>
             <p className="text-sm text-gray-500 mb-4">Essayez d'autres mots-clés ou sélectionnez une autre catégorie.</p>
             <button
               onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
@@ -217,14 +217,11 @@ export default function Publications() {
               return (
                 <div
                   key={pub.id}
-                  className={`pub-card glass-card rounded-2xl p-6 bg-white dark:bg-zinc-800 border transition-all flex flex-col justify-between shadow-xs hover:shadow-md ${
-                    pub.featured
-                      ? 'border-ba-blue/30 dark:border-ba-blue/40 ring-1 ring-ba-blue/20'
-                      : 'border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/30'
-                  }`}
+                  className="pub-card card card-interactive p-6 flex flex-col justify-between"
+                  style={{ background: '#ffffff' }}
                 >
                   <div>
-                    <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="card-row mb-3">
                       <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider ${badge.bg}`}>
                         {badge.label}
                       </span>
@@ -233,11 +230,11 @@ export default function Publications() {
                       </span>
                     </div>
 
-                    <h3 className="font-heading font-bold text-lg text-gray-900 dark:text-white mb-2.5 leading-snug">
+                    <h3 className="font-heading font-bold text-lg mb-2.5 leading-snug" style={{ color: '#111827' }}>
                       {pub.title}
                     </h3>
 
-                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                    <p className="text-sm leading-relaxed mb-4 break-words" style={{ color: '#6B7280' }}>
                       {pub.summary}
                     </p>
                   </div>
@@ -283,7 +280,7 @@ export default function Publications() {
       {/* ── MODAL D'APERÇU DU DOCUMENT ── */}
       {readingDoc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-zinc-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-gray-200 dark:border-zinc-700 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-gray-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between gap-4 mb-4">
               <span className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${getCategoryBadge(readingDoc.category).bg}`}>
                 {getCategoryBadge(readingDoc.category).label}

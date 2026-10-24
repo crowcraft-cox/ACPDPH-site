@@ -289,64 +289,55 @@ function ImpactSection() {
   );
 }
 
-/* Primary Hero Card: largest number, prominent hierarchy, context */
+/* Primary Hero Card */
 function PrimaryCounterCard({ value, label, description }: { value: number; label: string; description: string }) {
   const { count, ref } = useCountUp(value, 2200);
 
   return (
-    <div
-      ref={ref}
-      className="glass-card w-full rounded-2xl p-6 sm:p-7 md:p-9 flex flex-col justify-between border border-slate-200 dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
-    >
+    <div ref={ref} className="card w-full flex flex-col justify-between">
       <div>
-        <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
-          <span className="text-xs font-bold uppercase tracking-wider text-ba-blue bg-ba-blue/10 px-3 py-1 rounded-full">
-            Indicateur Majeur
-          </span>
-          <span className="text-xs text-slate-500 dark:text-slate-400">Région Nord-Kivu</span>
+        <div className="card-row mb-6">
+          <span className="badge-accent">Indicateur Majeur</span>
+          <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>Région Nord-Kivu</span>
         </div>
 
         <div className="mb-4">
-          <div className="font-heading text-5xl sm:text-6xl font-black tracking-tight text-ba-blue mb-1">
+          <div className="font-heading text-5xl sm:text-6xl font-black tracking-tight mb-1" style={{ color: '#1D4ED8' }}>
             {count.toLocaleString('fr-FR')}+
           </div>
-          <h3 className="font-heading text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">
+          <h3 className="font-heading text-xl sm:text-2xl font-bold" style={{ color: '#111827' }}>
             {label}
           </h3>
         </div>
 
-        <p className="text-slate-500 dark:text-slate-300 text-sm leading-relaxed mb-6">
+        <p className="text-sm mb-6" style={{ color: '#6B7280', lineHeight: 1.5 }}>
           {description}
         </p>
       </div>
 
-      <div className="pt-4 border-t border-slate-200 dark:border-white/[0.06] flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 flex-wrap gap-2">
-        <span>Rapport de terrain 2026</span>
-        <span className="font-semibold text-ba-blue">Audit annuel conforme</span>
+      <div className="card-footer">
+        <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>Rapport de terrain 2026</span>
+        <span className="font-semibold" style={{ color: '#1D4ED8', fontSize: '0.75rem' }}>Audit annuel conforme</span>
       </div>
     </div>
   );
 }
 
-/* Secondary Cards: streamlined, hero number, clean label, no multi-colored pastilles */
+/* Secondary Counter Card */
 function SecondaryCounterCard({ value, label, index }: { value: number; label: string; index: number }) {
   const { count, ref } = useCountUp(value, 2000);
 
   return (
-    <div
-      ref={ref}
-      className="glass-card flex-1 rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center justify-between gap-4 border border-slate-200 dark:border-white/[0.08] hover:border-ba-blue/30 transition-colors"
-    >
-      <div className="flex-1 min-w-0">
-        <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 block mb-1">
+    <div ref={ref} className="card-sm flex-1 card-row gap-4">
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <span className="block mb-1" style={{ color: '#6B7280', fontSize: '0.75rem', fontWeight: 600 }}>
           Indicateur 0{index + 1}
         </span>
-        <span className="font-heading text-base md:text-lg font-bold text-slate-800 dark:text-white block leading-snug truncate">
+        <span className="font-heading font-bold block" style={{ color: '#111827', fontSize: '1.05rem', lineHeight: 1.3 }}>
           {label}
         </span>
       </div>
-
-      <div className="font-heading text-3xl sm:text-4xl font-extrabold text-ba-blue text-right tabular-nums shrink-0">
+      <div className="font-heading font-extrabold tabular-nums" style={{ color: '#1D4ED8', fontSize: '2rem', flexShrink: 0, whiteSpace: 'nowrap' }}>
         {count.toLocaleString('fr-FR')}+
       </div>
     </div>
@@ -381,32 +372,31 @@ function PillarsSection() {
             <Link
               key={pillar.id || i}
               to="/pillars"
-              className="pillar-card glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
+              className="pillar-card card card-cover group flex flex-col"
+              style={{ padding: 0 }}
             >
-              {/* Card Header with Image */}
-              <div className="h-60 w-full overflow-hidden relative">
-                <img 
-                  src={pillar.image} 
-                  alt={pillar.title} 
+              {/* Image couverture */}
+              <div className="h-56 w-full overflow-hidden relative">
+                <img
+                  src={pillar.image}
+                  alt={pillar.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-black/60" />
-                <div className="absolute bottom-5 left-6 right-6 z-10">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white border border-white/20 mb-2">
+                <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.55)' }} />
+                <div className="absolute bottom-4 left-5 right-5 z-10">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
                     Pilier #{i + 1}
                   </span>
-                  <h3 className="font-heading text-2xl font-bold text-white leading-tight">{pillar.title}</h3>
+                  <h3 className="font-heading text-xl font-bold leading-tight" style={{ color: '#fff' }}>{pillar.title}</h3>
                 </div>
               </div>
 
-              {/* Card Body */}
-              <div className="p-6 md:p-8 flex-grow flex flex-col justify-between">
-                <p className="text-ba-text-secondary text-sm md:text-base leading-relaxed mb-6">{pillar.description}</p>
-                
-                {/* Card Footer */}
-                <div className="pt-4 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
-                  <span className="text-xs font-medium text-ba-text-muted">En savoir plus</span>
-                  <div className="flex items-center gap-2 text-sm font-bold text-ba-blue group-hover:translate-x-1.5 transition-transform duration-200">
+              {/* Corps */}
+              <div style={{ padding: '20px 24px 24px', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <p style={{ color: '#6B7280', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>{pillar.description}</p>
+                <div className="card-footer">
+                  <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>En savoir plus</span>
+                  <div className="flex items-center gap-2 font-bold group-hover:translate-x-1.5 transition-transform duration-200" style={{ color: '#1D4ED8', fontSize: '0.875rem' }}>
                     <span>{t.pillars.learn_more}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -468,56 +458,50 @@ function ProjectsPreviewSection() {
               <Link
                 key={proj.id || i}
                 to={`/projects/${proj.id}`}
-                className="project-preview-card glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
+                className="project-preview-card card card-cover group flex flex-col"
+                style={{ padding: 0 }}
               >
-                {/* Cover Thumbnail */}
+                {/* Miniature */}
                 <div className="relative w-full overflow-hidden" style={{ height: '200px' }}>
                   {proj.image ? (
-                    <img
-                      src={proj.image}
-                      alt={proj.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+                    <img src={proj.image} alt={proj.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-ba-dark-light text-ba-text-muted">
-                      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-full h-full flex items-center justify-center" style={{ background: '#F3F4F6' }}>
+                      <svg className="w-10 h-10" fill="none" stroke="#9CA3AF" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159" />
                       </svg>
                     </div>
                   )}
-
-                  {/* Type Badge */}
-                  <div className="absolute top-3 left-3 bg-ba-blue text-white text-xs font-bold px-3 py-1 rounded-full">
+                  <div className="absolute top-3 left-3 text-white text-xs font-bold px-3 py-1 rounded-full" style={{ background: '#1D4ED8' }}>
                     {proj.type}
                   </div>
                 </div>
 
-                {/* Card Body */}
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${statusBadge[proj.status] || 'bg-gray-500/20 text-gray-400 border border-gray-500/30'}`}>
+                {/* Corps */}
+                <div style={{ padding: '16px 20px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <div className="card-row mb-3">
+                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${statusBadge[proj.status] || 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
                       {proj.status}
                     </span>
-                    <p className="text-xs text-ba-text-muted flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 text-ba-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <span className="flex items-center gap-1" style={{ color: '#6B7280', fontSize: '0.75rem' }}>
+                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="#1D4ED8" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                       </svg>
                       {proj.location}
-                    </p>
+                    </span>
                   </div>
 
-                  <h3 className="font-heading text-lg font-bold mb-2 group-hover:text-ba-blue transition-colors leading-snug line-clamp-2">
+                  <h3 className="font-heading font-bold mb-2 group-hover:transition-colors line-clamp-2" style={{ color: '#111827', fontSize: '1rem', lineHeight: 1.35 }}>
                     {proj.title}
                   </h3>
 
                   {excerpt && (
-                    <p className="text-xs text-ba-text-secondary leading-relaxed line-clamp-2 mb-4 flex-1">{excerpt}</p>
+                    <p className="line-clamp-2 flex-1 mb-4" style={{ color: '#6B7280', fontSize: '0.8rem', lineHeight: 1.5 }}>{excerpt}</p>
                   )}
 
-                  {/* Card Footer */}
-                  <div className="pt-3 border-t border-black/[0.06] dark:border-white/[0.06] mt-auto flex items-center justify-between">
-                    <span className="text-xs font-semibold text-ba-blue flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                  <div className="card-footer" style={{ marginTop: 'auto' }}>
+                    <span className="flex items-center gap-1.5 font-semibold" style={{ color: '#1D4ED8', fontSize: '0.75rem' }}>
                       Voir les détails
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -570,54 +554,48 @@ function NewsPreviewSection() {
             <Link
               key={article.id || i}
               to={`/news/${article.id}`}
-              className="news-card-item glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
+              className="news-card-item card card-cover group flex flex-col"
+              style={{ padding: 0 }}
             >
-              {/* Cover Image or Graphic */}
+              {/* Image */}
               <div className="relative h-48 w-full overflow-hidden">
                 {article.image ? (
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+                  <img src={article.image} alt={article.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 ) : (
-                  <div className="w-full h-full bg-ba-blue/10 flex items-center justify-center">
-                    <div className="w-14 h-14 rounded-2xl bg-ba-blue/20 text-ba-blue flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+                  <div className="w-full h-full flex items-center justify-center" style={{ background: 'rgba(29,78,216,0.07)' }}>
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(29,78,216,0.15)', color: '#1D4ED8' }}>
                       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                       </svg>
                     </div>
                   </div>
                 )}
-                
-                {/* Category Pill */}
                 <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-ba-blue text-white">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: '#1D4ED8' }}>
                     {article.category}
                   </span>
                 </div>
               </div>
 
-              {/* Card Body */}
-              <div className="p-6 flex-grow flex flex-col justify-between">
+              {/* Corps */}
+              <div style={{ padding: '16px 20px 20px', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
                 <div>
-                  <div className="flex items-center gap-2 text-xs text-ba-text-muted mb-3">
-                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <div className="flex items-center gap-2 mb-3" style={{ color: '#6B7280', fontSize: '0.75rem' }}>
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="#9CA3AF" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                     </svg>
                     <span>{article.date}</span>
                   </div>
 
-                  <h3 className="font-heading font-bold text-lg mb-2.5 group-hover:text-ba-blue transition-colors line-clamp-2 leading-snug">
+                  <h3 className="font-heading font-bold line-clamp-2 mb-2" style={{ color: '#111827', fontSize: '1rem', lineHeight: 1.35 }}>
                     {article.title}
                   </h3>
 
-                  <p className="text-ba-text-secondary text-sm leading-relaxed line-clamp-2 mb-4">{article.excerpt}</p>
+                  <p className="line-clamp-2 mb-4" style={{ color: '#6B7280', fontSize: '0.85rem', lineHeight: 1.5 }}>{article.excerpt}</p>
                 </div>
 
-                {/* Card Footer */}
-                <div className="pt-3 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ba-blue flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                <div className="card-footer">
+                  <span className="flex items-center gap-1.5 font-semibold" style={{ color: '#1D4ED8', fontSize: '0.75rem' }}>
                     {t.news.read_more}
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

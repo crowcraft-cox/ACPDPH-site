@@ -84,19 +84,20 @@ export default function Support() {
           ].map((item, i) => (
             <div
               key={i}
-              className="glass-card rounded-2xl p-6 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08] shadow-xs hover:border-ba-blue/30 transition-all flex flex-col justify-between"
+              className="card card-interactive p-6 flex flex-col justify-between"
+              style={{ background: '#ffffff' }}
             >
               <div>
-                <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue dark:bg-blue-900/40 dark:text-blue-300 mb-3 inline-block">
+                <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3 inline-block">
                   {item.badge}
                 </span>
-                <span className="font-heading text-3xl font-extrabold text-ba-blue dark:text-blue-400 block mb-2">
+                <span className="font-heading text-3xl font-extrabold text-ba-blue block mb-2">
                   {item.amount}
                 </span>
-                <h3 className="font-heading font-bold text-base text-gray-900 dark:text-white mb-2">
+                <h3 className="font-heading font-bold text-base mb-2" style={{ color: '#111827' }}>
                   {item.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed">
+                <p className="text-xs leading-relaxed" style={{ color: '#6B7280' }}>
                   {item.desc}
                 </p>
               </div>
@@ -111,8 +112,8 @@ export default function Support() {
           
           {/* Colonne Gauche : Canaux de Don direct (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="glass-card rounded-3xl p-6 sm:p-8 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08]">
-              <h2 className="font-heading text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            <div className="card p-6 sm:p-8" style={{ background: '#ffffff' }}>
+              <h2 className="font-heading text-2xl font-bold mb-6" style={{ color: '#111827' }}>
                 Canaux de Règlement Officiels
               </h2>
 
@@ -276,7 +277,7 @@ export default function Support() {
 
           {/* Colonne Droite : Formulaire d'engagement de Don / Promesse (5 cols) */}
           <div className="lg:col-span-5">
-            <div className="glass-card rounded-3xl p-6 sm:p-8 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08] shadow-sm">
+            <div className="card p-6 sm:p-8 shadow-sm" style={{ background: '#ffffff' }}>
               {formSubmitted ? (
                 <div className="text-center py-8">
                   <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">

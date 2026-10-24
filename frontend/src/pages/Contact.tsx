@@ -59,23 +59,23 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           
           {/* Contact Info */}
-          <div className="space-y-8">
-            <div>
-              <h3 className="font-heading text-2xl font-bold mb-6">{t.contact.address_title}</h3>
-              <p className="text-ba-text-secondary mb-4 flex items-start gap-3">
+          <div className="space-y-6">
+            <div className="card p-6 sm:p-8" style={{ background: '#ffffff' }}>
+              <h3 className="font-heading text-2xl font-bold mb-6" style={{ color: '#111827' }}>{t.contact.address_title}</h3>
+              <p className="mb-4 flex items-start gap-3" style={{ color: '#6B7280' }}>
                 <svg className="w-6 h-6 text-ba-blue shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 {data.contact.address || t.contact.address}
               </p>
-              <p className="text-ba-text-secondary mb-4 flex items-center gap-3">
+              <p className="mb-4 flex items-center gap-3" style={{ color: '#6B7280' }}>
                 <svg className="w-6 h-6 text-ba-blue shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 {data.contact.email || 'contact@acpdph.org'}
               </p>
-              <p className="text-ba-text-secondary flex items-center gap-3">
+              <p className="flex items-center gap-3" style={{ color: '#6B7280' }}>
                 <svg className="w-6 h-6 text-ba-blue shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
@@ -84,13 +84,13 @@ export default function Contact() {
             </div>
 
             {/* Map Placeholder */}
-            <div className="glass-card overflow-hidden h-64 bg-gray-200 dark:bg-gray-800 relative flex items-center justify-center">
-               <span className="text-ba-text-muted">Carte interactive de Beni (Intégration Google Maps)</span>
+            <div className="card card-cover overflow-hidden h-64 bg-gray-100 relative flex items-center justify-center border border-gray-200">
+               <span className="text-gray-500 font-medium text-sm">Carte interactive de Beni (Intégration Google Maps)</span>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div>
+          <div className="card p-6 sm:p-8" style={{ background: '#ffffff' }}>
             <form onSubmit={handleSubmit} className="space-y-6">
               {statusMsg && (
                 <div className={`p-4 rounded-xl text-sm flex items-center gap-3 ${
@@ -108,46 +108,46 @@ export default function Contact() {
               )}
 
               <div>
-                <label className="block text-sm font-medium mb-2">{t.contact.form_name}</label>
+                <label className="block text-sm font-semibold mb-2" style={{ color: '#111827' }}>{t.contact.form_name}</label>
                 <input
                   required
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-ba-dark border border-ba-gray dark:border-ba-dark-lighter rounded-xl focus:outline-none focus:border-ba-blue transition-colors"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-ba-blue transition-colors text-gray-900"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-2">{t.contact.form_email}</label>
+                <label className="block text-sm font-semibold mb-2" style={{ color: '#111827' }}>{t.contact.form_email}</label>
                 <input
                   required
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-ba-dark border border-ba-gray dark:border-ba-dark-lighter rounded-xl focus:outline-none focus:border-ba-blue transition-colors"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-ba-blue transition-colors text-gray-900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">{t.contact.form_subject}</label>
+                <label className="block text-sm font-semibold mb-2" style={{ color: '#111827' }}>{t.contact.form_subject}</label>
                 <input
                   required
                   type="text"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-ba-dark border border-ba-gray dark:border-ba-dark-lighter rounded-xl focus:outline-none focus:border-ba-blue transition-colors"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-ba-blue transition-colors text-gray-900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">{t.contact.form_message}</label>
+                <label className="block text-sm font-semibold mb-2" style={{ color: '#111827' }}>{t.contact.form_message}</label>
                 <textarea
                   required
                   rows={5}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 bg-white dark:bg-ba-dark border border-ba-gray dark:border-ba-dark-lighter rounded-xl focus:outline-none focus:border-ba-blue transition-colors"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-ba-blue transition-colors text-gray-900"
                 ></textarea>
               </div>
 

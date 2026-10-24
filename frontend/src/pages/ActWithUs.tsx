@@ -162,7 +162,7 @@ export default function ActWithUs() {
                 </div>
               )}
 
-             <div className="glass-card p-6 sm:p-8 md:p-10 rounded-3xl border border-black/[0.08] dark:border-white/[0.08]">
+             <div className="card p-6 sm:p-8 md:p-10" style={{ background: '#ffffff' }}>
                {activeTab === 'donate' ? (
                  <div>
                     <div className="flex items-center gap-4 mb-6">
@@ -393,7 +393,7 @@ export default function ActWithUs() {
                alt="ACPDPH Logo" 
                className="w-full max-w-sm md:max-w-md h-auto object-contain" 
              />
-             <div className="glass-card p-6 border-l-4 border-ba-blue text-sm text-ba-text-secondary space-y-2">
+             <div className="card-sm p-6 border-l-4 border-ba-blue text-sm space-y-2" style={{ background: '#ffffff', color: '#6B7280' }}>
                <div className="font-bold text-ba-blue">Engagement éthique & Transparence</div>
                <p>Conformément aux statuts de l'ACPDPH, chaque membre s'engage à respecter les principes de promotion des droits des personnes handicapées, de non-discrimination et d'inclusion sociale.</p>
              </div>

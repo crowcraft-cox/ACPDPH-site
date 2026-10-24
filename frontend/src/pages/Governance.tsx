@@ -129,18 +129,19 @@ export default function Governance() {
           ].map((principle, idx) => (
             <div
               key={idx}
-              className="glass-card rounded-2xl p-6 border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-zinc-800/80 shadow-xs hover:border-ba-blue/30 transition-all"
+              className="card card-interactive p-6 flex flex-col justify-between"
+              style={{ background: '#ffffff' }}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue dark:bg-blue-900/40 dark:text-blue-300">
+                <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue">
                   {principle.tag}
                 </span>
                 <span className="text-xs font-mono font-semibold text-gray-400">0{idx + 1}</span>
               </div>
-              <h3 className="font-heading font-bold text-lg text-gray-900 dark:text-white mb-2">
+              <h3 className="font-heading font-bold text-lg mb-2" style={{ color: '#111827' }}>
                 {principle.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
                 {principle.desc}
               </p>
             </div>
@@ -151,13 +152,13 @@ export default function Governance() {
       {/* ── NAVIGATION PAR ONGLETS ── */}
       <section className="container-ba mb-10">
         <div className="flex justify-center">
-          <div className="inline-flex p-1.5 bg-gray-200/80 dark:bg-zinc-800 rounded-xl border border-gray-300 dark:border-zinc-700">
+          <div className="inline-flex p-1.5 bg-gray-100 rounded-xl border border-gray-200">
             <button
               onClick={() => setActiveTab('board')}
               className={`px-5 py-2 rounded-lg text-sm font-heading font-semibold transition-all cursor-pointer ${
                 activeTab === 'board'
-                  ? 'bg-white dark:bg-ba-blue text-ba-blue dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-white text-ba-blue shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               Conseil d'Administration
@@ -166,8 +167,8 @@ export default function Governance() {
               onClick={() => setActiveTab('executive')}
               className={`px-5 py-2 rounded-lg text-sm font-heading font-semibold transition-all cursor-pointer ${
                 activeTab === 'executive'
-                  ? 'bg-white dark:bg-ba-blue text-ba-blue dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-white text-ba-blue shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               Direction Exécutive & Pôles
@@ -176,8 +177,8 @@ export default function Governance() {
               onClick={() => setActiveTab('principles')}
               className={`px-5 py-2 rounded-lg text-sm font-heading font-semibold transition-all cursor-pointer ${
                 activeTab === 'principles'
-                  ? 'bg-white dark:bg-ba-blue text-ba-blue dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-white text-ba-blue shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               Organigramme Institutionnel
@@ -191,10 +192,10 @@ export default function Governance() {
         {activeTab === 'board' && (
           <div>
             <div className="text-center max-w-2xl mx-auto mb-10">
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold mb-2" style={{ color: '#111827' }}>
                 Le Conseil d'Administration (C.A.)
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
+              <p className="text-sm" style={{ color: '#6B7280' }}>
                 Élu par l'Assemblée Générale, le Conseil d'Administration supervise l'orientation stratégique, garantit l'alignement sur notre mission sociale et valide les états financiers.
               </p>
             </div>
@@ -203,29 +204,30 @@ export default function Governance() {
               {BOARD_MEMBERS.map((member, i) => (
                 <div
                   key={i}
-                  className="team-card glass-card rounded-2xl p-6 bg-white dark:bg-zinc-800/90 border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+                  className="team-card card card-interactive p-6 flex flex-col justify-between"
+                  style={{ background: '#ffffff' }}
                 >
                   <div>
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-ba-blue/10 dark:bg-ba-blue/20 flex items-center justify-center text-ba-blue dark:text-white font-heading font-extrabold text-lg">
+                      <div className="w-12 h-12 rounded-xl bg-ba-blue/10 flex items-center justify-center text-ba-blue font-heading font-extrabold text-lg">
                         {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
                       </div>
                       <div>
-                        <h3 className="font-heading font-bold text-base text-gray-900 dark:text-white">
+                        <h3 className="font-heading font-bold text-base" style={{ color: '#111827' }}>
                           {member.name}
                         </h3>
-                        <p className="text-xs font-semibold text-ba-blue dark:text-blue-300">
+                        <p className="text-xs font-semibold text-ba-blue">
                           {member.role}
                         </p>
                       </div>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                    <p className="text-sm leading-relaxed mb-4" style={{ color: '#6B7280' }}>
                       {member.bio}
                     </p>
                   </div>
-                  <div className="pt-3 border-t border-gray-100 dark:border-zinc-700/60 flex items-center justify-between text-xs text-gray-500">
+                  <div className="card-footer text-xs text-gray-500">
                     <span>Mandat statutaire</span>
-                    <span className="font-semibold text-gray-700 dark:text-gray-300">Organe élu</span>
+                    <span className="font-semibold text-gray-700">Organe élu</span>
                   </div>
                 </div>
               ))}
@@ -236,10 +238,10 @@ export default function Governance() {
         {activeTab === 'executive' && (
           <div>
             <div className="text-center max-w-2xl mx-auto mb-10">
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold mb-2" style={{ color: '#111827' }}>
                 Direction Exécutive & Équipes de Terrain
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
+              <p className="text-sm" style={{ color: '#6B7280' }}>
                 Basée au siège de Beni (Nord-Kivu), l'équipe opérationnelle met en œuvre quotidiennement nos programmes de plaidoyer, d'accessibilité et d'autonomisation.
               </p>
             </div>
@@ -248,34 +250,35 @@ export default function Governance() {
               {EXECUTIVE_TEAM.map((member, i) => (
                 <div
                   key={i}
-                  className="glass-card rounded-2xl p-6 bg-white dark:bg-zinc-800/90 border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+                  className="team-card card card-interactive p-6 flex flex-col justify-between"
+                  style={{ background: '#ffffff' }}
                 >
                   <div>
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-ba-blue/15 text-ba-blue dark:text-white font-heading font-extrabold text-lg flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-xl bg-ba-blue/15 text-ba-blue font-heading font-extrabold text-lg flex items-center justify-center">
                         {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
                       </div>
                       <div>
-                        <h3 className="font-heading font-bold text-base text-gray-900 dark:text-white">
+                        <h3 className="font-heading font-bold text-base" style={{ color: '#111827' }}>
                           {member.name}
                         </h3>
-                        <p className="text-xs font-semibold text-ba-blue dark:text-blue-300">
+                        <p className="text-xs font-semibold text-ba-blue">
                           {member.role}
                         </p>
                       </div>
                     </div>
                     {member.department && (
-                      <span className="inline-block px-2.5 py-0.5 rounded text-[11px] font-bold bg-gray-100 dark:bg-zinc-700 text-gray-700 dark:text-gray-200 mb-3">
+                      <span className="inline-block px-2.5 py-0.5 rounded text-[11px] font-bold bg-gray-100 text-gray-700 mb-3">
                         {member.department}
                       </span>
                     )}
-                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                    <p className="text-sm leading-relaxed mb-4" style={{ color: '#6B7280' }}>
                       {member.bio}
                     </p>
                   </div>
-                  <div className="pt-3 border-t border-gray-100 dark:border-zinc-700/60 flex items-center justify-between text-xs text-gray-500">
+                  <div className="card-footer text-xs text-gray-500">
                     <span>Statut</span>
-                    <span className="font-semibold text-ba-blue dark:text-blue-300">Pôle Opérationnel</span>
+                    <span className="font-semibold text-ba-blue">Pôle Opérationnel</span>
                   </div>
                 </div>
               ))}
@@ -285,50 +288,50 @@ export default function Governance() {
 
         {activeTab === 'principles' && (
           <div className="max-w-4xl mx-auto space-y-8">
-            <div className="glass-card rounded-3xl p-8 md:p-12 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08]">
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+            <div className="card p-6 md:p-10" style={{ background: '#ffffff' }}>
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold mb-6 text-center" style={{ color: '#111827' }}>
                 Structure & Organigramme Institutionnel
               </h2>
 
               <div className="space-y-6">
                 {/* Niveau 1: AG */}
-                <div className="text-center p-5 rounded-2xl bg-ba-blue text-white shadow-sm">
+                <div className="text-center p-5 rounded-xl bg-ba-blue text-white shadow-xs">
                   <span className="text-xs uppercase font-extrabold tracking-wider block opacity-90 mb-1">Organe Souverain</span>
                   <h3 className="font-heading text-xl font-bold">Assemblée Générale (AG)</h3>
                   <p className="text-xs text-blue-100 mt-1">Membres fondateurs, membres effectifs et représentants des personnes handicapées</p>
                 </div>
 
                 <div className="flex justify-center">
-                  <div className="w-0.5 h-6 bg-gray-300 dark:bg-zinc-600" />
+                  <div className="w-0.5 h-6 bg-gray-300" />
                 </div>
 
                 {/* Niveau 2: CA & Commissariat */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="text-center p-5 rounded-2xl bg-ba-blue/10 dark:bg-zinc-700 border border-ba-blue/20">
-                    <span className="text-xs uppercase font-extrabold tracking-wider block text-ba-blue dark:text-blue-300 mb-1">Organe d'Orientation</span>
-                    <h3 className="font-heading text-lg font-bold text-gray-900 dark:text-white">Conseil d'Administration (C.A.)</h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">Supervision stratégique, validation budgétaire et contrôle</p>
+                  <div className="text-center p-5 rounded-xl bg-blue-50 border border-blue-200">
+                    <span className="text-xs uppercase font-extrabold tracking-wider block text-ba-blue mb-1">Organe d'Orientation</span>
+                    <h3 className="font-heading text-lg font-bold" style={{ color: '#111827' }}>Conseil d'Administration (C.A.)</h3>
+                    <p className="text-xs text-gray-600 mt-1">Supervision stratégique, validation budgétaire et contrôle</p>
                   </div>
-                  <div className="text-center p-5 rounded-2xl bg-ba-blue/10 dark:bg-zinc-700 border border-ba-blue/20">
-                    <span className="text-xs uppercase font-extrabold tracking-wider block text-ba-blue dark:text-blue-300 mb-1">Organe de Contrôle</span>
-                    <h3 className="font-heading text-lg font-bold text-gray-900 dark:text-white">Commissariat aux Comptes</h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">Audit financier interne, régularité et conformité légale</p>
+                  <div className="text-center p-5 rounded-xl bg-blue-50 border border-blue-200">
+                    <span className="text-xs uppercase font-extrabold tracking-wider block text-ba-blue mb-1">Organe de Contrôle</span>
+                    <h3 className="font-heading text-lg font-bold" style={{ color: '#111827' }}>Commissariat aux Comptes</h3>
+                    <p className="text-xs text-gray-600 mt-1">Audit financier interne, régularité et conformité légale</p>
                   </div>
                 </div>
 
                 <div className="flex justify-center">
-                  <div className="w-0.5 h-6 bg-gray-300 dark:bg-zinc-600" />
+                  <div className="w-0.5 h-6 bg-gray-300" />
                 </div>
 
                 {/* Niveau 3: Coordination Exécutive */}
-                <div className="text-center p-5 rounded-2xl bg-slate-100 dark:bg-zinc-700/80 border border-gray-300 dark:border-zinc-600">
-                  <span className="text-xs uppercase font-extrabold tracking-wider block text-gray-500 dark:text-gray-400 mb-1">Organe de Gestion Quotidienne</span>
-                  <h3 className="font-heading text-lg font-bold text-gray-900 dark:text-white">Direction Exécutive</h3>
-                  <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">Mise en œuvre des résolutions, gestion opérationnelle et partenariats</p>
+                <div className="text-center p-5 rounded-xl bg-gray-50 border border-gray-200">
+                  <span className="text-xs uppercase font-extrabold tracking-wider block text-gray-500 mb-1">Organe de Gestion Quotidienne</span>
+                  <h3 className="font-heading text-lg font-bold" style={{ color: '#111827' }}>Direction Exécutive</h3>
+                  <p className="text-xs text-gray-600 mt-1">Mise en œuvre des résolutions, gestion opérationnelle et partenariats</p>
                 </div>
 
                 <div className="flex justify-center">
-                  <div className="w-0.5 h-6 bg-gray-300 dark:bg-zinc-600" />
+                  <div className="w-0.5 h-6 bg-gray-300" />
                 </div>
 
                 {/* Niveau 4: Départements Opérationnels */}
@@ -339,8 +342,8 @@ export default function Governance() {
                     'Pôle Éducation & Autonomisation',
                     'Pôle Administration & Finances',
                   ].map((dept, i) => (
-                    <div key={i} className="p-3.5 rounded-xl bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 shadow-2xs">
-                      <span className="font-heading text-xs font-bold text-gray-800 dark:text-gray-200 block">
+                    <div key={i} className="p-3.5 rounded-xl bg-white border border-gray-200 shadow-2xs">
+                      <span className="font-heading text-xs font-bold text-gray-800 block">
                         {dept}
                       </span>
                     </div>
@@ -350,8 +353,8 @@ export default function Governance() {
             </div>
 
             {/* Documents juridiques & officiels */}
-            <div className="glass-card rounded-2xl p-6 md:p-8 bg-white dark:bg-zinc-800 border border-black/[0.08] dark:border-white/[0.08]">
-              <h3 className="font-heading font-bold text-xl text-gray-900 dark:text-white mb-4">
+            <div className="card p-6 md:p-8" style={{ background: '#ffffff' }}>
+              <h3 className="font-heading font-bold text-xl mb-4" style={{ color: '#111827' }}>
                 Statuts Juridiques & Fiche Statutaire
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6">
