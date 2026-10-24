@@ -1,3 +1,4 @@
+
 import { useI18n } from '../i18n';
 import { useScrollReveal, useAnimeReveal } from '../hooks/useScrollReveal';
 

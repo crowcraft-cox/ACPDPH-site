@@ -2,11 +2,14 @@
   "nav": {
     "home": "Accueil",
     "about": "Qui sommes-nous",
+    "governance": "Gouvernance",
     "pillars": "Domaines d'intervention",
-    "projects": "Projets & Impact",
-    "safeguarding": "Protection & Sauvegarde",
-    "act": "Nous soutenir",
+    "projects": "Nos Projets",
     "news": "Actualités",
+    "partners": "Nos Partenaires",
+    "publications": "Publications",
+    "careers": "Offres & Emploi",
+    "support": "Nous soutenir",
     "contact": "Contact",
     "donate": "Faire un Don",
     "language": "EN"
@@ -105,24 +108,21 @@
     "download_statuts": "Télécharger les Statuts de l'ACPDPH (PDF)",
     "download_roi": "Télécharger le Règlement d'Ordre Intérieur"
   },
-  "safeguarding": {
-    "title": "Protection & Sauvegarde",
-    "subtitle": "Politique de tolérance zéro envers les abus, l'exploitation et la discrimination",
-    "charter_title": "Charte de Protection et de Non-Discrimination",
-    "charter_text": "L'ACPDPH applique une politique rigoureuse de sauvegarde et de protection des personnes vulnérables et des personnes handicapées. Tout intervenant s'engage à respecter notre code de déontologie et d'éthique.",
-    "referent_title": "Référent Protection & Sauvegarde",
-    "referent_text": "Un Référent Protection nommé par la gouvernance est chargé de recueillir, traiter de façon confidentielle les signalements et veiller au respect des droits de chaque bénéficiaire.",
-    "form_title": "Formulaire de Signalement Confidentiel",
-    "form_subtitle": "Signalez en toute sécurité et confidentialité tout incident, violation de droits, abus ou acte discriminatoire à l'encontre d'une personne handicapée.",
-    "form_type": "Nature du signalement",
-    "form_desc": "Description détaillée des faits",
-    "form_location": "Lieu de l'incident (Ville, Quartier, Structure...)",
-    "form_date": "Date approximative",
-    "form_anonymous": "Transmettre anonymement",
-    "form_name": "Votre nom (optionnel)",
-    "form_contact": "Votre téléphone / email (optionnel)",
-    "form_submit": "Envoyer le signalement",
-    "form_disclaimer": "Ce signalement est chiffré et transmis directement au Référent Protection de l'ACPDPH. La confidentialité et la protection de l'émetteur sont rigoureusement garanties."
+  "partners": {
+    "title": "Nos Partenaires",
+    "subtitle": "Bailleurs de fonds, institutions publiques, ONG et réseaux partenaires unis pour l'inclusion en RDC"
+  },
+  "publications": {
+    "title": "Publications & Études",
+    "subtitle": "Rapports institutionnels, documents de plaidoyer, textes légaux et études thématiques"
+  },
+  "careers": {
+    "title": "Offres et Emploi",
+    "subtitle": "Opportunités professionnelles, stages et volontariat inclusif à l'ACPDPH"
+  },
+  "governance": {
+    "title": "Gouvernance & Équipe Dirigeante",
+    "subtitle": "Conseil d'Administration, Direction Exécutive et principes d'éthique"
   },
   "act": {
     "title": "Nous Soutenir",

@@ -9,11 +9,14 @@ import { useLenis, smoothScrollTo } from './hooks/useLenis';
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
+const Governance = lazy(() => import('./pages/Governance'));
 const Pillars = lazy(() => import('./pages/Pillars'));
 const Projects = lazy(() => import('./pages/Projects'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
-const Safeguarding = lazy(() => import('./pages/Safeguarding'));
-const ActWithUs = lazy(() => import('./pages/ActWithUs'));
+const Partners = lazy(() => import('./pages/Partners'));
+const Publications = lazy(() => import('./pages/Publications'));
+const Support = lazy(() => import('./pages/Support'));
+const Careers = lazy(() => import('./pages/Careers'));
 const News = lazy(() => import('./pages/News'));
 const NewsDetail = lazy(() => import('./pages/NewsDetail'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -89,11 +92,15 @@ function MainLayout() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/governance" element={<Governance />} />
                 <Route path="/pillars" element={<Pillars />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />
-                <Route path="/safeguarding" element={<Safeguarding />} />
-                <Route path="/act" element={<ActWithUs />} />
+                <Route path="/partners" element={<Partners />} />
+                <Route path="/publications" element={<Publications />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/act" element={<Support />} />
+                <Route path="/careers" element={<Careers />} />
                 <Route path="/news" element={<News />} />
                 <Route path="/news/:id" element={<NewsDetail />} />
                 <Route path="/contact" element={<Contact />} />

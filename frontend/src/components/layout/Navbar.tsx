@@ -7,14 +7,18 @@ export default function Navbar() {
   const { t, toggleLang, lang } = useI18n();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<'org' | 'resources' | null>(null);
   const location = useLocation();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const navContainerRef = useRef<HTMLDivElement>(null);
 
+  // Close menus on route change
   useEffect(() => {
     setIsMobileOpen(false);
-  }, [location]);
+    setOpenDropdown(null);
+  }, [location.pathname]);
 
-  /* Track scroll position to adjust navbar height and elevation */
+  // Track scroll position
   useEffect(() => {
     function onScroll() {
       setScrolled(window.scrollY > 15);
@@ -23,7 +27,18 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* Mobile menu entry animation */
+  // Close desktop dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (navContainerRef.current && !navContainerRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Mobile menu entrance animation
   useEffect(() => {
     if (isMobileOpen && mobileMenuRef.current) {
       const items = mobileMenuRef.current.querySelectorAll('.mobile-nav-item');
@@ -31,24 +46,30 @@ export default function Navbar() {
         animate(items, {
           opacity: [0, 1],
           translateX: [-16, 0],
-          duration: 320,
-          delay: stagger(35, { start: 40 }),
+          duration: 300,
+          delay: stagger(30, { start: 30 }),
           ease: 'outExpo',
         });
       }
     }
   }, [isMobileOpen]);
 
-  const navLinks = [
+  // Mobile nav list in order of the PDF model
+  const mobileNavLinks = [
     { path: '/', label: t.nav.home },
     { path: '/about', label: t.nav.about },
+    { path: '/governance', label: t.nav.governance || 'Gouvernance' },
     { path: '/pillars', label: t.nav.pillars },
     { path: '/projects', label: t.nav.projects },
-    { path: '/safeguarding', label: t.nav.safeguarding },
-    { path: '/act', label: t.nav.act },
     { path: '/news', label: t.nav.news },
+    { path: '/partners', label: t.nav.partners || 'Nos Partenaires' },
+    { path: '/publications', label: t.nav.publications || 'Publications' },
+    { path: '/careers', label: t.nav.careers || 'Offres & Emploi' },
     { path: '/contact', label: t.nav.contact },
   ];
+
+  const isOrgActive = ['/about', '/governance', '/pillars'].includes(location.pathname);
+  const isResourcesActive = ['/publications', '/partners', '/careers'].includes(location.pathname);
 
   return (
     <header
@@ -58,10 +79,10 @@ export default function Navbar() {
           : 'bg-white/90 dark:bg-ba-dark/90 backdrop-blur-xs border-b border-gray-100 dark:border-gray-800/60 py-3'
       }`}
     >
-      <nav aria-label="Navigation principale" className="container-ba">
+      <nav aria-label="Navigation principale" className="container-ba" ref={navContainerRef}>
         <div className="flex items-center justify-between gap-2 lg:gap-4">
           
-          {/* 1. LEFT: Brand & Logo */}
+          {/* 1. BRAND LOGO */}
           <Link
             to="/"
             className="flex items-center gap-2.5 sm:gap-3 group shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ba-blue rounded-lg"
@@ -83,29 +104,178 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* 2. MIDDLE / RIGHT: Navigation Links (Optimized for 1024px-1280px viewports) */}
-          <div className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 2xl:gap-2">
-            {navLinks.map((link) => {
-              const isActive = location.pathname === link.path;
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`px-2 xl:px-2.5 2xl:px-3 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all duration-150 ${
-                    isActive
-                      ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+          {/* 2. DESKTOP NAVIGATION LINKS */}
+          <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+            {/* Accueil */}
+            <Link
+              to="/"
+              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all ${
+                location.pathname === '/'
+                  ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
+              }`}
+            >
+              {t.nav.home}
+            </Link>
+
+            {/* Dropdown: L'Organisation */}
+            <div className="relative" onMouseLeave={() => setOpenDropdown(null)}>
+              <button
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === 'org' ? null : 'org')}
+                onMouseEnter={() => setOpenDropdown('org')}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all cursor-pointer ${
+                  isOrgActive
+                    ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
+                }`}
+              >
+                <span>Organisation</span>
+                <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === 'org' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openDropdown === 'org' && (
+                <div className="absolute left-0 top-full pt-1.5 w-60 z-50">
+                  <div className="p-2 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-gray-100 dark:border-zinc-700 space-y-1">
+                    <Link
+                      to="/about"
+                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
+                        location.pathname === '/about'
+                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
+                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
+                      }`}
+                    >
+                      <div className="font-bold">{t.nav.about}</div>
+                      <div className="text-[11px] text-gray-500 font-normal">Historique & Mission</div>
+                    </Link>
+                    <Link
+                      to="/governance"
+                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
+                        location.pathname === '/governance'
+                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
+                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
+                      }`}
+                    >
+                      <div className="font-bold">{t.nav.governance || 'Gouvernance & Équipe'}</div>
+                      <div className="text-[11px] text-gray-500 font-normal">C.A., Direction & Éthique</div>
+                    </Link>
+                    <Link
+                      to="/pillars"
+                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
+                        location.pathname === '/pillars'
+                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
+                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
+                      }`}
+                    >
+                      <div className="font-bold">{t.nav.pillars}</div>
+                      <div className="text-[11px] text-gray-500 font-normal">Droits, Accessibilité, Santé...</div>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Nos Projets */}
+            <Link
+              to="/projects"
+              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all ${
+                location.pathname.startsWith('/projects')
+                  ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
+              }`}
+            >
+              {t.nav.projects}
+            </Link>
+
+            {/* Actualités */}
+            <Link
+              to="/news"
+              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all ${
+                location.pathname.startsWith('/news')
+                  ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
+              }`}
+            >
+              {t.nav.news}
+            </Link>
+
+            {/* Dropdown: Ressources & Réseau */}
+            <div className="relative" onMouseLeave={() => setOpenDropdown(null)}>
+              <button
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === 'resources' ? null : 'resources')}
+                onMouseEnter={() => setOpenDropdown('resources')}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all cursor-pointer ${
+                  isResourcesActive
+                    ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
+                }`}
+              >
+                <span>Ressources</span>
+                <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === 'resources' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openDropdown === 'resources' && (
+                <div className="absolute left-0 top-full pt-1.5 w-64 z-50">
+                  <div className="p-2 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-gray-100 dark:border-zinc-700 space-y-1">
+                    <Link
+                      to="/publications"
+                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
+                        location.pathname === '/publications'
+                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
+                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
+                      }`}
+                    >
+                      <div className="font-bold">{t.nav.publications || 'Publications & Études'}</div>
+                      <div className="text-[11px] text-gray-500 font-normal">Rapports, Textes de lois, Guides</div>
+                    </Link>
+                    <Link
+                      to="/partners"
+                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
+                        location.pathname === '/partners'
+                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
+                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
+                      }`}
+                    >
+                      <div className="font-bold">{t.nav.partners || 'Nos Partenaires'}</div>
+                      <div className="text-[11px] text-gray-500 font-normal">Bailleurs, ONG & Institutions</div>
+                    </Link>
+                    <Link
+                      to="/careers"
+                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
+                        location.pathname === '/careers'
+                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
+                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
+                      }`}
+                    >
+                      <div className="font-bold">{t.nav.careers || 'Offres et Emploi'}</div>
+                      <div className="text-[11px] text-gray-500 font-normal">Emplois, Stages & Bénévolat</div>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Contact */}
+            <Link
+              to="/contact"
+              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all ${
+                location.pathname === '/contact'
+                  ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
+              }`}
+            >
+              {t.nav.contact}
+            </Link>
           </div>
 
-          {/* 3. FAR RIGHT: Language Selector & Primary CTA Button */}
+          {/* 3. RIGHT: Language Selector & CTA */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            {/* Segmented Language Switcher */}
+            {/* Lang switcher */}
             <div
               className="inline-flex items-center p-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200/80 dark:border-gray-700"
               role="group"
@@ -137,119 +307,73 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Primary CTA Button */}
+            {/* Primary CTA Button: Nous Soutenir */}
             <Link
-              to="/act"
+              to="/support"
               className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 xl:px-4 xl:py-2 rounded-xl text-xs font-heading font-bold uppercase tracking-wider text-white bg-ba-blue hover:bg-ba-blue-dark active:scale-95 transition-all duration-200 shadow-xs hover:shadow-sm"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-3.5 h-3.5 text-white"
-                aria-hidden="true"
-              >
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
-              <span>{t.nav.donate}</span>
+              <span>{t.nav.support || 'Nous soutenir'}</span>
             </Link>
 
-            {/* Mobile Menu Hamburger Toggle */}
+            {/* Mobile Hamburger Button */}
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
               type="button"
               className="lg:hidden p-1.5 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
               aria-label={isMobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-              aria-expanded={isMobileOpen}
             >
               {isMobileOpen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6"
-                  aria-hidden="true"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6"
-                  aria-hidden="true"
-                >
-                  <line x1="4" y1="6" x2="20" y2="6" />
-                  <line x1="4" y1="12" x2="20" y2="12" />
-                  <line x1="4" y1="18" x2="20" y2="18" />
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu Dropdown */}
+        {/* 4. MOBILE MENU DROPDOWN */}
         <div
           ref={mobileMenuRef}
           className={`lg:hidden overflow-hidden transition-all duration-300 ${
             isMobileOpen
-              ? 'max-h-[600px] opacity-100 mt-3 pt-3 border-t border-gray-100 dark:border-gray-800'
+              ? 'max-h-[640px] opacity-100 mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 overflow-y-auto'
               : 'max-h-0 opacity-0 pointer-events-none'
           }`}
         >
           <div className="py-2 space-y-1">
-            {navLinks.map((link) => {
+            {mobileNavLinks.map((link) => {
               const isActive = location.pathname === link.path;
               return (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`mobile-nav-item flex items-center justify-between py-2.5 px-3.5 rounded-xl text-sm font-heading font-medium transition-colors ${
+                  className={`mobile-nav-item flex items-center justify-between py-2 px-3.5 rounded-xl text-sm font-heading font-medium transition-colors ${
                     isActive
                       ? 'bg-ba-blue/10 text-ba-blue dark:text-white font-bold'
                       : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
                   }`}
                 >
                   <span>{link.label}</span>
-                  {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-ba-blue" />
-                  )}
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-ba-blue" />}
                 </Link>
               );
             })}
             <div className="pt-3 pb-1">
               <Link
-                to="/act"
+                to="/support"
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-heading font-bold uppercase tracking-wider text-white bg-ba-blue hover:bg-ba-blue-dark active:scale-95 transition-all text-center shadow-sm"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-4 h-4"
-                  aria-hidden="true"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <span>{t.nav.donate}</span>
+                <span>{t.nav.support || 'Nous soutenir'}</span>
               </Link>
             </div>
           </div>

@@ -83,6 +83,24 @@ const DEFAULT_DATA: AdminData = {
         'Psychosocial support and adapted physical therapy.',
       ],
     },
+    {
+      id: '5',
+      title: 'Autonomisation & Activités Économiques',
+      title_en: 'Empowerment & Livelihoods',
+      description: 'Formation professionnelle adaptée, appui aux micro-crédits, création d\'ateliers artisanaux et insertion socio-économique durable.',
+      description_en: 'Adapted vocational training, micro-credit support, establishment of craft workshops, and sustainable socio-economic inclusion.',
+      image: '/pillars/formation.jpg',
+      color: 'ba-blue',
+      gradient: 'from-amber-600/10 to-orange-600/5',
+      bulletPoints: [
+        'Financement et coaching de micro-activités génératrices de revenus.',
+        'Apprentissage des métiers artisanaux (couture, cordonnerie, vannerie).',
+      ],
+      bulletPoints_en: [
+        'Funding and coaching for income-generating micro-activities.',
+        'Vocational training in crafts (tailoring, shoemaking, basketry).',
+      ],
+    },
   ],
   news: [
     {

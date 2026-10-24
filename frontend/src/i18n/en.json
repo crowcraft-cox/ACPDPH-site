@@ -2,11 +2,14 @@
   "nav": {
     "home": "Home",
     "about": "About Us",
-    "pillars": "Areas of Intervention",
-    "projects": "Projects & Impact",
-    "safeguarding": "Protection & Safeguarding",
-    "act": "Support Us",
+    "governance": "Governance",
+    "pillars": "Intervention Areas",
+    "projects": "Our Projects",
     "news": "News",
+    "partners": "Our Partners",
+    "publications": "Publications",
+    "careers": "Careers & Jobs",
+    "support": "Support Us",
     "contact": "Contact",
     "donate": "Donate",
     "language": "FR"
@@ -105,24 +108,21 @@
     "download_statuts": "Download ACPDPH Statutes (PDF)",
     "download_roi": "Download Internal Regulations"
   },
-  "safeguarding": {
-    "title": "Protection & Safeguarding",
-    "subtitle": "Zero-tolerance policy against abuse, exploitation, and discrimination",
-    "charter_title": "Protection and Non-Discrimination Charter",
-    "charter_text": "ACPDPH enforces a strict safeguarding policy protecting vulnerable individuals and persons with disabilities. Every staff member and volunteer signs our code of conduct.",
-    "referent_title": "Safeguarding Officer",
-    "referent_text": "A Safeguarding Officer appointed by the Board receives and handles all reports confidentially and ensures appropriate protective actions.",
-    "form_title": "Confidential Reporting Form",
-    "form_subtitle": "Safely and confidentially report any incident, rights violation, abuse, or discriminatory act against a person with disabilities.",
-    "form_type": "Incident type",
-    "form_desc": "Detailed description of facts",
-    "form_location": "Incident location (City, Area, Institution...)",
-    "form_date": "Approximate date",
-    "form_anonymous": "Submit anonymously",
-    "form_name": "Your name (optional)",
-    "form_contact": "Phone / email (optional)",
-    "form_submit": "Submit report",
-    "form_disclaimer": "This report is encrypted and sent directly to the ACPDPH Safeguarding Officer. Whistleblower protection and strict confidentiality are guaranteed."
+  "partners": {
+    "title": "Our Partners",
+    "subtitle": "Donors, public institutions, NGOs, and partner networks united for inclusion in the DRC"
+  },
+  "publications": {
+    "title": "Publications & Studies",
+    "subtitle": "Institutional reports, advocacy documents, legal frameworks, and thematic studies"
+  },
+  "careers": {
+    "title": "Careers & Jobs",
+    "subtitle": "Professional opportunities, internships, and inclusive volunteering at ACPDPH"
+  },
+  "governance": {
+    "title": "Governance & Leadership Team",
+    "subtitle": "Board of Directors, Executive Direction, and ethical principles"
   },
   "act": {
     "title": "Support Us",

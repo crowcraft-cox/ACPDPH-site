@@ -38,14 +38,20 @@ export default function Footer() {
     }, 400);
   };
 
-  const quickLinks = [
+  const orgLinks = [
     { path: '/', label: t.nav.home },
     { path: '/about', label: t.nav.about },
+    { path: '/governance', label: t.nav.governance || 'Gouvernance & Équipe' },
     { path: '/pillars', label: t.nav.pillars },
     { path: '/projects', label: t.nav.projects },
-    { path: '/safeguarding', label: t.nav.safeguarding },
-    { path: '/act', label: t.nav.act },
+  ];
+
+  const resourceLinks = [
     { path: '/news', label: t.nav.news },
+    { path: '/publications', label: t.nav.publications || 'Publications & Études' },
+    { path: '/partners', label: t.nav.partners || 'Nos Partenaires' },
+    { path: '/careers', label: t.nav.careers || 'Offres & Emploi' },
+    { path: '/support', label: t.nav.support || 'Nous soutenir' },
     { path: '/contact', label: t.nav.contact },
   ];
 
@@ -53,7 +59,7 @@ export default function Footer() {
     <footer className="bg-ba-dark text-white">
       {/* Main Footer */}
       <div className="container-ba pt-20 pb-20 md:pt-28 md:pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 lg:gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-14">
           {/* Brand */}
           <div className="lg:col-span-1 space-y-6">
             <Link to="/" className="flex items-center gap-3">
@@ -67,11 +73,11 @@ export default function Footer() {
                 </span>
               </div>
             </Link>
-            <p className="text-gray-300 text-base leading-relaxed">
+            <p className="text-gray-300 text-sm leading-relaxed">
               {t.footer.description}
             </p>
             {/* Social Links */}
-            <div className="flex gap-4 pt-2">
+            <div className="flex gap-3 pt-2">
               {[
                 {
                   id: 'facebook',
@@ -99,7 +105,7 @@ export default function Footer() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-xl bg-white/10 hover:bg-ba-blue flex items-center justify-center transition-all hover:-translate-y-1 text-white"
+                  className="w-10 h-10 rounded-xl bg-white/10 hover:bg-ba-blue flex items-center justify-center transition-all hover:-translate-y-1 text-white"
                   aria-label={social.label}
                   title={social.label}
                 >
@@ -109,17 +115,17 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Column 2: Organisation */}
           <div>
-            <h4 className="font-heading font-bold text-xl mb-8 text-white tracking-wide">{t.footer.quick_links}</h4>
-            <ul className="space-y-5">
-              {quickLinks.map(link => (
+            <h4 className="font-heading font-bold text-lg mb-6 text-white tracking-wide">Organisation</h4>
+            <ul className="space-y-3.5 text-sm">
+              {orgLinks.map(link => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-gray-300 hover:text-ba-blue text-base transition-colors flex items-center gap-2.5"
+                    className="text-gray-300 hover:text-ba-blue transition-colors flex items-center gap-2"
                   >
-                    <svg className="w-3.5 h-3.5 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                     </svg>
                     {link.label}
@@ -129,34 +135,23 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Column 3: Ressources & Agir */}
           <div>
-            <h4 className="font-heading font-bold text-xl mb-8 text-white tracking-wide">{t.footer.legal}</h4>
-            <ul className="space-y-5">
-              <li>
-                <a href="#privacy" className="text-gray-300 hover:text-ba-blue text-base transition-colors flex items-center gap-2.5">
-                  <svg className="w-3.5 h-3.5 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                  {t.footer.privacy}
-                </a>
-              </li>
-              <li>
-                <a href="#terms" className="text-gray-300 hover:text-ba-blue text-base transition-colors flex items-center gap-2.5">
-                  <svg className="w-3.5 h-3.5 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                  {t.footer.terms}
-                </a>
-              </li>
-              <li>
-                <a href="#statuts" className="text-gray-300 hover:text-ba-blue text-base transition-colors flex items-center gap-2.5">
-                  <svg className="w-3.5 h-3.5 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                  {t.footer.statuts}
-                </a>
-              </li>
+            <h4 className="font-heading font-bold text-lg mb-6 text-white tracking-wide">Ressources & Agir</h4>
+            <ul className="space-y-3.5 text-sm">
+              {resourceLinks.map(link => (
+                <li key={link.path}>
+                  <Link
+                    to={link.path}
+                    className="text-gray-300 hover:text-ba-blue transition-colors flex items-center gap-2"
+                  >
+                    <svg className="w-3 h-3 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
