@@ -212,20 +212,14 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* Overlapping CTA Buttons (Fixed at bottom) */}
+      {/* Overlapping CTA Button (Fixed at bottom) */}
       <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-20 px-4">
-        <div className="container-ba flex flex-col md:flex-row items-center justify-center gap-4">
-          <Link to="/support" className="btn btn-blue btn-lg group">
+        <div className="container-ba flex items-center justify-center">
+          <Link to="/support" className="btn btn-blue btn-lg group shadow-lg">
             <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
             {t.hero.cta_donate}
-          </Link>
-          <Link to="/about" className="btn btn-outline btn-lg border-white/20 text-white bg-ba-dark/90 backdrop-blur-md hover:border-ba-blue hover:text-ba-blue">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Qui sommes-nous
           </Link>
         </div>
       </div>
