@@ -24,7 +24,7 @@ function ProjectDescription({ text, images }: { text: string; images?: { id: str
                   className="w-full max-h-[480px] object-cover"
                 />
                 <span style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.04em', padding: '3px 8px', borderRadius: '6px', fontFamily: "'Outfit', sans-serif" }}>
-                  Bright African · {new Date().getFullYear()}
+                  ACPDPH · {new Date().getFullYear()}
                 </span>
               </figure>
             );
@@ -62,7 +62,7 @@ export default function ProjectDetail() {
 
   if (!project) {
     return (
-      <div style={{ paddingTop: '150px' }} className="container-ba pb-32 text-center">
+      <div className="pt-24 sm:pt-32 container-ba pb-32 text-center">
         <p className="text-ba-text-secondary text-xl mb-8">Projet introuvable.</p>
         <Link to="/projects" className="btn btn-primary">← Retour aux projets</Link>
       </div>
@@ -115,7 +115,7 @@ export default function ProjectDetail() {
           <div>
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${project.color || 'bg-ba-red'} text-white`}>
+              <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${project.color || 'bg-ba-blue'} text-white`}>
                 {project.type}
               </span>
               <span className={`text-xs font-semibold px-3 py-1.5 rounded-full ${statusColors[project.status] || 'bg-gray-500/30 text-gray-300 border border-gray-500/40'}`}>
@@ -128,7 +128,7 @@ export default function ProjectDetail() {
             </h1>
 
             <div className="flex items-center gap-2 text-white/80 text-sm font-medium">
-              <svg className="w-4 h-4 text-ba-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <svg className="w-4 h-4 text-ba-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
               </svg>
@@ -145,7 +145,7 @@ export default function ProjectDetail() {
           {/* Description */}
           <section className="mb-16">
             <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="w-1 h-8 rounded-full bg-ba-red inline-block" />
+              <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
               {t.projects.about_project}
             </h2>
             {project.description ? (
@@ -159,7 +159,7 @@ export default function ProjectDetail() {
           {allPhotos.length > 1 && (
             <section className="mb-16">
               <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
-                <span className="w-1 h-8 rounded-full bg-ba-red inline-block" />
+                <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
                 {t.projects.photo_gallery}
                 <span className="text-sm font-normal text-ba-text-secondary ml-2">
                   ({allPhotos.length} photo{allPhotos.length > 1 ? 's' : ''})
@@ -178,9 +178,9 @@ export default function ProjectDetail() {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      {/* Signature Bright African */}
+                      {/* Signature ACPDPH */}
                       <span style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.04em', padding: '3px 8px', borderRadius: '6px', fontFamily: "'Outfit', sans-serif" }}>
-                        Bright African · {new Date().getFullYear()}
+                        ACPDPH · {new Date().getFullYear()}
                       </span>
                     </div>
                   </div>
@@ -193,7 +193,7 @@ export default function ProjectDetail() {
           <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link
               to="/projects"
-              className="flex items-center gap-2 text-ba-text-secondary hover:text-ba-red transition-colors font-medium"
+              className="flex items-center gap-2 text-ba-text-secondary hover:text-ba-blue transition-colors font-medium"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -202,7 +202,7 @@ export default function ProjectDetail() {
             </Link>
             <Link
               to="/contact"
-              className="btn btn-primary text-sm"
+              className="btn btn-blue text-sm"
             >
               {t.projects.contact_us_about} →
             </Link>

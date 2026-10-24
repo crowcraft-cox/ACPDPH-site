@@ -1,15 +1,23 @@
 @import "tailwindcss";
 
-/* ===== BRIGHT AFRICAN — Design System (Tailwind CSS v4) ===== */
+/* ===== ACPDPH — Design System (Tailwind CSS v4) ===== */
 
 @theme {
-  /* Brand Colors */
-  --color-ba-red: #E30613;
-  --color-ba-red-light: #FF2D3A;
-  --color-ba-red-dark: #B8050F;
-  --color-ba-green: #1A8F0A;
-  --color-ba-green-light: #24B810;
-  --color-ba-green-dark: #146E08;
+  /* Brand Colors - ACPDPH Blue Palette */
+  --color-ba-blue: #1D4ED8;
+  --color-ba-blue-light: #3B82F6;
+  --color-ba-blue-dark: #1E40AF;
+  --color-acpd-blue: #1D4ED8;
+  --color-acpd-blue-light: #3B82F6;
+  --color-acpd-blue-dark: #1E40AF;
+
+  /* Remplacement de Rouge et Vert par Bleu (Conservation du Blanc et Gris) */
+  --color-ba-red: #1D4ED8;
+  --color-ba-red-light: #3B82F6;
+  --color-ba-red-dark: #1E40AF;
+  --color-ba-green: #2563EB;
+  --color-ba-green-light: #60A5FA;
+  --color-ba-green-dark: #1E40AF;
   --color-ba-gray: #E5E7EB;
   --color-ba-gray-light: #F3F4F6;
   --color-ba-gray-dark: #9CA3AF;
@@ -29,12 +37,13 @@
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  /* Shadows */
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
-  --shadow-btn: 0 4px 14px rgba(227, 6, 19, 0.3);
-  --shadow-btn-green: 0 4px 14px rgba(26, 143, 10, 0.3);
+  /* Shadows — only for truly floating overlays (Rule 4) */
+  --shadow-glass: 0 12px 32px rgba(0, 0, 0, 0.14);
+  --shadow-card: none;
+  --shadow-card-hover: none;
+  --shadow-btn: none;
+  --shadow-btn-green: none;
+  --shadow-btn-blue: none;
 
   /* Animations */
   --animate-fade-in: fade-in 0.6s ease-out forwards;
@@ -81,47 +90,44 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ===== HeroUI Card System & Glassmorphism ===== */
 .glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .dark .glass {
-  background: rgba(24, 24, 27, 0.8);
+  background: rgba(24, 24, 27, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
 .glass-card,
 .heroui-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 1.5rem;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
 }
 
 .dark .glass-card,
 .dark .heroui-card {
-  background: rgba(24, 24, 27, 0.85);
+  background: rgba(24, 24, 27, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+  box-shadow: none;
 }
 
 .glass-card:hover,
 .heroui-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
+  transform: translateY(-3px);
+  border-color: rgba(29, 78, 216, 0.35);
+  box-shadow: none;
 }
 
 .dark .glass-card:hover,
 .dark .heroui-card:hover {
-  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.5), 0 8px 16px -4px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: none;
+  border-color: rgba(59, 130, 246, 0.4);
 }
 
 /* HeroUI Card sub-elements */
@@ -179,12 +185,10 @@ h1, h2, h3, h4, h5, h6 {
 
 
 /* ===== Gradient Utilities ===== */
-.gradient-red {
-  background: linear-gradient(135deg, #E30613 0%, #FF2D3A 100%);
-}
-
-.gradient-green {
-  background: linear-gradient(135deg, #1A8F0A 0%, #24B810 100%);
+.gradient-red,
+.gradient-green,
+.gradient-blue {
+  background: linear-gradient(135deg, #1D4ED8 0%, #3B82F6 100%);
 }
 
 .gradient-hero {
@@ -200,18 +204,16 @@ h1, h2, h3, h4, h5, h6 {
   );
 }
 
-.gradient-text-red {
-  background: linear-gradient(135deg, #E30613, #FF2D3A);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.gradient-text-red,
+.gradient-text-green,
+.gradient-text-blue {
+  color: #1D4ED8;
 }
 
-.gradient-text-green {
-  background: linear-gradient(135deg, #1A8F0A, #24B810);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.dark .gradient-text-red,
+.dark .gradient-text-green,
+.dark .gradient-text-blue {
+  color: #3B82F6;
 }
 
 .gradient-border {
@@ -224,7 +226,7 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   inset: -2px;
   border-radius: inherit;
-  background: linear-gradient(135deg, #E30613, #1A8F0A);
+  background: linear-gradient(135deg, #1D4ED8, #2563EB);
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -297,22 +299,43 @@ h1, h2, h3, h4, h5, h6 {
   100% { transform: translateX(-50%); }
 }
 
-/* ===== Custom Scrollbar ===== */
+/* ===== Custom Scrollbar — Premium Slim ===== */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-ba-gray-light);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-ba-gray-dark);
-  border-radius: 4px;
+  background: #1D4ED8;
+  border-radius: 100px;
+  opacity: 0.7;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-ba-dark-lighter);
+  background: #1E40AF;
+  opacity: 1;
+}
+
+/* Firefox slim scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1D4ED8 transparent;
+}
+
+/* ===== Navbar scroll-aware elevation ===== */
+.navbar-scrolled {
+  box-shadow: 0 1px 24px rgba(0, 0, 0, 0.10);
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-bottom-color: rgba(229, 231, 235, 0.6) !important;
+}
+
+.dark .navbar-scrolled {
+  background: rgba(17, 24, 39, 0.97) !important;
+  box-shadow: 0 1px 24px rgba(0, 0, 0, 0.35);
 }
 
 /* ===== Section Spacing ===== */
@@ -354,13 +377,13 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #E30613, #1A8F0A);
+  background: #1D4ED8;
   transition: width 0.3s ease;
 }
 
 .nav-link:hover,
 .nav-link.active {
-  color: var(--color-ba-red);
+  color: var(--color-ba-blue);
 }
 
 .nav-link:hover::after,
@@ -386,26 +409,20 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1;
 }
 
-.btn-red {
-  background: linear-gradient(135deg, #E30613, #FF2D3A);
-  color: white;
-  box-shadow: var(--shadow-btn);
-}
-
-.btn-red:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(227, 6, 19, 0.4);
-}
-
+.btn-red,
+.btn-blue,
 .btn-green {
-  background: linear-gradient(135deg, #1A8F0A, #24B810);
+  background: #1D4ED8;
   color: white;
-  box-shadow: var(--shadow-btn-green);
+  box-shadow: none;
 }
 
+.btn-red:hover,
+.btn-blue:hover,
 .btn-green:hover {
+  background: #1E40AF;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(26, 143, 10, 0.4);
+  box-shadow: none;
 }
 
 .btn-outline {
@@ -415,8 +432,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-outline:hover {
-  border-color: #E30613;
-  color: #E30613;
+  border-color: #1D4ED8;
+  color: #1D4ED8;
   transform: translateY(-2px);
 }
 
@@ -433,8 +450,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ===== Selection ===== */
 ::selection {
-  background: rgba(227, 6, 19, 0.15);
-  color: #E30613;
+  background: rgba(29, 78, 216, 0.15);
+  color: #1D4ED8;
 }
 
 /* ===== Mobile Spacing for Impact Section Title ===== */
@@ -541,5 +558,73 @@ select option {
   background-color: #FFFFFF;
   color: #111827;
   -webkit-text-fill-color: #111827;
+}
+
+/* ===== Lenis Smooth Scroll Recommended CSS ===== */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Offset for anchored sections under the sticky navbar */
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+/* ===== Modern Minimalist Scrollbar ===== */
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #94A3B8 transparent;
+}
+
+.dark * {
+  scrollbar-color: #4B5563 transparent;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1D4ED8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4B5563;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3B82F6;
 }
 

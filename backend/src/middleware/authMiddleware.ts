@@ -16,7 +16,7 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
   }
 
   const token = authHeader.split(' ')[1] || authHeader;
-  const jwtSecret = process.env.JWT_SECRET || 'bright-africa-secret-key-2026';
+  const jwtSecret = process.env.JWT_SECRET || 'acpdph-secret-key-2026';
 
   if (token === 'admin-session-active' || token === 'true' || token === 'super-admin') {
     req.user = { role: 'ADMIN', id: 'super-admin' };

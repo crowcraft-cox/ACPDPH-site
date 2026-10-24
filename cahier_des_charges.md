@@ -1,42 +1,43 @@
 # CAHIER DES CHARGES FONCTIONNEL ET TECHNIQUE
 ## Conception et Développement du Site Web Officiel et de la Plateforme Numérique
-### ONG « BRIGHT AFRICAN » (BA)
+### AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES (ACPDPH)
 
 ---
 
 ## 1. CONTEXTE ET PRÉSENTATION DE L'ORGANISATION
 
 ### 1.1 Contexte Général
-L'ONG **« BRIGHT AFRICAN » (BA en sigle)** est une Organisation Non Gouvernementale et Association Sans But Lucratif (ASBL), fondée conformément à la loi n° 004/2001 du 20 juillet 2001 relative aux ASBL en République Démocratique du Congo (RDC).
+L'**AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH** est une Organisation Non Gouvernementale et Association Sans But Lucratif (ASBL), fondée conformément à la loi n° 004/2001 du 20 juillet 2001 relative aux ASBL en République Démocratique du Congo (RDC).
 
-- **Dénomination officielle** : ONG BRIGHT AFRICAN (« BA »)
-- **Siège Social** : Avenue de la Paix, Quartier Himbi, Commune de Goma, Ville de Goma, Province du Nord-Kivu, République Démocratique du Congo.
+- **Dénomination officielle** : AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH (« ACPDPH »)
+- **Siège Social** : N° 08, Avenue Ruwenzori, Quartier Résidentiel, Commune de Beni, Ville de Beni, Province du Nord-Kivu, République Démocratique du Congo.
 - **Rayon d'action** : Province du Nord-Kivu, avec possibilité d'extension sur toute l'étendue de la RDC et à l'international.
 - **Exercice social** : 1er Janvier – 31 Décembre (Langue officielle de travail : Français).
 
 ### 1.2 Vision, Mission et Objet Social
-- **Objet Principal (Art. 5)** : Protection et promotion des droits de l'enfant, en vue de contribuer à son épanouissement intégral et à son développement dans un cadre sécurisé, sain et durable.
-- **Vision (Art. 6)** : Créer un environnement protecteur, sain et éducatif, garantissant le bien-être, la sécurité et le développement harmonieux de l’enfant en Afrique.
-- **Mission (Art. 7)** : Promouvoir, protéger et défendre les droits des enfants en leur assurant un accès à l'éducation, à la santé, à la protection et à un environnement sûr, afin qu'ils puissent s'épanouir et contribuer au développement de l’Afrique.
+- **Objet Principal** : Promotion, défense active et concrétisation des droits des personnes en situation de handicap, pour leur pleine participation à la vie sociale, économique, civile et culturelle en RDC.
+- **Vision** : Une société congolaise juste, inclusive et équitable, exempte de barrières et de discriminations, où chaque personne en situation de handicap jouit pleinement de ses droits et de sa dignité humaine.
+- **Mission** : Sensibiliser les communautés, conduire des plaidoyers institutionnels, faciliter l'accessibilité universelle, l'éducation inclusive, l'accès à la santé adaptée, et stimuler l'autonomisation économique des personnes vivant avec handicap.
 
-### 1.3 Les 4 Piliers d'Intervention Majeurs (Art. 9)
-1. **Protection de l’Enfant** : Lutte contre les violences, l'exploitation, le travail des enfants, le mariage forcé/précoce et le recrutement dans les groupes armés. Accompagnement psychosocial, juridique et mécanisme d'alerte aux autorités.
-2. **Santé Maternelle et Infantile** : Sensibilisation à l'hygiène, prévention sanitaire, assainissement et santé de la mère et de l'enfant.
-3. **Éducation et Formation** : Alphabétisation, formation professionnelle des jeunes, soutien à la scolarisation (notamment la jeune fille).
-4. **Protection de l’Environnement** : Reboisement, préservation des écosystèmes, lutte contre la déforestation, gestion durable des déchets et sensibilisation au changement climatique.
+### 1.3 Les 5 Piliers d'Intervention Majeurs
+1. **Droits & Plaidoyer Juridique** : Défense active des droits fondamentaux, lutte contre les discriminations, assistance juridique et plaidoyer pour l'application effective de la législation congolaise et des traités internationaux (CDPH).
+2. **Accessibilité Universelle & Cadre Bâti** : Promotion de l'aménagement des infrastructures publiques et privées, des transports et des outils d'information accessibles à tous.
+3. **Éducation Inclusive & Formation** : Accès effectif à l'école pour tous les enfants, formations professionnelles adaptées et bourses de soutien didactique.
+4. **Santé, Réadaptation & Aides Techniques** : Accompagnement médical, réadaptation fonctionnelle, et distribution d'équipements de mobilité (fauteuils roulants, tricycles, béquilles).
+5. **Autonomisation Économique & Moyens d'Existence** : Formations aux métiers d'avenir, appui aux micro-entreprises et initiatives génératrices de revenus.
 
 ---
 
 ## 2. OBJECTIFS DU PROJET NUMÉRIQUE
 
-Le projet vise à concevoir, développer et déployer le site web officiel et la plateforme numérique de l'ONG Bright African.
+Le projet vise à concevoir, développer et déployer le site web officiel et la plateforme numérique de l'ONG ACPDPH.
 
 ### 2.1 Objectifs Stratégiques
-1. **Visibilité & Notoriété Internationale et Locale** : Présenter l'ONG, sa vision, ses actions au Nord-Kivu et ses partenariats auprès du grand public, des bailleurs de fonds et des institutions.
+1. **Visibilité & Notoriété Internationale et Locale** : Présenter l'ACPDPH, sa vision, ses actions au Nord-Kivu et ses partenariats auprès du grand public, des bailleurs de fonds et des institutions.
 2. **Mobilisation des Ressources (Fundraising)** : Permettre la collecte sécurisée de dons (Mobile Money congolais et cartes bancaires/internationales) et le recrutement de membres bienfaiteurs.
-3. **Transparence et Redevabilité (Gouvernance)** : Publier les rapports d'activités, les états financiers, la composition des organes dirigeants et les statuts/règlements de l'ONG.
-4. **Mise en œuvre du Devoir d'Alerte et de Sauvegarde (Art. 22 - Safeguarding)** : Mettre à disposition un canal de signalement sécurisé et confidentiel pour les cas de violation des droits de l'enfant.
-5. **Gestion de la Communauté (Membres & Bénévoles)** : Faciliter les demandes d'adhésion en ligne, la gestion des bénévoles et les recrutements (avec soumission des documents obligatoires de Safeguarding).
+3. **Transparence et Redevabilité (Gouvernance)** : Publier les rapports d'activités, les états financiers, la composition des organes dirigeants et les textes statutaires de l'ONG.
+4. **Canal de Signalement & Protection** : Mettre à disposition un canal de signalement sécurisé et confidentiel pour les cas de violation des droits ou discriminations subies par des personnes handicapées.
+5. **Gestion de la Communauté (Membres & Bénévoles)** : Faciliter les demandes d'adhésion en ligne, la gestion des membres et le recrutement d'acteurs de terrain.
 
 ---
 
@@ -44,124 +45,90 @@ Le projet vise à concevoir, développer et déployer le site web officiel et la
 
 ### 3.1 Arborescence Globale du Site
 ```
-┌── Accueil (Home Page)
+├── Accueil (Home Page)
 ├── À Propos (Qui sommes-nous ?)
-│   ├── Histoire & Contexte légal
+│   ├── Statut juridique & Contexte légal
 │   ├── Vision, Mission & Valeurs
-│   ├── Organes de Gouvernance (AG, CA, Bureau, Direction)
-│   └── Transparence & Documents Officiels (Statuts, ROI)
+│   ├── Organes de Gouvernance & Équipe
+│   └── Transparence & Documents Officiels
 ├── Nos Piliers d'Intervention
-│   ├── 1. Protection de l'Enfant
-│   ├── 2. Santé Maternelle & Infantile
-│   ├── 3. Éducation & Formation Pro
-│   └── 4. Protection de l'Environnement
+│   ├── 1. Droits & Plaidoyer Juridique
+│   ├── 2. Accessibilité Universelle
+│   ├── 3. Éducation Inclusive & Formation
+│   ├── 4. Santé & Réadaptation
+│   └── 5. Autonomisation Économique
 ├── Nos Projets & Impact
-│   ├── Projets en Cours & Cartographie Nord-Kivu
-│   ├── Témoignages & Rapports de Terrain
-│   └── Rapports Annuels & Financiers
-├── Espace Safeguarding & Signalement (Protection Enfants - Art. 22)
-│   ├── Charte de Protection de l'Enfant (Code de Conduite)
-│   ├── Présentation du Référent Protection
-│   └── Formulaire de Signalement Confidentiel
+│   ├── Projets de Terrain & Cartographie (Beni / Nord-Kivu)
+│   ├── Témoignages & Rapports
+│   └── Rapports Annuels (PDF)
+├── Espace Safeguarding & Signalement Confidentiel
+│   ├── Charte de Protection & Non-discrimination
+│   ├── Référent Protection
+│   └── Formulaire de Signalement Chiffré
 ├── Agir avec Nous
-│   ├── Faire un Don (Fundraising)
-│   ├── Devenir Membre (Adhérent / Bienfaiteur)
-│   └── Bénévolat & Recrutement (Postuler)
-├── Actualités & Médiathèque
-│   ├── Blog / Articles & Communiqués
-│   └── Galeries Photos & Vidéos
-└── Contact & Siège Social
+│   ├── Faire un Don (Mobile Money, Devises)
+│   ├── Devenir Membre / Adhésion
+│   └── Bénévolat & Engagement
+├── Actualités & Médias
+│   ├── Articles & Communiqués
+│   └── Galerie de Terrain
+└── Contact & Siège Social (Beni, RDC)
 ```
 
 ---
 
-## 4. DESCRIPTION DÉTAILLÉE DES MODULES ET FONCTIONNALITÉS
+## 4. DESCRIPTION DES MODULES ET FONCTIONNALITÉS
 
 ### 4.1 Page d'Accueil (Home Page)
-- **Hero Section Dynamique** : Visuels percutants, slogan de Bright African, boutons d'action rapides (« *Faire un don* », « *Rejoindre l'ONG* », « *Signalement Urgent* »).
-- **Compteur d'Impact en Temps Réel** : Chiffres clés (Enfants accompagnés, Écoles soutenues, Arbres plantés, Sensibilisations effectuées).
-- **Présentation des 4 Piliers** : Cartes interactives détaillant chaque domaine d'intervention.
-- **Section Actualités Récentes & Alertes** : Derniers communiqués de presse et articles de terrain.
-- **Partenaires & Bailleurs** : Carrousel des logos des partenaires institutionnels et techniques.
+- **Hero Section Dynamique** : Visuels clairs, titre officiel, slogan de l'ACPDPH, boutons d'action (« Faire un don », « Adhérer », « Signalement confidentiel »).
+- **Compteur d'Impact en Temps Réel** : Personnes accompagnées, écoles et centres inclusifs, aides techniques distribuées, plaidoyers menés.
+- **Présentation des Piliers** : Cartes interactives détaillant chaque domaine d'intervention.
+- **Section Actualités Récentes** : Derniers communiqués et rapports de terrain.
+- **Partenaires & Bailleurs** : Présentation des partenaires institutionnels.
 
-### 4.2 Module Safeguarding & Signalement d'Alerte (Conforme Art. 22)
-*Fonctionnalité critique obligatoire liée à la Politique de Sauvegarde des Enfants.*
-- **Formulaire de Signalement Securisé** :
-  - Envoi sécurisé et chiffré vers le **Référent Protection** nommé par le CA.
-  - Option d'anonymat garantie pour l'émetteur du signalement.
-  - Horodatage et numéro de suivi unique généré pour le traitement du dossier.
-  - Routage direct automatique vers le Référent Protection et le Président de l'ONG.
-- **Ressources Téléchargeables** : Charte de Protection de l'Enfant, Code de Conduite, Guide de Sauvegarde.
+### 4.2 Module Safeguarding & Signalement
+- **Formulaire de Signalement Sécurisé** :
+  - Envoi sécurisé vers le Référent Protection de l'ACPDPH.
+  - Option d'anonymat pour le lanceur d'alerte.
+  - Numéro de dossier confidentiel pour le suivi.
+- **Ressources Téléchargeables** : Charte de protection, engagements éthiques.
 
-### 4.3 Module Adhésion & Recrutement RH (Conforme Art. 17, 18 & 22.2)
-- **Formulaire de Demande d'Adhésion** :
-  - Formulaire pour Membres Adhérents et Membres Bienfaiteurs.
-  - Signature numérique / engagement à respecter les statuts, le ROI et la Charte de Protection des Enfants.
-- **Espace Candidatures & Recrutement (Salariés / Bénévoles / Stagiaires)** :
-  - Dépôt de CV et lettre de motivation.
-  - **Champs obligatoires de vérification des antécédents (Art. 22.2)** : Upload de l'Extrait de Casier Judiciaire (Bulletin n°3 < 3 mois) et Déclaration sur l'honneur signée.
+### 4.3 Module Adhésion & Recrutement
+- Formulaire pour Membres Adhérents et Sympathisants.
+- Engagement déontologique de respect des droits des personnes en situation de handicap.
 
-### 4.4 Module de Don en Ligne & Autofinancement (Conforme Art. 20)
-- **Interface de Don Multi-Devises (USD / CDF / EUR)** :
-  - Dons ponctuels ou réguliers (mensuels).
-  - Intégration des moyens de paiement adaptés au Nord-Kivu / RDC :
-    - **Mobile Money local** : M-Pesa (Vodacom), Airtel Money, Orange Money.
-    - **Paiements Internationaux** : Cartes Visa / Mastercard, PayPal, Virement Bancaire officiel de l'ONG (gestion avec double signature conjointe conforme Art. 16.2.4).
-- Reçu de don automatique généré au format PDF pour le donateur.
-
-### 4.5 Espace Transparence & Documents Téléchargeables
-- Téléchargement libre des documents légaux : Statuts signés de l'ONG, Règlement d'Ordre Intérieur, Rapports Annuels d'Activités, Rapports Financiers certifiés.
-
-### 4.6 Médiathèque Éthique
-- Galerie d'images et vidéos des projets.
-- **Règle Éthique & Floutage / Masquage (Art. 22.3)** : Conformité stricte au droit à l'image des mineurs et à la charte de sauvegarde (aucun visage d'enfant vulnérable affiché sans consentement formel écrit des tuteurs).
+### 4.4 Module de Don en Ligne
+- Multi-devises : USD, CDF, EUR.
+- Paiement adapté au contexte local (Mobile Money : M-Pesa, Airtel Money) et cartes bancaires.
 
 ---
 
-## 5. SPÉCIFICATIONS TECHNIQUES, ERGONOMIE ET SÉCURITÉ
+## 5. SPÉCIFICATIONS TECHNIQUES, ERGONOMIE ET CHARTE GRAPHIQUE
 
-### 5.1 Architecture Technique et CMS
-- **Technologies Web** : HTML5, CSS3 Moderne (Design System personnalisé), JavaScript ES6+ / React / Next.js ou CMS headless léger et réactif.
-- **Design System & Aesthetics** :
-  - Palette de couleurs professionnelles et chaleureuses (Vert Nature/Espoir, Bleu Protection/Trust, Or/Jaune Soleil d'Afrique).
-  - Typographie moderne et très lisible (Google Fonts : Outfit / Inter).
-  - Mode Sombre / Mode Clair adaptatif.
-  - Micro-animations fluides pour une expérience utilisateur premium.
-- **Responsive & Mobile-First** : Optimisation poussée pour smartphones et tablettes (plus de 80% des utilisateurs en RDC naviguent sur mobile).
-- **Optimisation Bande Passante** : Poids des pages ultra-léger (compression WebP/AVIF pour les images, mise en cache progressive) pour un chargement instantané même en connexion 3G/Edge au Nord-Kivu.
+### 5.1 Charte Graphique & Palette de Couleurs
+- **Palette de Couleurs** :
+  - **Bleu Principal** (#1D4ED8 / #2563EB / #1E40AF) : Symbole de confiance, de droits fondamentaux, de sérénité et d'institutionnel.
+  - **Blanc** (#FFFFFF) : Surfaces principales, cartes et fonds épurés.
+  - **Gris** (#F8FAFC, #F1F5F9, #64748B, #0F172A) : Textes, bordures délicates, fonds secondaires.
+- **Typographie** : Outfit & Inter (Google Fonts) pour une lisibilité maximale.
+- **Règle d'Iconographie** : Icônes vectorielles SVG soignées uniquement (aucun émoji Unicode dans l'interface).
+- **Mode Sombre / Mode Clair** adaptatif.
 
-### 5.2 Multilinguisme
-- **Langue Principale** : Français (Langue officielle de travail - Art. 23).
-- **Langue Secondaire** : Anglais (Indispensable pour la visibilité auprès des bailleurs de fonds et ONG internationales).
-
-### 5.3 Sécurité et Protection des Données (RGPD & Droits Congolais)
-- **Protocole SSL/HTTPS** obligatoire avec certificat valide.
-- **Chiffrement des Données Sensibles** : Chiffrement bout-en-bout des formulaires de signalement d'abus d'enfants (Safeguarding).
-- **Protection Anti-Spam & Anti-DDOS** : CAPTCHA invisible (reCAPTCHA v3 / Cloudflare TURNSTILE) sur tous les formulaires.
-- **Sauvegardes Automatiques** : Sauvegarde quotidienne de la base de données et hebdomadaire du site complet.
+### 5.2 Performance & Bande Passante
+- Optimisation pour connexions mobiles à faible débit (3G au Nord-Kivu).
+- Compression moderne des ressources et réactivité instantanée.
 
 ---
 
-## 6. PLANNING DE RÉALISATION ET PHASES DU PROJET
+## 6. CRITÈRES DE VALIDATION ET RECETTE
 
-| Phase | Description des Livrables | Durée Estimée |
-| :--- | :--- | :--- |
-| **Phase 1 : Conception UX/UI** | Maquettes fonctionnelles (Wireframes), Charte graphique, Arborescence validée | 1 semaine |
-| **Phase 2 : Développement Front-End & Back-End** | Intégration du Design System, Développement des modules (Safeguarding, Dons, Adhésion) | 2 semaines |
-| **Phase 3 : Intégration du Contenu & Textes Légaux** | Intégration des statuts, photos, fiches projets et paramétrage du Mobile Money | 1 semaine |
-| **Phase 4 : Tests & Securité** | Audit de sécurité, tests responsive 3G/4G, validation du canal de signalement | 3 jours |
-| **Phase 5 : Déploiement & Formation** | Mise en ligne sur le nom de domaine officiel (`.org`), formation de l'équipe d'administration à Goma | 2 jours |
-
----
-
-## 7. CRITÈRES DE VALIDATION ET RECETTE
-
-Le projet sera considéré comme validé après vérification des critères suivants :
-1. ✅ Conformité à 100% avec les **Statuts de l'ONG Bright African** (Gouvernance, Vision, 4 Piliers).
-2. ✅ Bon fonctionnement du **Module de Signalement Safeguarding** (Art. 22) et routage vers le Référent Protection.
-3. ✅ Intégration fonctionnelle du **Module de Don** (Mobile Money + Carte).
-4. ✅ Chargement rapide et parfait affichage sur mobile en zone à faible débit internet.
-5. ✅ Formation de l'équipe administrative de Bright African à la mise à jour des contenus.
+Le projet est validé sur base des critères suivants :
+1. Conformité rigoureuse avec la dénomination officielle « AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH ».
+2. Application intégrale de la palette de couleurs bleue, blanche et grise sur l'ensemble des pages publiques et administratives.
+3. Réinitialisation complète et propre du fichier `.gitignore`.
+4. Remplacement exhaustif de toute mention antérieure par ACPDPH.
+5. Respect strict de la règle d'interdiction totale d'émojis Unicode au profit d'icônes SVG.
+6. Absence totale d'erreurs de build TypeScript frontend et backend.
 
 ---
-*Document établi pour l'ONG Bright African — Ville de Goma, Nord-Kivu, RDC.*
+*Document officiel ACPDPH — Ville de Beni, Nord-Kivu, RDC.*

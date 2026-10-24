@@ -1,11 +1,11 @@
 {
   "nav": {
     "home": "Accueil",
-    "about": "À Propos",
-    "pillars": "Nos Piliers",
+    "about": "Qui sommes-nous",
+    "pillars": "Domaines d'intervention",
     "projects": "Projets & Impact",
-    "safeguarding": "Safeguarding",
-    "act": "Agir avec Nous",
+    "safeguarding": "Protection & Sauvegarde",
+    "act": "Nous soutenir",
     "news": "Actualités",
     "contact": "Contact",
     "donate": "Faire un Don",
@@ -13,151 +13,155 @@
   },
   "projects": {
     "title": "Nos Projets",
-    "subtitle": "Découvrez nos actions sur le terrain et l'impact que nous créons ensemble à travers le continent africain. Chaque projet que nous déployons est pensé pour répondre aux besoins vitaux et urgents des communautés, tout en bâtissant des fondations solides pour un avenir autonome, pacifique et durable.",
+    "subtitle": "Découvrez nos réalisations et nos projets en cours pour la promotion, l'inclusion et la protection des personnes vivant avec handicap en République Démocratique du Congo. Chaque initiative vise des résultats mesurables et durables pour nos bénéficiaires.",
     "view_details": "Voir les détails",
     "back_to_projects": "Retour aux projets",
     "back_to_all_projects": "Retour à tous les projets",
     "about_project": "À propos du projet",
     "photo_gallery": "Galerie photos",
     "contact_us_about": "Nous contacter à propos de ce projet",
-    "annual_reports": "Rapports Annuels",
-    "reports_subtitle": "La transparence est au cœur de notre gouvernance. Consultez nos rapports d'activités et financiers.",
+    "annual_reports": "Rapports & Publications",
+    "reports_subtitle": "La transparence et la redevabilité guident nos actions. Consultez nos rapports institutionnels, d'activités et financiers certifiés.",
     "no_projects": "Aucun projet pour l'instant.",
     "report_pdf": "Rapport"
   },
   "hero": {
-    "badge": "ONG Panafricaine de Protection de l'Enfant",
-    "title1": "Protéger l'avenir",
-    "title2": "des enfants d'Afrique",
-    "subtitle": "Nous œuvrons pour la protection, l'éducation, la santé et l'environnement des enfants en Afrique. Rejoignez notre mouvement pour un avenir meilleur.",
+    "badge": "AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH",
+    "title1": "Promouvoir les droits",
+    "title2": "des personnes handicapées",
+    "subtitle": "L'ACPDPH œuvre pour la défense des droits, l'accessibilité universelle, l'éducation inclusive, la santé adaptée et l'autonomisation socio-économique en RDC.",
     "cta_donate": "Faire un Don",
     "cta_join": "Rejoindre l'ONG",
-    "cta_report": "Signalement Urgent"
+    "cta_report": "Signalement & Sauvegarde"
   },
   "impact": {
-    "title": "Notre Impact en Chiffres",
-    "subtitle": "Des résultats concrets et mesurables sur le terrain, portés par nos équipes engagées à travers l'Afrique. Chaque chiffre représente une vie transformée, une communauté renforcée et un pas de plus vers un avenir durable pour les enfants, les femmes et les populations vulnérables du continent africain.",
-    "children": "Enfants accompagnés",
-    "schools": "Écoles soutenues",
-    "trees": "Arbres plantés",
-    "sessions": "Sensibilisations"
+    "title": "Notre Impact sur le Terrain",
+    "subtitle": "Des avancées concrètes et mesurables pour l'inclusion des personnes handicapées en République Démocratique du Congo.",
+    "children": "Personnes accompagnées",
+    "schools": "Écoles & Centres inclusifs",
+    "trees": "Aides techniques remises",
+    "sessions": "Plaidoyers & Formations"
   },
   "pillars": {
-    "title": "Nos Piliers d'Intervention",
-    "subtitle": "Conformément à l'Article 9 de nos statuts, BRIGHT AFRICAN déploie ses actions à travers quatre domaines d'intervention stratégiques et complémentaires, conçus pour répondre de manière holistique aux défis les plus urgents auxquels font face les communautés vulnérables à travers le continent africain. Chaque pilier constitue un axe fondamental de notre engagement et reflète notre vision d'un développement durable, inclusif et centré sur la dignité humaine. De la protection de l'enfance à la promotion de la santé maternelle et infantile, en passant par l'éducation environnementale et la consolidation de la paix, nos interventions visent à créer un impact profond et durable dans chaque communauté que nous accompagnons. Grâce à une approche participative et à des partenariats solides avec les acteurs locaux, les institutions gouvernementales et les organisations internationales, BRIGHT AFRICAN s'efforce de bâtir des sociétés plus justes, plus résilientes et plus solidaires pour les générations présentes et futures.",
+    "title": "Nos Domaines d'Intervention",
+    "subtitle": "L'ACPDPH concentre son action autour de cinq axes stratégiques pour garantir l'épanouissement intégral, l'égalité des chances et la pleine participation citoyenne des personnes en situation de handicap.",
     "protection": {
-      "title": "Protection de l'Enfant",
-      "desc": "Lutte contre les violences, l'exploitation, le travail des enfants, le mariage précoce et le recrutement armé. Accompagnement psychosocial, juridique et alertes aux autorités compétentes (Parquet, Affaires Sociales)."
+      "title": "Droits & Plaidoyer",
+      "desc": "Promotion et défense des droits fondamentaux des personnes handicapées, vulgarisation des lois nationales et conventions internationales, et lutte sans relâche contre toutes formes de discrimination et d'exclusion sociale."
     },
     "health": {
-      "title": "Santé Maternelle & Infantile",
-      "desc": "Promotion de la santé de la mère et de l'enfant, organisation de campagnes de sensibilisation à l'hygiène, à l'assainissement et à la prévention sanitaire au sein des communautés."
+      "title": "Accessibilité Universelle",
+      "desc": "Plaidoyer et actions concrètes pour l'accessibilité des infrastructures publiques, des transports, de l'espace urbain et des outils de communication pour toutes les formes de handicap."
     },
     "education": {
-      "title": "Éducation & Formation",
-      "desc": "Soutien à la scolarisation des enfants et des jeunes filles vulnérables, programmes d'alphabétisation et formations professionnelles pour l'autonomisation des jeunes."
+      "title": "Éducation Inclusive",
+      "desc": "Intégration scolaire des enfants et jeunes avec handicap, formation des enseignants à la pédagogie inclusive, adaptation des cursus et fourniture de matériels didactiques appropriés."
     },
     "environment": {
-      "title": "Protection de l'Environnement",
-      "desc": "Actions de reboisement, préservation des écosystèmes, lutte contre la déforestation, sensibilisation au changement climatique et gestion durable du cadre de vie."
+      "title": "Santé & Réadaptation",
+      "desc": "Accès aux soins spécialisés, réadaptation physique et fonctionnelle, accompagnement psychosocial et distribution d'aides à la mobilité (béquilles, tricycles, fauteuils roulants, prothèses)."
+    },
+    "autonomy": {
+      "title": "Autonomisation Socio-économique",
+      "desc": "Formations aux métiers porteurs, appui à la création d'activités génératrices de revenus et insertion socioprofessionnelle pour favoriser une véritable autonomie financière."
     },
     "learn_more": "En savoir plus"
   },
   "news": {
-    "title": "Dernières Actualités",
-    "subtitle": "Restez informés de nos actions sur le terrain à travers le continent africain. Nos actualités vous plongent au cœur de nos interventions quotidiennes, des témoignages des communautés que nous accompagnons et des avancées significatives réalisées dans les domaines de la protection de l'enfance, de la santé maternelle, de l'éducation environnementale et de la consolidation de la paix.",
+    "title": "Actualités & Plaidoyers",
+    "subtitle": "Suivez les formations, sensibilisations, actions de terrain et témoignages portés par l'ACPDPH en faveur de l'inclusion.",
     "read_more": "Lire la suite",
     "all_news": "Toutes les actualités"
   },
   "partners": {
     "title": "Nos Partenaires",
-    "subtitle": "Ils nous font confiance et soutiennent notre mission"
+    "subtitle": "Bailleurs de fonds, institutions publiques, ONG et réseaux partenaires unis pour l'inclusion"
   },
   "cta": {
-    "title": "Ensemble, construisons un avenir meilleur pour les enfants",
-    "subtitle": "Chaque geste compte. Rejoignez Bright African et contribuez à protéger les droits de l'enfant en Afrique.",
+    "title": "Ensemble pour une société inclusive sans discrimination",
+    "subtitle": "Votre engagement et vos contributions permettent de bâtir un environnement digne et accessible pour toutes et tous en RDC.",
     "donate": "Faire un Don",
-    "join": "Devenir Membre"
+    "join": "Nous Rejoindre"
   },
   "about": {
     "title": "Qui sommes-nous ?",
-    "subtitle": "Découvrez le cadre légal, la vision, la mission et la gouvernance statutaire de l'ONG Bright African, engagée à travers tout le continent africain pour offrir un avenir meilleur aux enfants et bâtir des communautés résilientes.",
-    "history_title": "Cadre Légal & Identité",
-    "history_text": "Créée le 1er Janvier 2026 à Goma, BRIGHT AFRICAN (BA en sigle) est une Organisation Non Gouvernementale (ONG) et Association Sans But Lucratif (ASBL) régie conformément à la loi n° 004/2001 du 20 juillet 2001 relative aux ASBL en République Démocratique du Congo. Son siège social est établi à Goma (Avenue de la Paix, Quartier Himbi) et son rayon d'action s'étend à travers tout le continent africain.",
+    "subtitle": "Découvrez l'historique, le statut juridique, la vision, la mission et la gouvernance de l'AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH.",
+    "history_title": "Historique & Statut Juridique",
+    "history_text": "L'AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH est une Organisation Non Gouvernementale reconnue en République Démocratique du Congo. Son siège social est établi à Beni (Nord-Kivu) avec un champ d'action s'étendant sur l'ensemble du territoire national et des collaborations internationales.",
     "vision_title": "Notre Vision",
-    "vision_text": "La vision de BRIGHT AFRICAN est de créer un environnement protecteur, sain et éducatif, garantissant le bien-être, la sécurité et le développement harmonieux de l'enfant.",
+    "vision_text": "Bâtir une société congolaise juste, inclusive et solidaire où chaque personne handicapée jouit pleinement de ses droits fondamentaux, dispose d'un accès universel aux opportunités et participe activement au développement communautaire.",
     "mission_title": "Notre Mission",
-    "mission_text": "La mission principale de BRIGHT AFRICAN est de promouvoir, protéger et défendre les droits des enfants en leur assurant un accès à l'éducation, à la santé, à la protection et à un environnement sûr, afin qu'ils puissent s'épanouir et contribuer au développement de l'Afrique.",
-    "governance_title": "Organes Dirigeants",
-    "ag": "Assemblée Générale (AGO / AGE)",
-    "ag_desc": "Organe souverain de l'ONG, composé des membres fondateurs et adhérents. Elle définit la politique globale, adopte les statuts et élit les administrateurs.",
+    "mission_text": "Promouvoir, protéger et défendre les droits des personnes handicapées en garantissant leur accessibilité, leur éducation inclusive, leur santé et réadaptation, ainsi que leur autonomisation socio-économique.",
+    "governance_title": "Organes de Gouvernance & Équipe",
+    "ag": "Assemblée Générale",
+    "ag_desc": "Organe souverain de l'organisation, regroupant les membres fondateurs et adhérents pour définir les grandes orientations stratégiques.",
     "ca": "Conseil d'Administration",
-    "ca_desc": "Organe d'administration et d'orientation composé de 5 à 9 membres élus pour un mandat de 3 ans. Il supervise la mise en œuvre des actions et la gestion.",
-    "bureau": "Coordination",
-    "bureau_desc": "Organe exécutif d'orientation stratégique et de coordination des programmes sur le terrain conformément aux directives du Conseil d'Administration.",
-    "direction": "Direction Générale",
-    "direction_desc": "Organe de conduite opérationnelle, administrative, financière et technique quotidienne des projets de l'ONG.",
-    "docs_title": "Documents Officiels",
-    "download_statuts": "Télécharger les Statuts (PDF)",
-    "download_roi": "Télécharger le ROI"
+    "ca_desc": "Organe d'orientation et de supervision garantissant la bonne gouvernance et le contrôle des programmes menés par l'ACPDPH.",
+    "bureau": "Coordination Exécutive",
+    "bureau_desc": "Équipe de coordination opérationnelle chargée du suivi technique des projets, des partenariats et du plaidoyer.",
+    "direction": "Direction des Programmes",
+    "direction_desc": "Conduite opérationnelle quotidienne des projets sur le terrain à Beni et dans les territoires d'intervention.",
+    "docs_title": "Publications & Documents Officiels",
+    "download_statuts": "Télécharger les Statuts de l'ACPDPH (PDF)",
+    "download_roi": "Télécharger le Règlement d'Ordre Intérieur"
   },
   "safeguarding": {
-    "title": "Espace Safeguarding & Sauvegarde",
-    "subtitle": "Politique renforcée de protection de l'enfant",
-    "charter_title": "Charte de Protection de l'Enfant",
-    "charter_text": "Conformément à nos Statuts, BRIGHT AFRICAN applique une politique stricte de sauvegarde des enfants. Toute personne intervenant auprès des enfants s'engage à signer et respecter le code de conduite, à fournir un extrait de casier judiciaire vierge (bulletin n°3) et à suivre les formations internes.",
-    "referent_title": "Référent Protection",
-    "referent_text": "Le Conseil d'Administration désigne en son sein un Référent Protection chargé de veiller à l'application de la politique de sauvegarde, de recevoir et traiter les signalements et d'assurer le suivi des actions correctives.",
+    "title": "Protection & Sauvegarde",
+    "subtitle": "Politique de tolérance zéro envers les abus, l'exploitation et la discrimination",
+    "charter_title": "Charte de Protection et de Non-Discrimination",
+    "charter_text": "L'ACPDPH applique une politique rigoureuse de sauvegarde et de protection des personnes vulnérables et des personnes handicapées. Tout intervenant s'engage à respecter notre code de déontologie et d'éthique.",
+    "referent_title": "Référent Protection & Sauvegarde",
+    "referent_text": "Un Référent Protection nommé par la gouvernance est chargé de recueillir, traiter de façon confidentielle les signalements et veiller au respect des droits de chaque bénéficiaire.",
     "form_title": "Formulaire de Signalement Confidentiel",
-    "form_subtitle": "Conformément au devoir de signalement statutaire, signalez en toute confidentialité toute suspicion ou acte de maltraitance, d'abus, d'exploitation ou de violence faite à un enfant.",
-    "form_type": "Type d'incident",
+    "form_subtitle": "Signalez en toute sécurité et confidentialité tout incident, violation de droits, abus ou acte discriminatoire à l'encontre d'une personne handicapée.",
+    "form_type": "Nature du signalement",
     "form_desc": "Description détaillée des faits",
-    "form_location": "Lieu de l'incident (Ville, Quartier, École...)",
+    "form_location": "Lieu de l'incident (Ville, Quartier, Structure...)",
     "form_date": "Date approximative",
-    "form_anonymous": "Soumettre anonymement",
+    "form_anonymous": "Transmettre anonymement",
     "form_name": "Votre nom (optionnel)",
-    "form_contact": "Votre contact (optionnel)",
+    "form_contact": "Votre téléphone / email (optionnel)",
     "form_submit": "Envoyer le signalement",
-    "form_disclaimer": "Ce signalement est transmis en toute confidentialité au Référent Protection et à la Présidence. Aucun membre ne peut subir de sanction pour un signalement fait de bonne foi."
+    "form_disclaimer": "Ce signalement est chiffré et transmis directement au Référent Protection de l'ACPDPH. La confidentialité et la protection de l'émetteur sont rigoureusement garanties."
   },
   "act": {
-    "title": "Agir avec Nous",
-    "subtitle": "Plusieurs façons de soutenir notre mission",
+    "title": "Nous Soutenir",
+    "subtitle": "Dons, partenariats et appels à collaboration pour l'inclusion en RDC",
     "donate_title": "Faire un Don",
-    "donate_subtitle": "Soutenez le financement de nos actions sur le terrain en Afrique",
-    "member_title": "Devenir Membre",
-    "member_subtitle": "Rejoignez notre communauté d'adhérents",
-    "volunteer_title": "Bénévolat & Engagement",
-    "volunteer_subtitle": "Mettez vos compétences au service de la protection de l'enfant",
+    "donate_subtitle": "Participez au financement de prothèses, tricycles, bourses scolaires et kits d'autonomisation",
+    "member_title": "Devenir Membre & Partenaire",
+    "member_subtitle": "Rejoignez l'ACPDPH en tant que membre adhérent, bénévole ou partenaire institutionnel",
+    "volunteer_title": "Bénévolat & Plaidoyer",
+    "volunteer_subtitle": "Mettez vos compétences au service de la promotion des personnes handicapées",
     "amount": "Montant",
     "currency": "Devise",
     "frequency": "Fréquence",
     "one_time": "Don ponctuel",
     "monthly": "Don mensuel",
-    "payment_method": "Moyen de paiement",
-    "submit_donation": "Confirmer le don"
+    "payment_method": "Mode de règlement",
+    "submit_donation": "Valider le don"
   },
   "contact": {
     "title": "Contactez-nous",
-    "subtitle": "Notre équipe permanente est à votre écoute au siège social de Goma",
-    "address_title": "Siège Social",
-    "address": "Avenue de la Paix, Quartier Himbi, Commune de Goma, Ville de Goma, Province du Nord-Kivu, RDC",
+    "subtitle": "Notre équipe est à votre écoute au siège social de Beni",
+    "address_title": "Adresse & Siège Social",
+    "address": "Beni, Province du Nord-Kivu, République Démocratique du Congo",
     "form_name": "Nom complet",
-    "form_email": "Adresse email",
-    "form_subject": "Sujet",
+    "form_email": "Adresse courriel",
+    "form_subject": "Objet du message",
     "form_message": "Votre message",
     "form_send": "Envoyer le message"
   },
   "footer": {
-    "description": "ONG de protection et promotion des droits de l'enfant en Afrique.",
-    "quick_links": "Liens Rapides",
-    "legal": "Informations Légales",
+    "description": "AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH. Organisation Non Gouvernementale engagée pour l'accessibilité, l'éducation inclusive, la santé et l'autonomisation en RDC.",
+    "quick_links": "Navigation",
+    "legal": "Documents & Légal",
     "privacy": "Politique de confidentialité",
-    "terms": "Conditions d'utilisation",
-    "statuts": "Statuts de l'ONG",
-    "newsletter_title": "Newsletter",
-    "newsletter_subtitle": "Recevez nos dernières nouvelles",
-    "newsletter_placeholder": "Votre adresse email",
+    "terms": "Mentions légales",
+    "statuts": "Statuts de l'ACPDPH",
+    "newsletter_title": "Lettre d'Information",
+    "newsletter_subtitle": "Recevez nos rapports de projets et alertes de plaidoyer",
+    "newsletter_placeholder": "Votre adresse courriel",
     "newsletter_submit": "S'abonner",
     "rights": "Tous droits réservés."
   }

@@ -1,5 +1,5 @@
 // URL du backend — utilise la variable d'env Vite si définie, sinon l'URL Render en production
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://brightafrica-api.onrender.com/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://acpdph-api.onrender.com/api/v1';
 
 export interface ApiResponse<T = any> {
   success: boolean;

@@ -21,7 +21,7 @@ export default function ContactManager() {
     <div>
       <div style={{ marginBottom: '1.5rem' }}>
         <p style={{ color: '#E5E7EB', fontSize: '0.875rem' }}>
-          Modifiez les informations de contact officielles de l'ONG Bright African.
+          Modifiez les informations de contact officielles de l'ACPDPH (AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH).
         </p>
       </div>
 
@@ -34,7 +34,7 @@ export default function ContactManager() {
               rows={3}
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
-              placeholder="Ex: Avenue de la Paix, Quartier Himbi, Commune de Goma, Nord-Kivu, RDC"
+              placeholder="Ex: N° 08, Avenue Ruwenzori, Quartier Résidentiel, Ville de Beni, Nord-Kivu, RDC"
               required
             />
           </div>
@@ -46,7 +46,7 @@ export default function ContactManager() {
               className="admin-input"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="Ex: contact@brightafrica.org"
+              placeholder="Ex: contact@acpdph.org"
               required
             />
           </div>
@@ -66,9 +66,9 @@ export default function ContactManager() {
           {saved && (
             <div
               style={{
-                background: 'rgba(26, 143, 10, 0.12)',
-                border: '1px solid rgba(26, 143, 10, 0.3)',
-                color: '#3DD632',
+                background: 'rgba(37, 99, 235, 0.12)',
+                border: '1px solid rgba(37, 99, 235, 0.3)',
+                color: '#60A5FA',
                 padding: '0.75rem 1rem',
                 borderRadius: '0.625rem',
                 fontSize: '0.875rem',
@@ -85,7 +85,7 @@ export default function ContactManager() {
           )}
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
-            <button type="submit" className="admin-btn admin-btn-green">
+            <button type="submit" className="admin-btn admin-btn-blue">
               <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>

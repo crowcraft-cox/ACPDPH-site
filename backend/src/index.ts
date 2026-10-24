@@ -59,10 +59,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`[Server] Bright African API running on port ${PORT}`);
+  console.log(`[Server] ACPDPH API running on port ${PORT}`);
 
   // Self-ping pour maintenir le serveur actif sur Render (toutes les 10 minutes)
-  const RENDER_URL = 'https://brightafrica-api.onrender.com/health';
+  const RENDER_URL = 'https://acpdph-api.onrender.com/health';
   setInterval(() => {
     fetch(RENDER_URL)
       .then(res => console.log(`[Keep-Alive Ping] ${new Date().toISOString()} - Status: ${res.status}`))

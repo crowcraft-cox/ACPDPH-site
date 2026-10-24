@@ -496,10 +496,11 @@ export default function NewsManager() {
                     <select
                       className="admin-select"
                       value={form.color}
-                      onChange={(e) => setForm({ ...form, color: e.target.value as 'ba-red' | 'ba-green' })}
+                      onChange={(e) => setForm({ ...form, color: e.target.value as 'ba-red' | 'ba-green' | 'ba-blue' })}
                     >
-                      <option value="ba-red">Rouge Bright</option>
-                      <option value="ba-green">Vert Bright</option>
+                      <option value="ba-blue">Bleu Principal (ACPDPH)</option>
+                      <option value="ba-red">Bleu Cobalt</option>
+                      <option value="ba-green">Bleu Océan</option>
                     </select>
                   </div>
                 </div>
@@ -509,7 +510,7 @@ export default function NewsManager() {
 
             <div className="admin-modal-footer">
               <button className="admin-btn admin-btn-ghost" onClick={closeModal}>Annuler</button>
-              <button className="admin-btn admin-btn-green" onClick={handleSave}>
+              <button className="admin-btn admin-btn-blue" onClick={handleSave}>
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>

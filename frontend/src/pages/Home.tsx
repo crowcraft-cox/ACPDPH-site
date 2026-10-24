@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '../i18n';
-import { useScrollReveal, useCountUp } from '../hooks/useScrollReveal';
+import { useScrollReveal, useCountUp, useAnimeReveal } from '../hooks/useScrollReveal';
 import { useAdminData } from '../context/adminData';
 import type { Project, NewsArticle } from '../types';
+import { animate } from 'animejs';
 
 export default function Home() {
   return (
@@ -29,7 +30,7 @@ function HeroSection() {
   const { data } = useAdminData();
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [fading, setFading] = useState(false);
+  const slideContentRef = useRef<HTMLDivElement>(null);
 
   /* Build dynamic slides array: Default -> Project 1 -> News 1 -> Project 2 -> News 2 */
   const slides: HeroSlide[] = [{ kind: 'default' }];
@@ -39,28 +40,37 @@ function HeroSection() {
   if (data.projects.length > 1) slides.push({ kind: 'project', data: data.projects[1] });
   if (data.news.length > 1) slides.push({ kind: 'news', data: data.news[1] });
 
-  /* Auto-rotate slides every 5 seconds */
+  /* Auto-rotate slides every 6 seconds with smooth Anime.js transition */
   useEffect(() => {
     if (slides.length <= 1) return;
 
     const timer = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % slides.length);
-        setFading(false);
-      }, 400);
-    }, 5000);
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, 6000);
 
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  /* Anime.js entrance whenever active slide changes */
+  useEffect(() => {
+    const el = slideContentRef.current;
+    if (!el) return;
+
+    const anim = animate(el, {
+      opacity: [0, 1],
+      translateY: [18, 0],
+      duration: 650,
+      ease: 'outExpo',
+    });
+
+    return () => {
+      if (anim && typeof anim.pause === 'function') anim.pause();
+    };
+  }, [currentIndex]);
+
   const goToSlide = (idx: number) => {
     if (idx === currentIndex) return;
-    setFading(true);
-    setTimeout(() => {
-      setCurrentIndex(idx);
-      setFading(false);
-    }, 300);
+    setCurrentIndex(idx);
   };
 
   const currentSlide = slides[currentIndex] || slides[0];
@@ -80,26 +90,26 @@ function HeroSection() {
       {/* Dark Overlay */}
       <div className="absolute inset-0 z-0 bg-black/65" />
       
-      {/* Animated Shapes */}
+      {/* Subtle Shapes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-1/3 -left-20 w-72 h-72 rounded-full bg-ba-green/10 animate-float" />
-        <div className="absolute bottom-20 right-1/4 w-60 h-60 rounded-full bg-ba-red/10 animate-pulse-soft" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-1/3 -left-20 w-72 h-72 rounded-full bg-ba-blue/10 animate-float" />
+        <div className="absolute bottom-20 right-1/4 w-60 h-60 rounded-full bg-ba-blue/10 animate-pulse-soft" style={{ animationDelay: '1.5s' }} />
       </div>
 
       <div className="relative container-ba text-center text-white z-10 pt-28 pb-20 md:pt-32 md:pb-24 flex flex-col items-center justify-center min-h-[380px]">
 
-        {/* Dynamic Content Box with Fade Transition */}
+        {/* Dynamic Content Box with Anime.js Transition */}
         <div
-          className="w-full flex flex-col items-center justify-center transition-all duration-500"
-          style={{ opacity: fading ? 0 : 1, transform: fading ? 'scale(0.98)' : 'scale(1)' }}
+          ref={slideContentRef}
+          className="w-full flex flex-col items-center justify-center"
         >
           {/* SLIDE 0: DEFAULT HERO PRESENTATION */}
           {currentSlide.kind === 'default' && (
             <>
               <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[5rem] font-bold mb-6 leading-tight max-w-5xl">
                 <span className="block">{t.hero.title1}</span>
-                <span className="block mt-2">
-                  <span className="gradient-text-red">{t.hero.title2}</span>
+                <span className="block mt-2 text-ba-blue-light">
+                  {t.hero.title2}
                 </span>
               </h1>
 
@@ -118,7 +128,7 @@ function HeroSection() {
 
               <div className="flex flex-col md:flex-row items-center gap-8 my-3 text-center md:text-left max-w-4xl">
                 {currentSlide.data.image && (
-                  <div className="w-full md:w-64 h-48 rounded-2xl overflow-hidden flex-shrink-0 border border-white/20 shadow-2xl">
+                  <div className="w-full md:w-64 h-48 rounded-2xl overflow-hidden flex-shrink-0 border border-white/20">
                     <img src={currentSlide.data.image} alt={currentSlide.data.title} className="w-full h-full object-cover" />
                   </div>
                 )}
@@ -128,15 +138,15 @@ function HeroSection() {
                   </p>
                   <div className="flex flex-wrap items-center gap-4">
                     <span className="text-sm text-gray-300 font-medium flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 text-ba-red shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <svg className="w-3.5 h-3.5 text-ba-blue-light shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                       </svg>
-                      {currentSlide.data.location} — <span className="text-ba-red font-semibold">{currentSlide.data.status}</span>
+                      {currentSlide.data.location} — <span className="text-ba-blue-light font-semibold">{currentSlide.data.status}</span>
                     </span>
                     <Link
                       to={`/projects/${currentSlide.data.id}`}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ba-red hover:bg-ba-red-dark text-white text-sm font-semibold transition-all shadow-lg hover:scale-105"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ba-blue hover:bg-ba-blue-dark text-white text-sm font-semibold transition-all hover:translate-y-[-2px]"
                     >
                       Lire plus sur ce projet
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -164,7 +174,7 @@ function HeroSection() {
                 <span className="text-sm text-gray-300">Publié le {currentSlide.data.date}</span>
                 <Link
                   to="/news"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ba-green hover:bg-ba-green-dark text-white text-sm font-semibold transition-all shadow-lg hover:scale-105"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ba-blue hover:bg-ba-blue-dark text-white text-sm font-semibold transition-all hover:translate-y-[-2px]"
                 >
                   Lire plus
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -186,7 +196,7 @@ function HeroSection() {
                 aria-label={`Slide ${idx + 1}`}
                 className={`transition-all duration-300 cursor-pointer ${
                   idx === currentIndex
-                    ? 'w-8 h-3 bg-ba-red rounded-full'
+                    ? 'w-8 h-3 bg-ba-blue rounded-full'
                     : 'w-3 h-3 bg-white/40 hover:bg-white/70 rounded-full'
                 }`}
               />
@@ -202,16 +212,16 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* Overlapping CTA Buttons (Always Fixed at bottom) */}
+      {/* Overlapping CTA Buttons (Fixed at bottom) */}
       <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-20 px-4">
-        <div className="container-ba flex flex-col md:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-          <Link to="/act" className="btn btn-red btn-lg group shadow-xl">
+        <div className="container-ba flex flex-col md:flex-row items-center justify-center gap-4">
+          <Link to="/act" className="btn btn-blue btn-lg group">
             <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
             {t.hero.cta_donate}
           </Link>
-          <Link to="/safeguarding" className="btn btn-outline btn-lg border-white/20 text-white bg-ba-dark/80 backdrop-blur-md hover:border-ba-red hover:text-ba-red shadow-xl">
+          <Link to="/safeguarding" className="btn btn-outline btn-lg border-white/20 text-white bg-ba-dark/90 backdrop-blur-md hover:border-ba-blue hover:text-ba-blue">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
@@ -223,87 +233,155 @@ function HeroSection() {
   );
 }
 
-/* ===== IMPACT COUNTERS ===== */
+/* ===== IMPACT COUNTERS (DE-AI RULES APPLIED: 1 PRIMARY, 3 SECONDARY, THE NUMBER IS THE HERO) ===== */
 function ImpactSection() {
   const { t } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollReveal();
   const { data } = useAdminData();
 
   const counters = data.impact;
+  const primaryItem = counters[0] || { value: 2500, label: 'Personnes accompagnées' };
+  const secondaryItems = counters.slice(1, 4);
 
   return (
     <section className="section-padding pt-36 sm:pt-40 md:pt-24 bg-ba-surface-elevated relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-ba-red/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-ba-green/20 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-ba-border" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-ba-border" />
       </div>
 
       <div ref={sectionRef} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        <div className="text-center mb-8 impact-title-offset">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">{t.impact.title}</h2>
-          <p className="text-ba-text-secondary text-justify">{t.impact.subtitle}</p>
+        <div className="text-center mb-10 impact-title-offset max-w-2xl mx-auto">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
+            Bilan d'impact vérifié
+          </span>
+          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-3">{t.impact.title}</h2>
+          <p className="text-ba-text-secondary text-base leading-relaxed">{t.impact.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {counters.map((item, i) => (
-            <CounterCard key={item.id || i} value={item.value} label={item.label} color={item.color} delay={i * 200} />
-          ))}
+        {/* 1 PRIMARY + 3 SECONDARIES GRID (RULE 3 & RULE 2) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          
+          {/* PRIMARY CARD (The Hero Metric) */}
+          <div className="lg:col-span-5 flex">
+            <PrimaryCounterCard 
+              value={primaryItem.value} 
+              label={primaryItem.label} 
+              description="Bénéficiaires directs et familles accompagnés vers l'accès aux soins, à l'éducation inclusive, à l'autonomie et aux droits fondamentaux."
+            />
+          </div>
+
+          {/* THREE SECONDARY CARDS (Grouped & streamlined) */}
+          <div className="lg:col-span-7 flex flex-col justify-between gap-4">
+            {secondaryItems.map((item, idx) => (
+              <SecondaryCounterCard 
+                key={item.id || idx} 
+                value={item.value} 
+                label={item.label} 
+                index={idx + 1}
+              />
+            ))}
+          </div>
+
         </div>
       </div>
     </section>
   );
 }
 
-function CounterCard({ value, label, color, delay }: { value: number; label: string; color: string; delay: number }) {
-  const { count, ref } = useCountUp(value, 2500);
-
-  const isRed = color === 'ba-red';
+/* Primary Hero Card: largest number, prominent hierarchy, context */
+function PrimaryCounterCard({ value, label, description }: { value: number; label: string; description: string }) {
+  const { count, ref } = useCountUp(value, 2200);
 
   return (
     <div
       ref={ref}
-      className="glass-card rounded-3xl p-6 md:p-8 text-center group relative overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
-      style={{ animationDelay: `${delay}ms` }}
+      className="glass-card w-full rounded-2xl p-7 md:p-9 flex flex-col justify-between border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
     >
-      {/* Background ambient glow */}
-      <div className={`absolute -right-8 -bottom-8 w-28 h-28 rounded-full blur-3xl opacity-20 pointer-events-none ${isRed ? 'bg-ba-red' : 'bg-ba-green'}`} />
+      <div>
+        <div className="flex items-center justify-between gap-2 mb-6">
+          <span className="text-xs font-bold uppercase tracking-wider text-ba-blue bg-ba-blue/10 px-3 py-1 rounded-full">
+            Indicateur Majeur
+          </span>
+          <span className="text-xs text-ba-text-muted">Région Nord-Kivu</span>
+        </div>
 
-      <div className="relative z-10 flex flex-col items-center">
-        <span className={`font-heading text-3xl md:text-4xl font-extrabold tracking-tight ${isRed ? 'text-ba-red' : 'text-ba-green'} block mb-2 transition-transform duration-300 group-hover:scale-105`}>
-          {count.toLocaleString()}+
-        </span>
-        <span className="text-ba-text-secondary text-sm md:text-base font-medium">{label}</span>
+        <div className="mb-4">
+          <div className="font-heading text-5xl sm:text-6xl font-black tracking-tight text-ba-blue mb-1">
+            {count.toLocaleString('fr-FR')}+
+          </div>
+          <h3 className="font-heading text-xl sm:text-2xl font-bold text-ba-text-primary">
+            {label}
+          </h3>
+        </div>
+
+        <p className="text-ba-text-secondary text-sm leading-relaxed mb-6">
+          {description}
+        </p>
+      </div>
+
+      <div className="pt-4 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between text-xs text-ba-text-muted">
+        <span>Rapport de terrain 2026</span>
+        <span className="font-semibold text-ba-blue">Audit annuel conforme</span>
       </div>
     </div>
   );
 }
 
-/* ===== 4 PILLARS SECTION ===== */
+/* Secondary Cards: streamlined, hero number, clean label, no multi-colored pastilles */
+function SecondaryCounterCard({ value, label, index }: { value: number; label: string; index: number }) {
+  const { count, ref } = useCountUp(value, 2000);
+
+  return (
+    <div
+      ref={ref}
+      className="glass-card flex-1 rounded-2xl p-5 md:p-6 flex items-center justify-between gap-4 border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/30 transition-colors"
+    >
+      <div className="flex-1">
+        <span className="text-xs font-semibold text-ba-text-muted block mb-1">
+          Indicateur 0{index + 1}
+        </span>
+        <span className="font-heading text-base md:text-lg font-bold text-ba-text-primary block leading-snug">
+          {label}
+        </span>
+      </div>
+
+      <div className="font-heading text-3xl sm:text-4xl font-extrabold text-ba-text-primary text-right tabular-nums shrink-0">
+        {count.toLocaleString('fr-FR')}+
+      </div>
+    </div>
+  );
+}
+
+/* ===== 4 PILLARS SECTION (STAGGERED WITH ANIME.JS) ===== */
 function PillarsSection() {
   const { t } = useI18n();
-  const { ref, isVisible } = useScrollReveal();
   const { data } = useAdminData();
+  const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
+    variant: 'stagger-cards',
+    itemSelector: '.pillar-card',
+    staggerDelay: 90,
+  });
 
   const pillars = data.pillars;
 
   return (
     <section className="section-padding relative">
-      <div ref={ref} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className="container-ba">
         <div className="text-center mb-10 max-w-3xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-red/10 text-ba-red mb-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
             Domaines d'intervention
           </span>
           <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">{t.pillars.title}</h2>
           <p className="text-ba-text-secondary text-base leading-relaxed">{t.pillars.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {pillars.map((pillar, i) => (
             <Link
               key={pillar.id || i}
               to="/pillars"
-              className="glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
-              style={{ animationDelay: `${i * 150}ms` }}
+              className="pillar-card glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
             >
               {/* Card Header with Image */}
               <div className="h-60 w-full overflow-hidden relative">
@@ -312,7 +390,7 @@ function PillarsSection() {
                   alt={pillar.title} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-black/60" />
                 <div className="absolute bottom-5 left-6 right-6 z-10">
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white border border-white/20 mb-2">
                     Pilier #{i + 1}
@@ -328,7 +406,7 @@ function PillarsSection() {
                 {/* Card Footer */}
                 <div className="pt-4 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
                   <span className="text-xs font-medium text-ba-text-muted">En savoir plus</span>
-                  <div className="flex items-center gap-2 text-sm font-bold text-ba-red group-hover:translate-x-1.5 transition-transform duration-300">
+                  <div className="flex items-center gap-2 text-sm font-bold text-ba-blue group-hover:translate-x-1.5 transition-transform duration-200">
                     <span>{t.pillars.learn_more}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -344,10 +422,14 @@ function PillarsSection() {
   );
 }
 
-/* ===== PROJECTS PREVIEW ===== */
+/* ===== PROJECTS PREVIEW (STAGGERED WITH ANIME.JS) ===== */
 function ProjectsPreviewSection() {
-  const { ref, isVisible } = useScrollReveal();
   const { data } = useAdminData();
+  const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
+    variant: 'stagger-cards',
+    itemSelector: '.project-preview-card',
+    staggerDelay: 90,
+  });
 
   const projects = data.projects.slice(0, 3);
   if (projects.length === 0) return null;
@@ -360,14 +442,14 @@ function ProjectsPreviewSection() {
 
   return (
     <section className="section-padding relative">
-      <div ref={ref} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className="container-ba">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-green/10 text-ba-green mb-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
               Impact Terrain
             </span>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-2">Nos Projets</h2>
-            <p className="text-ba-text-secondary max-w-3xl leading-relaxed">Découvrez nos actions concrètes déployées sur le terrain à travers le continent africain pour la protection de l'enfance, la santé, l'éducation et l'environnement.</p>
+            <p className="text-ba-text-secondary max-w-3xl leading-relaxed">Découvrez nos actions concrètes déployées sur le terrain en RDC pour la promotion des droits, l'accessibilité, l'éducation inclusive et l'autonomie des personnes handicapées.</p>
           </div>
           <Link to="/projects" className="btn btn-outline btn-sm shrink-0">
             Tous les projets
@@ -377,7 +459,7 @@ function ProjectsPreviewSection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {projects.map((proj, i) => {
             const excerpt = proj.description
               ? proj.description.replace(/\[photo:\d+\]/g, '').trim().slice(0, 110) + (proj.description.length > 110 ? '…' : '')
@@ -386,7 +468,7 @@ function ProjectsPreviewSection() {
               <Link
                 key={proj.id || i}
                 to={`/projects/${proj.id}`}
-                className="glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
+                className="project-preview-card glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
               >
                 {/* Cover Thumbnail */}
                 <div className="relative w-full overflow-hidden" style={{ height: '200px' }}>
@@ -405,7 +487,7 @@ function ProjectsPreviewSection() {
                   )}
 
                   {/* Type Badge */}
-                  <div className={`absolute top-3 left-3 ${proj.color || 'bg-ba-red'} text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg`}>
+                  <div className="absolute top-3 left-3 bg-ba-blue text-white text-xs font-bold px-3 py-1 rounded-full">
                     {proj.type}
                   </div>
                 </div>
@@ -417,7 +499,7 @@ function ProjectsPreviewSection() {
                       {proj.status}
                     </span>
                     <p className="text-xs text-ba-text-muted flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 text-ba-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <svg className="w-3.5 h-3.5 text-ba-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                       </svg>
@@ -425,7 +507,7 @@ function ProjectsPreviewSection() {
                     </p>
                   </div>
 
-                  <h3 className="font-heading text-lg font-bold mb-2 group-hover:text-ba-red transition-colors leading-snug line-clamp-2">
+                  <h3 className="font-heading text-lg font-bold mb-2 group-hover:text-ba-blue transition-colors leading-snug line-clamp-2">
                     {proj.title}
                   </h3>
 
@@ -435,7 +517,7 @@ function ProjectsPreviewSection() {
 
                   {/* Card Footer */}
                   <div className="pt-3 border-t border-black/[0.06] dark:border-white/[0.06] mt-auto flex items-center justify-between">
-                    <span className="text-xs font-semibold text-ba-red flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                    <span className="text-xs font-semibold text-ba-blue flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
                       Voir les détails
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -452,20 +534,24 @@ function ProjectsPreviewSection() {
   );
 }
 
-/* ===== NEWS PREVIEW ===== */
+/* ===== NEWS PREVIEW (STAGGERED WITH ANIME.JS) ===== */
 function NewsPreviewSection() {
   const { t } = useI18n();
-  const { ref, isVisible } = useScrollReveal();
   const { data } = useAdminData();
+  const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
+    variant: 'stagger-cards',
+    itemSelector: '.news-card-item',
+    staggerDelay: 90,
+  });
 
   const articles = data.news.slice(0, 3);
 
   return (
     <section className="section-padding">
-      <div ref={ref} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className="container-ba">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-red/10 text-ba-red mb-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
               Publications Récentes
             </span>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-2">{t.news.title}</h2>
@@ -479,12 +565,12 @@ function NewsPreviewSection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {articles.map((article, i) => (
             <Link
               key={article.id || i}
               to={`/news/${article.id}`}
-              className="glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] hover:border-ba-red/30 transition-all duration-300"
+              className="news-card-item glass-card group flex flex-col rounded-3xl overflow-hidden border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
             >
               {/* Cover Image or Graphic */}
               <div className="relative h-48 w-full overflow-hidden">
@@ -495,8 +581,8 @@ function NewsPreviewSection() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
-                  <div className={`w-full h-full bg-gradient-to-br ${article.color === 'ba-red' ? 'from-ba-red/20 to-ba-red/5' : 'from-ba-green/20 to-ba-green/5'} flex items-center justify-center`}>
-                    <div className={`w-14 h-14 rounded-2xl ${article.color === 'ba-red' ? 'bg-ba-red/20 text-ba-red' : 'bg-ba-green/20 text-ba-green'} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
+                  <div className="w-full h-full bg-ba-blue/10 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-2xl bg-ba-blue/20 text-ba-blue flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
                       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                       </svg>
@@ -506,7 +592,7 @@ function NewsPreviewSection() {
                 
                 {/* Category Pill */}
                 <div className="absolute top-3 left-3">
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-bold border backdrop-blur-md ${article.color === 'ba-red' ? 'bg-ba-red/90 text-white border-ba-red/40' : 'bg-ba-green/90 text-white border-ba-green/40'}`}>
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-ba-blue text-white">
                     {article.category}
                   </span>
                 </div>
@@ -522,7 +608,7 @@ function NewsPreviewSection() {
                     <span>{article.date}</span>
                   </div>
 
-                  <h3 className="font-heading font-bold text-lg mb-2.5 group-hover:text-ba-red transition-colors line-clamp-2 leading-snug">
+                  <h3 className="font-heading font-bold text-lg mb-2.5 group-hover:text-ba-blue transition-colors line-clamp-2 leading-snug">
                     {article.title}
                   </h3>
 
@@ -531,10 +617,10 @@ function NewsPreviewSection() {
 
                 {/* Card Footer */}
                 <div className="pt-3 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ba-red flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                  <span className="text-xs font-semibold text-ba-blue flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
                     {t.news.read_more}
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </span>
                 </div>
@@ -547,20 +633,23 @@ function NewsPreviewSection() {
   );
 }
 
-/* ===== CTA SECTION ===== */
+/* ===== CTA SECTION (ANIME.JS REVEAL) ===== */
 function CTASection() {
   const { t } = useI18n();
-  const { ref, isVisible } = useScrollReveal();
+  const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
+    variant: 'fade-up',
+    duration: 800,
+  });
 
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 gradient-hero" />
+      <div className="absolute inset-0 bg-ba-dark" />
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-ba-red/10 animate-pulse-soft" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-ba-green/10 animate-pulse-soft" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-ba-blue/10 animate-pulse-soft" />
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-ba-blue/10 animate-pulse-soft" style={{ animationDelay: '1.5s' }} />
       </div>
 
-      <div ref={ref} className={`container-ba section-padding relative z-10 text-center text-white transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div ref={containerRef} className="container-ba section-padding relative z-10 text-center text-white">
         <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6 max-w-3xl mx-auto leading-tight">
           {t.cta.title}
         </h2>
@@ -568,13 +657,13 @@ function CTASection() {
           {t.cta.subtitle}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/act" className="btn btn-red btn-lg">
+          <Link to="/act" className="btn btn-blue btn-lg">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
             {t.cta.donate}
           </Link>
-          <Link to="/about" className="btn btn-green btn-lg">
+          <Link to="/about" className="btn btn-outline btn-lg border-white/30 text-white hover:border-ba-blue hover:text-ba-blue">
             {t.cta.join}
           </Link>
         </div>

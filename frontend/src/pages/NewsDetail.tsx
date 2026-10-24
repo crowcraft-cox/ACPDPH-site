@@ -23,7 +23,7 @@ function NewsContent({ text, images }: { text: string; images?: { id: string; ur
                   className="w-full max-h-[480px] object-cover"
                 />
                 <span style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.04em', padding: '3px 8px', borderRadius: '6px', fontFamily: "'Outfit', sans-serif" }}>
-                  Bright African · {new Date().getFullYear()}
+                  ACPDPH · {new Date().getFullYear()}
                 </span>
               </figure>
             );
@@ -66,7 +66,7 @@ export default function NewsDetail() {
     : article.image ? [{ id: '0', url: article.image, caption: article.title }] : [];
 
   const mainContent = article.content || article.excerpt;
-  const badgeColor = article.color === 'ba-red' ? 'bg-ba-red' : 'bg-ba-green';
+  const badgeColor = 'bg-ba-blue';
 
   return (
     <div className="min-h-screen">
@@ -141,7 +141,7 @@ export default function NewsDetail() {
           {/* Corps de l'article */}
           <section className="mb-16">
             <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="w-1 h-8 rounded-full bg-ba-red inline-block" />
+              <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
               À propos de cet article
             </h2>
             {mainContent ? (
@@ -155,7 +155,7 @@ export default function NewsDetail() {
           {allPhotos.length > 1 && (
             <section className="mb-16">
               <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
-                <span className="w-1 h-8 rounded-full bg-ba-red inline-block" />
+                <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
                 Galerie de photos
                 <span className="text-sm font-normal text-ba-text-secondary ml-2">
                   ({allPhotos.length} photo{allPhotos.length > 1 ? 's' : ''})
@@ -174,9 +174,9 @@ export default function NewsDetail() {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      {/* Signature Bright African */}
+                      {/* Signature ACPDPH */}
                       <span style={{ position: 'absolute', bottom: '10px', left: '12px', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', color: 'rgba(255,255,255,0.85)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.04em', padding: '3px 8px', borderRadius: '6px', fontFamily: "'Outfit', sans-serif" }}>
-                        Bright African · {new Date().getFullYear()}
+                        ACPDPH · {new Date().getFullYear()}
                       </span>
                     </div>
                   </div>
@@ -189,7 +189,7 @@ export default function NewsDetail() {
           <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link
               to="/news"
-              className="flex items-center gap-2 text-ba-text-secondary hover:text-ba-red transition-colors font-medium"
+              className="flex items-center gap-2 text-ba-text-secondary hover:text-ba-blue transition-colors font-medium"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />

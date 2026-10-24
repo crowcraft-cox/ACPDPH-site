@@ -23,7 +23,7 @@ router.post('/', async (req: Request, res: Response) => {
       amount: amount || 0,
       type: type || 'ONE_TIME',
       name: name || 'Anonyme',
-      email: email || 'donor@brightafrica.org',
+      email: email || 'donor@acpdph.org',
       paymentMethod: paymentMethod || 'MOBILE_MONEY'
     });
 

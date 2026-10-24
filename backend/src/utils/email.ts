@@ -24,7 +24,7 @@ export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
         tls: { rejectUnauthorized: false },
       });
 
-      const from = process.env.SMTP_FROM || `Bright African ONG <${user}>`;
+      const from = process.env.SMTP_FROM || `ACPDPH ONG <${user}>`;
 
       await transporter.sendMail({
         from,
@@ -34,7 +34,7 @@ export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
         html: options.html || options.text.replace(/\n/g, '<br/>'),
       });
 
-      console.log(`[Email Sent] ✅ Real email sent to inbox: ${options.to}`);
+      console.log(`[Email Sent] Real email sent to inbox: ${options.to}`);
       return true;
     } else {
       console.log(`[Email Log] To: ${options.to} | Subject: ${options.subject}`);

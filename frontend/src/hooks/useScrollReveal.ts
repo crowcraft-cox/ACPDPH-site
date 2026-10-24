@@ -1,75 +1,115 @@
 import { useEffect, useRef, useState } from 'react';
+import { animate } from 'animejs';
+export { useAnimeReveal, useAnimeCounter, useAnimeHeroSequence } from './useAnime';
 
+const prefersReducedMotion = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+/**
+ * useScrollReveal powered by Anime.js
+ * Retains full backward compatibility with { ref, isVisible } signature
+ */
 export function useScrollReveal(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (prefersReducedMotion()) {
+      setIsVisible(true);
+      return;
+    }
+
+    let anim: any = null;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+
+          anim = animate(el, {
+            opacity: [0, 1],
+            translateY: [24, 0],
+            duration: 750,
+            ease: 'outExpo',
+          });
+
           observer.unobserve(entry.target);
         }
       },
       { threshold }
     );
 
-    const el = ref.current;
-    if (el) observer.observe(el);
+    observer.observe(el);
 
     return () => {
-      if (el) observer.unobserve(el);
+      observer.disconnect();
+      if (anim && typeof anim.pause === 'function') {
+        anim.pause();
+      }
     };
   }, [threshold]);
 
   return { ref, isVisible };
 }
 
+/**
+ * useCountUp powered by Anime.js
+ * Animates numerical values with smooth exponential deceleration easing
+ */
 export function useCountUp(end: number, duration = 2000, start = 0) {
   const [count, setCount] = useState(start);
-  const [shouldCount, setShouldCount] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const hasTriggered = useRef(false);
 
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (prefersReducedMotion()) {
+      setCount(end);
+      return;
+    }
+
+    let anim: any = null;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldCount(true);
+        if (entry.isIntersecting && !hasTriggered.current) {
+          hasTriggered.current = true;
+
+          const counterObj = { current: start };
+          anim = animate(counterObj, {
+            current: end,
+            duration,
+            ease: 'outExpo',
+            onUpdate: () => {
+              setCount(Math.round(counterObj.current));
+            },
+            onComplete: () => {
+              setCount(end);
+            },
+          });
+
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.25 }
     );
 
-    const el = ref.current;
-    if (el) observer.observe(el);
+    observer.observe(el);
 
     return () => {
-      if (el) observer.unobserve(el);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!shouldCount) return;
-
-    let startTime: number;
-    let animationFrame: number;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-      setCount(Math.floor(eased * (end - start) + start));
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
+      observer.disconnect();
+      if (anim && typeof anim.pause === 'function') {
+        anim.pause();
       }
     };
-
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [shouldCount, end, duration, start]);
+  }, [end, duration, start]);
 
   return { count, ref };
 }

@@ -32,7 +32,7 @@ router.post('/', [
     // Check if already subscribed in MongoDB Atlas
     const existing = await Newsletter.findOne({ email });
     if (existing) {
-      res.status(200).json({ success: true, message: 'Vous êtes déjà inscrit à la newsletter de Bright African.' });
+      res.status(200).json({ success: true, message: 'Vous êtes déjà inscrit à la newsletter de l\'ACPDPH.' });
       return;
     }
 
@@ -41,16 +41,16 @@ router.post('/', [
     // Send confirmation welcome email to subscriber's inbox
     await sendEmail({
       to: email,
-      subject: 'Bienvenue chez Bright African — Inscription réussie !',
-      text: `Bonjour,\n\nMerci de vous être abonné(e) à la newsletter de Bright African ONG.\n\nVous recevrez désormais nos dernières actualités, rapports d'impact et avancées de nos projets sur le terrain.\n\nEnsemble pour la protection et le développement en Afrique.\n\nL'équipe Bright African ONG\nhttps://brightafrican.org`,
+      subject: 'Bienvenue chez l\'ACPDPH — Inscription réussie !',
+      text: `Bonjour,\n\nMerci de vous être abonné(e) à la newsletter de l'ACPDPH (AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH).\n\nVous recevrez désormais nos dernières actualités, rapports d'impact et avancées de nos projets sur le terrain.\n\nEnsemble pour la promotion des droits et de l'inclusion.\n\nL'équipe ACPDPH ONG\nhttps://acpdph.org`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; borderRadius: 10px;">
-          <h2 style="color: #E30613;">Bienvenue chez Bright African ONG !</h2>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #1D4ED8;">Bienvenue chez l'ACPDPH ONG !</h2>
           <p>Bonjour,</p>
-          <p>Merci de vous être abonné(e) à la newsletter officielle de <strong>Bright African</strong>.</p>
-          <p>Vous recevrez nos projets d'impact, nos actions de protection de l'enfance, de santé et d'éducation en Afrique.</p>
+          <p>Merci de vous être abonné(e) à la newsletter officielle de <strong>l'ACPDPH (AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH)</strong>.</p>
+          <p>Vous recevrez nos projets d'impact, nos actions de promotion des droits, d'éducation inclusive et d'autonomisation en RDC.</p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-          <p style="font-size: 0.85em; color: #777;">Bright African ONG — Goma, RDC</p>
+          <p style="font-size: 0.85em; color: #777;">ACPDPH ONG — Beni, Nord-Kivu, RDC</p>
         </div>
       `,
     });
@@ -93,13 +93,13 @@ router.post('/broadcast', authMiddleware, [
     for (const sub of subscribers) {
       const ok = await sendEmail({
         to: sub.email,
-        subject: `[Bright African] ${subject}`,
+        subject: `[ACPDPH] ${subject}`,
         text: content,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px;">
-            <div style="margin-bottom: 20px; border-bottom: 2px solid #E30613; padding-bottom: 12px;">
-              <h1 style="color: #E30613; margin: 0; font-size: 24px;">Bright African ONG</h1>
-              <span style="color: #1A8F0A; font-weight: bold; font-size: 14px;">Information & Actualités</span>
+            <div style="margin-bottom: 20px; border-bottom: 2px solid #1D4ED8; padding-bottom: 12px;">
+              <h1 style="color: #1D4ED8; margin: 0; font-size: 24px;">ACPDPH ONG</h1>
+              <span style="color: #2563EB; font-weight: bold; font-size: 14px;">Information & Actualités</span>
             </div>
             
             <h2 style="color: #111827; font-size: 18px; margin-top: 0;">${subject}</h2>
@@ -109,8 +109,8 @@ router.post('/broadcast', authMiddleware, [
             </div>
 
             <div style="margin-top: 30px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; text-align: center;">
-              Vous recevez ce message car vous êtes abonné(e) à la newsletter de Bright African.<br/>
-              Avenue de la Paix, Himbi, Goma — Nord-Kivu, RDC
+              Vous recevez ce message car vous êtes abonné(e) à la newsletter de l'ACPDPH.<br/>
+              Avenue Ruwenzori, Quartier Résidentiel, Beni — Nord-Kivu, RDC
             </div>
           </div>
         `,

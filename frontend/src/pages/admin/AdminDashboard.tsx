@@ -194,9 +194,9 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
-          <img src="/logo.png" alt="BA" className="admin-sidebar-logo" />
+          <img src="/logo_ACPDPH.jpg" alt="ACPDPH" className="admin-sidebar-logo rounded-full object-cover" />
           <div>
-            <div className="admin-sidebar-title">Bright African</div>
+            <div className="admin-sidebar-title">ACPDPH</div>
             <div className="admin-sidebar-subtitle">Panel Admin</div>
           </div>
         </div>
@@ -301,7 +301,12 @@ export default function AdminDashboard() {
               </svg>
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, color: '#EF4444', fontSize: '0.95rem', marginBottom: '0.25rem' }}>⚠️ Base de données non connectée</div>
+              <div style={{ fontWeight: 700, color: '#EF4444', fontSize: '0.95rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+                Base de données non connectée
+              </div>
               <div style={{ color: '#FCA5A5', fontSize: '0.82rem', lineHeight: 1.5 }}>{dbError}</div>
             </div>
             <button

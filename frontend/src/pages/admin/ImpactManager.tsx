@@ -8,10 +8,10 @@ export default function ImpactManager() {
   const [isAdding, setIsAdding] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  const [form, setForm] = useState({ value: 0, label: '', color: 'ba-red' as 'ba-red' | 'ba-green' });
+  const [form, setForm] = useState({ value: 0, label: '', color: 'ba-blue' as 'ba-red' | 'ba-green' | 'ba-blue' });
 
   const openAdd = () => {
-    setForm({ value: 0, label: '', color: 'ba-red' });
+    setForm({ value: 0, label: '', color: 'ba-blue' });
     setIsAdding(true);
     setEditing(null);
   };
@@ -51,7 +51,7 @@ export default function ImpactManager() {
             Gérez les compteurs d'impact affichés sur la page d'accueil.
           </p>
         </div>
-        <button className="admin-btn admin-btn-red" onClick={openAdd}>
+        <button className="admin-btn admin-btn-blue" onClick={openAdd}>
           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
@@ -75,14 +75,14 @@ export default function ImpactManager() {
             {data.impact.map((item) => (
               <tr key={item.id}>
                 <td>
-                  <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: item.color === 'ba-red' ? '#FF4D57' : '#3DD632' }}>
+                  <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: '#60A5FA' }}>
                     {item.value.toLocaleString()}+
                   </span>
                 </td>
                 <td style={{ fontWeight: 500 }}>{item.label}</td>
                 <td>
-                  <span style={{ fontSize: '0.8rem', color: '#E5E7EB', fontWeight: 600 }}>
-                    {item.color === 'ba-red' ? 'Rouge' : 'Vert'}
+                  <span style={{ fontSize: '0.8rem', color: '#60A5FA', fontWeight: 600 }}>
+                    Bleu ACPDPH
                   </span>
                 </td>
                 <td style={{ textAlign: 'right' }}>
@@ -152,21 +152,22 @@ export default function ImpactManager() {
                   />
                 </div>
                 <div>
-                  <label className="admin-label">Couleur</label>
+                  <label className="admin-label">Couleur d'accent</label>
                   <select
                     className="admin-select"
                     value={form.color}
-                    onChange={(e) => setForm({ ...form, color: e.target.value as 'ba-red' | 'ba-green' })}
+                    onChange={(e) => setForm({ ...form, color: e.target.value as 'ba-red' | 'ba-green' | 'ba-blue' })}
                   >
-                    <option value="ba-red">Rouge (BA Red)</option>
-                    <option value="ba-green">Vert (BA Green)</option>
+                    <option value="ba-blue">Bleu Principal (ACPDPH)</option>
+                    <option value="ba-red">Bleu Cobalt</option>
+                    <option value="ba-green">Bleu Océan</option>
                   </select>
                 </div>
               </div>
             </div>
             <div className="admin-modal-footer">
               <button className="admin-btn admin-btn-ghost" onClick={closeModal}>Annuler</button>
-              <button className="admin-btn admin-btn-green" onClick={handleSave}>
+              <button className="admin-btn admin-btn-blue" onClick={handleSave}>
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>

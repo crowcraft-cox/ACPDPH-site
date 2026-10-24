@@ -1,0 +1,123 @@
+DE-AI YOUR UI - 01
+(Partie 1 : texte repris tel quel de la vidéo, en anglais)
+
+Your dashboard looks AI-made.
+
+TELL 01 - THE GRADIENT
+Problem: Gradients with nothing to say.
+Rule: One flat accent
+
+TELL 02 - ICON TILES
+Problem: Four colors, four numbers.
+Rule: The number is the hero
+
+TELL 03 - HIERARCHY
+Problem: Same size, same weight.
+Rule: One primary. Three secondary.
+
+TELL 04 - SHADOWS
+Problem: When everything floats.
+Rule: Shadow only on what floats
+
+TELL 05 - COPY
+Problem: Welcome back, Jordan.
+Rule: Numbers with a shape
+
+Five tells, gone.
+
+
+==========================================================
+PARTIE 2 : CE QUE L'IA DOIT FAIRE (instructions détaillées)
+(Texte rédigé pour développer chaque règle ci-dessus. Il ne vient pas de la vidéo.)
+==========================================================
+
+OBJECTIF GÉNÉRAL
+Quand l'IA crée ou modifie une interface (tableau de bord, page, application), elle doit
+appliquer les 5 règles ci-dessous pour que le résultat ne paraisse pas généré par une IA.
+Avant de rendre son travail, elle vérifie chaque règle une par une.
+
+
+RÈGLE 1 : UN SEUL ACCENT PLAT (One flat accent)
+Ce que l'IA ne doit pas faire :
+- Mettre des dégradés (violet vers bleu, par exemple) sur l'en-tête, les boutons, les
+  graphiques ou les arrière-plans sans raison précise.
+Ce que l'IA doit faire :
+- Choisir une seule couleur d'accent et l'utiliser en aplat (couleur unie, sans dégradé).
+- Réserver cette couleur aux éléments importants : bouton principal, lien actif, élément
+  sélectionné, courbe principale du graphique.
+- Utiliser des gris neutres pour tout le reste (fond, bordures, texte secondaire).
+- N'autoriser un dégradé que s'il transmet une information (par exemple une échelle de
+  valeurs). Sinon, le supprimer.
+Vérification : si l'on retire la couleur d'accent, l'interface doit rester lisible, et la
+couleur doit apparaître sur très peu d'éléments.
+
+
+RÈGLE 2 : LE CHIFFRE EST LE HÉROS (The number is the hero)
+Ce que l'IA ne doit pas faire :
+- Mettre quatre cartes avec quatre icônes de quatre couleurs différentes (bleu, vert,
+  violet, orange) uniquement pour décorer.
+Ce que l'IA doit faire :
+- Mettre en avant la valeur chiffrée : grande taille, graisse forte, bien lisible.
+- Supprimer les pastilles d'icônes colorées, ou les rendre discrètes (une seule teinte
+  neutre, petite taille).
+- Garder un libellé court et sobre au-dessus ou en dessous du chiffre.
+- Utiliser la couleur seulement pour donner un sens (par exemple vert pour une hausse,
+  rouge pour une baisse), jamais pour distinguer les cartes entre elles.
+Vérification : au premier regard, on lit d'abord les chiffres, pas les icônes.
+
+
+RÈGLE 3 : UN PRINCIPAL, TROIS SECONDAIRES (One primary. Three secondary.)
+Ce que l'IA ne doit pas faire :
+- Donner la même taille, le même poids et le même style à toutes les cartes de chiffres
+  (par exemple quatre cartes identiques de même dimension).
+Ce que l'IA doit faire :
+- Choisir l'indicateur le plus important (par exemple le chiffre d'affaires) et en faire
+  la carte principale : plus grande, avec un chiffre plus gros.
+- Placer les trois autres indicateurs en secondaires : plus petits, plus légers, regroupés.
+- Ajouter à la carte principale un contexte utile (par exemple le détail abonnements /
+  achats uniques, ou l'évolution par rapport au mois dernier).
+- Créer une hiérarchie visible avec la taille, le poids de la police, l'espace et la
+  position, et non avec la couleur seule.
+Vérification : on doit pouvoir dire sans hésiter quel est l'élément le plus important de
+l'écran.
+
+
+RÈGLE 4 : OMBRE SEULEMENT SUR CE QUI FLOTTE (Shadow only on what floats)
+Ce que l'IA ne doit pas faire :
+- Mettre une ombre portée sur toutes les cartes, les champs de saisie, les graphiques et les
+  badges, ce qui donne l'impression que tout flotte.
+Ce que l'IA doit faire :
+- Supprimer les ombres sur les éléments posés à plat : cartes, champs, graphiques, badges,
+  lignes de tableau.
+- Séparer ces éléments avec une fine bordure, une différence de fond ou de l'espace.
+- Réserver les ombres aux éléments qui sont réellement au-dessus du reste : menus déroulants,
+  fenêtres modales, info-bulles, panneaux flottants.
+Vérification : si un élément a une ombre, il doit pouvoir répondre « je suis au-dessus de la
+page ». Sinon, l'ombre est retirée.
+
+
+RÈGLE 5 : DES CHIFFRES AVEC UNE FORME (Numbers with a shape)
+Ce que l'IA ne doit pas faire :
+- Écrire des phrases génériques et vides comme « Welcome back, Jordan » (avec un emoji),
+  ou des textes d'accueil qui ne servent à rien.
+- Afficher des chiffres inventés ou sans forme précise.
+Ce que l'IA doit faire :
+- Remplacer le message d'accueil par un titre utile, qui dit où l'on est et sur quelle
+  période (par exemple « Revenue - Aug 1 to Aug 31, 2026 »).
+- Donner aux chiffres un format réaliste et cohérent : séparateurs de milliers, devise,
+  unité, nombre de décimales constant, comparaison claire (« +12.5% vs Jul »).
+- Écrire des libellés courts, précis et utiles. Pas d'emoji décoratif, pas de phrases
+  d'enthousiasme.
+- Utiliser des exemples de données variés et plausibles (noms, montants, dates, statuts),
+  sans chiffres ronds ou répétés.
+Vérification : chaque mot et chaque chiffre à l'écran doit apporter une information.
+
+
+PROCÉDURE À SUIVRE PAR L'IA
+1. Lire l'interface existante ou le brouillon.
+2. Repérer lesquels des 5 « tells » sont présents (dégradé, tuiles colorées, cartes toutes
+   identiques, ombres partout, texte générique).
+3. Corriger chacun en appliquant la règle correspondante, dans cet ordre : 1, 2, 3, 4, 5.
+4. Vérifier que le résultat garde une seule couleur d'accent, une hiérarchie claire, des
+   ombres rares et un texte utile.
+5. Présenter le résultat final en indiquant brièvement ce qui a été changé pour chaque règle.

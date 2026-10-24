@@ -28,17 +28,17 @@ export default function AdminLogin() {
   return (
     <div className="admin-login-page">
       {/* Decorative background subtle glow */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-ba-red/10 blur-3xl" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-ba-green/10 blur-3xl" />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-ba-blue/10 blur-3xl" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-blue-600/10 blur-3xl" />
 
       <div className="admin-login-card">
         {/* Logo - Centered */}
         <div className="text-center mb-8 flex flex-col items-center justify-center">
           <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden shadow-md bg-white p-2 border border-gray-100 flex items-center justify-center">
-            <img src="/logo.png" alt="Bright African" className="w-full h-full object-contain" />
+            <img src="/logo_ACPDPH.jpg" alt="ACPDPH" className="w-full h-full object-cover rounded-xl" />
           </div>
           <h1 style={{ fontFamily: "'Outfit', sans-serif", fontSize: '1.6rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.25rem' }}>
-            Bright African
+            ACPDPH
           </h1>
           <p style={{ fontSize: '0.875rem', color: '#64748B', fontWeight: 500 }}>
             Panneau d'administration

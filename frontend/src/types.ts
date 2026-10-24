@@ -1,11 +1,11 @@
-/* ===== BRIGHT AFRICAN — Shared Types ===== */
+/* ===== ACPDPH — Shared Types ===== */
 
 export interface ImpactCounter {
   id: string;
   value: number;
   label: string;
   label_en?: string;
-  color: 'ba-red' | 'ba-green';
+  color: 'ba-red' | 'ba-green' | 'ba-blue';
 }
 
 export interface Pillar {
@@ -15,7 +15,7 @@ export interface Pillar {
   description: string;
   description_en?: string;
   image: string;
-  color: 'ba-red' | 'ba-green';
+  color: 'ba-red' | 'ba-green' | 'ba-blue';
   gradient: string;
   bulletPoints: string[];
   bulletPoints_en?: string[];
@@ -39,7 +39,7 @@ export interface NewsArticle {
   date: string;
   category: string;
   category_en?: string;
-  color: 'ba-red' | 'ba-green';
+  color: 'ba-red' | 'ba-green' | 'ba-blue';
   image?: string;
   images?: NewsImage[];
 }

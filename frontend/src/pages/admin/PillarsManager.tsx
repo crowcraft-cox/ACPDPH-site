@@ -6,8 +6,8 @@ const emptyPillar: Omit<Pillar, 'id'> = {
   title: '',
   description: '',
   image: '',
-  color: 'ba-red',
-  gradient: 'from-red-500/10 to-red-600/5',
+  color: 'ba-blue',
+  gradient: 'from-blue-600/15 to-blue-800/5',
   bulletPoints: ['', ''],
 };
 
@@ -74,8 +74,8 @@ export default function PillarsManager() {
     setForm({ ...form, bulletPoints: form.bulletPoints.filter((_, i) => i !== index) });
   };
 
-  const colorToGradient = (color: 'ba-red' | 'ba-green') => {
-    return color === 'ba-red' ? 'from-red-500/10 to-red-600/5' : 'from-green-500/10 to-green-600/5';
+  const colorToGradient = (_color: 'ba-red' | 'ba-green' | 'ba-blue') => {
+    return 'from-blue-600/15 to-blue-800/5';
   };
 
   return (
@@ -83,9 +83,9 @@ export default function PillarsManager() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
         <p style={{ color: '#E5E7EB', fontSize: '0.875rem' }}>
-          Gérez les 4 piliers d'intervention de l'ONG.
+          Gérez les piliers d'intervention de l'ACPDPH.
         </p>
-        <button className="admin-btn admin-btn-red" onClick={openAdd}>
+        <button className="admin-btn admin-btn-blue" onClick={openAdd}>
           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
@@ -108,9 +108,9 @@ export default function PillarsManager() {
                   </svg>
                 </div>
               )}
-              <span className={`admin-badge ${pillar.color === 'ba-red' ? 'admin-badge-red' : 'admin-badge-green'}`}
+              <span className="admin-badge admin-badge-blue"
                 style={{ position: 'absolute', top: '0.75rem', left: '0.75rem' }}>
-                {pillar.color === 'ba-red' ? 'Rouge' : 'Vert'}
+                Pilier ACPDPH
               </span>
             </div>
 
@@ -191,13 +191,14 @@ export default function PillarsManager() {
                   <input type="text" className="admin-input" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="Ex: /pillars/protection.jpg" />
                 </div>
                 <div>
-                  <label className="admin-label">Couleur</label>
+                  <label className="admin-label">Couleur d'accent</label>
                   <select className="admin-select" value={form.color} onChange={(e) => {
-                    const color = e.target.value as 'ba-red' | 'ba-green';
+                    const color = e.target.value as 'ba-red' | 'ba-green' | 'ba-blue';
                     setForm({ ...form, color, gradient: colorToGradient(color) });
                   }}>
-                    <option value="ba-red">Rouge</option>
-                    <option value="ba-green">Vert</option>
+                    <option value="ba-blue">Bleu Principal (ACPDPH)</option>
+                    <option value="ba-red">Bleu Cobalt</option>
+                    <option value="ba-green">Bleu Océan</option>
                   </select>
                 </div>
 
@@ -226,7 +227,7 @@ export default function PillarsManager() {
             </div>
             <div className="admin-modal-footer">
               <button className="admin-btn admin-btn-ghost" onClick={closeModal}>Annuler</button>
-              <button className="admin-btn admin-btn-green" onClick={handleSave}>
+              <button className="admin-btn admin-btn-blue" onClick={handleSave}>
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>

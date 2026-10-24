@@ -37,7 +37,7 @@ router.post('/', [
     
     // Send email notification
     await sendEmail({
-      to: process.env.CONTACT_EMAIL || 'contact@brightafrica.org',
+      to: process.env.CONTACT_EMAIL || 'contact@acpdph.org',
       subject: `Nouveau message de contact: ${subject}`,
       text: `Nom: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
     });

@@ -57,11 +57,13 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1 space-y-6">
             <Link to="/" className="flex items-center gap-3">
-              <img src="/logo.png" alt="Bright African" className="h-14 w-auto brightness-110" />
+              <img src="/logo_ACPDPH.jpg" alt="ACPDPH" className="h-14 w-auto brightness-110 rounded-full object-cover" />
               <div>
-                <span className="font-heading font-bold text-xl leading-none text-white block">
-                  <span className="text-ba-red">Bright</span>{' '}
-                  <span className="text-ba-green">African</span>
+                <span className="font-heading font-extrabold text-2xl leading-none text-white block">
+                  ACPDPH
+                </span>
+                <span className="text-xs text-blue-300 font-medium leading-tight block mt-1">
+                  Promotion des Droits des Personnes Handicapées
                 </span>
               </div>
             </Link>
@@ -74,22 +76,22 @@ export default function Footer() {
                 {
                   id: 'facebook',
                   url: 'https://www.facebook.com/share/1atRhwrxaY/',
-                  label: 'Facebook - ONG Bright African',
+                  label: 'Facebook - ACPDPH',
                 },
                 {
                   id: 'twitter',
-                  url: 'https://x.com/brightafric',
-                  label: 'X (Twitter) - ONG Bright African',
+                  url: 'https://x.com/acpdph',
+                  label: 'X (Twitter) - ACPDPH',
                 },
                 {
                   id: 'instagram',
-                  url: 'https://www.instagram.com/bright_african/',
-                  label: 'Instagram - ONG Bright African',
+                  url: 'https://www.instagram.com/acpdph/',
+                  label: 'Instagram - ACPDPH',
                 },
                 {
                   id: 'tiktok',
                   url: 'https://vm.tiktok.com/ZS9kHDsU4hALR-qa7BL/',
-                  label: 'TikTok - ONG Bright African',
+                  label: 'TikTok - ACPDPH',
                 },
               ].map(social => (
                 <a
@@ -97,7 +99,7 @@ export default function Footer() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-xl bg-white/10 hover:bg-ba-red flex items-center justify-center transition-all hover:-translate-y-1 text-white"
+                  className="w-11 h-11 rounded-xl bg-white/10 hover:bg-ba-blue flex items-center justify-center transition-all hover:-translate-y-1 text-white"
                   aria-label={social.label}
                   title={social.label}
                 >
@@ -115,9 +117,9 @@ export default function Footer() {
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-gray-300 hover:text-ba-red text-base transition-colors flex items-center gap-2.5"
+                    className="text-gray-300 hover:text-ba-blue text-base transition-colors flex items-center gap-2.5"
                   >
-                    <svg className="w-3.5 h-3.5 text-ba-red shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3.5 h-3.5 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                     </svg>
                     {link.label}
@@ -132,24 +134,24 @@ export default function Footer() {
             <h4 className="font-heading font-bold text-xl mb-8 text-white tracking-wide">{t.footer.legal}</h4>
             <ul className="space-y-5">
               <li>
-                <a href="#privacy" className="text-gray-300 hover:text-ba-green text-base transition-colors flex items-center gap-2.5">
-                  <svg className="w-3.5 h-3.5 text-ba-green shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <a href="#privacy" className="text-gray-300 hover:text-ba-blue text-base transition-colors flex items-center gap-2.5">
+                  <svg className="w-3.5 h-3.5 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
                   {t.footer.privacy}
                 </a>
               </li>
               <li>
-                <a href="#terms" className="text-gray-300 hover:text-ba-green text-base transition-colors flex items-center gap-2.5">
-                  <svg className="w-3.5 h-3.5 text-ba-green shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <a href="#terms" className="text-gray-300 hover:text-ba-blue text-base transition-colors flex items-center gap-2.5">
+                  <svg className="w-3.5 h-3.5 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
                   {t.footer.terms}
                 </a>
               </li>
               <li>
-                <a href="#statuts" className="text-gray-300 hover:text-ba-green text-base transition-colors flex items-center gap-2.5">
-                  <svg className="w-3.5 h-3.5 text-ba-green shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <a href="#statuts" className="text-gray-300 hover:text-ba-blue text-base transition-colors flex items-center gap-2.5">
+                  <svg className="w-3.5 h-3.5 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
                   {t.footer.statuts}
@@ -168,13 +170,13 @@ export default function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t.footer.newsletter_placeholder}
-                className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-base text-white placeholder-gray-400 focus:outline-none focus:border-ba-red focus:ring-1 focus:ring-ba-red transition-all"
+                className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-base text-white placeholder-gray-400 focus:outline-none focus:border-ba-blue focus:ring-1 focus:ring-ba-blue transition-all"
                 required
               />
               <button
                 type="submit"
                 disabled={loading}
-                className={`btn btn-red w-full text-base py-3.5 flex items-center justify-center gap-2 ${loading ? 'opacity-60' : ''}`}
+                className={`btn btn-blue w-full text-base py-3.5 flex items-center justify-center gap-2 ${loading ? 'opacity-60' : ''}`}
               >
                 {loading ? 'Inscription...' : (subscribed ? 'Inscription confirmée !' : t.footer.newsletter_submit)}
               </button>
@@ -195,10 +197,10 @@ export default function Footer() {
       <div className="border-t border-white/10 bg-black/30">
         <div className="container-ba py-10 md:py-12 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-gray-300 text-sm leading-relaxed">
-            © {new Date().getFullYear()} ONG Bright African. {t.footer.rights}
+            © {new Date().getFullYear()} ACPDPH. {t.footer.rights}
           </p>
           <p className="text-gray-400 text-sm leading-relaxed text-center md:text-right">
-            Avenue de la Paix, Quartier Himbi, Goma — Nord-Kivu, RDC
+            Beni — Nord-Kivu, RDC
           </p>
         </div>
       </div>
