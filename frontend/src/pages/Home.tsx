@@ -296,31 +296,31 @@ function PrimaryCounterCard({ value, label, description }: { value: number; labe
   return (
     <div
       ref={ref}
-      className="glass-card w-full rounded-2xl p-7 md:p-9 flex flex-col justify-between border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
+      className="glass-card w-full rounded-2xl p-6 sm:p-7 md:p-9 flex flex-col justify-between border border-slate-200 dark:border-white/[0.08] hover:border-ba-blue/40 transition-colors"
     >
       <div>
-        <div className="flex items-center justify-between gap-2 mb-6">
+        <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
           <span className="text-xs font-bold uppercase tracking-wider text-ba-blue bg-ba-blue/10 px-3 py-1 rounded-full">
             Indicateur Majeur
           </span>
-          <span className="text-xs text-ba-text-muted">Région Nord-Kivu</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">Région Nord-Kivu</span>
         </div>
 
         <div className="mb-4">
           <div className="font-heading text-5xl sm:text-6xl font-black tracking-tight text-ba-blue mb-1">
             {count.toLocaleString('fr-FR')}+
           </div>
-          <h3 className="font-heading text-xl sm:text-2xl font-bold text-ba-text-primary">
+          <h3 className="font-heading text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">
             {label}
           </h3>
         </div>
 
-        <p className="text-ba-text-secondary text-sm leading-relaxed mb-6">
+        <p className="text-slate-500 dark:text-slate-300 text-sm leading-relaxed mb-6">
           {description}
         </p>
       </div>
 
-      <div className="pt-4 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center justify-between text-xs text-ba-text-muted">
+      <div className="pt-4 border-t border-slate-200 dark:border-white/[0.06] flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 flex-wrap gap-2">
         <span>Rapport de terrain 2026</span>
         <span className="font-semibold text-ba-blue">Audit annuel conforme</span>
       </div>
@@ -335,18 +335,18 @@ function SecondaryCounterCard({ value, label, index }: { value: number; label: s
   return (
     <div
       ref={ref}
-      className="glass-card flex-1 rounded-2xl p-5 md:p-6 flex items-center justify-between gap-4 border border-black/[0.08] dark:border-white/[0.08] hover:border-ba-blue/30 transition-colors"
+      className="glass-card flex-1 rounded-2xl px-5 py-4 md:px-6 md:py-5 flex items-center justify-between gap-4 border border-slate-200 dark:border-white/[0.08] hover:border-ba-blue/30 transition-colors"
     >
-      <div className="flex-1">
-        <span className="text-xs font-semibold text-ba-text-muted block mb-1">
+      <div className="flex-1 min-w-0">
+        <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 block mb-1">
           Indicateur 0{index + 1}
         </span>
-        <span className="font-heading text-base md:text-lg font-bold text-ba-text-primary block leading-snug">
+        <span className="font-heading text-base md:text-lg font-bold text-slate-800 dark:text-white block leading-snug truncate">
           {label}
         </span>
       </div>
 
-      <div className="font-heading text-3xl sm:text-4xl font-extrabold text-ba-text-primary text-right tabular-nums shrink-0">
+      <div className="font-heading text-3xl sm:text-4xl font-extrabold text-ba-blue text-right tabular-nums shrink-0">
         {count.toLocaleString('fr-FR')}+
       </div>
     </div>

@@ -82,6 +82,17 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Dark mode — surcharge des variables de texte pour lisibilité */
+.dark body,
+.dark {
+  --color-ba-text-primary: #f9fafb;
+  --color-ba-text-secondary: #d1d5db;
+  --color-ba-text-muted: #9ca3af;
+  --color-ba-surface: #111827;
+  --color-ba-surface-elevated: #1f2937;
+  --color-ba-border: #374151;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
@@ -107,6 +118,12 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  /* overflow: hidden est retiré — il coupait le contenu sur mobile */
+}
+
+/* Les cards qui ont des images en couverture doivent gérer elles-mêmes overflow */
+.glass-card.overflow-hidden,
+.heroui-card.overflow-hidden {
   overflow: hidden;
 }
 
@@ -128,6 +145,15 @@ h1, h2, h3, h4, h5, h6 {
 .dark .heroui-card:hover {
   box-shadow: none;
   border-color: rgba(59, 130, 246, 0.4);
+}
+
+/* Texte blanc quand les cards sont dans une section sombre */
+.bg-ba-dark .glass-card *,
+[style*='background: #111827'] .glass-card *,
+[style*="background: '#111827'"] .glass-card * {
+  --color-ba-text-primary: #f9fafb;
+  --color-ba-text-secondary: #d1d5db;
+  --color-ba-text-muted: #9ca3af;
 }
 
 /* HeroUI Card sub-elements */
@@ -353,12 +379,20 @@ h1, h2, h3, h4, h5, h6 {
 .container-ba {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1.25rem; /* min 20px horizontal sur mobile */
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container-ba {
+    padding: 0 1.5rem;
+  }
 }
 
 @media (min-width: 1536px) {
   .container-ba {
     max-width: 1400px;
+    padding: 0 2rem;
   }
 }
 
