@@ -289,8 +289,7 @@ function PrimaryCounterCard({ value, label, description }: { value: number; labe
   return (
     <div ref={ref} className="card w-full flex flex-col justify-between">
       <div>
-        <div className="card-row mb-6">
-          <span className="badge-accent">Indicateur Majeur</span>
+        <div className="flex justify-end mb-6">
           <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>Région Nord-Kivu</span>
         </div>
 
@@ -317,15 +316,12 @@ function PrimaryCounterCard({ value, label, description }: { value: number; labe
 }
 
 /* Secondary Counter Card */
-function SecondaryCounterCard({ value, label, index }: { value: number; label: string; index: number }) {
+function SecondaryCounterCard({ value, label }: { value: number; label: string; index?: number }) {
   const { count, ref } = useCountUp(value, 2000);
 
   return (
-    <div ref={ref} className="card-sm flex-1 card-row gap-4">
+    <div ref={ref} className="card-sm flex-1 card-row gap-4 items-center">
       <div style={{ flex: 1, minWidth: 0 }}>
-        <span className="block mb-1" style={{ color: '#6B7280', fontSize: '0.75rem', fontWeight: 600 }}>
-          Indicateur 0{index + 1}
-        </span>
         <span className="font-heading font-bold block" style={{ color: '#111827', fontSize: '1.05rem', lineHeight: 1.3 }}>
           {label}
         </span>
@@ -376,9 +372,6 @@ function PillarsSection() {
                 />
                 <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.55)' }} />
                 <div className="absolute bottom-4 left-5 right-5 z-10">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
-                    Pilier #{i + 1}
-                  </span>
                   <h3 className="font-heading text-xl font-bold leading-tight" style={{ color: '#fff' }}>{pillar.title}</h3>
                 </div>
               </div>

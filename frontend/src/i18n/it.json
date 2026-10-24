@@ -1,0 +1,164 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "Chi siamo",
+    "governance": "Governance",
+    "pillars": "Settori di intervento",
+    "projects": "I nostri progetti",
+    "news": "Notizie",
+    "partners": "I nostri partner",
+    "publications": "Pubblicazioni",
+    "careers": "Offerte & Lavoro",
+    "support": "Sostienici",
+    "contact": "Contatti",
+    "donate": "Dona ora",
+    "language": "IT"
+  },
+  "projects": {
+    "title": "I nostri progetti",
+    "subtitle": "Scoprite le nostre realizzazioni e i progetti in corso per la promozione, l'inclusione e la protezione delle persone con disabilità nella Repubblica Democratica del Congo. Ogni iniziativa mira a risultati misurabili e duraturi per i nostri beneficiari.",
+    "view_details": "Visualizza i dettagli",
+    "back_to_projects": "Torna ai progetti",
+    "back_to_all_projects": "Torna a tutti i progetti",
+    "about_project": "Informazioni sul progetto",
+    "photo_gallery": "Galleria fotografica",
+    "contact_us_about": "Contattaci riguardo a questo progetto",
+    "annual_reports": "Relazioni & Pubblicazioni",
+    "reports_subtitle": "La trasparenza e la responsabilità guidano le nostre azioni. Consultate le nostre relazioni istituzionali, di attività e finanziarie certificate.",
+    "no_projects": "Nessun progetto al momento.",
+    "report_pdf": "Relazione"
+  },
+  "hero": {
+    "badge": "AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH",
+    "title1": "Promuovere i diritti",
+    "title2": "delle persone con disabilità",
+    "subtitle": "L'ACPDPH opera per la difesa dei diritti, l'accessibilità universale, l'istruzione inclusiva, la salute adattata e l'emancipazione socio-economica nella RDC.",
+    "cta_donate": "Fai una donazione",
+    "cta_join": "Unisciti all'ONG",
+    "cta_report": "Segnalazione & Tutela"
+  },
+  "impact": {
+    "title": "Il nostro impatto sul campo",
+    "subtitle": "Progressi concreti e misurabili per l'inclusione delle persone con disabilità nella Repubblica Democratica del Congo.",
+    "children": "Persone assistite",
+    "schools": "Scuole & Centri inclusivi",
+    "trees": "Ausili tecnici consegnati",
+    "sessions": "Campagne di sensibilizzazione & Formazioni"
+  },
+  "pillars": {
+    "title": "I nostri settori di intervento",
+    "subtitle": "L'ACPDPH concentra la sua azione su cinque assi strategici per garantire il pieno sviluppo, le pari opportunità e la partecipazione civica delle persone con disabilità.",
+    "protection": {
+      "title": "Diritti & Difesa attiva",
+      "desc": "Promozione e difesa dei diritti fondamentali delle persone con disabilità, divulgazione delle leggi nazionali e convenzioni internazionali, e lotta costante contro ogni forma di discriminazione ed esclusione sociale."
+    },
+    "health": {
+      "title": "Accessibilità Universale",
+      "desc": "Sensibilizzazione e azioni concrete per l'accessibilità delle infrastrutture pubbliche, dei trasporti, dello spazio urbano e degli strumenti di comunicazione per tutte le forme di disabilità."
+    },
+    "education": {
+      "title": "Istruzione Inclusiva",
+      "desc": "Integrazione scolastica di bambini e giovani con disabilità, formazione degli insegnanti alla pedagogia inclusiva, adeguamento dei programmi e fornitura di materiale didattico adeguato."
+    },
+    "environment": {
+      "title": "Salute & Riabilitazione",
+      "desc": "Accesso a cure specialistiche, riabilitazione fisica e funzionale, supporto psicosociale e distribuzione di ausili per la mobilità (stampelle, tricicli, sedie a rotelle, protesi)."
+    },
+    "autonomy": {
+      "title": "Emancipazione Socio-economica",
+      "desc": "Formazione professionale nei settori emergenti, sostegno alla creazione di attività generatrici di reddito e inserimento sociolavorativo verso un'autentica indipendenza economica."
+    },
+    "learn_more": "Scopri di più"
+  },
+  "news": {
+    "title": "Notizie & Campagne",
+    "subtitle": "Seguite le formazioni, le sensibilizzazioni, le azioni sul campo e le testimonianze guidate dall'ACPDPH a favore dell'inclusione.",
+    "read_more": "Leggi di più",
+    "all_news": "Tutte le notizie"
+  },
+  "partners": {
+    "title": "I nostri partner",
+    "subtitle": "Donatori, istituzioni pubbliche, ONG e reti partner uniti per l'inclusione nella RDC"
+  },
+  "cta": {
+    "title": "Insieme per una società inclusiva senza discriminazioni",
+    "subtitle": "Il vostro impegno e le vostre donazioni permettono di costruire un ambiente dignitoso e accessibile per tutti nella RDC.",
+    "donate": "Fai una donazione",
+    "join": "Unisciti a noi"
+  },
+  "about": {
+    "title": "Chi siamo?",
+    "subtitle": "Scoprite la storia, lo status giuridico, la visione, la missione e la governance dell'AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH.",
+    "history_title": "Storia & Status Giuridico",
+    "history_text": "L'AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH è un'Organizzazione Non Governativa riconosciuta nella Repubblica Democratica del Congo. La sede legale si trova a Beni (Nord Kivu), con un raggio d'azione esteso su tutto il territorio nazionale e collaborazioni internazionali.",
+    "vision_title": "La nostra Visione",
+    "vision_text": "Costruire una società congolese giusta, inclusiva e solidale, in cui ogni persona con disabilità goda appieno dei propri diritti fondamentali, abbia accesso universale alle opportunità e partecipi attivamente allo sviluppo della comunità.",
+    "mission_title": "La nostra Missione",
+    "mission_text": "Promuovere, proteggere e difendere i diritti delle persone con disabilità garantendo accessibilità, istruzione inclusiva, salute e riabilitazione, nonché la loro emancipazione socio-economica.",
+    "governance_title": "Organi di Governance & Team",
+    "ag": "Assemblea Generale",
+    "ag_desc": "Organo sovrano dell'organizzazione, che riunisce i membri fondatori e gli aderenti per definire i grandi orientamenti strategici.",
+    "ca": "Consiglio di Amministrazione",
+    "ca_desc": "Organo di indirizzo e supervisione che garantisce la corretta governance e il monitoraggio dei programmi dell'ACPDPH.",
+    "bureau": "Coordinamento Esecutivo",
+    "bureau_desc": "Team operativo responsabile del monitoraggio tecnico dei progetti, dei partenariati e della sensibilizzazione.",
+    "direction": "Direzione dei Programmi",
+    "direction_desc": "Gestione operativa quotidiana delle attività sul campo a Beni e nelle aree di intervento.",
+    "docs_title": "Pubblicazioni & Documenti Ufficiali",
+    "download_statuts": "Scarica lo Statuto dell'ACPDPH (PDF)",
+    "download_roi": "Scarica il Regolamento Interno"
+  },
+  "publications": {
+    "title": "Pubblicazioni & Studi",
+    "subtitle": "Relazioni istituzionali, documenti di sensibilizzazione, testi normativi e studi tematici"
+  },
+  "careers": {
+    "title": "Offerte e Lavoro",
+    "subtitle": "Opportunità professionali, tirocini e volontariato inclusivo presso l'ACPDPH"
+  },
+  "governance": {
+    "title": "Governance & Dirigenza",
+    "subtitle": "Consiglio di Amministrazione, Direzione Esecutiva e principi etici"
+  },
+  "act": {
+    "title": "Sostienici",
+    "subtitle": "Donazioni, partenariati e inviti alla collaborazione per l'inclusione nella RDC",
+    "donate_title": "Fai una donazione",
+    "donate_subtitle": "Contribuisci all'acquisto di protesi, tricicli, borse di studio e kit di autonomia economica",
+    "member_title": "Diventa Membro & Partner",
+    "member_subtitle": "Unisciti all'ACPDPH come membro attivo, volontario o partner istituzionale",
+    "volunteer_title": "Volontariato & Sensibilizzazione",
+    "volunteer_subtitle": "Metti le tue competenze al servizio dei diritti delle persone con disabilità",
+    "amount": "Importo",
+    "currency": "Valuta",
+    "frequency": "Frequenza",
+    "one_time": "Donazione singola",
+    "monthly": "Donazione mensile",
+    "payment_method": "Metodo di pagamento",
+    "submit_donation": "Conferma la donazione"
+  },
+  "contact": {
+    "title": "Contattaci",
+    "subtitle": "Il nostro team è a vostra disposizione presso la sede centrale di Beni",
+    "address_title": "Indirizzo & Sede Legale",
+    "address": "Beni, Provincia del Nord Kivu, Repubblica Democratica del Congo",
+    "form_name": "Nome completo",
+    "form_email": "Indirizzo email",
+    "form_subject": "Oggetto del messaggio",
+    "form_message": "Il tuo messaggio",
+    "form_send": "Invia il messaggio"
+  },
+  "footer": {
+    "description": "AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH. Organizzazione Non Governativa impegnata per l'accessibilità, l'istruzione inclusiva, la salute e l'emancipazione nella RDC.",
+    "quick_links": "Navigazione",
+    "legal": "Documenti & Note legali",
+    "privacy": "Informativa sulla privacy",
+    "terms": "Note legali",
+    "statuts": "Statuto dell'ACPDPH",
+    "newsletter_title": "Newsletter",
+    "newsletter_subtitle": "Ricevi i nostri rapporti sui progetti e gli aggiornamenti",
+    "newsletter_placeholder": "Il tuo indirizzo email",
+    "newsletter_submit": "Iscriviti",
+    "rights": "Tutti i diritti riservati."
+  }
+}

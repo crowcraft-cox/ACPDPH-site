@@ -4,7 +4,7 @@ import { useI18n } from '../../i18n';
 import { animate, stagger } from 'animejs';
 
 export default function Navbar() {
-  const { t, toggleLang, lang } = useI18n();
+  const { t, setLang, lang, languages } = useI18n();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<'org' | 'resources' | null>(null);
@@ -275,36 +275,27 @@ export default function Navbar() {
 
           {/* 3. RIGHT: Language Selector & CTA */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            {/* Lang switcher */}
+            {/* Lang switcher (FR, EN, IT, DE) */}
             <div
               className="inline-flex items-center p-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200/80 dark:border-gray-700"
               role="group"
               aria-label="Sélecteur de langue"
             >
-              <button
-                type="button"
-                onClick={() => lang !== 'fr' && toggleLang()}
-                className={`px-2 py-0.5 text-[11px] font-heading font-bold rounded-md transition-all cursor-pointer ${
-                  lang === 'fr'
-                    ? 'bg-white dark:bg-gray-700 text-ba-blue dark:text-white shadow-xs'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                }`}
-                title="Passer en français"
-              >
-                FR
-              </button>
-              <button
-                type="button"
-                onClick={() => lang !== 'en' && toggleLang()}
-                className={`px-2 py-0.5 text-[11px] font-heading font-bold rounded-md transition-all cursor-pointer ${
-                  lang === 'en'
-                    ? 'bg-white dark:bg-gray-700 text-ba-blue dark:text-white shadow-xs'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                }`}
-                title="Switch to English"
-              >
-                EN
-              </button>
+              {languages.map((l) => (
+                <button
+                  key={l.code}
+                  type="button"
+                  onClick={() => setLang(l.code)}
+                  className={`px-1.5 sm:px-2 py-0.5 text-[11px] font-heading font-bold rounded-md transition-all cursor-pointer ${
+                    lang === l.code
+                      ? 'bg-white dark:bg-gray-700 text-ba-blue dark:text-white shadow-xs'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                  }`}
+                  title={l.name}
+                >
+                  {l.label}
+                </button>
+              ))}
             </div>
 
             {/* Primary CTA Button: Nous Soutenir */}
@@ -365,7 +356,30 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            <div className="pt-3 pb-1">
+            {/* Mobile language selector */}
+            <div className="pt-2.5 pb-1 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between px-3.5">
+              <span className="text-xs font-heading font-semibold text-gray-500 dark:text-gray-400">
+                {lang === 'fr' ? 'Langue' : lang === 'it' ? 'Lingua' : lang === 'de' ? 'Sprache' : 'Language'}
+              </span>
+              <div className="inline-flex items-center p-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200/80 dark:border-gray-700">
+                {languages.map((l) => (
+                  <button
+                    key={l.code}
+                    type="button"
+                    onClick={() => setLang(l.code)}
+                    className={`px-2 py-1 text-xs font-heading font-bold rounded-md transition-all cursor-pointer ${
+                      lang === l.code
+                        ? 'bg-white dark:bg-gray-700 text-ba-blue dark:text-white shadow-xs'
+                        : 'text-gray-500 dark:text-gray-400'
+                    }`}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-2 pb-1">
               <Link
                 to="/support"
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-heading font-bold uppercase tracking-wider text-white bg-ba-blue hover:bg-ba-blue-dark active:scale-95 transition-all text-center shadow-sm"

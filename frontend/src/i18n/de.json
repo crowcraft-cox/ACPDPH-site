@@ -1,0 +1,164 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "governance": "Governance",
+    "pillars": "Handlungsfelder",
+    "projects": "Unsere Projekte",
+    "news": "Aktuelles",
+    "partners": "Unsere Partner",
+    "publications": "Publikationen",
+    "careers": "Karriere & Stellen",
+    "support": "Unterstützen Sie uns",
+    "contact": "Kontakt",
+    "donate": "Spenden",
+    "language": "DE"
+  },
+  "projects": {
+    "title": "Unsere Projekte",
+    "subtitle": "Entdecken Sie unsere Errungenschaften und laufenden Projekte zur Förderung, Inklusion und zum Schutz von Menschen mit Behinderungen in der Demokratischen Republik Kongo. Jede Initiative zielt auf messbare und nachhaltige Ergebnisse für unsere Begünstigten ab.",
+    "view_details": "Details ansehen",
+    "back_to_projects": "Zurück zu den Projekten",
+    "back_to_all_projects": "Zurück zu allen Projekten",
+    "about_project": "Über das Projekt",
+    "photo_gallery": "Fotogalerie",
+    "contact_us_about": "Kontaktieren Sie uns zu diesem Projekt",
+    "annual_reports": "Berichte & Publikationen",
+    "reports_subtitle": "Transparenz und Rechenschaftspflicht leiten unser Handeln. Konsultieren Sie unsere institutionellen, Tätigkeits- und geprüften Finanzberichte.",
+    "no_projects": "Derzeit sind keine Projekte vorhanden.",
+    "report_pdf": "Bericht"
+  },
+  "hero": {
+    "badge": "AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH",
+    "title1": "Rechte fördern",
+    "title2": "von Menschen mit Behinderungen",
+    "subtitle": "Die ACPDPH setzt sich für die Verteidigung von Rechten, universelle Barrierefreiheit, inklusive Bildung, angepasste Gesundheitsversorgung und sozioökonomische Stärkung in der DRK ein.",
+    "cta_donate": "Jetzt spenden",
+    "cta_join": "Der NGO beitreten",
+    "cta_report": "Meldung & Schutz"
+  },
+  "impact": {
+    "title": "Unsere Wirkung vor Ort",
+    "subtitle": "Konkrete und messbare Fortschritte für die Inklusion von Menschen mit Behinderungen in der Demokratischen Republik Kongo.",
+    "children": "Begleitete Personen",
+    "schools": "Inklusive Schulen & Zentren",
+    "trees": "Übergebene Hilfsmittel",
+    "sessions": "Interessenvertretung & Schulungen"
+  },
+  "pillars": {
+    "title": "Unsere Handlungsfelder",
+    "subtitle": "Die ACPDPH konzentriert ihr Engagement auf fünf strategische Schwerpunkte, um die ganzheitliche Entfaltung, Chancengleichheit und volle gesellschaftliche Teilhabe von Menschen mit Behinderungen zu gewährleisten.",
+    "protection": {
+      "title": "Rechte & Anwaltschaft",
+      "desc": "Förderung und Verteidigung der Grundrechte von Menschen mit Behinderungen, Bekanntmachung nationaler Gesetze und internationaler Konventionen sowie unermüdlicher Einsatz gegen alle Formen von Diskriminierung und Ausgrenzung."
+    },
+    "health": {
+      "title": "Universelle Barrierefreiheit",
+      "desc": "Interessenvertretung und konkrete Maßnahmen für die Zugänglichkeit öffentlicher Infrastrukturen, des Verkehrs, des städtischen Raums und der Kommunikationsmittel für alle Arten von Behinderungen."
+    },
+    "education": {
+      "title": "Inklusive Bildung",
+      "desc": "Schulische Integration von Kindern und Jugendlichen mit Behinderungen, Ausbildung von Lehrkräften in inklusiver Pädagogik, Anpassung der Lehrpläne und Bereitstellung geeigneter Lernmaterialien."
+    },
+    "environment": {
+      "title": "Gesundheit & Rehabilitation",
+      "desc": "Zugang zu spezialisierter medizinischer Versorgung, physischer und funktioneller Rehabilitation, psychosozialer Betreuung und Verteilung von Mobilitätshilfen (Krücken, Dreiräder, Rollstühle, Prothesen)."
+    },
+    "autonomy": {
+      "title": "Sozioökonomische Stärkung",
+      "desc": "Berufsausbildung in zukunftsträchtigen Berufen, Unterstützung bei der Gründung einkommensschaffender Aktivitäten und berufliche Eingliederung für eine echte finanzielle Unabhängigkeit."
+    },
+    "learn_more": "Mehr erfahren"
+  },
+  "news": {
+    "title": "Aktuelles & Kampagnen",
+    "subtitle": "Verfolgen Sie Schulungen, Sensibilisierungsmaßnahmen, Feldaktionen und Erfahrungsberichte der ACPDPH zur Förderung der Inklusion.",
+    "read_more": "Weiterlesen",
+    "all_news": "Alle Neuigkeiten"
+  },
+  "partners": {
+    "title": "Unsere Partner",
+    "subtitle": "Geber, öffentliche Institutionen, NGOs und Partnernetzwerke, vereint für Inklusion in der DRK"
+  },
+  "cta": {
+    "title": "Gemeinsam für eine inklusive Gesellschaft ohne Diskriminierung",
+    "subtitle": "Ihr Engagement und Ihre Spenden tragen dazu bei, eine würdevolle und barrierefreie Umgebung für alle in der DRK zu schaffen.",
+    "donate": "Jetzt spenden",
+    "join": "Mitmachen"
+  },
+  "about": {
+    "title": "Wer sind wir?",
+    "subtitle": "Entdecken Sie die Geschichte, den rechtlichen Status, die Vision, die Mission und die Führung der AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH.",
+    "history_title": "Geschichte & Rechtlicher Status",
+    "history_text": "Die AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH ist eine anerkannte Nichtregierungsorganisation in der Demokratischen Republik Kongo. Ihr Hauptsitz befindet sich in Beni (Nord-Kivu) mit einem landesweiten Tätigkeitsbereich und internationalen Kooperationen.",
+    "vision_title": "Unsere Vision",
+    "vision_text": "Eine gerechte, inklusive und solidarische kongolesische Gesellschaft aufzubauen, in der jeder Mensch mit Behinderung seine Grundrechte voll ausschöpft, universellen Zugang zu Chancen hat und aktiv an der Entwicklung der Gemeinschaft teilhat.",
+    "mission_title": "Unsere Mission",
+    "mission_text": "Die Rechte von Menschen mit Behinderungen zu fördern, zu schützen und zu verteidigen, indem wir Barrierefreiheit, inklusive Bildung, Gesundheit und Rehabilitation sowie sozioökonomische Stärkung gewährleisten.",
+    "governance_title": "Führungsorgane & Team",
+    "ag": "Generalversammlung",
+    "ag_desc": "Souveränes Gremium der Organisation, das Gründungs- und Vollmitglieder vereint, um die strategischen Leitlinien festzulegen.",
+    "ca": "Verwaltungsrat",
+    "ca_desc": "Aufsichtsgremium, das eine solide Führung, Programmaufsicht und finanzielle Integrität gewährleistet.",
+    "bureau": "Exekutive Koordination",
+    "bureau_desc": "Operatives Koordinationsteam für das technische Projektmonitoring, Partnerschaften und Advocacy.",
+    "direction": "Programmdirektion",
+    "direction_desc": "Tägliche operative Leitung der Feldeinsätze in Beni und den Zielregionen.",
+    "docs_title": "Publikationen & Offizielle Dokumente",
+    "download_statuts": "Satzung der ACPDPH herunterladen (PDF)",
+    "download_roi": "Geschäftsordnung herunterladen"
+  },
+  "publications": {
+    "title": "Publikationen & Studien",
+    "subtitle": "Institutionelle Berichte, Anwaltschaftsdokumente, Gesetzestexte und thematische Studien"
+  },
+  "careers": {
+    "title": "Karriere & Stellenangebote",
+    "subtitle": "Berufliche Möglichkeiten, Praktika und inklusives Engagement bei der ACPDPH"
+  },
+  "governance": {
+    "title": "Governance & Führungsteam",
+    "subtitle": "Verwaltungsrat, Exekutivdirektion und ethische Grundsätze"
+  },
+  "act": {
+    "title": "Unterstützen Sie uns",
+    "subtitle": "Spenden, Partnerschaften und Kooperationsaufrufe für Inklusion in der DRK",
+    "donate_title": "Jetzt spenden",
+    "donate_subtitle": "Beteiligen Sie sich an der Finanzierung von Prothesen, Dreirädern, Bildungsstipendien und Existenzgründungspaketen",
+    "member_title": "Mitglied & Partner werden",
+    "member_subtitle": "Werden Sie Mitglied, ehrenamtlicher Helfer oder institutioneller Partner der ACPDPH",
+    "volunteer_title": "Ehrenamt & Anwaltschaft",
+    "volunteer_subtitle": "Bringen Sie Ihre Fähigkeiten für die Rechte von Menschen mit Behinderungen ein",
+    "amount": "Betrag",
+    "currency": "Währung",
+    "frequency": "Häufigkeit",
+    "one_time": "Einmalige Spende",
+    "monthly": "Monatliche Spende",
+    "payment_method": "Zahlungsmethode",
+    "submit_donation": "Spende bestätigen"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Unser Team steht Ihnen am Hauptsitz in Beni gerne zur Verfügung",
+    "address_title": "Adresse & Hauptsitz",
+    "address": "Beni, Provinz Nord-Kivu, Demokratische Republik Kongo",
+    "form_name": "Vollständiger Name",
+    "form_email": "E-Mail-Adresse",
+    "form_subject": "Betreff",
+    "form_message": "Ihre Nachricht",
+    "form_send": "Nachricht senden"
+  },
+  "footer": {
+    "description": "AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH. Nichtregierungsorganisation für Barrierefreiheit, inklusive Bildung, Gesundheit und Empowerment in der DRK.",
+    "quick_links": "Navigation",
+    "legal": "Dokumente & Rechtliches",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Impressum & AGB",
+    "statuts": "Satzung der ACPDPH",
+    "newsletter_title": "Newsletter",
+    "newsletter_subtitle": "Erhalten Sie unsere Projektberichte und Neuigkeiten",
+    "newsletter_placeholder": "Ihre E-Mail-Adresse",
+    "newsletter_submit": "Abonnieren",
+    "rights": "Alle Rechte vorbehalten."
+  }
+}

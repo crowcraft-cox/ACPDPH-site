@@ -36,11 +36,6 @@ export default function Pillars() {
               style={{ background: '#ffffff' }}
             >
               <div className={isEven ? 'order-2 md:order-1' : ''}>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-ba-blue/10 text-ba-blue border border-ba-blue/20">
-                    Pilier #{index + 1}
-                  </span>
-                </div>
                 <h2 className="font-heading text-2xl md:text-3xl font-bold mb-4" style={{ color: '#111827' }}>{pillar.title}</h2>
                 <p className="leading-relaxed mb-6 text-base" style={{ color: '#6B7280' }}>
                   {pillar.description}
