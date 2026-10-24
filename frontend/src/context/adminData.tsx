@@ -372,7 +372,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     // 2. Super Admin local (mot de passe fixe)
     if (
       (trimUser === 'admin' || trimUser === 'administrator' || trimUser === 'acpdph') &&
-      (password === 'Acpdph2026' || password === 'ACPDPH2026')
+      (password === 'Acpdph2026' || password === 'ACPDPH2026' || password === 'Acpdph2026!' || password === 'ACPDPH2026!')
     ) {
       const user: AdminUser = {
         id: 'super-admin',
