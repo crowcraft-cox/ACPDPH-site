@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Force dark mode class-based uniquement — jamais activé par le système OS */
+@variant dark (&:where(.dark, .dark *));
+
 /* ===== ACPDPH — Design System (Tailwind CSS v4) ===== */
 
 @theme {
@@ -74,12 +77,16 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  background-color: #ffffff;
+}
+
 body {
   font-family: var(--font-body);
   color: var(--color-ba-text-primary);
-  background-color: var(--color-ba-surface);
+  background-color: #ffffff;
   line-height: 1.7;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 /* Dark mode — surcharge des variables de texte pour lisibilité */
