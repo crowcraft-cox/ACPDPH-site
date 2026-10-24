@@ -245,12 +245,11 @@ function ImpactSection() {
       </div>
 
       <div ref={sectionRef} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        <div className="text-center mb-10 impact-title-offset max-w-2xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
-            Bilan d'impact vérifié
-          </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-3">{t.impact.title}</h2>
-          <p className="text-ba-text-secondary text-base leading-relaxed">{t.impact.subtitle}</p>
+        <div className="w-full mb-10 impact-title-offset">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4" style={{ color: '#111827' }}>{t.impact.title}</h2>
+          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#4B5563' }}>
+            Des avancées concrètes, mesurables et durables pour l'inclusion des personnes handicapées en République Démocratique du Congo. À travers nos programmes intégrés d'accompagnement juridique, de réadaptation fonctionnelle, d'éducation inclusive et d'insertion socio-économique, nous œuvrons sans relâche pour transformer le quotidien des personnes vulnérables et de leurs familles. Chaque action menée sur le terrain renforce l'autonomie, restaure la dignité humaine et favorise une participation citoyenne équitable et respectueuse des droits fondamentaux.
+          </p>
         </div>
 
         {/* 1 PRIMARY + 3 SECONDARIES GRID (RULE 3 & RULE 2) */}
@@ -353,12 +352,11 @@ function PillarsSection() {
   return (
     <section className="section-padding relative">
       <div className="container-ba">
-        <div className="text-center mb-10 max-w-3xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
-            Domaines d'intervention
-          </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">{t.pillars.title}</h2>
-          <p className="text-ba-text-secondary text-base leading-relaxed">{t.pillars.subtitle}</p>
+        <div className="w-full mb-10">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4" style={{ color: '#111827' }}>{t.pillars.title}</h2>
+          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#4B5563' }}>
+            L'ACPDPH déploie une approche globale et multisectorielle structurée autour d'axes d'intervention prioritaires pour garantir l'épanouissement intégral, l'égalité des chances et la pleine participation citoyenne des personnes en situation de handicap. De la promotion des droits et de l'accessibilité universelle du cadre bâti jusqu'à l'accès prioritaire à l'éducation inclusive, aux soins adaptés et à l'autonomie financière, nous construisons des solutions pérennes pour surmonter les barrières discriminatoires et promouvoir une société congolaise juste et solidaire.
+          </p>
         </div>
 
         <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -427,20 +425,19 @@ function ProjectsPreviewSection() {
   return (
     <section className="section-padding relative">
       <div className="container-ba">
-        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
-          <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
-              Impact Terrain
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-2">Nos Projets</h2>
-            <p className="text-ba-text-secondary max-w-3xl leading-relaxed">Découvrez nos actions concrètes déployées sur le terrain en RDC pour la promotion des droits, l'accessibilité, l'éducation inclusive et l'autonomie des personnes handicapées.</p>
+        <div className="mb-10 w-full">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold" style={{ color: '#111827' }}>Nos Projets</h2>
+            <Link to="/projects" className="btn btn-outline btn-sm shrink-0">
+              Tous les projets
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
-          <Link to="/projects" className="btn btn-outline btn-sm shrink-0">
-            Tous les projets
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
+          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#4B5563' }}>
+            Découvrez nos réalisations concrètes et nos initiatives stratégiques menées directement sur le terrain en République Démocratique du Congo. Qu'il s'agisse de la mise aux normes d'accessibilité des bâtiments publics, du renforcement des capacités économiques par l'apprentissage de métiers adaptés, de la scolarisation d'enfants vivant avec handicap ou de la fourniture d'aides techniques à la mobilité, chaque projet est élaboré en concertation étroite avec les bénéficiaires afin d'assurer un impact tangible, mesurable et pérenne dans leurs milieux de vie.
+          </p>
         </div>
 
         <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -527,20 +524,19 @@ function NewsPreviewSection() {
   return (
     <section className="section-padding">
       <div className="container-ba">
-        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 gap-4">
-          <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
-              Publications Récentes
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-2">{t.news.title}</h2>
-            <p className="text-ba-text-secondary leading-relaxed">{t.news.subtitle}</p>
+        <div className="mb-8 w-full">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold" style={{ color: '#111827' }}>{t.news.title}</h2>
+            <Link to="/news" className="btn btn-outline btn-sm shrink-0">
+              {t.news.all_news}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
-          <Link to="/news" className="btn btn-outline btn-sm shrink-0">
-            {t.news.all_news}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
+          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#4B5563' }}>
+            Suivez au quotidien nos actions de terrain, nos prises de position publiques, nos ateliers de sensibilisation et les témoignages inspirants de résilience portés par nos membres. À travers nos publications, articles et plaidoyers institutionnels réguliers, l'ACPDPH informe la société civile, interpelle les pouvoirs publics et partage les progrès accomplis dans la promotion et la protection des droits des personnes en situation de handicap en République Démocratique du Congo.
+          </p>
         </div>
 
         <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
