@@ -81,7 +81,7 @@ function HeroSection() {
       <div 
         className="absolute inset-0 z-0" 
         style={{
-          backgroundImage: "url('/photo1.jpg')",
+          backgroundImage: "url('/images/hero/photo_accueil.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat"
