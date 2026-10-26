@@ -86,7 +86,7 @@ function MainLayout() {
 
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow focus:outline-none">
           <Suspense fallback={<PageLoader />}>
             <AnimatedPage>
               <Routes>

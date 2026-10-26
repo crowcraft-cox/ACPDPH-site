@@ -1,35 +1,144 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useI18n } from '../../i18n';
-import { animate, stagger } from 'animejs';
+
+type DropdownKey = 'org' | 'resources' | 'lang' | 'lang-compact' | null;
+type MobileSubmenu = 'org' | 'resources' | null;
+
+const COMPACT_THRESHOLD_DOWN = 80;
+const COMPACT_THRESHOLD_UP = 10;
 
 export default function Navbar() {
   const { t, setLang, lang, languages } = useI18n();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<'org' | 'resources' | 'lang' | null>(null);
   const location = useLocation();
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const navContainerRef = useRef<HTMLDivElement>(null);
+
+  // États des menus et navigation
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<DropdownKey>(null);
+  const [mobileSubmenu, setMobileSubmenu] = useState<MobileSubmenu>(null);
+
+  // État compact au scroll avec hystérésis (down > 80px, up <= 10px)
+  const [isCompact, setIsCompact] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.scrollY > COMPACT_THRESHOLD_DOWN;
+    }
+    return false;
+  });
+  const [isMounted, setIsMounted] = useState(false);
+  const lastScrollYRef = useRef(0);
+
+  // Fonctionnalité d'accessibilité : Contraste élevé (icône soleil/sombre)
+  const [highContrast, setHighContrast] = useState<boolean>(() => {
+    return localStorage.getItem('acpdph_contrast') === 'true';
+  });
+
+  // Références DOM pour le focus clavier
+  const navContainerRef = useRef<HTMLElement>(null);
+  const orgBtnRef = useRef<HTMLButtonElement>(null);
+  const resourcesBtnRef = useRef<HTMLButtonElement>(null);
+  const langBtnRef = useRef<HTMLButtonElement>(null);
+  const compactLangBtnRef = useRef<HTMLButtonElement>(null);
 
   const currentLang = languages.find((l) => l.code === lang) || languages[0];
 
-  // Close menus on route change
+  // Nettoyage de toute ancienne valeur de taille de police mémorisée chez les visiteurs
+  useEffect(() => {
+    try {
+      localStorage.removeItem('acpdph_font_size');
+      document.documentElement.classList.remove('font-size-lg', 'font-size-xl');
+    } catch {
+      // Ignorer si localStorage n'est pas accessible
+    }
+  }, []);
+
+  // Montage initial : activation des transitions après le premier rendu pour éviter tout saut
+  useEffect(() => {
+    lastScrollYRef.current = window.scrollY;
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 60);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Détection du scroll avec hystérésis et rAF :
+  // Passage en compact si scrollY > 80px ET défilement vers le bas
+  // Retour au mode complet UNIQUEMENT si scrollY <= 10px
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+
+      window.requestAnimationFrame(() => {
+        const currentScrollY = Math.max(0, window.scrollY);
+        const lastScrollY = lastScrollYRef.current;
+        const scrollingDown = currentScrollY > lastScrollY;
+
+        setIsCompact((prevCompact) => {
+          if (!prevCompact && currentScrollY > COMPACT_THRESHOLD_DOWN && scrollingDown) {
+            return true;
+          }
+          if (prevCompact && currentScrollY <= COMPACT_THRESHOLD_UP) {
+            return false;
+          }
+          return prevCompact;
+        });
+
+        lastScrollYRef.current = currentScrollY;
+        ticking = false;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Synchronisation avec Lenis si actif
+    const lenis = window.__lenis;
+    const unsubLenis = lenis ? lenis.on('scroll', handleScroll) : null;
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (unsubLenis) unsubLenis();
+    };
+  }, []);
+
+  // Fermeture des sous-menus au changement d'état compact / complet
+  const prevCompactRef = useRef(isCompact);
+  useEffect(() => {
+    if (prevCompactRef.current !== isCompact) {
+      setOpenDropdown(null);
+      prevCompactRef.current = isCompact;
+    }
+  }, [isCompact]);
+
+  // Application dynamique du contraste élevé
+  useEffect(() => {
+    const root = document.documentElement;
+    if (highContrast) {
+      root.classList.add('dark');
+      localStorage.setItem('acpdph_contrast', 'true');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('acpdph_contrast', 'false');
+    }
+  }, [highContrast]);
+
+  const toggleContrast = useCallback(() => {
+    setHighContrast((prev) => !prev);
+  }, []);
+
+  const resetContrast = useCallback(() => {
+    setHighContrast(false);
+  }, []);
+
+  // Fermeture automatique lors d'un changement de route
   useEffect(() => {
     setIsMobileOpen(false);
     setOpenDropdown(null);
+    setMobileSubmenu(null);
   }, [location.pathname]);
 
-  // Track scroll position
-  useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 15);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Close desktop dropdown on outside click
+  // Fermeture des menus au clic extérieur
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (navContainerRef.current && !navContainerRef.current.contains(e.target as Node)) {
@@ -40,263 +149,215 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Mobile menu entrance animation
-  useEffect(() => {
-    if (isMobileOpen && mobileMenuRef.current) {
-      const items = mobileMenuRef.current.querySelectorAll('.mobile-nav-item');
-      if (items.length > 0) {
-        animate(items, {
-          opacity: [0, 1],
-          translateX: [-16, 0],
-          duration: 300,
-          delay: stagger(30, { start: 30 }),
-          ease: 'outExpo',
-        });
+  // Navigation au clavier : touche Échap pour refermer les menus
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      if (openDropdown === 'org') {
+        setOpenDropdown(null);
+        orgBtnRef.current?.focus();
+      } else if (openDropdown === 'resources') {
+        setOpenDropdown(null);
+        resourcesBtnRef.current?.focus();
+      } else if (openDropdown === 'lang') {
+        setOpenDropdown(null);
+        langBtnRef.current?.focus();
+      } else if (openDropdown === 'lang-compact') {
+        setOpenDropdown(null);
+        compactLangBtnRef.current?.focus();
+      } else if (isMobileOpen) {
+        setIsMobileOpen(false);
       }
     }
-  }, [isMobileOpen]);
+  }, [openDropdown, isMobileOpen]);
 
-  // Mobile nav list in order of the PDF model
-  const mobileNavLinks = [
-    { path: '/', label: t.nav.home },
-    { path: '/about', label: t.nav.about },
-    { path: '/governance', label: t.nav.governance || 'Gouvernance' },
-    { path: '/pillars', label: t.nav.pillars },
-    { path: '/projects', label: t.nav.projects },
-    { path: '/news', label: t.nav.news },
-    { path: '/partners', label: t.nav.partners || 'Nos Partenaires' },
-    { path: '/publications', label: t.nav.publications || 'Publications' },
-    { path: '/careers', label: t.nav.careers || 'Offres & Emploi' },
-    { path: '/contact', label: t.nav.contact },
-  ];
-
+  // Détection des routes actives
+  const isHomeActive = location.pathname === '/';
   const isOrgActive = ['/about', '/governance', '/pillars'].includes(location.pathname);
+  const isProjectsActive = location.pathname.startsWith('/projects');
+  const isNewsActive = location.pathname.startsWith('/news');
   const isResourcesActive = ['/publications', '/partners', '/careers'].includes(location.pathname);
+  const isContactActive = location.pathname === '/contact';
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/95 dark:bg-ba-dark/95 backdrop-blur-md shadow-sm border-b border-gray-200/80 dark:border-gray-800 py-2'
-          : 'bg-white/90 dark:bg-ba-dark/90 backdrop-blur-xs border-b border-gray-100 dark:border-gray-800/60 py-3'
-      }`}
-    >
-      <nav aria-label="Navigation principale" className="container-ba" ref={navContainerRef}>
-        <div className="flex items-center justify-between gap-2 lg:gap-4">
-          
-          {/* 1. BRAND LOGO */}
-          <Link
-            to="/"
-            className="flex items-center gap-2.5 sm:gap-3 group shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ba-blue rounded-lg"
-          >
-            <div className="relative">
-              <img
-                src="/logo_ACPDPH.jpg"
-                alt="ACPDPH Logo"
-                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover border border-ba-blue/20 transition-transform duration-200 group-hover:scale-105"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-extrabold text-lg sm:text-xl leading-none text-ba-blue dark:text-white tracking-tight">
-                ACPDPH
-              </span>
-              <span className="text-[10px] font-heading font-semibold tracking-wider uppercase text-ba-text-secondary mt-0.5 hidden xl:block">
-                Droits & Inclusion
-              </span>
-            </div>
-          </Link>
+    <>
+      {/* 0. PLACEHOLDER QUI RÉSERVE LA HAUTEUR TOTALE DU HEADER (AUCUN LAYOUT SHIFT) */}
+      <div className="header-placeholder shrink-0" aria-hidden="true" />
 
-          {/* 2. DESKTOP NAVIGATION LINKS */}
-          <div className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {/* Accueil */}
+      <header
+        role="banner"
+        ref={navContainerRef}
+        onKeyDown={handleKeyDown}
+        className={`header-container fixed top-0 left-0 w-full z-40 font-heading selection:bg-[var(--color-accent)] selection:text-white ${
+          isCompact ? 'is-compact' : ''
+        } ${!isMounted ? 'header-no-anim' : ''}`}
+      >
+        {/* 0. SKIP LINK (Accessibilité Clavier WCAG 2.2) */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2.5 focus:bg-[var(--color-primary)] focus:text-white focus:font-bold focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-[var(--color-accent)]"
+        >
+          Aller au contenu principal
+        </a>
+
+        {/* ========================================================================================= */}
+        {/* 1. LOGO AGRANDI QUI DÉBORDE (Desktop : Débordement 60% blanc / 40% bleu)                    */}
+        {/* 185px, border 3px blanche SANS OMBRE portée (boxShadow: none, filter: none)                */}
+        {/* ========================================================================================= */}
+        <Link
+          to="/"
+          className="header-logo-link hidden lg:block absolute z-30 transition-transform duration-200 hover:scale-[1.015] focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-accent)] rounded-full group shadow-none"
+          style={{
+            left: 'var(--logo-margin-left, 24px)',
+            top: 'var(--logo-offset, 14px)',
+            width: 'var(--logo-size, 185px)',
+            height: 'var(--logo-size, 185px)',
+            boxShadow: 'none',
+            filter: 'none',
+          }}
+          tabIndex={isCompact ? -1 : 0}
+          aria-hidden={isCompact ? 'true' : undefined}
+          aria-label="ACPDPH – Agence Congolaise de Promotion des Droits des Personnes Handicapées - Retour à l'accueil"
+        >
+          <img
+            src="/logo_ACPDPH.jpg"
+            alt="ACPDPH – Agence Congolaise de Promotion des Droits des Personnes Handicapées"
+            className="header-logo-img w-full h-full rounded-full object-cover border-white bg-white shadow-none"
+            style={{
+              borderWidth: 'var(--logo-border-width, 3px)',
+              borderStyle: 'solid',
+              boxShadow: 'none',
+              filter: 'none',
+            }}
+          />
+        </Link>
+
+      {/* ========================================================================================= */}
+      {/* 2. BARRE HAUTE (FOND BLANC, REPLIABLE AU SCROLL EN MODE COMPACT)                           */}
+      {/* ========================================================================================= */}
+      <div className="header-top-bar relative w-full bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 transition-colors">
+        <div className="header-top-bar-content container-ba h-full flex items-center justify-between">
+          
+          {/* GAUCHE : Logo mobile (< 1024px) OU Titre décalé (>= 1024px) */}
+          <div className="h-full flex items-center">
+            
+            {/* Version Mobile & Tablette (< 1024px) : Logo contenu dans la barre blanche (se réduit à ~44px en compact) */}
             <Link
               to="/"
-              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all ${
-                location.pathname === '/'
-                  ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
-              }`}
+              className="header-logo-link flex lg:hidden items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] shadow-none"
+              style={{ boxShadow: 'none', filter: 'none' }}
+              aria-label="ACPDPH – Agence Congolaise de Promotion des Droits des Personnes Handicapées"
             >
-              {t.nav.home}
+              <img
+                src="/logo_ACPDPH.jpg"
+                alt="ACPDPH – Agence Congolaise de Promotion des Droits des Personnes Handicapées"
+                className="header-logo-img header-mobile-logo-img h-14 w-14 rounded-full object-cover border-white bg-white shrink-0 shadow-none"
+                style={{
+                  borderWidth: 'var(--logo-border-width, 2.5px)',
+                  borderStyle: 'solid',
+                  boxShadow: 'none',
+                  filter: 'none',
+                }}
+              />
+              <div className="flex flex-col justify-center">
+                <span className="font-heading font-extrabold text-lg leading-none text-gray-900 dark:text-white tracking-tight">
+                  ACPDPH
+                </span>
+                <span className="font-heading font-bold text-[10px] tracking-wider uppercase text-[var(--color-accent)] mt-0.5 leading-tight">
+                  Droits &amp; Inclusion
+                </span>
+              </div>
             </Link>
 
-            {/* Dropdown: L'Organisation */}
-            <div className="relative" onMouseLeave={() => setOpenDropdown(null)}>
-              <button
-                type="button"
-                onClick={() => setOpenDropdown(openDropdown === 'org' ? null : 'org')}
-                onMouseEnter={() => setOpenDropdown('org')}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all cursor-pointer ${
-                  isOrgActive
-                    ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
-                }`}
-              >
-                <span>Organisation</span>
-                <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === 'org' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {openDropdown === 'org' && (
-                <div className="absolute left-0 top-full pt-1.5 w-60 z-50">
-                  <div className="p-2 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-gray-100 dark:border-zinc-700 space-y-1">
-                    <Link
-                      to="/about"
-                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
-                        location.pathname === '/about'
-                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
-                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
-                      }`}
-                    >
-                      <div className="font-bold">{t.nav.about}</div>
-                      <div className="text-[11px] text-gray-500 font-normal">Historique & Mission</div>
-                    </Link>
-                    <Link
-                      to="/governance"
-                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
-                        location.pathname === '/governance'
-                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
-                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
-                      }`}
-                    >
-                      <div className="font-bold">{t.nav.governance || 'Gouvernance & Équipe'}</div>
-                      <div className="text-[11px] text-gray-500 font-normal">C.A., Direction & Éthique</div>
-                    </Link>
-                    <Link
-                      to="/pillars"
-                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
-                        location.pathname === '/pillars'
-                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
-                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
-                      }`}
-                    >
-                      <div className="font-bold">{t.nav.pillars}</div>
-                      <div className="text-[11px] text-gray-500 font-normal">Droits, Accessibilité, Santé...</div>
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Nos Projets */}
+            {/* Version Desktop (>= 1024px) : Titre décalé après le logo */}
             <Link
-              to="/projects"
-              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all ${
-                location.pathname.startsWith('/projects')
-                  ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
-              }`}
+              to="/"
+              className="hidden lg:flex flex-col justify-center h-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
+              style={{ paddingLeft: 'var(--menu-reserved-space, 250px)' }}
+              tabIndex={isCompact ? -1 : 0}
+              aria-label="ACPDPH – Droits & Inclusion - Retour à l'accueil"
             >
-              {t.nav.projects}
-            </Link>
-
-            {/* Actualités */}
-            <Link
-              to="/news"
-              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all ${
-                location.pathname.startsWith('/news')
-                  ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
-              }`}
-            >
-              {t.nav.news}
-            </Link>
-
-            {/* Dropdown: Ressources & Réseau */}
-            <div className="relative" onMouseLeave={() => setOpenDropdown(null)}>
-              <button
-                type="button"
-                onClick={() => setOpenDropdown(openDropdown === 'resources' ? null : 'resources')}
-                onMouseEnter={() => setOpenDropdown('resources')}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all cursor-pointer ${
-                  isResourcesActive
-                    ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
-                }`}
-              >
-                <span>Ressources</span>
-                <svg className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === 'resources' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {openDropdown === 'resources' && (
-                <div className="absolute left-0 top-full pt-1.5 w-64 z-50">
-                  <div className="p-2 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-gray-100 dark:border-zinc-700 space-y-1">
-                    <Link
-                      to="/publications"
-                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
-                        location.pathname === '/publications'
-                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
-                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
-                      }`}
-                    >
-                      <div className="font-bold">{t.nav.publications || 'Publications & Études'}</div>
-                      <div className="text-[11px] text-gray-500 font-normal">Rapports, Textes de lois, Guides</div>
-                    </Link>
-                    <Link
-                      to="/partners"
-                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
-                        location.pathname === '/partners'
-                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
-                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
-                      }`}
-                    >
-                      <div className="font-bold">{t.nav.partners || 'Nos Partenaires'}</div>
-                      <div className="text-[11px] text-gray-500 font-normal">Bailleurs, ONG & Institutions</div>
-                    </Link>
-                    <Link
-                      to="/careers"
-                      className={`block px-3 py-2 rounded-xl text-xs font-heading transition-colors ${
-                        location.pathname === '/careers'
-                          ? 'bg-ba-blue/10 text-ba-blue font-bold'
-                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700'
-                      }`}
-                    >
-                      <div className="font-bold">{t.nav.careers || 'Offres et Emploi'}</div>
-                      <div className="text-[11px] text-gray-500 font-normal">Emplois, Stages & Bénévolat</div>
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Contact */}
-            <Link
-              to="/contact"
-              className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13.5px] font-heading transition-all ${
-                location.pathname === '/contact'
-                  ? 'text-ba-blue dark:text-white font-bold bg-ba-blue/10 dark:bg-ba-blue/25'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-ba-blue dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-gray-800/60 font-medium'
-              }`}
-            >
-              {t.nav.contact}
+              <span className="font-heading font-extrabold text-2xl lg:text-[2.1rem] leading-none text-gray-900 dark:text-white tracking-tight transition-colors group-hover:text-[var(--color-primary)]">
+                ACPDPH
+              </span>
+              <span className="font-heading font-bold text-xs lg:text-[0.95rem] tracking-wider uppercase text-[var(--color-accent)] mt-1.5 leading-tight">
+                Droits &amp; Inclusion
+              </span>
             </Link>
           </div>
 
-          {/* 3. RIGHT: Language Selector & CTA */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            {/* Language Selector Dropdown */}
-            <div className="relative" onMouseLeave={() => openDropdown === 'lang' && setOpenDropdown(null)}>
+          {/* DROITE : Accessibilité (Soleil + RESET si actif) + Langue + Bouton Soutenir + Burger */}
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
+            
+            {/* RANGÉE D'ACCESSIBILITÉ (Icône soleil/contraste, RESET si actif) */}
+            <div
+              className="hidden md:flex items-center gap-2 pr-2 lg:pr-3 border-r border-gray-200 dark:border-zinc-700"
+              role="group"
+              aria-label="Options d'accessibilité du site"
+            >
+              {/* Bouton Contraste élevé (icône soleil/mode sombre) */}
               <button
                 type="button"
+                onClick={toggleContrast}
+                tabIndex={isCompact ? -1 : 0}
+                className={`min-w-[44px] min-h-[44px] flex items-center justify-center text-[#3B9896] hover:text-[var(--color-accent)] dark:text-teal-400 dark:hover:text-[var(--color-accent)] transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${
+                  highContrast ? 'bg-teal-100/70 dark:bg-zinc-700 font-bold' : 'bg-transparent hover:bg-teal-50/70 dark:hover:bg-zinc-800'
+                }`}
+                title="Basculer le contraste élevé / mode sombre"
+                aria-label="Basculer le contraste élevé"
+                aria-pressed={highContrast}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+              </button>
+
+              {/* Bouton RESET (réinitialise le contraste si actif) */}
+              {highContrast && (
+                <button
+                  type="button"
+                  onClick={resetContrast}
+                  tabIndex={isCompact ? -1 : 0}
+                  className="min-h-[44px] px-2 flex items-center justify-center text-xs uppercase font-bold tracking-wider text-gray-500 hover:text-red-600 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                  title="Réinitialiser le contraste par défaut"
+                  aria-label="Réinitialiser le contraste"
+                >
+                  RESET
+                </button>
+              )}
+            </div>
+
+            {/* SELECTEUR DE LANGUE (Globe SVG + FR, angles droits, focus contraste) */}
+            <div
+              className="relative"
+              onMouseLeave={() => {
+                setTimeout(() => {
+                  setOpenDropdown((prev) => (prev === 'lang' ? null : prev));
+                }, 150);
+              }}
+            >
+              <button
+                ref={langBtnRef}
+                type="button"
+                tabIndex={isCompact ? -1 : 0}
                 onClick={() => setOpenDropdown(openDropdown === 'lang' ? null : 'lang')}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-heading font-semibold text-gray-700 dark:text-gray-200 bg-gray-100/90 dark:bg-gray-800/90 hover:bg-gray-200/80 dark:hover:bg-gray-700 border border-gray-200/80 dark:border-gray-700 transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ba-blue"
+                className="flex items-center gap-1.5 px-3 py-2 text-xs lg:text-[13px] font-heading font-bold text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 border border-gray-300 dark:border-zinc-700 rounded-none transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
                 aria-expanded={openDropdown === 'lang'}
+                aria-haspopup="true"
                 aria-label={`Langue : ${currentLang.name}. Cliquez pour changer`}
               >
-                {/* Modern Globe SVG Icon */}
-                <svg className="w-3.5 h-3.5 text-ba-blue dark:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[#3B9896] dark:text-teal-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
 
-                {/* Current Language Label */}
-                <span className="font-bold tracking-wide">{currentLang.label}</span>
+                <span className="tracking-wide uppercase">{currentLang.label}</span>
 
-                {/* Chevron Tab */}
                 <svg
-                  className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${openDropdown === 'lang' ? 'rotate-180' : ''}`}
+                  className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-150 ${openDropdown === 'lang' ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -305,40 +366,98 @@ export default function Navbar() {
                 </svg>
               </button>
 
-              {/* Language Dropdown Menu */}
               {openDropdown === 'lang' && (
-                <div className="absolute right-0 top-full pt-1.5 w-44 z-50">
-                  <div className="p-1.5 bg-white dark:bg-zinc-800 rounded-xl shadow-xl border border-gray-100 dark:border-zinc-700 space-y-0.5">
-                    {languages.map((item) => {
+                <div
+                  className="absolute z-50"
+                  style={{
+                    top: '100%',
+                    right: '0',
+                    minWidth: '160px',
+                    width: 'max-content',
+                  }}
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-label="Sélecteur de langue"
+                  onMouseEnter={() => setOpenDropdown('lang')}
+                >
+                  {/* Pont invisible anti-gap */}
+                  <div style={{ height: '4px' }} />
+                  <div
+                    style={{
+                      background: '#FFFFFF',
+                      border: '1px solid #D9DEEA',
+                      borderTop: '3px solid var(--color-accent)',
+                      borderRadius: '0 0 8px 8px',
+                      paddingTop: '6px',
+                      paddingBottom: '6px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                    }}
+                  >
+                    {languages.map((item, idx) => {
                       const isSelected = item.code === lang;
                       return (
-                        <button
-                          key={item.code}
-                          type="button"
-                          onClick={() => {
-                            setLang(item.code);
-                            setOpenDropdown(null);
-                          }}
-                          className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-heading transition-colors cursor-pointer text-left ${
-                            isSelected
-                              ? 'bg-ba-blue/10 dark:bg-ba-blue/20 text-ba-blue dark:text-blue-400 font-bold'
-                              : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 font-medium'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
-                              isSelected ? 'bg-ba-blue text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
-                            }`}>
+                        <div key={item.code}>
+                          <button
+                            type="button"
+                            role="menuitem"
+                            aria-current={isSelected ? 'true' : undefined}
+                            onClick={() => {
+                              setLang(item.code);
+                              setOpenDropdown(null);
+                              langBtnRef.current?.focus();
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              width: '100%',
+                              padding: '11px 18px',
+                              minHeight: '44px',
+                              fontSize: '13px',
+                              fontWeight: isSelected ? 700 : 600,
+                              color: isSelected ? '#1D4ED8' : '#101828',
+                              background: isSelected ? '#EEF2FF' : 'transparent',
+                              borderLeft: isSelected ? '3px solid #1D4ED8' : '3px solid transparent',
+                              transition: 'background 150ms, color 150ms, border-left-color 150ms',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.05em',
+                              whiteSpace: 'nowrap',
+                              boxSizing: 'border-box',
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isSelected) {
+                                (e.currentTarget as HTMLElement).style.background = '#EEF2FF';
+                                (e.currentTarget as HTMLElement).style.color = '#1D4ED8';
+                                (e.currentTarget as HTMLElement).style.borderLeftColor = '#1D4ED8';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isSelected) {
+                                (e.currentTarget as HTMLElement).style.background = 'transparent';
+                                (e.currentTarget as HTMLElement).style.color = '#101828';
+                                (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                              }
+                            }}
+                          >
+                            <span>{item.name}</span>
+                            <span
+                              style={{
+                                fontSize: '11px',
+                                fontWeight: 700,
+                                letterSpacing: '0.06em',
+                                color: isSelected ? '#1D4ED8' : '#6B7280',
+                                marginLeft: '10px',
+                              }}
+                            >
                               {item.label}
                             </span>
-                            <span>{item.name}</span>
-                          </div>
-                          {isSelected && (
-                            <svg className="w-3.5 h-3.5 text-ba-blue dark:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                            </svg>
+                          </button>
+                          {idx < languages.length - 1 && (
+                            <div style={{ height: '1px', background: '#EEF1F7', margin: '0 18px' }} />
                           )}
-                        </button>
+                        </div>
                       );
                     })}
                   </div>
@@ -346,115 +465,690 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Primary CTA Button: Nous Soutenir */}
+            {/* BOUTON NOUS SOUTENIR (Rectangulaire, angles droits, couleur d'accent, texte blanc gras majuscules) */}
             <Link
               to="/support"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 xl:px-4 xl:py-2 rounded-xl text-xs font-heading font-bold uppercase tracking-wider text-white bg-ba-blue hover:bg-ba-blue-dark active:scale-95 transition-all duration-200 shadow-xs hover:shadow-sm"
+              tabIndex={isCompact ? -1 : 0}
+              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 lg:px-6 lg:py-3.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-heading font-bold text-xs lg:text-sm uppercase tracking-wider rounded-none shadow-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-primary)] shrink-0"
             >
-              <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               <span>{t.nav.support || 'Nous soutenir'}</span>
             </Link>
 
-            {/* Mobile Hamburger Button */}
+            {/* BOUTON BURGER (Mobile < 1024px) */}
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
               type="button"
-              className="lg:hidden p-1.5 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-              aria-label={isMobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+              className="lg:hidden p-2.5 text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-none transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+              aria-label={isMobileOpen ? 'Fermer le menu de navigation' : 'Ouvrir le menu de navigation'}
+              aria-expanded={isMobileOpen}
             >
               {isMobileOpen ? (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
             </button>
           </div>
         </div>
+      </div>
 
-        {/* 4. MOBILE MENU DROPDOWN */}
-        <div
-          ref={mobileMenuRef}
-          className={`lg:hidden overflow-hidden transition-all duration-300 ${
-            isMobileOpen
-              ? 'max-h-[640px] opacity-100 mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 overflow-y-auto'
-              : 'max-h-0 opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className="py-2 space-y-1">
-            {mobileNavLinks.map((link) => {
-              const isActive = location.pathname === link.path;
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`mobile-nav-item flex items-center justify-between py-2 px-3.5 rounded-xl text-sm font-heading font-medium transition-colors ${
-                    isActive
-                      ? 'bg-ba-blue/10 text-ba-blue dark:text-white font-bold'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
-                  }`}
+      {/* ========================================================================================= */}
+      {/* 3. BARRE DE NAVIGATION (FOND COULEUR PRINCIPALE, HAUTEUR 76px, ACCUEIL DÉCALÉ SOUS ACPDPH)  */}
+      {/* ========================================================================================= */}
+      <nav
+        aria-label="Navigation principale"
+        className="header-nav-bar hidden lg:block w-full bg-[var(--color-primary)]"
+      >
+        <div className="container-ba flex items-stretch justify-between h-[76px]">
+          
+          {/* LIENS DE NAVIGATION (Avec espace réservé à gauche pour aligner Accueil avec le titre) */}
+          <div className="flex items-center gap-7 xl:gap-10">
+            
+            {/* Espace réservé pour que les liens ne passent pas sous le logo qui déborde (glisse vers 18px en compact) */}
+            <div
+              className="hidden lg:block shrink-0 header-menu-spacer"
+              aria-hidden="true"
+            />
+
+            {/* ACCUEIL (Aligne verticalement sous le début de "ACPDPH") */}
+            <Link
+              to="/"
+              aria-current={isHomeActive ? 'page' : undefined}
+              className={`h-full flex items-center text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                isHomeActive
+                  ? 'text-[var(--color-accent-text)]'
+                  : 'text-white hover:text-[var(--color-accent-text)]'
+              }`}
+            >
+              {t.nav.home}
+            </Link>
+
+            {/* ORGANISATION ▾ (Menu déroulant accessible) */}
+            <div
+              className="relative h-full flex items-center"
+              onMouseEnter={() => setOpenDropdown('org')}
+              onMouseLeave={() => {
+                setTimeout(() => {
+                  setOpenDropdown((prev) => (prev === 'org' ? null : prev));
+                }, 150);
+              }}
+            >
+              <button
+                ref={orgBtnRef}
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === 'org' ? null : 'org')}
+                aria-expanded={openDropdown === 'org'}
+                aria-haspopup="true"
+                aria-current={isOrgActive ? 'true' : undefined}
+                className={`h-full flex items-center gap-1.5 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                  isOrgActive
+                    ? 'text-[var(--color-accent-text)]'
+                    : 'text-white hover:text-[var(--color-accent-text)]'
+                }`}
+              >
+                <span>Organisation</span>
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform duration-150 ${openDropdown === 'org' ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <span>{link.label}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-ba-blue" />}
-                </Link>
-              );
-            })}
-            {/* Mobile language selector */}
-            <div className="pt-2.5 pb-1 border-t border-gray-100 dark:border-gray-800 px-3.5">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-heading font-semibold text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5 text-ba-blue dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                  </svg>
-                  <span>{lang === 'fr' ? 'Langue' : lang === 'it' ? 'Lingua' : lang === 'de' ? 'Sprache' : 'Language'}</span>
-                </span>
-                <span className="text-xs font-heading font-bold text-ba-blue dark:text-blue-400">
-                  {currentLang.name}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-1.5">
-                {languages.map((item) => {
-                  const isSelected = item.code === lang;
-                  return (
-                    <button
-                      key={item.code}
-                      type="button"
-                      onClick={() => setLang(item.code)}
-                      className={`flex items-center justify-between px-2.5 py-2 text-xs font-heading rounded-lg border transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-ba-blue text-white border-ba-blue font-bold shadow-xs'
-                          : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-100 font-medium'
-                      }`}
-                    >
-                      <span>{item.name}</span>
-                      <span className={`text-[10px] font-bold ${isSelected ? 'text-white/90' : 'text-gray-400'}`}>
-                        {item.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Panneau déroulant Organisation */}
+              {openDropdown === 'org' && (
+                <div
+                  className="absolute z-50"
+                  style={{
+                    top: '100%',
+                    left: '-14px',
+                    minWidth: '230px',
+                    width: 'max-content',
+                  }}
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-label="Organisation"
+                  onMouseEnter={() => setOpenDropdown('org')}
+                >
+                  {/* Pont invisible pour éviter le vide entre le bouton et le panneau */}
+                  <div style={{ height: '4px' }} />
+                  <div
+                    style={{
+                      background: '#FFFFFF',
+                      border: '1px solid #D9DEEA',
+                      borderTop: '3px solid var(--color-accent)',
+                      borderRadius: '0 0 8px 8px',
+                      paddingTop: '6px',
+                      paddingBottom: '6px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                    }}
+                  >
+                    {[
+                      { to: '/about', label: t.nav.about },
+                      { to: '/governance', label: t.nav.governance || 'Gouvernance' },
+                      { to: '/pillars', label: t.nav.pillars },
+                    ].map((item, idx, arr) => (
+                      <div key={item.to}>
+                        <Link
+                          to={item.to}
+                          role="menuitem"
+                          aria-current={location.pathname === item.to ? 'page' : undefined}
+                          onClick={() => setOpenDropdown(null)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            padding: '11px 18px',
+                            minHeight: '44px',
+                            fontSize: '13px',
+                            fontWeight: location.pathname === item.to ? 700 : 600,
+                            color: location.pathname === item.to ? '#1D4ED8' : '#101828',
+                            background: location.pathname === item.to ? '#EEF2FF' : 'transparent',
+                            borderLeft: location.pathname === item.to ? '3px solid #1D4ED8' : '3px solid transparent',
+                            transition: 'background 150ms, color 150ms, border-left-color 150ms',
+                            textDecoration: 'none',
+                            whiteSpace: 'nowrap',
+                            boxSizing: 'border-box',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (location.pathname !== item.to) {
+                              (e.currentTarget as HTMLElement).style.background = '#EEF2FF';
+                              (e.currentTarget as HTMLElement).style.color = '#1D4ED8';
+                              (e.currentTarget as HTMLElement).style.borderLeftColor = '#1D4ED8';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (location.pathname !== item.to) {
+                              (e.currentTarget as HTMLElement).style.background = 'transparent';
+                              (e.currentTarget as HTMLElement).style.color = '#101828';
+                              (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                            }
+                          }}
+                        >
+                          {item.label}
+                        </Link>
+                        {idx < arr.length - 1 && (
+                          <div style={{ height: '1px', background: '#EEF1F7', margin: '0 18px' }} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="pt-2 pb-1">
+            {/* NOS PROJETS */}
+            <Link
+              to="/projects"
+              aria-current={isProjectsActive ? 'page' : undefined}
+              className={`h-full flex items-center text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                isProjectsActive
+                  ? 'text-[var(--color-accent-text)]'
+                  : 'text-white hover:text-[var(--color-accent-text)]'
+              }`}
+            >
+              {t.nav.projects}
+            </Link>
+
+            {/* ACTUALITÉS */}
+            <Link
+              to="/news"
+              aria-current={isNewsActive ? 'page' : undefined}
+              className={`h-full flex items-center text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                isNewsActive
+                  ? 'text-[var(--color-accent-text)]'
+                  : 'text-white hover:text-[var(--color-accent-text)]'
+              }`}
+            >
+              {t.nav.news}
+            </Link>
+
+            {/* RESSOURCES ▾ (Menu déroulant accessible) */}
+            <div
+              className="relative h-full flex items-center"
+              onMouseEnter={() => setOpenDropdown('resources')}
+              onMouseLeave={() => {
+                setTimeout(() => {
+                  setOpenDropdown((prev) => (prev === 'resources' ? null : prev));
+                }, 150);
+              }}
+            >
+              <button
+                ref={resourcesBtnRef}
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === 'resources' ? null : 'resources')}
+                aria-expanded={openDropdown === 'resources'}
+                aria-haspopup="true"
+                aria-current={isResourcesActive ? 'true' : undefined}
+                className={`h-full flex items-center gap-1.5 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                  isResourcesActive
+                    ? 'text-[var(--color-accent-text)]'
+                    : 'text-white hover:text-[var(--color-accent-text)]'
+                }`}
+              >
+                <span>Ressources</span>
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform duration-150 ${openDropdown === 'resources' ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Panneau déroulant Ressources */}
+              {openDropdown === 'resources' && (
+                <div
+                  className="absolute z-50"
+                  style={{
+                    top: '100%',
+                    left: '-14px',
+                    minWidth: '230px',
+                    width: 'max-content',
+                  }}
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-label="Ressources"
+                  onMouseEnter={() => setOpenDropdown('resources')}
+                >
+                  {/* Pont invisible pour éviter le vide entre le bouton et le panneau */}
+                  <div style={{ height: '4px' }} />
+                  <div
+                    style={{
+                      background: '#FFFFFF',
+                      border: '1px solid #D9DEEA',
+                      borderTop: '3px solid var(--color-accent)',
+                      borderRadius: '0 0 8px 8px',
+                      paddingTop: '6px',
+                      paddingBottom: '6px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                    }}
+                  >
+                    {[
+                      { to: '/publications', label: t.nav.publications || 'Publications' },
+                      { to: '/partners', label: t.nav.partners || 'Nos Partenaires' },
+                      { to: '/careers', label: t.nav.careers || 'Offres & Emploi' },
+                    ].map((item, idx, arr) => (
+                      <div key={item.to}>
+                        <Link
+                          to={item.to}
+                          role="menuitem"
+                          aria-current={location.pathname === item.to ? 'page' : undefined}
+                          onClick={() => setOpenDropdown(null)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            padding: '11px 18px',
+                            minHeight: '44px',
+                            fontSize: '13px',
+                            fontWeight: location.pathname === item.to ? 700 : 600,
+                            color: location.pathname === item.to ? '#1D4ED8' : '#101828',
+                            background: location.pathname === item.to ? '#EEF2FF' : 'transparent',
+                            borderLeft: location.pathname === item.to ? '3px solid #1D4ED8' : '3px solid transparent',
+                            transition: 'background 150ms, color 150ms, border-left-color 150ms',
+                            textDecoration: 'none',
+                            whiteSpace: 'nowrap',
+                            boxSizing: 'border-box',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (location.pathname !== item.to) {
+                              (e.currentTarget as HTMLElement).style.background = '#EEF2FF';
+                              (e.currentTarget as HTMLElement).style.color = '#1D4ED8';
+                              (e.currentTarget as HTMLElement).style.borderLeftColor = '#1D4ED8';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (location.pathname !== item.to) {
+                              (e.currentTarget as HTMLElement).style.background = 'transparent';
+                              (e.currentTarget as HTMLElement).style.color = '#101828';
+                              (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                            }
+                          }}
+                        >
+                          {item.label}
+                        </Link>
+                        {idx < arr.length - 1 && (
+                          <div style={{ height: '1px', background: '#EEF1F7', margin: '0 18px' }} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* EXTRÉMITÉ DROITE : Actions compactes (FR + Nous soutenir) + BLOC CONTACT */}
+          <div className="flex items-stretch shrink-0">
+            {/* ACTIONS COMPACTES (FR + Nous soutenir) - Visible uniquement en mode compact */}
+            <div className="header-compact-actions flex items-center gap-2.5 xl:gap-3.5 pr-3 xl:pr-4">
+              {/* SÉLECTEUR DE LANGUE COMPACT */}
+              <div
+                className="relative"
+                onMouseLeave={() => {
+                  setTimeout(() => {
+                    setOpenDropdown((prev) => (prev === 'lang-compact' ? null : prev));
+                  }, 150);
+                }}
+              >
+                <button
+                  ref={compactLangBtnRef}
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === 'lang-compact' ? null : 'lang-compact')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-heading font-bold text-white bg-white/10 hover:bg-white/20 border border-white/25 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-none min-h-[38px]"
+                  aria-expanded={openDropdown === 'lang-compact'}
+                  aria-haspopup="true"
+                  aria-label={`Langue : ${currentLang.name}. Cliquez pour changer`}
+                  tabIndex={isCompact ? 0 : -1}
+                >
+                  <svg className="w-4 h-4 text-teal-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                  <span className="tracking-wide uppercase">{currentLang.label}</span>
+                  <svg
+                    className={`w-3.5 h-3.5 text-white/80 transition-transform duration-150 ${openDropdown === 'lang-compact' ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {openDropdown === 'lang-compact' && (
+                  <div
+                    className="absolute z-50"
+                    style={{
+                      top: 'calc(100% + 6px)',
+                      right: '0',
+                      minWidth: '160px',
+                      width: 'max-content',
+                    }}
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-label="Sélecteur de langue"
+                    onMouseEnter={() => setOpenDropdown('lang-compact')}
+                  >
+                    <div style={{ height: '4px' }} />
+                    <div
+                      style={{
+                        background: '#FFFFFF',
+                        border: '1px solid #D9DEEA',
+                        borderTop: '3px solid var(--color-accent)',
+                        borderRadius: '0 0 8px 8px',
+                        paddingTop: '6px',
+                        paddingBottom: '6px',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.14)',
+                      }}
+                    >
+                      {languages.map((item, idx) => {
+                        const isSelected = item.code === lang;
+                        return (
+                          <div key={item.code}>
+                            <button
+                              type="button"
+                              role="menuitem"
+                              aria-current={isSelected ? 'true' : undefined}
+                              onClick={() => {
+                                setLang(item.code);
+                                setOpenDropdown(null);
+                                compactLangBtnRef.current?.focus();
+                              }}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                padding: '11px 18px',
+                                minHeight: '44px',
+                                fontSize: '13px',
+                                fontWeight: isSelected ? 700 : 600,
+                                color: isSelected ? '#1D4ED8' : '#101828',
+                                background: isSelected ? '#EEF2FF' : 'transparent',
+                                borderLeft: isSelected ? '3px solid #1D4ED8' : '3px solid transparent',
+                                transition: 'background 150ms, color 150ms, border-left-color 150ms',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                                whiteSpace: 'nowrap',
+                                boxSizing: 'border-box',
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isSelected) {
+                                  (e.currentTarget as HTMLElement).style.background = '#EEF2FF';
+                                  (e.currentTarget as HTMLElement).style.color = '#1D4ED8';
+                                  (e.currentTarget as HTMLElement).style.borderLeftColor = '#1D4ED8';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isSelected) {
+                                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                                  (e.currentTarget as HTMLElement).style.color = '#101828';
+                                  (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
+                                }
+                              }}
+                            >
+                              <span>{item.name}</span>
+                              <span
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  letterSpacing: '0.06em',
+                                  color: isSelected ? '#1D4ED8' : '#6B7280',
+                                  marginLeft: '10px',
+                                }}
+                              >
+                                {item.label}
+                              </span>
+                            </button>
+                            {idx < languages.length - 1 && (
+                              <div style={{ height: '1px', background: '#EEF1F7', margin: '0 18px' }} />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* BOUTON NOUS SOUTENIR COMPACT (Cœur seul < 1280px avec tooltip, Cœur + texte >= 1280px) */}
               <Link
                 to="/support"
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-heading font-bold uppercase tracking-wider text-white bg-ba-blue hover:bg-ba-blue-dark active:scale-95 transition-all text-center shadow-sm"
+                title={t.nav.support || 'Nous soutenir'}
+                aria-label={t.nav.support || 'Nous soutenir'}
+                tabIndex={isCompact ? 0 : -1}
+                className="inline-flex items-center justify-center gap-2 px-3.5 py-2 xl:px-4 xl:py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-heading font-bold text-xs uppercase tracking-wider rounded-none shadow-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white shrink-0 min-h-[38px]"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span className="hidden xl:inline">{t.nav.support || 'Nous soutenir'}</span>
+              </Link>
+            </div>
+
+            {/* BLOC CONTACT */}
+            <Link
+              to="/contact"
+              aria-current={isContactActive ? 'page' : undefined}
+              className="h-full flex items-center justify-center px-8 xl:px-12 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-heading font-bold text-[14.5px] uppercase tracking-wider rounded-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset shrink-0"
+            >
+              {t.nav.contact || 'CONTACT'}
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* ========================================================================================= */}
+      {/* 4. MENU MOBILE (< 1024px)                                                                 */}
+      {/* ========================================================================================= */}
+      {isMobileOpen && (
+        <div
+          className="lg:hidden w-full bg-[var(--color-primary)] text-white border-t border-white/10 shadow-2xl transition-all"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu principal mobile"
+        >
+          <div className="container-ba py-4 space-y-1">
+            
+            {/* ACCUEIL */}
+            <Link
+              to="/"
+              className={`flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] ${
+                isHomeActive ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
+              }`}
+            >
+              <span>{t.nav.home}</span>
+              {isHomeActive && <span className="w-2 h-2 bg-[var(--color-accent-text)]" />}
+            </Link>
+
+            {/* ORGANISATION (Accordéon) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setMobileSubmenu(mobileSubmenu === 'org' ? null : 'org')}
+                className={`w-full flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] cursor-pointer ${
+                  isOrgActive ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
+                }`}
+                aria-expanded={mobileSubmenu === 'org'}
+              >
+                <span>Organisation</span>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-150 ${mobileSubmenu === 'org' ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {mobileSubmenu === 'org' && (
+                <div className="pl-4 pr-2 py-1 space-y-1 bg-black/15">
+                  <Link
+                    to="/about"
+                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
+                      location.pathname === '/about' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t.nav.about}
+                  </Link>
+                  <Link
+                    to="/governance"
+                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
+                      location.pathname === '/governance' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t.nav.governance || 'Gouvernance'}
+                  </Link>
+                  <Link
+                    to="/pillars"
+                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
+                      location.pathname === '/pillars' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t.nav.pillars}
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* NOS PROJETS */}
+            <Link
+              to="/projects"
+              className={`flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] ${
+                isProjectsActive ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
+              }`}
+            >
+              <span>{t.nav.projects}</span>
+              {isProjectsActive && <span className="w-2 h-2 bg-[var(--color-accent-text)]" />}
+            </Link>
+
+            {/* ACTUALITÉS */}
+            <Link
+              to="/news"
+              className={`flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] ${
+                isNewsActive ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
+              }`}
+            >
+              <span>{t.nav.news}</span>
+              {isNewsActive && <span className="w-2 h-2 bg-[var(--color-accent-text)]" />}
+            </Link>
+
+            {/* RESSOURCES (Accordéon) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setMobileSubmenu(mobileSubmenu === 'resources' ? null : 'resources')}
+                className={`w-full flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] cursor-pointer ${
+                  isResourcesActive ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
+                }`}
+                aria-expanded={mobileSubmenu === 'resources'}
+              >
+                <span>Ressources</span>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-150 ${mobileSubmenu === 'resources' ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {mobileSubmenu === 'resources' && (
+                <div className="pl-4 pr-2 py-1 space-y-1 bg-black/15">
+                  <Link
+                    to="/publications"
+                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
+                      location.pathname === '/publications' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t.nav.publications || 'Publications'}
+                  </Link>
+                  <Link
+                    to="/partners"
+                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
+                      location.pathname === '/partners' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t.nav.partners || 'Nos Partenaires'}
+                  </Link>
+                  <Link
+                    to="/careers"
+                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
+                      location.pathname === '/careers' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t.nav.careers || 'Offres & Emploi'}
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* SECTION D'ACCESSIBILITÉ MOBILE (Contraste élevé uniquement) */}
+            <div className="pt-3 pb-2 border-t border-white/15 px-3">
+              <div className="text-xs font-bold uppercase tracking-wider text-white/80 mb-2">Accessibilité</div>
+              <button
+                type="button"
+                onClick={toggleContrast}
+                className={`w-full py-2.5 px-3 text-xs font-bold rounded-none border min-h-[44px] flex items-center justify-center gap-2 transition-colors ${
+                  highContrast
+                    ? 'bg-[var(--color-accent)] text-white border-[var(--color-accent)]'
+                    : 'bg-white/10 text-white border-white/20 hover:bg-white/15'
+                }`}
+              >
+                <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+                <span>{highContrast ? 'Mode Contraste Élevé Activé' : 'Activer le Contraste Élevé'}</span>
+              </button>
+            </div>
+
+            {/* BOUTONS D'APPEL À L'ACTION MOBILE (Pleine largeur, angles droits) */}
+            <div className="pt-2 pb-1 space-y-2">
+              <Link
+                to="/contact"
+                className="w-full flex items-center justify-center py-3.5 px-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-heading font-bold text-sm uppercase tracking-wider rounded-none min-h-[44px] transition-colors"
+              >
+                {t.nav.contact || 'CONTACT'}
+              </Link>
+
+              <Link
+                to="/support"
+                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-white hover:bg-gray-100 text-[var(--color-primary)] font-heading font-bold text-sm uppercase tracking-wider rounded-none min-h-[44px] transition-colors"
+              >
+                <svg className="w-4 h-4 text-[var(--color-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
                 <span>{t.nav.support || 'Nous soutenir'}</span>
               </Link>
             </div>
           </div>
         </div>
-      </nav>
-    </header>
+      )}
+      </header>
+    </>
   );
 }

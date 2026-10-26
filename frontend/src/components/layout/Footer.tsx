@@ -1,19 +1,36 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '../../i18n';
 import { useAdminData } from '../../context/adminData';
 
+/* ─── Utilities ─────────────────────────────────────── */
+const isEmailValid = (v: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+/* ─── Footer ─────────────────────────────────────────── */
 export default function Footer() {
   const { t } = useI18n();
   const { addSubscriber } = useAdminData();
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [newsletterMsg, setNewsletterMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const [email, setEmail]               = useState('');
+  const [subscribed, setSubscribed]     = useState(false);
+  const [loading, setLoading]           = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [newsletterMsg, setNewsletterMsg] =
+    useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const handleNewsletter = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+
+    /* Anti-spam honeypot */
+    if (honeypotRef.current?.value) return;
+
+    if (!isEmailValid(email)) {
+      setNewsletterMsg({ type: 'error', text: 'Entrez une adresse e-mail valide.' });
+      return;
+    }
 
     setLoading(true);
     setNewsletterMsg(null);
@@ -24,207 +41,261 @@ export default function Footer() {
 
       if (res.success) {
         setSubscribed(true);
-        setNewsletterMsg({
-          type: 'success',
-          text: 'Merci ! Votre inscription à la newsletter a été enregistrée avec succès. Vous recevrez nos futurs projets et actualités.',
-        });
+        setNewsletterMsg({ type: 'success', text: 'Merci, vous êtes inscrit(e) !' });
         setEmail('');
       } else {
         setNewsletterMsg({
           type: 'error',
-          text: res.message || 'Erreur lors de l\'inscription.',
+          text: res.message || "Erreur lors de l'inscription.",
         });
       }
     }, 400);
   };
 
-  const orgLinks = [
-    { path: '/', label: t.nav.home },
-    { path: '/about', label: t.nav.about },
-    { path: '/governance', label: t.nav.governance || 'Gouvernance & Équipe' },
-    { path: '/pillars', label: t.nav.pillars },
-    { path: '/projects', label: t.nav.projects },
+  /* ── Données ── */
+  const navLinks = [
+    { path: '/',             label: t.nav.home },
+    { path: '/about',        label: t.nav.about },
+    { path: '/governance',   label: t.nav.governance  || 'Gouvernance & Équipe' },
+    { path: '/projects',     label: t.nav.projects },
+    { path: '/news',         label: t.nav.news },
+    { path: '/contact',      label: t.nav.contact },
   ];
 
-  const resourceLinks = [
-    { path: '/news', label: t.nav.news },
-    { path: '/publications', label: t.nav.publications || 'Publications & Études' },
-    { path: '/partners', label: t.nav.partners || 'Nos Partenaires' },
-    { path: '/careers', label: t.nav.careers || 'Offres & Emploi' },
-    { path: '/support', label: t.nav.support || 'Nous soutenir' },
-    { path: '/contact', label: t.nav.contact },
+  const socialLinks = [
+    { id: 'linkedin',  url: 'https://linkedin.com/company/acpdph',            label: 'LinkedIn' },
+    { id: 'facebook',  url: 'https://www.facebook.com/share/1atRhwrxaY/',     label: 'Facebook' },
+    { id: 'twitter',   url: 'https://x.com/acpdph',                           label: 'X (Twitter)' },
+    { id: 'instagram', url: 'https://www.instagram.com/acpdph/',               label: 'Instagram' },
+    { id: 'tiktok',    url: 'https://vm.tiktok.com/ZS9kHDsU4hALR-qa7BL/',    label: 'TikTok' },
   ];
+
+  /* ── Rendu email inline ── */
+  const showEmailError =
+    emailTouched && !isEmailValid(email) && !subscribed && !newsletterMsg;
 
   return (
-    <footer className="bg-ba-dark text-white">
-      {/* Main Footer */}
-      <div className="container-ba pt-20 pb-20 md:pt-28 md:pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-14">
-          {/* Brand */}
-          <div className="lg:col-span-1 space-y-6">
-            <Link to="/" className="flex items-center gap-3">
-              <img src="/logo_ACPDPH.jpg" alt="ACPDPH" className="h-14 w-auto brightness-110 rounded-full object-cover" />
-              <div>
-                <span className="font-heading font-extrabold text-2xl leading-none text-white block">
-                  ACPDPH
-                </span>
-                <span className="text-xs text-blue-300 font-medium leading-tight block mt-1">
-                  Promotion des Droits des Personnes Handicapées
-                </span>
-              </div>
-            </Link>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              {t.footer.description}
-            </p>
-            {/* Social Links */}
-            <div className="flex gap-3 pt-2">
-              {[
-                {
-                  id: 'facebook',
-                  url: 'https://www.facebook.com/share/1atRhwrxaY/',
-                  label: 'Facebook - ACPDPH',
-                },
-                {
-                  id: 'twitter',
-                  url: 'https://x.com/acpdph',
-                  label: 'X (Twitter) - ACPDPH',
-                },
-                {
-                  id: 'instagram',
-                  url: 'https://www.instagram.com/acpdph/',
-                  label: 'Instagram - ACPDPH',
-                },
-                {
-                  id: 'tiktok',
-                  url: 'https://vm.tiktok.com/ZS9kHDsU4hALR-qa7BL/',
-                  label: 'TikTok - ACPDPH',
-                },
-              ].map(social => (
-                <a
-                  key={social.id}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-white/10 hover:bg-ba-blue flex items-center justify-center transition-all hover:-translate-y-1 text-white"
-                  aria-label={social.label}
-                  title={social.label}
-                >
-                  <SocialIcon name={social.id} />
-                </a>
-              ))}
+    <footer className="footer-root" aria-label="Pied de page">
+
+      {/* ── Niveau 1 : trois colonnes ──────────────────── */}
+      <div className="footer-main">
+        <div className="container-ba">
+          <div className="footer-grid">
+
+            {/* Colonne 1 – Notre bureau */}
+            <div>
+              <h3 className="footer-col-title">Notre bureau</h3>
+              <ul className="footer-contact-list">
+                <li>
+                  <span className="footer-contact-icon" aria-hidden="true">
+                    <PinIcon />
+                  </span>
+                  <span>Beni, Province du Nord-Kivu,{'\u00a0'}RDC</span>
+                </li>
+                <li>
+                  <span className="footer-contact-icon" aria-hidden="true">
+                    <MailIcon />
+                  </span>
+                  <a href="mailto:acpdph@exemple.org" className="footer-contact-link">
+                    acpdph@exemple.org
+                  </a>
+                </li>
+                <li>
+                  <span className="footer-contact-icon" aria-hidden="true">
+                    <PhoneIcon />
+                  </span>
+                  <a href="tel:+243000000000" className="footer-contact-link">
+                    +243 000 000 000
+                  </a>
+                </li>
+              </ul>
             </div>
-          </div>
 
-          {/* Column 2: Organisation */}
-          <div>
-            <h4 className="font-heading font-bold text-lg mb-6 text-white tracking-wide">Organisation</h4>
-            <ul className="space-y-3.5 text-sm">
-              {orgLinks.map(link => (
-                <li key={link.path}>
-                  <Link
-                    to={link.path}
-                    className="text-gray-300 hover:text-ba-blue transition-colors flex items-center gap-2"
+            {/* Colonne 2 – Liens rapides */}
+            <div>
+              <h3 className="footer-col-title">Liens rapides</h3>
+              <nav aria-label="Liens du pied de page">
+                <ul className="footer-nav-list">
+                  {navLinks.map(link => (
+                    <li key={link.path}>
+                      <Link to={link.path} className="footer-nav-link">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+
+            {/* Colonne 3 – Suivez-nous + newsletter */}
+            <div className="footer-col-social">
+              <h3 className="footer-col-title">Suivez-nous</h3>
+
+              <div className="footer-social-row">
+                {socialLinks.map(s => (
+                  <a
+                    key={s.id}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    className="footer-social-btn"
                   >
-                    <svg className="w-3 h-3 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+                    <SocialIcon name={s.id} />
+                  </a>
+                ))}
+              </div>
 
-          {/* Column 3: Ressources & Agir */}
-          <div>
-            <h4 className="font-heading font-bold text-lg mb-6 text-white tracking-wide">Ressources & Agir</h4>
-            <ul className="space-y-3.5 text-sm">
-              {resourceLinks.map(link => (
-                <li key={link.path}>
-                  <Link
-                    to={link.path}
-                    className="text-gray-300 hover:text-ba-blue transition-colors flex items-center gap-2"
-                  >
-                    <svg className="w-3 h-3 text-ba-blue shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+              {/* Newsletter */}
+              <div>
+                <label htmlFor="footer-email-input" className="footer-newsletter-label">
+                  {t.footer.newsletter_title}
+                </label>
 
-          {/* Newsletter */}
-          <div>
-            <h4 className="font-heading font-bold text-xl mb-8 text-white tracking-wide">{t.footer.newsletter_title}</h4>
-            <p className="text-gray-300 text-base leading-relaxed mb-8">{t.footer.newsletter_subtitle}</p>
-            <form onSubmit={handleNewsletter} className="space-y-4">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t.footer.newsletter_placeholder}
-                className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-base text-white placeholder-gray-400 focus:outline-none focus:border-ba-blue focus:ring-1 focus:ring-ba-blue transition-all"
-                required
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className={`btn btn-blue w-full text-base py-3.5 flex items-center justify-center gap-2 ${loading ? 'opacity-60' : ''}`}
-              >
-                {loading ? 'Inscription...' : (subscribed ? 'Inscription confirmée !' : t.footer.newsletter_submit)}
-              </button>
+                <form onSubmit={handleNewsletter} noValidate>
+                  {/* Honeypot anti-spam */}
+                  <input
+                    ref={honeypotRef}
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    autoComplete="off"
+                    style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }}
+                  />
 
-              {newsletterMsg && (
-                <div className={`p-3.5 rounded-xl text-xs leading-relaxed border font-medium ${
-                  newsletterMsg.type === 'success' ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40' : 'bg-red-950/80 text-red-300 border-red-500/40'
-                }`}>
-                  {newsletterMsg.text}
-                </div>
-              )}
-            </form>
+                  <div className="footer-newsletter-row">
+                    <input
+                      id="footer-email-input"
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      onBlur={() => setEmailTouched(true)}
+                      placeholder="nom@exemple.org"
+                      className="footer-newsletter-input"
+                      autoComplete="email"
+                      required
+                      disabled={subscribed}
+                      aria-describedby="footer-newsletter-feedback"
+                      aria-invalid={showEmailError ? 'true' : undefined}
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading || subscribed}
+                      className="footer-newsletter-btn"
+                    >
+                      {loading ? '...' : subscribed ? 'Inscrit(e)' : t.footer.newsletter_submit}
+                    </button>
+                  </div>
+
+                  <div id="footer-newsletter-feedback" aria-live="polite">
+                    {newsletterMsg ? (
+                      <p
+                        role="status"
+                        className={`footer-newsletter-hint ${
+                          newsletterMsg.type === 'success'
+                            ? 'footer-newsletter-success'
+                            : 'footer-newsletter-error'
+                        }`}
+                      >
+                        {newsletterMsg.text}
+                      </p>
+                    ) : showEmailError ? (
+                      <p role="alert" className="footer-newsletter-hint footer-newsletter-error">
+                        Entrez une adresse e-mail valide.
+                      </p>
+                    ) : null}
+                  </div>
+                </form>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-white/10 bg-black/30">
-        <div className="container-ba py-10 md:py-12 flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-gray-300 text-sm leading-relaxed">
-            © {new Date().getFullYear()} ACPDPH. {t.footer.rights}
+      {/* ── Niveau 2 : barre du bas ────────────────────── */}
+      <div className="footer-bar">
+        <div className="container-ba footer-bar-inner footer-bar-inner--centered">
+          <p className="footer-bar-copy">
+            &copy; {new Date().getFullYear()} ACPDPH. {t.footer.rights}
           </p>
-          <p className="text-gray-400 text-sm leading-relaxed text-center md:text-right">
-            Beni — Nord-Kivu, RDC
-          </p>
+          <div className="footer-bar-links">
+            <Link to="/legal"   className="footer-bar-link">{t.footer.terms}</Link>
+            <Link to="/privacy" className="footer-bar-link">{t.footer.privacy}</Link>
+          </div>
         </div>
       </div>
+
     </footer>
   );
 }
 
+/* ─── Icônes SVG ──────────────────────────────────────── */
+
+function PinIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+      <circle cx="12" cy="10" r="3"/>
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="4" width="20" height="16" rx="2"/>
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.14 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.05 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/>
+    </svg>
+  );
+}
+
 function SocialIcon({ name }: { name: string }) {
+  const size = 18;
   const icons: Record<string, React.ReactNode> = {
+
+    linkedin: (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      </svg>
+    ),
+
     facebook: (
-      <svg className="w-4 h-4 pointer-events-none" fill="currentColor" viewBox="0 0 24 24">
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
       </svg>
     ),
+
     twitter: (
-      <svg className="w-4 h-4 pointer-events-none" fill="currentColor" viewBox="0 0 24 24">
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
       </svg>
     ),
+
     instagram: (
-      <svg className="w-4 h-4 pointer-events-none" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
       </svg>
     ),
+
     tiktok: (
-      <svg className="w-4 h-4 pointer-events-none" fill="currentColor" viewBox="0 0 24 24">
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
       </svg>
     ),
   };
-  return icons[name] || null;
+
+  return <>{icons[name] ?? null}</>;
 }

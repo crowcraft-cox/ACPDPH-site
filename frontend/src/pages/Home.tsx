@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '../i18n';
 import { useScrollReveal, useCountUp, useAnimeReveal } from '../hooks/useScrollReveal';
 import { useAdminData } from '../context/adminData';
-import type { Project, NewsArticle } from '../types';
-import { animate } from 'animejs';
+import { buildHeroHookTitle } from '../utils/heroHook';
 
 export default function Home() {
   return (
@@ -19,10 +18,15 @@ export default function Home() {
   );
 }
 
-type HeroSlide =
-  | { kind: 'default' }
-  | { kind: 'project'; data: Project }
-  | { kind: 'news'; data: NewsArticle };
+interface HeroItem {
+  type: 'project' | 'news';
+  typeLabel: 'Projet' | 'Publication';
+  title: string;       /* Titre d'accroche pour la page d'accueil */
+  rawTitle: string;    /* Titre administratif complet pour l'accessibilité */
+  description: string;
+  link: string;
+  image?: string;
+}
 
 /* ===== HERO SECTION ===== */
 function HeroSection() {
@@ -30,189 +34,269 @@ function HeroSection() {
   const { data } = useAdminData();
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const slideContentRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
-  /* Build dynamic slides array: Default -> Project 1 -> News 1 -> Project 2 -> News 2 */
-  const slides: HeroSlide[] = [{ kind: 'default' }];
-  
-  if (data.projects.length > 0) slides.push({ kind: 'project', data: data.projects[0] });
-  if (data.news.length > 0) slides.push({ kind: 'news', data: data.news[0] });
-  if (data.projects.length > 1) slides.push({ kind: 'project', data: data.projects[1] });
-  if (data.news.length > 1) slides.push({ kind: 'news', data: data.news[1] });
+  const projects = data.projects || [];
+  const news = data.news || [];
 
-  /* Auto-rotate slides every 6 seconds with smooth Anime.js transition */
+  /* Respect prefers-reduced-motion */
+  const prefersReduced =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Dynamic 6-item rotation: alternating Projects and Publications */
+  const slides: HeroItem[] = [
+    {
+      type: 'project',
+      typeLabel: 'Projet',
+      title: buildHeroHookTitle(projects[0] || {
+        title: 'Écoles Inclusives & Équité Éducative',
+        type: 'Éducation Inclusive',
+        location: 'Beni, Nord-Kivu, RDC',
+        description: 'Aménagement de salles adaptées, formation des enseignants à l\'inclusion et dotation d\'outils pédagogiques pour les enfants vivant avec handicap.',
+      }, 'project'),
+      rawTitle: projects[0]?.title || 'Écoles Inclusives & Équité Éducative',
+      description: projects[0]?.description?.replace(/\[photo:\d+\]/g, '').trim() || 'Aménagement de salles adaptées, formation des enseignants à l\'inclusion et dotation d\'outils pédagogiques pour les enfants vivant avec handicap.',
+      link: `/projects/${projects[0]?.id || '1'}`,
+      image: projects[0]?.image || '/pillars/formation.jpg',
+    },
+    {
+      type: 'news',
+      typeLabel: 'Publication',
+      title: buildHeroHookTitle(news[0] || {
+        title: 'Campagne de plaidoyer pour l\'accessibilité des édifices publics à Beni',
+        category: 'Plaidoyer',
+        excerpt: 'L\'ACPDPH a rencontré les autorités urbaines de Beni pour la mise en conformité des accès aux bâtiments administratifs.',
+      }, 'news'),
+      rawTitle: news[0]?.title || 'Campagne de plaidoyer pour l\'accessibilité des édifices publics à Beni',
+      description: news[0]?.excerpt || 'L\'ACPDPH a rencontré les autorités urbaines de Beni pour la mise en conformité des accès aux bâtiments administratifs.',
+      link: `/news/${news[0]?.id || '1'}`,
+      image: news[0]?.image || '/images/hero/photo_accueil.jpg',
+    },
+    {
+      type: 'project',
+      typeLabel: 'Projet',
+      title: buildHeroHookTitle(projects[1] || {
+        title: 'Autonomisation & Métiers pour Personnes Handicapées',
+        type: 'Autonomisation',
+        location: 'Beni et environs',
+        description: 'Formations professionnelles aux métiers d\'artisanat, numérique et gestion de micro-entreprises avec octroi de kits de démarrage.',
+      }, 'project'),
+      rawTitle: projects[1]?.title || 'Autonomisation & Métiers pour Personnes Handicapées',
+      description: projects[1]?.description?.replace(/\[photo:\d+\]/g, '').trim() || 'Formations professionnelles aux métiers d\'artisanat, numérique et gestion de micro-entreprises avec octroi de kits de démarrage.',
+      link: `/projects/${projects[1]?.id || '2'}`,
+      image: projects[1]?.image || '/pillars/protection.jpg',
+    },
+    {
+      type: 'news',
+      typeLabel: 'Publication',
+      title: buildHeroHookTitle(news[1] || {
+        title: 'Remise d\'aides techniques et bourses scolaires inclusives',
+        category: 'Inclusion',
+        location: 'Beni',
+        excerpt: 'L\'ACPDPH a distribué des tricycles et kits scolaires complets à 120 élèves en situation de handicap à Beni.',
+      }, 'news'),
+      rawTitle: news[1]?.title || 'Remise d\'aides techniques et bourses scolaires inclusives',
+      description: news[1]?.excerpt || 'L\'ACPDPH a distribué des tricycles et kits scolaires complets à 120 élèves en situation de handicap à Beni.',
+      link: `/news/${news[1]?.id || '2'}`,
+      image: news[1]?.image || '/images/hero/photo_accueil.jpg',
+    },
+    {
+      type: 'project',
+      typeLabel: 'Projet',
+      title: buildHeroHookTitle(projects[2] || {
+        title: 'Clinique Mobile de Réadaptation & Aides Mobilité',
+        type: 'Santé & Réadaptation',
+        location: 'Nord-Kivu, RDC',
+        description: 'Consultations médicales itinérantes, consultations de kinésithérapie et don d\'aides techniques à la mobilité pour les personnes vulnérables.',
+      }, 'project'),
+      rawTitle: projects[2]?.title || 'Clinique Mobile de Réadaptation & Aides Mobilité',
+      description: projects[2]?.description?.replace(/\[photo:\d+\]/g, '').trim() || 'Consultations médicales itinérantes, consultations de kinésithérapie et don d\'aides techniques à la mobilité pour les personnes vulnérables.',
+      link: `/projects/${projects[2]?.id || '3'}`,
+      image: projects[2]?.image || '/pillars/sante.jpg',
+    },
+    {
+      type: 'news',
+      typeLabel: 'Publication',
+      title: buildHeroHookTitle(news[2] || {
+        title: 'Publication du rapport d\'évaluation sur l\'inclusion scolaire',
+        category: 'Publication',
+        excerpt: 'Rapport diagnostique et recommandations stratégiques pour l\'accès universel à l\'éducation inclusive dans le Grand Nord-Kivu.',
+      }, 'news'),
+      rawTitle: news[2]?.title || 'Publication du rapport d\'évaluation sur l\'inclusion scolaire',
+      description: news[2]?.excerpt || 'Rapport diagnostique et recommandations stratégiques pour l\'accès universel à l\'éducation inclusive dans le Grand Nord-Kivu.',
+      link: news[2]?.id ? `/news/${news[2].id}` : '/publications',
+      image: news[2]?.image || '/images/hero/photo_accueil.jpg',
+    },
+  ];
+
+  const totalSlides = slides.length;
+
+  /* ── Avancer d'une diapositive ── */
+  const advance = (dir: 1 | -1 = 1) => {
+    setCurrentIndex((prev) => (prev + dir + totalSlides) % totalSlides);
+  };
+
+  /* ── Navigation manuelle ── */
+  const goManual = (dir: 1 | -1) => {
+    advance(dir);
+  };
+
+  const togglePause = () => {
+    setIsPaused((p) => !p);
+  };
+
+  /* ── Auto-rotate (désactivé si reduced-motion) ── */
   useEffect(() => {
-    if (slides.length <= 1) return;
+    if (prefersReduced || isPaused || totalSlides <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slides.length);
+      advance(1);
     }, 6000);
 
     return () => clearInterval(timer);
-  }, [slides.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, isPaused, prefersReduced, totalSlides]);
 
-  /* Anime.js entrance whenever active slide changes */
+  /* ── Pause quand l'onglet n'est pas visible ── */
   useEffect(() => {
-    const el = slideContentRef.current;
-    if (!el) return;
-
-    const anim = animate(el, {
-      opacity: [0, 1],
-      translateY: [18, 0],
-      duration: 650,
-      ease: 'outExpo',
-    });
-
-    return () => {
-      if (anim && typeof anim.pause === 'function') anim.pause();
+    const onVisibility = () => {
+      if (document.hidden) setIsPaused(true);
+      else setIsPaused(false);
     };
-  }, [currentIndex]);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, []);
 
-  const goToSlide = (idx: number) => {
-    if (idx === currentIndex) return;
-    setCurrentIndex(idx);
+  /* ── Navigation clavier (flèches gauche/droite) ── */
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goManual(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goManual(1); }
+  };
+
+  /* ── Swipe tactile ── */
+  const touchStartX = { current: 0 };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 40) goManual(delta < 0 ? 1 : -1);
   };
 
   const currentSlide = slides[currentIndex] || slides[0];
 
   return (
-    <section className="relative min-h-[72vh] md:min-h-[78vh] flex items-center justify-center overflow-visible bg-ba-dark">
-      {/* Background Image — ALWAYS FIXED, NEVER CHANGES */}
-      <div 
-        className="absolute inset-0 z-0" 
-        style={{
-          backgroundImage: "url('/images/hero/photo_accueil.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat"
-        }}
+    <section
+      className="hero-section relative flex items-center justify-center overflow-visible bg-ba-dark"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
+      onKeyDown={handleKeyDown}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      aria-label="Carousel de projets et publications"
+      aria-roledescription="carousel"
+    >
+      {/* Background Image avec fondu */}
+      <div
+        key={currentSlide.image}
+        className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-1000 ease-out"
+        style={{ backgroundImage: `url('${currentSlide.image || '/images/hero/photo_accueil.jpg'}')` }}
       />
       {/* Dark Overlay */}
-      <div className="absolute inset-0 z-0 bg-black/65" />
-      
+      <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/85 via-black/75 to-black/65" aria-hidden="true" />
+
       {/* Subtle Shapes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-1/3 -left-20 w-72 h-72 rounded-full bg-ba-blue/10 animate-float" />
         <div className="absolute bottom-20 right-1/4 w-60 h-60 rounded-full bg-ba-blue/10 animate-pulse-soft" style={{ animationDelay: '1.5s' }} />
       </div>
 
-      <div className="relative container-ba text-center text-white z-10 pt-28 pb-20 md:pt-32 md:pb-24 flex flex-col items-center justify-center min-h-[380px]">
-
-        {/* Dynamic Content Box with Anime.js Transition */}
-        <div
-          ref={slideContentRef}
-          className="w-full flex flex-col items-center justify-center"
+      {/* ── Commandes accessibles (masquées visuellement, visibles au focus clavier) ── */}
+      <div className="hero-a11y-controls" aria-label="Commandes du carousel">
+        <button
+          className="hero-a11y-btn"
+          onClick={() => goManual(-1)}
+          aria-label="Diapositive précédente"
         >
-          {/* SLIDE 0: DEFAULT HERO PRESENTATION */}
-          {currentSlide.kind === 'default' && (
-            <>
-              <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[5rem] font-bold mb-6 leading-tight max-w-5xl">
-                <span className="block">{t.hero.title1}</span>
-                <span className="block mt-2 text-ba-blue-light">
-                  {t.hero.title2}
-                </span>
-              </h1>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          className="hero-a11y-btn"
+          onClick={togglePause}
+          aria-label={isPaused ? 'Lecture' : 'Pause'}
+          aria-pressed={isPaused}
+        >
+          {isPaused ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          )}
+        </button>
+        <button
+          className="hero-a11y-btn"
+          onClick={() => goManual(1)}
+          aria-label="Diapositive suivante"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
 
-              <p className="max-w-3xl mx-auto text-gray-300 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed mb-8 font-normal">
-                {t.hero.subtitle}
+      <div className="relative container-ba text-white z-10 hero-inner w-full">
+        {/* Slide */}
+        <div
+          key={`slide-${currentIndex}`}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${currentIndex + 1} sur ${totalSlides}`}
+          className="hero-slide-container hero-text-anim"
+        >
+          {/* Bloc de texte */}
+          <div className="hero-slide-text-block">
+            <h2 className="hero-slide-title">
+              {currentSlide.title}
+            </h2>
+            {currentSlide.description && (
+              <p className="hero-slide-desc">
+                {currentSlide.description}
               </p>
-            </>
-          )}
-
-          {/* SLIDE: RECENT PROJECT */}
-          {currentSlide.kind === 'project' && (
-            <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
-              <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[5rem] font-bold text-white mb-6 leading-tight max-w-5xl">
-                {currentSlide.data.title}
-              </h2>
-
-              <div className="flex flex-col md:flex-row items-center gap-8 my-3 text-center md:text-left max-w-4xl">
-                {currentSlide.data.image && (
-                  <div className="w-full md:w-64 h-48 rounded-2xl overflow-hidden flex-shrink-0 border border-white/20">
-                    <img src={currentSlide.data.image} alt={currentSlide.data.title} className="w-full h-full object-cover" />
-                  </div>
-                )}
-                <div className="flex-1">
-                  <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed mb-4 line-clamp-3">
-                    {currentSlide.data.description?.replace(/\[photo:\d+\]/g, '').trim()}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-4">
-                    <span className="text-sm text-gray-300 font-medium flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 text-ba-blue-light shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                      </svg>
-                      {currentSlide.data.location} — <span className="text-ba-blue-light font-semibold">{currentSlide.data.status}</span>
-                    </span>
-                    <Link
-                      to={`/projects/${currentSlide.data.id}`}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ba-blue hover:bg-ba-blue-dark text-white text-sm font-semibold transition-all hover:translate-y-[-2px]"
-                    >
-                      Lire plus sur ce projet
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                      </svg>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* SLIDE: RECENT NEWS */}
-          {currentSlide.kind === 'news' && (
-            <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
-              <h2 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[5rem] font-bold text-white mb-6 leading-tight max-w-5xl">
-                {currentSlide.data.title}
-              </h2>
-
-              <p className="max-w-3xl mx-auto text-gray-200 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed mb-8 font-normal line-clamp-3">
-                {currentSlide.data.excerpt}
-              </p>
-
-              <div className="flex flex-wrap items-center justify-center gap-6">
-                <span className="text-sm text-gray-300">Publié le {currentSlide.data.date}</span>
-                <Link
-                  to="/news"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-ba-blue hover:bg-ba-blue-dark text-white text-sm font-semibold transition-all hover:translate-y-[-2px]"
-                >
-                  Lire plus
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Slide Indicators / Navigation Dots */}
-        {slides.length > 1 && (
-          <div className="flex items-center gap-3 mt-8 z-10">
-            {slides.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => goToSlide(idx)}
-                aria-label={`Slide ${idx + 1}`}
-                className={`transition-all duration-300 cursor-pointer ${
-                  idx === currentIndex
-                    ? 'w-8 h-3 bg-ba-blue rounded-full'
-                    : 'w-3 h-3 bg-white/40 hover:bg-white/70 rounded-full'
-                }`}
-              />
-            ))}
+            )}
           </div>
-        )}
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 animate-float pointer-events-none hidden md:block">
-          <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-1.5">
-            <div className="w-1.5 h-3 rounded-full bg-white/40 animate-pulse" />
+          {/* Bouton Lire plus — à droite */}
+          <div className="hero-btn-wrapper hero-btn-anim">
+            <Link
+              to={currentSlide.link}
+              aria-label={`Lire plus : ${currentSlide.rawTitle}`}
+              className="hero-read-more-btn group"
+            >
+              <span>Lire plus</span>
+              <svg
+                className="w-4 h-4 ml-2.5 transition-transform duration-200 group-hover:translate-x-1 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2.2}
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Overlapping CTA Button (Fixed at bottom) */}
+      {/* Overlapping CTA Button */}
       <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-20 px-4">
         <div className="container-ba flex items-center justify-center">
           <Link to="/support" className="btn btn-blue btn-lg group shadow-lg">
@@ -226,6 +310,7 @@ function HeroSection() {
     </section>
   );
 }
+
 
 /* ===== IMPACT COUNTERS (DE-AI RULES APPLIED: 1 PRIMARY, 3 SECONDARY, THE NUMBER IS THE HERO) ===== */
 function ImpactSection() {

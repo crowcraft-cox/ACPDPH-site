@@ -4,6 +4,7 @@ import type { NewsArticle, NewsImage } from '../../types';
 
 const emptyArticle: Omit<NewsArticle, 'id'> = {
   title: '',
+  hookTitle: '',
   excerpt: '',
   content: '',
   date: '',
@@ -73,6 +74,7 @@ export default function NewsManager() {
   const openEdit = (item: NewsArticle) => {
     setForm({
       title: item.title,
+      hookTitle: item.hookTitle || '',
       excerpt: item.excerpt,
       content: item.content || item.excerpt,
       date: item.date,
@@ -96,6 +98,7 @@ export default function NewsManager() {
 
     const articleData: Omit<NewsArticle, 'id'> = {
       ...form,
+      hookTitle: form.hookTitle?.trim() || '',
       image: coverUrl,
       content: form.content || form.excerpt,
     };
@@ -312,6 +315,27 @@ export default function NewsManager() {
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
                     placeholder="Ex: Distribution de fournitures scolaires à Goma"
                   />
+                </div>
+
+                {/* Titre d'accroche pour la page d'accueil (optionnel, 80 caractères max) */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                    <label className="admin-label" style={{ marginBottom: 0 }}>Titre d'accroche pour la page d'accueil</label>
+                    <span style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>
+                      {(form.hookTitle || '').length}/80 car. (optionnel)
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={80}
+                    className="admin-input"
+                    value={form.hookTitle || ''}
+                    onChange={(e) => setForm({ ...form, hookTitle: e.target.value })}
+                    placeholder="Ex: RAPPORT 2026 : OÙ EN SONT LES DROITS EN RDC ?"
+                  />
+                  <span style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: '4px', display: 'block' }}>
+                    Accroche percutante pour le grand titre du hero (6 à 10 mots, 70 car. max). Si vide, une accroche sera générée automatiquement.
+                  </span>
                 </div>
 
                 {/* Extrait / Résumé */}

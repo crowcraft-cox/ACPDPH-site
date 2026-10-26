@@ -4,6 +4,7 @@ import type { Project, ProjectImage } from '../../types';
 
 const emptyProject: Omit<Project, 'id'> = {
   title: '',
+  hookTitle: '',
   location: '',
   type: '',
   status: 'En cours',
@@ -80,6 +81,7 @@ export default function ProjectsManager() {
   const openEdit = (item: Project) => {
     setForm({
       title: item.title,
+      hookTitle: item.hookTitle || '',
       location: item.location,
       type: item.type || 'Protection',
       status: item.status || 'En cours',
@@ -104,6 +106,7 @@ export default function ProjectsManager() {
 
     const projectData: Omit<Project, 'id'> = {
       ...form,
+      hookTitle: form.hookTitle?.trim() || '',
       color: typeColors[form.type] || form.color || 'bg-ba-red',
       image: coverUrl,
     };
@@ -339,6 +342,27 @@ export default function ProjectsManager() {
                 <div>
                   <label className="admin-label">Titre du projet</label>
                   <input type="text" className="admin-input" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Ex: Construction de l'École Espoir" />
+                </div>
+
+                {/* Titre d'accroche pour la page d'accueil (optionnel, 80 caractères max) */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                    <label className="admin-label" style={{ marginBottom: 0 }}>Titre d'accroche pour la page d'accueil</label>
+                    <span style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>
+                      {(form.hookTitle || '').length}/80 car. (optionnel)
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={80}
+                    className="admin-input"
+                    value={form.hookTitle || ''}
+                    onChange={(e) => setForm({ ...form, hookTitle: e.target.value })}
+                    placeholder="Ex: ÉDUCATION INCLUSIVE : DES ENFANTS HANDICAPÉS ENFIN À L'ÉCOLE"
+                  />
+                  <span style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: '4px', display: 'block' }}>
+                    Accroche percutante pour le grand titre du hero (6 à 10 mots, 70 car. max). Si vide, une accroche sera générée automatiquement.
+                  </span>
                 </div>
 
                 {/* Location & Type */}

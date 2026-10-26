@@ -32,6 +32,7 @@ export interface NewsArticle {
   id: string;
   title: string;
   title_en?: string;
+  hookTitle?: string;
   excerpt: string;
   excerpt_en?: string;
   content?: string;
@@ -55,6 +56,7 @@ export interface Project {
   id: string;
   title: string;
   title_en?: string;
+  hookTitle?: string;
   location: string;
   type: string;
   type_en?: string;
