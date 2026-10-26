@@ -38,8 +38,18 @@ export default function Navbar() {
   const resourcesBtnRef = useRef<HTMLButtonElement>(null);
   const langBtnRef = useRef<HTMLButtonElement>(null);
   const compactLangBtnRef = useRef<HTMLButtonElement>(null);
+  const langTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const compactLangTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentLang = languages.find((l) => l.code === lang) || languages[0];
+
+  // Nettoyage des timers de langue au démontage
+  useEffect(() => {
+    return () => {
+      if (langTimeoutRef.current) clearTimeout(langTimeoutRef.current);
+      if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
+    };
+  }, []);
 
   // Nettoyage de toute ancienne valeur de taille de police mémorisée chez les visiteurs
   useEffect(() => {
@@ -234,7 +244,7 @@ export default function Navbar() {
       {/* ========================================================================================= */}
       {/* 2. BARRE HAUTE (FOND BLANC, REPLIABLE AU SCROLL EN MODE COMPACT)                           */}
       {/* ========================================================================================= */}
-      <div className="header-top-bar relative w-full bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 transition-colors">
+      <div className="header-top-bar relative z-30 w-full bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 transition-colors">
         <div className="header-top-bar-content container-ba h-full flex items-center justify-between">
           
           {/* GAUCHE : Logo mobile (< 1024px) OU Titre décalé (>= 1024px) */}
@@ -333,11 +343,15 @@ export default function Navbar() {
 
             {/* SELECTEUR DE LANGUE (Globe SVG + FR, angles droits, focus contraste) */}
             <div
-              className="relative"
+              className="relative z-50"
+              onMouseEnter={() => {
+                if (langTimeoutRef.current) clearTimeout(langTimeoutRef.current);
+              }}
               onMouseLeave={() => {
-                setTimeout(() => {
+                if (langTimeoutRef.current) clearTimeout(langTimeoutRef.current);
+                langTimeoutRef.current = setTimeout(() => {
                   setOpenDropdown((prev) => (prev === 'lang' ? null : prev));
-                }, 150);
+                }, 300);
               }}
             >
               <button
@@ -368,17 +382,26 @@ export default function Navbar() {
 
               {openDropdown === 'lang' && (
                 <div
-                  className="absolute z-50"
+                  className="absolute z-[100] shadow-2xl"
                   style={{
-                    top: '100%',
+                    top: 'calc(100% + 4px)',
                     right: '0',
-                    minWidth: '160px',
+                    minWidth: '170px',
                     width: 'max-content',
                   }}
                   role="menu"
                   aria-orientation="vertical"
                   aria-label="Sélecteur de langue"
-                  onMouseEnter={() => setOpenDropdown('lang')}
+                  onMouseEnter={() => {
+                    if (langTimeoutRef.current) clearTimeout(langTimeoutRef.current);
+                    setOpenDropdown('lang');
+                  }}
+                  onMouseLeave={() => {
+                    if (langTimeoutRef.current) clearTimeout(langTimeoutRef.current);
+                    langTimeoutRef.current = setTimeout(() => {
+                      setOpenDropdown((prev) => (prev === 'lang' ? null : prev));
+                    }, 300);
+                  }}
                 >
                   {/* Pont invisible anti-gap */}
                   <div style={{ height: '4px' }} />
@@ -390,7 +413,7 @@ export default function Navbar() {
                       borderRadius: '0 0 8px 8px',
                       paddingTop: '6px',
                       paddingBottom: '6px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.15)',
                     }}
                   >
                     {languages.map((item, idx) => {
@@ -504,7 +527,7 @@ export default function Navbar() {
       {/* ========================================================================================= */}
       <nav
         aria-label="Navigation principale"
-        className="header-nav-bar hidden lg:block w-full bg-[var(--color-primary)]"
+        className="header-nav-bar relative z-20 hidden lg:block w-full bg-[var(--color-primary)]"
       >
         <div className="container-ba flex items-stretch justify-between h-[76px]">
           
@@ -799,11 +822,15 @@ export default function Navbar() {
             <div className="header-compact-actions flex items-center gap-2.5 xl:gap-3.5 pr-3 xl:pr-4">
               {/* SÉLECTEUR DE LANGUE COMPACT */}
               <div
-                className="relative"
+                className="relative z-50"
+                onMouseEnter={() => {
+                  if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
+                }}
                 onMouseLeave={() => {
-                  setTimeout(() => {
+                  if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
+                  compactLangTimeoutRef.current = setTimeout(() => {
                     setOpenDropdown((prev) => (prev === 'lang-compact' ? null : prev));
-                  }, 150);
+                  }, 300);
                 }}
               >
                 <button
@@ -832,17 +859,26 @@ export default function Navbar() {
 
                 {openDropdown === 'lang-compact' && (
                   <div
-                    className="absolute z-50"
+                    className="absolute z-[100] shadow-2xl"
                     style={{
                       top: 'calc(100% + 6px)',
                       right: '0',
-                      minWidth: '160px',
+                      minWidth: '170px',
                       width: 'max-content',
                     }}
                     role="menu"
                     aria-orientation="vertical"
                     aria-label="Sélecteur de langue"
-                    onMouseEnter={() => setOpenDropdown('lang-compact')}
+                    onMouseEnter={() => {
+                      if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
+                      setOpenDropdown('lang-compact');
+                    }}
+                    onMouseLeave={() => {
+                      if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
+                      compactLangTimeoutRef.current = setTimeout(() => {
+                        setOpenDropdown((prev) => (prev === 'lang-compact' ? null : prev));
+                      }, 300);
+                    }}
                   >
                     <div style={{ height: '4px' }} />
                     <div
@@ -853,7 +889,7 @@ export default function Navbar() {
                         borderRadius: '0 0 8px 8px',
                         paddingTop: '6px',
                         paddingBottom: '6px',
-                        boxShadow: '0 4px 16px rgba(0,0,0,0.14)',
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.15)',
                       }}
                     >
                       {languages.map((item, idx) => {

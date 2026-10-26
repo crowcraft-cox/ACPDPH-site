@@ -185,7 +185,7 @@
               opacity var(--header-fade-duration) var(--header-anim-ease),
               border-color var(--header-fade-duration) var(--header-anim-ease);
   will-change: max-height, opacity;
-  overflow: hidden;
+  overflow: visible; /* Permet aux menus déroulants (ex: langue) de déborder au-dessus de la barre de navigation */
 }
 
 .header-top-bar-content {
@@ -204,6 +204,7 @@
     max-height: 0 !important;
     height: 0 !important;
     opacity: 0 !important;
+    overflow: hidden !important;
     border-bottom-width: 0 !important;
     pointer-events: none;
     visibility: hidden;
