@@ -1128,6 +1128,7 @@ html.lenis body {
   word-break: break-word;
   text-wrap: balance;
   color: #FFFFFF;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.9);
   width: 100%;
   max-width: 100%;
   text-align: left;
@@ -1148,7 +1149,8 @@ html.lenis body {
 
 /* Description (3 phrases) */
 .hero-slide-desc {
-  color: rgba(243, 244, 246, 0.9);
+  color: #FFFFFF;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
   font-family: 'Montserrat', 'Outfit', sans-serif;
   font-weight: 700;
   font-size: 0.95rem;

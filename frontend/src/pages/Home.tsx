@@ -199,20 +199,12 @@ function HeroSection() {
       aria-label="Carousel de projets et publications"
       aria-roledescription="carousel"
     >
-      {/* Background Image avec fondu */}
+      {/* Background Image avec fondu (sans filtre) */}
       <div
         key={currentSlide.image}
         className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-1000 ease-out"
         style={{ backgroundImage: `url('${currentSlide.image || '/images/hero/photo_accueil.jpg'}')` }}
       />
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-t from-black/85 via-black/75 to-black/65" aria-hidden="true" />
-
-      {/* Subtle Shapes */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-1/3 -left-20 w-72 h-72 rounded-full bg-ba-blue/10 animate-float" />
-        <div className="absolute bottom-20 right-1/4 w-60 h-60 rounded-full bg-ba-blue/10 animate-pulse-soft" style={{ animationDelay: '1.5s' }} />
-      </div>
 
       {/* ── Commandes accessibles (masquées visuellement, visibles au focus clavier) ── */}
       <div className="hero-a11y-controls" aria-label="Commandes du carousel">
