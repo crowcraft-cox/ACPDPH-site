@@ -62,9 +62,6 @@ export default function About() {
               {/* Statuts & Reconnaissance Juridique */}
               <div className="pt-6 border-t border-gray-200 space-y-6">
                 <div>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-2.5">
-                    Cadre Légal & Réglementaire
-                  </span>
                   <h4 className="font-heading font-bold text-xl mb-3" style={{ color: '#111827' }}>
                     Statut juridique
                   </h4>
