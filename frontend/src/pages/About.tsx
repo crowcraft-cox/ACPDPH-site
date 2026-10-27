@@ -59,6 +59,13 @@ export default function About() {
                 </p>
               </div>
 
+              <div>
+                <h3 className="font-heading text-2xl font-bold mb-3 text-ba-blue">{t.about.social_objective_title}</h3>
+                <p className="text-base md:text-lg leading-loose text-justify" style={{ color: '#374151' }}>
+                  {t.about.social_objective_text}
+                </p>
+              </div>
+
               {/* Statuts & Reconnaissance Juridique */}
               <div className="pt-6 border-t border-gray-200 space-y-6">
                 <div>
