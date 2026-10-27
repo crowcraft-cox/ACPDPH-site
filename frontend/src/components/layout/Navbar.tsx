@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useI18n } from '../../i18n';
+import DisabilitySymbols from './DisabilitySymbols';
 
 type DropdownKey = 'org' | 'resources' | 'lang' | 'lang-compact' | null;
 type MobileSubmenu = 'org' | 'resources' | null;
@@ -38,8 +39,8 @@ export default function Navbar() {
   const resourcesBtnRef = useRef<HTMLButtonElement>(null);
   const langBtnRef = useRef<HTMLButtonElement>(null);
   const compactLangBtnRef = useRef<HTMLButtonElement>(null);
-  const langTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const compactLangTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const langTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const compactLangTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentLang = languages.find((l) => l.code === lang) || languages[0];
 
@@ -298,12 +299,15 @@ export default function Navbar() {
           {/* DROITE : Accessibilité (Soleil + RESET si actif) + Langue + Bouton Soutenir + Burger */}
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
             
-            {/* RANGÉE D'ACCESSIBILITÉ (Icône soleil/contraste, RESET si actif) */}
+            {/* RANGÉE D'ACCESSIBILITÉ (Symboles des handicaps + Icône soleil/contraste, RESET si actif) */}
             <div
-              className="hidden md:flex items-center gap-2 pr-2 lg:pr-3 border-r border-gray-200 dark:border-zinc-700"
+              className="hidden md:flex items-center gap-2.5 lg:gap-3.5 pr-2.5 lg:pr-3.5 border-r border-gray-200 dark:border-zinc-700"
               role="group"
-              aria-label="Options d'accessibilité du site"
+              aria-label="Options d'accessibilité et symboles des handicaps"
             >
+              {/* SYMBOLES UNIVERSELS DU HANDICAP (Affichés juste avant l'icône de contraste) */}
+              <DisabilitySymbols className="mr-1 lg:mr-2" />
+
               {/* Bouton Contraste élevé (icône soleil/mode sombre) */}
               <button
                 type="button"
@@ -316,7 +320,7 @@ export default function Navbar() {
                 aria-label="Basculer le contraste élevé"
                 aria-pressed={highContrast}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -1138,9 +1142,19 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* SECTION D'ACCESSIBILITÉ MOBILE (Contraste élevé uniquement) */}
+            {/* SECTION D'ACCESSIBILITÉ MOBILE */}
             <div className="pt-3 pb-2 border-t border-white/15 px-3">
-              <div className="text-xs font-bold uppercase tracking-wider text-white/80 mb-2">Accessibilité</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-white/80 mb-2">Accessibilité &amp; Handicaps</div>
+              
+              {/* SYMBOLES UNIVERSELS DU HANDICAP EN MOBILE */}
+              <div className="flex items-center justify-center py-2 px-3 mb-2.5 bg-white/10 border border-white/15 overflow-x-auto">
+                <DisabilitySymbols
+                  className="text-teal-200"
+                  iconClassName="w-5 h-5 shrink-0"
+                  showTooltip={false}
+                />
+              </div>
+
               <button
                 type="button"
                 onClick={toggleContrast}
