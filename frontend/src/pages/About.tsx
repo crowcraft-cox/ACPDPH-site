@@ -66,7 +66,7 @@ export default function About() {
                     Cadre Légal & Réglementaire
                   </span>
                   <h4 className="font-heading font-bold text-xl mb-3" style={{ color: '#111827' }}>
-                    Statut juridique de l’ONG Nationale « ACPDPH »
+                    Statut juridique
                   </h4>
                   <p className="text-sm md:text-base leading-relaxed text-justify" style={{ color: '#4B5563' }}>
                     L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une Organisation Nationale (ONG) de droit congolais, constituée conformément à la législation de la République démocratique du Congo applicable aux associations sans but lucratif, notamment la <strong>Loi n° 004/2001 du 20 juillet 2001</strong>.
