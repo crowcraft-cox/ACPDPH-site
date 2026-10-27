@@ -1149,8 +1149,7 @@ export default function Navbar() {
               {/* SYMBOLES UNIVERSELS DU HANDICAP EN MOBILE */}
               <div className="flex items-center justify-center py-2 px-3 mb-2.5 bg-white/10 border border-white/15 overflow-x-auto">
                 <DisabilitySymbols
-                  className="text-teal-200"
-                  iconClassName="w-5 h-5 shrink-0"
+                  iconClassName="w-8 h-8 shrink-0"
                   showTooltip={false}
                 />
               </div>
