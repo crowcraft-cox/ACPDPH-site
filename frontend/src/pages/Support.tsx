@@ -268,7 +268,7 @@ export default function Support() {
                     ))}
                   </ul>
                   <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-xs">
-                    Pour l'expédition ou le dépôt d'un colis de dons matériels, contactez directement notre secrétariat au <strong>contact@acpdph.org</strong>.
+                    Pour l'expédition ou le dépôt d'un colis de dons matériels, contactez directement notre secrétariat au <strong>info.acpdph.asbl.rdc@gmail.com</strong>.
                   </div>
                 </div>
               )}

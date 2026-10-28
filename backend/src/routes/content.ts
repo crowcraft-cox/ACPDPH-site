@@ -155,9 +155,10 @@ const DEFAULT_CONTENT = {
     },
   ],
   contact: {
-    address: 'N° 08, Avenue Ruwenzori, Quartier Résidentiel, Ville de Beni, Nord-Kivu, RDC',
-    email: 'contact@acpdph.org',
-    phone: '+243 990 000 000 / +243 810 000 000',
+    address: 'Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.',
+    email: 'info.acpdph.asbl.rdc@gmail.com',
+    phone: '+243 976 992 466',
+    whatsapp: '+243 852 799 553',
   },
   users: [],
 };

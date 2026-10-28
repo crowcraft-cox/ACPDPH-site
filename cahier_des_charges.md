@@ -10,7 +10,10 @@
 L'**AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH** est une Organisation Non Gouvernementale et Association Sans But Lucratif (ASBL), fondée conformément à la loi n° 004/2001 du 20 juillet 2001 relative aux ASBL en République Démocratique du Congo (RDC).
 
 - **Dénomination officielle** : AGENCE CONGOLAISE DE PROMOTION DES DROITS DES PERSONNES HANDICAPEES-ACPDPH (« ACPDPH »)
-- **Siège Social** : N° 08, Avenue Ruwenzori, Quartier Résidentiel, Commune de Beni, Ville de Beni, Province du Nord-Kivu, République Démocratique du Congo.
+- **Siège Social** : Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.
+- **Téléphone** : +243 976 992 466
+- **WhatsApp** : +243 852 799 553
+- **E-mail** : info.acpdph.asbl.rdc@gmail.com
 - **Rayon d'action** : Province du Nord-Kivu, avec possibilité d'extension sur toute l'étendue de la RDC et à l'international.
 - **Exercice social** : 1er Janvier – 31 Décembre (Langue officielle de travail : Français).
 

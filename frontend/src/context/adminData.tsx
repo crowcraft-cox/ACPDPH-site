@@ -174,9 +174,10 @@ const DEFAULT_DATA: AdminData = {
     },
   ],
   contact: {
-    address: 'Beni — Nord-Kivu, RDC',
-    email: 'contact@acpdph.org',
-    phone: '+243 990 000 000 / +243 810 000 000',
+    address: 'Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.',
+    email: 'info.acpdph.asbl.rdc@gmail.com',
+    phone: '+243 976 992 466',
+    whatsapp: '+243 852 799 553',
   },
   users: [],
 };
@@ -286,7 +287,14 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
         console.log(`[ACPDPH] Connexion MongoDB Atlas (tentative ${attempt}/${attempts})...`);
         const res = await apiFetch<AdminData>('/content');
         if (res.success && res.data) {
-          setData({ ...res.data, users: res.data.users || [] });
+          const cloudContact = res.data.contact || {};
+          const mergedContact = {
+            address: cloudContact.address && !cloudContact.address.includes('XX') && cloudContact.address !== 'Beni — Nord-Kivu, RDC' ? cloudContact.address : DEFAULT_DATA.contact.address,
+            email: cloudContact.email && cloudContact.email !== 'contact@acpdph.org' ? cloudContact.email : DEFAULT_DATA.contact.email,
+            phone: cloudContact.phone && !cloudContact.phone.includes('000') && !cloudContact.phone.includes('XX') ? cloudContact.phone : DEFAULT_DATA.contact.phone,
+            whatsapp: cloudContact.whatsapp || DEFAULT_DATA.contact.whatsapp,
+          };
+          setData({ ...res.data, contact: mergedContact, users: res.data.users || [] });
           setDbConnected(true);
           setDbError(null);
           setIsLoading(false);

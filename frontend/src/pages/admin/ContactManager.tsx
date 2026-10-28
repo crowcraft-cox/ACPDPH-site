@@ -4,9 +4,10 @@ import { useAdminData } from '../../context/adminData';
 export default function ContactManager() {
   const { data, updateContact } = useAdminData();
   const [form, setForm] = useState({
-    address: data.contact.address,
-    email: data.contact.email,
-    phone: data.contact.phone,
+    address: data.contact?.address || 'Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.',
+    email: data.contact?.email || 'info.acpdph.asbl.rdc@gmail.com',
+    phone: data.contact?.phone || '+243 976 992 466',
+    whatsapp: data.contact?.whatsapp || '+243 852 799 553',
   });
   const [saved, setSaved] = useState(false);
 
@@ -34,7 +35,7 @@ export default function ContactManager() {
               rows={3}
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
-              placeholder="Ex: N° 08, Avenue Ruwenzori, Quartier Résidentiel, Ville de Beni, Nord-Kivu, RDC"
+              placeholder="Ex: Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC."
               required
             />
           </div>
@@ -46,19 +47,31 @@ export default function ContactManager() {
               className="admin-input"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="Ex: contact@acpdph.org"
+              placeholder="Ex: info.acpdph.asbl.rdc@gmail.com"
               required
             />
           </div>
 
           <div>
-            <label className="admin-label">Numéro de Téléphone / WhatsApp</label>
+            <label className="admin-label">Numéro de Téléphone (Appels)</label>
             <input
               type="text"
               className="admin-input"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              placeholder="Ex: +243 XX XXX XXXX"
+              placeholder="Ex: +243 976 992 466"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="admin-label">Numéro WhatsApp Officiel</label>
+            <input
+              type="text"
+              className="admin-input"
+              value={form.whatsapp}
+              onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
+              placeholder="Ex: +243 852 799 553"
               required
             />
           </div>

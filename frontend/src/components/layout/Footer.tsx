@@ -10,7 +10,7 @@ const isEmailValid = (v: string) =>
 /* ─── Footer ─────────────────────────────────────────── */
 export default function Footer() {
   const { t } = useI18n();
-  const { addSubscriber } = useAdminData();
+  const { data, addSubscriber } = useAdminData();
 
   const [email, setEmail]               = useState('');
   const [subscribed, setSubscribed]     = useState(false);
@@ -90,22 +90,30 @@ export default function Footer() {
                   <span className="footer-contact-icon" aria-hidden="true">
                     <PinIcon />
                   </span>
-                  <span>Beni, Province du Nord-Kivu,{'\u00a0'}RDC</span>
+                  <span>{data?.contact?.address && data.contact.address !== 'Beni — Nord-Kivu, RDC' ? data.contact.address : 'Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.'}</span>
                 </li>
                 <li>
                   <span className="footer-contact-icon" aria-hidden="true">
                     <MailIcon />
                   </span>
-                  <a href="mailto:acpdph@exemple.org" className="footer-contact-link">
-                    acpdph@exemple.org
+                  <a href={`mailto:${data?.contact?.email && data.contact.email !== 'contact@acpdph.org' ? data.contact.email : 'info.acpdph.asbl.rdc@gmail.com'}`} className="footer-contact-link">
+                    {data?.contact?.email && data.contact.email !== 'contact@acpdph.org' ? data.contact.email : 'info.acpdph.asbl.rdc@gmail.com'}
                   </a>
                 </li>
                 <li>
                   <span className="footer-contact-icon" aria-hidden="true">
                     <PhoneIcon />
                   </span>
-                  <a href="tel:+243000000000" className="footer-contact-link">
-                    +243 000 000 000
+                  <a href={`tel:${(data?.contact?.phone && !data.contact.phone.includes('000') && !data.contact.phone.includes('XX') ? data.contact.phone : '+243976992466').replace(/\s+/g, '')}`} className="footer-contact-link">
+                    {data?.contact?.phone && !data.contact.phone.includes('000') && !data.contact.phone.includes('XX') ? data.contact.phone : '+243 976 992 466'}
+                  </a>
+                </li>
+                <li>
+                  <span className="footer-contact-icon" aria-hidden="true" style={{ color: "#25D366" }}>
+                    <WhatsAppIcon />
+                  </span>
+                  <a href={`https://wa.me/${(data?.contact?.whatsapp || '+243852799553').replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="footer-contact-link">
+                    WhatsApp : {data?.contact?.whatsapp || '+243 852 799 553'}
                   </a>
                 </li>
               </ul>
@@ -258,6 +266,14 @@ function PhoneIcon() {
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.14 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.05 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/>
+    </svg>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2m.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84-1.56 1.56-3.64 2.42-5.83 2.42-1.43 0-2.83-.37-4.06-1.08l-.29-.17-3.08.81.82-3-.19-.3a8.177 8.177 0 01-1.25-4.52c0-4.54 3.7-8.24 8.25-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.25-1.5-1.4-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.43.53.6.19 1.15.16 1.59.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.12-.22-.19-.47-.32z"/>
     </svg>
   );
 }

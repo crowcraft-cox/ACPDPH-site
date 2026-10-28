@@ -10,6 +10,7 @@ export interface ISiteContent extends Document {
     address: string;
     email: string;
     phone: string;
+    whatsapp?: string;
   };
   users?: any[];
   updatedAt: Date;
@@ -26,6 +27,7 @@ const SiteContentSchema: Schema = new Schema(
       address: { type: String, default: '' },
       email: { type: String, default: '' },
       phone: { type: String, default: '' },
+      whatsapp: { type: String, default: '' },
     },
     users: { type: Array, default: [] },
   },
