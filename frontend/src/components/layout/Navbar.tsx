@@ -17,6 +17,7 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<DropdownKey>(null);
   const [mobileSubmenu, setMobileSubmenu] = useState<MobileSubmenu>(null);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
 
   // État compact au scroll avec hystérésis (down > 80px, up <= 10px)
   const [isCompact, setIsCompact] = useState<boolean>(() => {
@@ -41,6 +42,8 @@ export default function Navbar() {
   const compactLangBtnRef = useRef<HTMLButtonElement>(null);
   const langTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const compactLangTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const burgerBtnRef = useRef<HTMLButtonElement>(null);
+  const drawerCloseBtnRef = useRef<HTMLButtonElement>(null);
 
   const currentLang = languages.find((l) => l.code === lang) || languages[0];
 
@@ -142,12 +145,46 @@ export default function Navbar() {
     setHighContrast(false);
   }, []);
 
+  // Fermeture du tiroir mobile IDDC (telephone <=768px) avec restauration du focus
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileOpen(false);
+    setMobileSubmenu(null);
+    setMobileLangOpen(false);
+    setTimeout(() => burgerBtnRef.current?.focus(), 50);
+  }, []);
+
   // Fermeture automatique lors d'un changement de route
   useEffect(() => {
     setIsMobileOpen(false);
     setOpenDropdown(null);
     setMobileSubmenu(null);
+    setMobileLangOpen(false);
   }, [location.pathname]);
+
+  // Tiroir mobile (<=768px) : verrouillage du scroll arriere-plan, touche Echap, focus
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    const mql = window.matchMedia('(max-width: 768px)');
+    if (!mql.matches) return;
+
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => drawerCloseBtnRef.current?.focus(), 100);
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMobileOpen(false);
+        setMobileSubmenu(null);
+        setMobileLangOpen(false);
+        setTimeout(() => burgerBtnRef.current?.focus(), 50);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [isMobileOpen]);
 
   // Fermeture des menus au clic extérieur
   useEffect(() => {
@@ -241,6 +278,106 @@ export default function Navbar() {
             }}
           />
         </Link>
+
+      {/* ========================================================================================= */}
+      {/* BARRE MOBILE TELEPHONE (<=768px) — fond blanc, logo, FR, loupe, burger                    */}
+      {/* ========================================================================================= */}
+      <div className="mobile-header-bar">
+        {/* Gauche : Logo compact */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+          aria-label="ACPDPH - Retour a l'accueil"
+          onClick={() => { setMobileLangOpen(false); }}
+        >
+          <img
+            src="/logo_ACPDPH.jpg"
+            alt=""
+            className="h-[38px] w-[38px] rounded-full object-cover border-2 border-white bg-white shrink-0"
+            style={{ boxShadow: 'none', filter: 'none' }}
+          />
+          <span className="font-heading font-extrabold text-[15px] leading-none text-gray-900 tracking-tight">
+            ACPDPH
+          </span>
+        </Link>
+
+        {/* Droite : FR + Loupe + Burger */}
+        <div className="flex items-center gap-0.5">
+          {/* Selecteur de langue FR */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setMobileLangOpen(!mobileLangOpen)}
+              className="flex items-center justify-center px-2.5 min-w-[44px] min-h-[44px] text-[13px] font-heading font-bold text-gray-900 tracking-wide uppercase cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+              aria-label={`Langue : ${currentLang.name}. Cliquez pour changer`}
+              aria-expanded={mobileLangOpen}
+              aria-haspopup="true"
+            >
+              {currentLang.label}
+            </button>
+            {mobileLangOpen && (
+              <div
+                className="absolute z-[130] shadow-xl"
+                style={{ top: 'calc(100% + 4px)', right: 0, minWidth: '150px', background: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', overflow: 'hidden' }}
+              >
+                {languages.map((item, idx) => {
+                  const isSelected = item.code === lang;
+                  return (
+                    <div key={item.code}>
+                      <button
+                        type="button"
+                        onClick={() => { setLang(item.code); setMobileLangOpen(false); }}
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          width: '100%', padding: '11px 16px', minHeight: '44px',
+                          fontSize: '13px', fontWeight: isSelected ? 700 : 500,
+                          color: isSelected ? '#1D4ED8' : '#111827',
+                          background: isSelected ? '#EEF2FF' : 'transparent',
+                          cursor: 'pointer', textAlign: 'left', border: 'none',
+                        }}
+                      >
+                        <span>{item.name}</span>
+                        <span style={{ fontSize: '11px', fontWeight: 700, color: isSelected ? '#1D4ED8' : '#9CA3AF', marginLeft: '8px' }}>
+                          {item.label}
+                        </span>
+                      </button>
+                      {idx < languages.length - 1 && (
+                        <div style={{ height: '1px', background: '#F3F4F6', margin: '0 12px' }} />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Icone de recherche (loupe) */}
+          <Link
+            to="/news"
+            className="flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+            aria-label="Rechercher"
+            onClick={() => setMobileLangOpen(false)}
+          >
+            <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </Link>
+
+          {/* Bouton burger (3 barres) */}
+          <button
+            ref={burgerBtnRef}
+            type="button"
+            onClick={() => { setIsMobileOpen(true); setMobileLangOpen(false); }}
+            className="flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-900 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+            aria-label="Ouvrir le menu"
+            aria-expanded={isMobileOpen}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
       {/* ========================================================================================= */}
       {/* 2. BARRE HAUTE (FOND BLANC, REPLIABLE AU SCROLL EN MODE COMPACT)                           */}
@@ -1000,7 +1137,7 @@ export default function Navbar() {
       {/* ========================================================================================= */}
       {isMobileOpen && (
         <div
-          className="lg:hidden w-full bg-[var(--color-primary)] text-white border-t border-white/10 shadow-2xl transition-all"
+          className="lg:hidden header-old-mobile-menu w-full bg-[var(--color-primary)] text-white border-t border-white/10 shadow-2xl transition-all"
           role="dialog"
           aria-modal="true"
           aria-label="Menu principal mobile"
@@ -1197,6 +1334,184 @@ export default function Navbar() {
           </div>
         </div>
       )}
+      {/* ========================================================================================= */}
+      {/* TIROIR LATERAL MOBILE IDDC (<=768px uniquement)                                            */}
+      {/* ========================================================================================= */}
+      <div className="mobile-drawer-container" aria-hidden={!isMobileOpen}>
+        {/* Voile sombre semi-transparent */}
+        <div
+          className={`fixed inset-0 z-[115] transition-opacity duration-300 ${isMobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          style={{ background: 'rgba(0,0,0,0.55)' }}
+          onClick={closeMobileMenu}
+          aria-hidden="true"
+        />
+
+        {/* Panneau tiroir */}
+        <div
+          className={`fixed top-0 left-0 bottom-0 z-[120] flex flex-col transition-transform duration-300 ease-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          style={{ width: '75%', maxWidth: '320px', background: '#ffffff' }}
+          role="dialog"
+          aria-modal={isMobileOpen ? 'true' : undefined}
+          aria-label="Menu principal"
+        >
+          {/* Barre sombre du haut avec bouton fermer */}
+          <div className="flex items-center h-14 shrink-0" style={{ background: '#222222' }}>
+            <button
+              ref={drawerCloseBtnRef}
+              type="button"
+              onClick={closeMobileMenu}
+              className="w-14 h-14 flex items-center justify-center shrink-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset"
+              style={{ background: '#F26A4F' }}
+              aria-label="Fermer le menu"
+            >
+              <span className="text-white text-2xl font-bold leading-none" aria-hidden="true">&times;</span>
+            </button>
+            <span className="text-white font-bold uppercase tracking-wider text-sm ml-4 select-none">MENU</span>
+          </div>
+
+          {/* Liens de navigation verticaux */}
+          <nav className="flex-1 overflow-y-auto" aria-label="Navigation mobile">
+            <ul className="py-2 list-none m-0 p-0">
+              {/* Accueil */}
+              <li>
+                <Link
+                  to="/"
+                  onClick={closeMobileMenu}
+                  className={`flex items-center px-6 text-[18px] font-medium hover:bg-gray-50 transition-colors ${isHomeActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
+                  style={{ minHeight: '52px' }}
+                >
+                  Accueil
+                </Link>
+              </li>
+
+              {/* Organisation (depliable) */}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setMobileSubmenu(mobileSubmenu === 'org' ? null : 'org')}
+                  className={`w-full flex items-center justify-between px-6 text-[18px] font-medium hover:bg-gray-50 cursor-pointer transition-colors ${isOrgActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
+                  style={{ minHeight: '52px' }}
+                  aria-expanded={mobileSubmenu === 'org'}
+                >
+                  <span>Organisation</span>
+                  <svg
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${mobileSubmenu === 'org' ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {mobileSubmenu === 'org' && (
+                  <ul className="list-none m-0 pb-1" style={{ paddingLeft: '40px', paddingRight: '24px' }}>
+                    <li>
+                      <Link to="/about" onClick={closeMobileMenu}
+                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/about' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
+                      >{t.nav.about}</Link>
+                    </li>
+                    <li>
+                      <Link to="/governance" onClick={closeMobileMenu}
+                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/governance' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
+                      >{t.nav.governance || 'Gouvernance'}</Link>
+                    </li>
+                    <li>
+                      <Link to="/pillars" onClick={closeMobileMenu}
+                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/pillars' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
+                      >{t.nav.pillars}</Link>
+                    </li>
+                  </ul>
+                )}
+              </li>
+
+              {/* Nos Projets */}
+              <li>
+                <Link
+                  to="/projects"
+                  onClick={closeMobileMenu}
+                  className={`flex items-center px-6 text-[18px] font-medium hover:bg-gray-50 transition-colors ${isProjectsActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
+                  style={{ minHeight: '52px' }}
+                >
+                  {t.nav.projects}
+                </Link>
+              </li>
+
+              {/* Actualites */}
+              <li>
+                <Link
+                  to="/news"
+                  onClick={closeMobileMenu}
+                  className={`flex items-center px-6 text-[18px] font-medium hover:bg-gray-50 transition-colors ${isNewsActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
+                  style={{ minHeight: '52px' }}
+                >
+                  {t.nav.news}
+                </Link>
+              </li>
+
+              {/* Ressources (depliable) */}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setMobileSubmenu(mobileSubmenu === 'resources' ? null : 'resources')}
+                  className={`w-full flex items-center justify-between px-6 text-[18px] font-medium hover:bg-gray-50 cursor-pointer transition-colors ${isResourcesActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
+                  style={{ minHeight: '52px' }}
+                  aria-expanded={mobileSubmenu === 'resources'}
+                >
+                  <span>Ressources</span>
+                  <svg
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${mobileSubmenu === 'resources' ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {mobileSubmenu === 'resources' && (
+                  <ul className="list-none m-0 pb-1" style={{ paddingLeft: '40px', paddingRight: '24px' }}>
+                    <li>
+                      <Link to="/publications" onClick={closeMobileMenu}
+                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/publications' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
+                      >{t.nav.publications || 'Publications'}</Link>
+                    </li>
+                    <li>
+                      <Link to="/partners" onClick={closeMobileMenu}
+                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/partners' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
+                      >{t.nav.partners || 'Nos Partenaires'}</Link>
+                    </li>
+                    <li>
+                      <Link to="/careers" onClick={closeMobileMenu}
+                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/careers' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
+                      >{t.nav.careers || 'Offres & Emploi'}</Link>
+                    </li>
+                  </ul>
+                )}
+              </li>
+
+              {/* Contact */}
+              <li>
+                <Link
+                  to="/contact"
+                  onClick={closeMobileMenu}
+                  className={`flex items-center px-6 text-[18px] font-medium hover:bg-gray-50 transition-colors ${isContactActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
+                  style={{ minHeight: '52px' }}
+                >
+                  {t.nav.contact || 'Contact'}
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          {/* Bas du tiroir : Nous soutenir */}
+          <div className="shrink-0 p-4 border-t border-gray-100">
+            <Link
+              to="/support"
+              onClick={closeMobileMenu}
+              className="flex items-center justify-center w-full bg-[#1F4FDB] hover:bg-[#1a44c0] text-white font-heading font-bold text-sm uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset"
+              style={{ minHeight: '48px', borderRadius: 0 }}
+            >
+              Nous soutenir
+            </Link>
+          </div>
+        </div>
+      </div>
+
       </header>
     </>
   );

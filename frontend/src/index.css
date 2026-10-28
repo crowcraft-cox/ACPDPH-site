@@ -302,7 +302,63 @@
   }
 }
 
+/* ========================================================================= */
+/* MOBILE PHONE HEADER — IDDC DRAWER (max-width: 768px uniquement)           */
+/* ========================================================================= */
 
+/* Barre mobile blanche — masquée par défaut */
+.mobile-header-bar {
+  display: none;
+}
+
+/* Conteneur du tiroir mobile — masqué par défaut */
+.mobile-drawer-container {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Afficher la nouvelle barre mobile blanche */
+  .mobile-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 50;
+    height: 60px;
+    width: 100%;
+    padding: 0 12px;
+    background: #ffffff;
+    border-bottom: 1px solid #E5E7EB;
+  }
+
+  /* Afficher le tiroir mobile */
+  .mobile-drawer-container {
+    display: block;
+  }
+
+  /* Masquer la barre haute existante sur telephone */
+  .header-top-bar {
+    display: none !important;
+  }
+
+  /* Masquer le menu mobile déroulant existant sur telephone */
+  .header-old-mobile-menu {
+    display: none !important;
+  }
+
+  /* Ajuster la hauteur du placeholder */
+  .header-placeholder {
+    height: 60px !important;
+  }
+
+  /* Empêcher toute couleur de fond parasite sur le header fixe */
+  .header-container {
+    background: #ffffff !important;
+  }
+  .header-container.is-compact {
+    background: #ffffff !important;
+  }
+}
 
 
 /* ===== Base Styles ===== */
