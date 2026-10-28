@@ -1335,7 +1335,8 @@ export default function Navbar() {
         </div>
       )}
       {/* ======================================================================= */}
-      {/* TIROIR LATERAL MOBILE IDDC (<=768px)                                    */}
+      </header>
+{/* TIROIR LATERAL MOBILE IDDC (<=768px)                                    */}
       {/* ======================================================================= */}
       <div className="mobile-drawer-container">
 
@@ -1534,7 +1535,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      </header>
     </>
   );
 }

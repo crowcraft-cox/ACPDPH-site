@@ -311,9 +311,9 @@
   display: none;
 }
 
-/* Conteneur du tiroir mobile — masqué par défaut */
+/* Conteneur du tiroir mobile — toujours dans le DOM, caché par transform */
 .mobile-drawer-container {
-  display: none;
+  display: block;
 }
 
 @media (max-width: 768px) {
