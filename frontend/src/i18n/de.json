@@ -97,6 +97,14 @@
     "mission_text": "Die Rechte von Menschen mit Behinderungen zu fördern, zu schützen und zu verteidigen, indem wir Barrierefreiheit, inklusive Bildung, Gesundheit und Rehabilitation sowie sozioökonomische Stärkung gewährleisten.",
     "social_objective_title": "Soziales Ziel",
     "social_objective_text": "Negative Wahrnehmungen von Behinderungen durch Sensibilisierung und Schulung zu bekämpfen und die Ausübung der Menschenrechte für Menschen mit Behinderungen durch humanitäre Maßnahmen und eine gemeinschaftsbasierte inklusive Entwicklung zu fördern.",
+    "values_title": "Grundwerte",
+    "values": [
+      "Professionalität",
+      "Solidarität",
+      "Nichtdiskriminierung",
+      "Achtung der Menschenwürde",
+      "Wohlbefinden"
+    ],
     "governance_title": "Führungsorgane & Team",
     "ag": "Generalversammlung",
     "ag_desc": "Souveränes Gremium der Organisation, das Gründungs- und Vollmitglieder vereint, um die strategischen Leitlinien festzulegen.",

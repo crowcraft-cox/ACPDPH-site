@@ -97,6 +97,14 @@
     "mission_text": "Promuovere, proteggere e difendere i diritti delle persone con disabilità garantendo accessibilità, istruzione inclusiva, salute e riabilitazione, nonché la loro emancipazione socio-economica.",
     "social_objective_title": "Obiettivo Sociale",
     "social_objective_text": "Combattere, attraverso la sensibilizzazione e la formazione, le percezioni negative della disabilità e promuovere l'esercizio dei diritti umani delle persone con disabilità attraverso l'azione umanitaria e lo sviluppo inclusivo su base comunitaria.",
+    "values_title": "Valori Fondamentali",
+    "values": [
+      "Professionalità",
+      "Solidarietà",
+      "Non discriminazione",
+      "Rispetto della dignità umana",
+      "Benessere"
+    ],
     "governance_title": "Organi di Governance & Team",
     "ag": "Assemblea Generale",
     "ag_desc": "Organo sovrano dell'organizzazione, che riunisce i membri fondatori e gli aderenti per definire i grandi orientamenti strategici.",

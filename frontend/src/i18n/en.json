@@ -97,6 +97,14 @@
     "mission_text": "To promote, protect, and defend the rights of persons with disabilities by ensuring accessibility, inclusive education, health, rehabilitation, and socio-economic empowerment.",
     "social_objective_title": "Social Objective",
     "social_objective_text": "To combat negative perceptions of disability through awareness and training, and promote the exercise of human rights for persons with disabilities through humanitarian action and community-based inclusive development.",
+    "values_title": "Core Values",
+    "values": [
+      "Professionalism",
+      "Solidarity",
+      "Non-discrimination",
+      "Respect for human dignity",
+      "Well-being"
+    ],
     "governance_title": "Governance & Team",
     "ag": "General Assembly",
     "ag_desc": "Supreme governing body uniting founding and active members to set key strategic directions.",

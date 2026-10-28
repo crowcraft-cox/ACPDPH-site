@@ -66,6 +66,28 @@ export default function About() {
                 </p>
               </div>
 
+              <div>
+                <h3 className="font-heading text-2xl font-bold mb-4 text-ba-blue">{t.about.values_title}</h3>
+                <ul className="space-y-3">
+                  {t.about.values.map((val, idx) => (
+                    <li
+                      key={idx}
+                      className="p-3.5 rounded-xl border border-gray-200/90 bg-white hover:border-ba-blue hover:shadow-sm transition-all duration-200 flex items-center gap-3.5"
+                    >
+                      <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-ba-blue/10 text-ba-blue border border-ba-blue/20">
+                        <svg className="w-4 h-4 text-ba-blue shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="font-bold text-xs tracking-wider">0{idx + 1}</span>
+                      </div>
+                      <span className="text-base md:text-lg font-semibold text-gray-900 leading-snug">
+                        {val}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               {/* Statuts & Reconnaissance Juridique */}
               <div className="pt-6 border-t border-gray-200 space-y-6">
                 <div>

@@ -97,6 +97,14 @@
     "mission_text": "Promouvoir et protéger les droits des personnes handicapées, lutter contre toutes les formes de discrimination et favoriser leur inclusion, leur autonomisation et leur participation active au développement communautaire, en vue de garantir leur dignité et leur bien-être socio-économique.",
     "social_objective_title": "Objectif Social",
     "social_objective_text": "Combattre, par la sensibilisation et la formation, les perceptions négatives du handicap et promouvoir l’exercice des droits humains des personnes handicapées à travers l’action humanitaire et le développement inclusif à base communautaire.",
+    "values_title": "Valeurs fondamentales",
+    "values": [
+      "Professionnalisme",
+      "Solidarité",
+      "Non-discrimination",
+      "Respect de la dignité humaine",
+      "Bien-être"
+    ],
     "governance_title": "Organes de Gouvernance & Équipe",
     "ag": "Assemblée Générale",
     "ag_desc": "Organe souverain de l'organisation, regroupant les membres fondateurs et adhérents pour définir les grandes orientations stratégiques.",
