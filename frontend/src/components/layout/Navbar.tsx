@@ -235,7 +235,7 @@ export default function Navbar() {
         role="banner"
         ref={navContainerRef}
         onKeyDown={handleKeyDown}
-        className={`header-container fixed top-0 left-0 w-full z-40 font-heading selection:bg-[var(--color-accent)] selection:text-white ${
+        className={`header-container fixed top-0 left-0 w-full z-40 overflow-visible font-heading selection:bg-[var(--color-accent)] selection:text-white ${
           isCompact ? 'is-compact' : ''
         } ${!isMounted ? 'header-no-anim' : ''}`}
       >
@@ -253,7 +253,7 @@ export default function Navbar() {
         {/* ========================================================================================= */}
         <Link
           to="/"
-          className="header-logo-link hidden lg:block absolute z-30 transition-transform duration-200 hover:scale-[1.015] focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-accent)] rounded-full group shadow-none"
+          className="header-logo-link hidden lg:block absolute z-40 transition-transform duration-200 hover:scale-[1.015] focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-accent)] rounded-full group shadow-none"
           style={{
             left: 'var(--logo-margin-left, 24px)',
             top: 'var(--logo-offset, 14px)',
@@ -382,7 +382,7 @@ export default function Navbar() {
       {/* ========================================================================================= */}
       {/* 2. BARRE HAUTE (FOND BLANC, REPLIABLE AU SCROLL EN MODE COMPACT)                           */}
       {/* ========================================================================================= */}
-      <div className="header-top-bar relative z-30 w-full bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 transition-colors">
+      <div className={`header-top-bar relative ${openDropdown === 'lang' ? 'z-30' : 'z-10'} overflow-visible w-full bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 transition-colors`}>
         <div className="header-top-bar-content container-ba h-full flex items-center justify-between">
           
           {/* GAUCHE : Logo mobile (< 1024px) OU Titre décalé (>= 1024px) */}
@@ -668,7 +668,7 @@ export default function Navbar() {
       {/* ========================================================================================= */}
       <nav
         aria-label="Navigation principale"
-        className="header-nav-bar relative z-20 hidden lg:block w-full bg-[var(--color-primary)]"
+        className="header-nav-bar relative z-20 overflow-visible hidden lg:block w-full bg-[var(--color-primary)]"
       >
         <div className="container-ba flex items-stretch justify-between h-[76px]">
           

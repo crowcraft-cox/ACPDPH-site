@@ -160,10 +160,12 @@
 /* Conteneur principal du header en position fixed */
 .header-container {
   will-change: transform;
+  overflow: visible;
 }
 
 /* Logo desktop débordant : fondu + scale 0.45 + translateY(-34px) */
 .header-logo-link {
+  z-index: 40;
   transform-origin: top left;
   transition: transform var(--header-anim-duration) var(--header-anim-ease),
               opacity var(--header-fade-duration) var(--header-anim-ease),
@@ -180,6 +182,7 @@
 
 /* Barre haute blanche */
 .header-top-bar {
+  z-index: 10;
   transition: max-height var(--header-anim-duration) var(--header-anim-ease),
               height var(--header-anim-duration) var(--header-anim-ease),
               opacity var(--header-fade-duration) var(--header-anim-ease),
@@ -251,6 +254,8 @@
 
 /* Barre de navigation bleue : bordure inférieure discrète et ombre en mode compact */
 .header-nav-bar {
+  z-index: 20;
+  overflow: visible;
   transition: border-bottom-color var(--header-fade-duration) var(--header-anim-ease),
               box-shadow var(--header-fade-duration) var(--header-anim-ease);
   border-bottom: 1px solid transparent;
