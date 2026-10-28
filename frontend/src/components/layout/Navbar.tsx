@@ -1334,19 +1334,24 @@ export default function Navbar() {
           </div>
         </div>
       )}
-      {/* ========================================================================================= */}
-      {/* TIROIR LATERAL MOBILE IDDC (<=768px uniquement)                                            */}
-      {/* ========================================================================================= */}
-      <div className="mobile-drawer-container" aria-hidden={!isMobileOpen}>
-        {/* Voile sombre semi-transparent */}
-        <div
-          className={`fixed inset-0 z-[115] transition-opacity duration-300 ${isMobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-          style={{ background: 'rgba(0,0,0,0.55)' }}
-          onClick={closeMobileMenu}
-          aria-hidden="true"
-        />
+      {/* ======================================================================= */}
+      {/* TIROIR LATERAL MOBILE IDDC (<=768px)                                    */}
+      {/* ======================================================================= */}
+      <div className="mobile-drawer-container">
 
-        {/* Panneau tiroir */}
+        {/* Voile semi-transparent */}
+        {isMobileOpen && (
+          <div
+            onClick={closeMobileMenu}
+            aria-hidden="true"
+            style={{
+              position: 'fixed', inset: 0, zIndex: 115,
+              background: 'rgba(0,0,0,0.55)',
+            }}
+          />
+        )}
+
+        {/* Panneau tiroir — positionnement absolu pour chaque zone */}
         <div
           role="dialog"
           aria-modal={isMobileOpen ? 'true' : undefined}
@@ -1358,169 +1363,174 @@ export default function Navbar() {
             bottom: 0,
             width: '75%',
             maxWidth: '320px',
-            background: '#ffffff',
-            display: 'flex',
-            flexDirection: 'column',
             zIndex: 120,
+            background: '#ffffff',
             transform: isMobileOpen ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 300ms ease-out',
-            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
           }}
         >
-          {/* Barre sombre du haut avec bouton fermer */}
-          <div style={{ display: 'flex', alignItems: 'center', height: '56px', flexShrink: 0, background: '#222222' }}>
+          {/* — Barre sombre du haut — */}
+          <div style={{ display: 'flex', alignItems: 'center', height: 56, flexShrink: 0, background: '#222222' }}>
             <button
               ref={drawerCloseBtnRef}
               type="button"
               onClick={closeMobileMenu}
-              style={{ width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: '#F26A4F', cursor: 'pointer', border: 'none', outline: 'none' }}
               aria-label="Fermer le menu"
+              style={{
+                width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0, background: '#F26A4F', border: 'none', cursor: 'pointer',
+              }}
             >
-              <span className="text-white text-2xl font-bold leading-none" aria-hidden="true">&times;</span>
+              <span style={{ color: '#ffffff', fontSize: 26, fontWeight: 700, lineHeight: 1 }}>&times;</span>
             </button>
-            <span className="text-white font-bold uppercase tracking-wider text-sm ml-4 select-none">MENU</span>
+            <span style={{ color: '#ffffff', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: 14, marginLeft: 16 }}>MENU</span>
           </div>
 
-          {/* Liens de navigation verticaux */}
-          <nav aria-label="Navigation mobile" style={{ flex: 1, overflowY: 'auto' }}>
-            <ul className="py-2 list-none m-0 p-0">
-              {/* Accueil */}
-              <li>
-                <Link
-                  to="/"
-                  onClick={closeMobileMenu}
-                  className={`flex items-center px-6 text-[18px] font-medium hover:bg-gray-50 transition-colors ${isHomeActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
-                  style={{ minHeight: '52px' }}
-                >
-                  Accueil
-                </Link>
-              </li>
+          {/* — Liste des liens — zone défilable principale — */}
+          <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
 
-              {/* Organisation (depliable) */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setMobileSubmenu(mobileSubmenu === 'org' ? null : 'org')}
-                  className={`w-full flex items-center justify-between px-6 text-[18px] font-medium hover:bg-gray-50 cursor-pointer transition-colors ${isOrgActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
-                  style={{ minHeight: '52px' }}
-                  aria-expanded={mobileSubmenu === 'org'}
-                >
-                  <span>Organisation</span>
-                  <svg
-                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${mobileSubmenu === 'org' ? 'rotate-180' : ''}`}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {mobileSubmenu === 'org' && (
-                  <ul className="list-none m-0 pb-1" style={{ paddingLeft: '40px', paddingRight: '24px' }}>
-                    <li>
-                      <Link to="/about" onClick={closeMobileMenu}
-                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/about' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
-                      >{t.nav.about}</Link>
-                    </li>
-                    <li>
-                      <Link to="/governance" onClick={closeMobileMenu}
-                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/governance' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
-                      >{t.nav.governance || 'Gouvernance'}</Link>
-                    </li>
-                    <li>
-                      <Link to="/pillars" onClick={closeMobileMenu}
-                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/pillars' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
-                      >{t.nav.pillars}</Link>
-                    </li>
-                  </ul>
-                )}
-              </li>
+            {/* Accueil */}
+            <Link to="/" onClick={closeMobileMenu}
+              style={{
+                display: 'flex', alignItems: 'center', minHeight: 52,
+                padding: '0 24px', fontSize: 18, fontWeight: 500,
+                color: isHomeActive ? '#1D4ED8' : '#111827',
+                textDecoration: 'none', background: 'transparent',
+                borderBottom: '1px solid #F3F4F6',
+              }}
+            >Accueil</Link>
 
-              {/* Nos Projets */}
-              <li>
-                <Link
-                  to="/projects"
-                  onClick={closeMobileMenu}
-                  className={`flex items-center px-6 text-[18px] font-medium hover:bg-gray-50 transition-colors ${isProjectsActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
-                  style={{ minHeight: '52px' }}
+            {/* Organisation (accordéon) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setMobileSubmenu(mobileSubmenu === 'org' ? null : 'org')}
+                aria-expanded={mobileSubmenu === 'org'}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  width: '100%', minHeight: 52, padding: '0 24px',
+                  fontSize: 18, fontWeight: 500,
+                  color: isOrgActive ? '#1D4ED8' : '#111827',
+                  background: 'transparent', border: 'none', borderBottom: '1px solid #F3F4F6',
+                  cursor: 'pointer',
+                }}
+              >
+                <span>Organisation</span>
+                <svg
+                  width="16" height="16" fill="none" stroke="#9CA3AF" viewBox="0 0 24 24"
+                  style={{ transition: 'transform 200ms', transform: mobileSubmenu === 'org' ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }}
                 >
-                  {t.nav.projects}
-                </Link>
-              </li>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobileSubmenu === 'org' && (
+                <div style={{ background: '#F9FAFB', paddingLeft: 40, paddingRight: 24, paddingBottom: 4 }}>
+                  <Link to="/about" onClick={closeMobileMenu}
+                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/about' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/about' ? 600 : 400 }}
+                  >{t.nav.about}</Link>
+                  <Link to="/governance" onClick={closeMobileMenu}
+                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/governance' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/governance' ? 600 : 400 }}
+                  >{t.nav.governance || 'Gouvernance'}</Link>
+                  <Link to="/pillars" onClick={closeMobileMenu}
+                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/pillars' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/pillars' ? 600 : 400 }}
+                  >{t.nav.pillars}</Link>
+                </div>
+              )}
+            </div>
 
-              {/* Actualites */}
-              <li>
-                <Link
-                  to="/news"
-                  onClick={closeMobileMenu}
-                  className={`flex items-center px-6 text-[18px] font-medium hover:bg-gray-50 transition-colors ${isNewsActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
-                  style={{ minHeight: '52px' }}
+            {/* Nos Projets */}
+            <Link to="/projects" onClick={closeMobileMenu}
+              style={{
+                display: 'flex', alignItems: 'center', minHeight: 52,
+                padding: '0 24px', fontSize: 18, fontWeight: 500,
+                color: isProjectsActive ? '#1D4ED8' : '#111827',
+                textDecoration: 'none', background: 'transparent',
+                borderBottom: '1px solid #F3F4F6',
+              }}
+            >{t.nav.projects}</Link>
+
+            {/* Actualités */}
+            <Link to="/news" onClick={closeMobileMenu}
+              style={{
+                display: 'flex', alignItems: 'center', minHeight: 52,
+                padding: '0 24px', fontSize: 18, fontWeight: 500,
+                color: isNewsActive ? '#1D4ED8' : '#111827',
+                textDecoration: 'none', background: 'transparent',
+                borderBottom: '1px solid #F3F4F6',
+              }}
+            >{t.nav.news}</Link>
+
+            {/* Ressources (accordéon) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setMobileSubmenu(mobileSubmenu === 'resources' ? null : 'resources')}
+                aria-expanded={mobileSubmenu === 'resources'}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  width: '100%', minHeight: 52, padding: '0 24px',
+                  fontSize: 18, fontWeight: 500,
+                  color: isResourcesActive ? '#1D4ED8' : '#111827',
+                  background: 'transparent', border: 'none', borderBottom: '1px solid #F3F4F6',
+                  cursor: 'pointer',
+                }}
+              >
+                <span>Ressources</span>
+                <svg
+                  width="16" height="16" fill="none" stroke="#9CA3AF" viewBox="0 0 24 24"
+                  style={{ transition: 'transform 200ms', transform: mobileSubmenu === 'resources' ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }}
                 >
-                  {t.nav.news}
-                </Link>
-              </li>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobileSubmenu === 'resources' && (
+                <div style={{ background: '#F9FAFB', paddingLeft: 40, paddingRight: 24, paddingBottom: 4 }}>
+                  <Link to="/publications" onClick={closeMobileMenu}
+                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/publications' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/publications' ? 600 : 400 }}
+                  >{t.nav.publications || 'Publications'}</Link>
+                  <Link to="/partners" onClick={closeMobileMenu}
+                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/partners' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/partners' ? 600 : 400 }}
+                  >{t.nav.partners || 'Nos Partenaires'}</Link>
+                  <Link to="/careers" onClick={closeMobileMenu}
+                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/careers' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/careers' ? 600 : 400 }}
+                  >{t.nav.careers || 'Offres & Emploi'}</Link>
+                </div>
+              )}
+            </div>
 
-              {/* Ressources (depliable) */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setMobileSubmenu(mobileSubmenu === 'resources' ? null : 'resources')}
-                  className={`w-full flex items-center justify-between px-6 text-[18px] font-medium hover:bg-gray-50 cursor-pointer transition-colors ${isResourcesActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
-                  style={{ minHeight: '52px' }}
-                  aria-expanded={mobileSubmenu === 'resources'}
-                >
-                  <span>Ressources</span>
-                  <svg
-                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${mobileSubmenu === 'resources' ? 'rotate-180' : ''}`}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {mobileSubmenu === 'resources' && (
-                  <ul className="list-none m-0 pb-1" style={{ paddingLeft: '40px', paddingRight: '24px' }}>
-                    <li>
-                      <Link to="/publications" onClick={closeMobileMenu}
-                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/publications' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
-                      >{t.nav.publications || 'Publications'}</Link>
-                    </li>
-                    <li>
-                      <Link to="/partners" onClick={closeMobileMenu}
-                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/partners' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
-                      >{t.nav.partners || 'Nos Partenaires'}</Link>
-                    </li>
-                    <li>
-                      <Link to="/careers" onClick={closeMobileMenu}
-                        className={`block py-2.5 text-[15px] transition-colors ${location.pathname === '/careers' ? 'text-[#1D4ED8] font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
-                      >{t.nav.careers || 'Offres & Emploi'}</Link>
-                    </li>
-                  </ul>
-                )}
-              </li>
+            {/* Contact */}
+            <Link to="/contact" onClick={closeMobileMenu}
+              style={{
+                display: 'flex', alignItems: 'center', minHeight: 52,
+                padding: '0 24px', fontSize: 18, fontWeight: 500,
+                color: isContactActive ? '#1D4ED8' : '#111827',
+                textDecoration: 'none', background: 'transparent',
+                borderBottom: '1px solid #F3F4F6',
+              }}
+            >{t.nav.contact || 'Contact'}</Link>
 
-              {/* Contact */}
-              <li>
-                <Link
-                  to="/contact"
-                  onClick={closeMobileMenu}
-                  className={`flex items-center px-6 text-[18px] font-medium hover:bg-gray-50 transition-colors ${isContactActive ? 'text-[#1D4ED8] font-semibold' : 'text-gray-900'}`}
-                  style={{ minHeight: '52px' }}
-                >
-                  {t.nav.contact || 'Contact'}
-                </Link>
-              </li>
-            </ul>
-          </nav>
+          </div>
 
-          {/* Bas du tiroir : Nous soutenir */}
-          <div style={{ flexShrink: 0, padding: '16px', borderTop: '1px solid #F3F4F6' }}>
+          {/* — Bouton Nous soutenir (bas du tiroir) — */}
+          <div style={{ flexShrink: 0, padding: 16, borderTop: '1px solid #E5E7EB' }}>
             <Link
               to="/support"
               onClick={closeMobileMenu}
-              className="flex items-center justify-center w-full bg-[#1F4FDB] hover:bg-[#1a44c0] text-white font-heading font-bold text-sm uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset"
-              style={{ minHeight: '48px', borderRadius: 0 }}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '100%', minHeight: 48,
+                background: '#1F4FDB', color: '#ffffff',
+                fontWeight: 700, fontSize: 13, textTransform: 'uppercase',
+                letterSpacing: '0.08em', textDecoration: 'none',
+              }}
             >
               Nous soutenir
             </Link>
           </div>
+
         </div>
       </div>
 
