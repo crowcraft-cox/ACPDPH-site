@@ -37,7 +37,7 @@ const BOARD_MEMBERS: Member[] = [
   },
   {
     name: 'Dr Justin Kambale',
-    role: 'Commissaire aux Comptes',
+    role: 'Président de la Commission de Contrôle',
     bio: 'Médecin spécialiste en réadaptation fonctionnelle et santé publique communautaire.',
     isBoard: true,
   },
@@ -46,8 +46,8 @@ const BOARD_MEMBERS: Member[] = [
 const EXECUTIVE_TEAM: Member[] = [
   {
     name: 'M. Germain Kasereka',
-    role: 'Coordonnateur Exécutif',
-    department: 'Direction Générale',
+    role: 'Secrétaire Exécutif',
+    department: 'Secrétariat Exécutif',
     bio: 'Supervision stratégique, relations avec les institutions étatiques, les bailleurs et les réseaux internationaux.',
   },
   {
@@ -171,7 +171,7 @@ export default function Governance() {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Direction Exécutive & Pôles
+              Secrétariat Exécutif & Pôles
             </button>
             <button
               onClick={() => setActiveTab('principles')}
@@ -239,7 +239,7 @@ export default function Governance() {
           <div>
             <div className="text-center max-w-2xl mx-auto mb-10">
               <h2 className="font-heading text-2xl sm:text-3xl font-bold mb-2" style={{ color: '#111827' }}>
-                Direction Exécutive & Équipes de Terrain
+                Secrétariat Exécutif & Équipes de Terrain
               </h2>
               <p className="text-sm" style={{ color: '#6B7280' }}>
                 Basée au siège de Beni (Nord-Kivu), l'équipe opérationnelle met en œuvre quotidiennement nos programmes de plaidoyer, d'accessibilité et d'autonomisation.
@@ -314,8 +314,8 @@ export default function Governance() {
                   </div>
                   <div className="text-center p-5 rounded-xl bg-blue-50 border border-blue-200">
                     <span className="text-xs uppercase font-extrabold tracking-wider block text-ba-blue mb-1">Organe de Contrôle</span>
-                    <h3 className="font-heading text-lg font-bold" style={{ color: '#111827' }}>Commissariat aux Comptes</h3>
-                    <p className="text-xs text-gray-600 mt-1">Audit financier interne, régularité et conformité légale</p>
+                    <h3 className="font-heading text-lg font-bold" style={{ color: '#111827' }}>Commission de Contrôle</h3>
+                    <p className="text-xs text-gray-600 mt-1">Audit financier interne, régularité et conformité statutaire</p>
                   </div>
                 </div>
 
@@ -323,11 +323,11 @@ export default function Governance() {
                   <div className="w-0.5 h-6 bg-gray-300" />
                 </div>
 
-                {/* Niveau 3: Coordination Exécutive */}
+                {/* Niveau 3: Secrétariat Exécutif */}
                 <div className="text-center p-5 rounded-xl bg-gray-50 border border-gray-200">
                   <span className="text-xs uppercase font-extrabold tracking-wider block text-gray-500 mb-1">Organe de Gestion Quotidienne</span>
-                  <h3 className="font-heading text-lg font-bold" style={{ color: '#111827' }}>Direction Exécutive</h3>
-                  <p className="text-xs text-gray-600 mt-1">Mise en œuvre des résolutions, gestion opérationnelle et partenariats</p>
+                  <h3 className="font-heading text-lg font-bold" style={{ color: '#111827' }}>Secrétariat Exécutif</h3>
+                  <p className="text-xs text-gray-600 mt-1">Mise en œuvre des résolutions, gestion opérationnelle et coordination des projets</p>
                 </div>
 
                 <div className="flex justify-center">

@@ -213,10 +213,10 @@ export default function About() {
 
           <div ref={govRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { title: t.about.ag,        desc: t.about.ag_desc },
-              { title: t.about.ca,        desc: t.about.ca_desc },
-              { title: t.about.bureau,    desc: t.about.bureau_desc },
-              { title: t.about.direction, desc: t.about.direction_desc },
+              { title: t.about.ag,          desc: t.about.ag_desc },
+              { title: t.about.ca,          desc: t.about.ca_desc },
+              { title: t.about.commission,  desc: t.about.commission_desc },
+              { title: t.about.secretariat, desc: t.about.secretariat_desc },
             ].map((card, i) => (
               <div
                 key={card.title}
