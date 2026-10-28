@@ -4,6 +4,7 @@ import { useI18n } from '../i18n';
 import { useScrollReveal, useCountUp, useAnimeReveal } from '../hooks/useScrollReveal';
 import { useAdminData } from '../context/adminData';
 import { buildHeroHookTitle } from '../utils/heroHook';
+import { formatProjectDate } from '../utils/dateFormatter';
 
 export default function Home() {
   return (
@@ -822,30 +823,35 @@ function ValuesSection() {
   );
 }
 
-/* ===== PROJECTS PREVIEW (STAGGERED WITH ANIME.JS) ===== */
+/* ===== PROJECTS PREVIEW (IDDC CARD DESIGN) ===== */
 function ProjectsPreviewSection() {
   const { data } = useAdminData();
-  const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
+  const { ref: containerRef } = useAnimeReveal<HTMLUListElement>({
     variant: 'stagger-cards',
-    itemSelector: '.project-preview-card',
-    staggerDelay: 90,
+    itemSelector: '.project-card-item',
+    staggerDelay: 80,
   });
 
-  const projects = data.projects.slice(0, 3);
+  // Tri décroissant par date (les plus récents d'abord), max 4 sur la page d'accueil
+  const sortedProjects = [...(data.projects || [])].sort((a, b) => {
+    const timeA = a.date ? new Date(a.date).getTime() : 0;
+    const timeB = b.date ? new Date(b.date).getTime() : 0;
+    return timeB - timeA;
+  });
+  const projects = sortedProjects.slice(0, 4);
+
   if (projects.length === 0) return null;
 
-  const statusBadge: Record<string, string> = {
-    'En cours':         'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
-    'Achevé':           'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
-    'En planification': 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
-  };
-
   return (
-    <section className="section-padding relative">
+    <section
+      className="bg-white"
+      style={{ paddingTop: 'clamp(64px, 8vw, 96px)', paddingBottom: 'clamp(64px, 8vw, 96px)' }}
+      aria-labelledby="projects-heading"
+    >
       <div className="container-ba">
         <div className="mb-10 w-full">
           <div className="relative flex items-center justify-center mb-4">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>Nos Projets</h2>
+            <h2 id="projects-heading" className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>Nos Projets</h2>
             <Link to="/projects" className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
               Tous les projets
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -861,75 +867,50 @@ function ProjectsPreviewSection() {
               </svg>
             </Link>
           </div>
-          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
-            Découvrez nos réalisations concrètes et nos initiatives stratégiques menées directement sur le terrain en République Démocratique du Congo. Qu'il s'agisse de la mise aux normes d'accessibilité des bâtiments publics, du renforcement des capacités économiques par l'apprentissage de métiers adaptés, de la scolarisation d'enfants vivant avec handicap ou de la fourniture d'aides techniques à la mobilité, chaque projet est élaboré en concertation étroite avec les bénéficiaires afin d'assurer un impact tangible, mesurable et pérenne dans leurs milieux de vie.
-          </p>
         </div>
 
-        <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {projects.map((proj, i) => {
-            const excerpt = proj.description
-              ? proj.description.replace(/\[photo:\d+\]/g, '').trim().slice(0, 110) + (proj.description.length > 110 ? '…' : '')
-              : '';
+        <ul ref={containerRef} role="list" className="projects-grid">
+          {projects.map((proj) => {
+            const dateInfo = formatProjectDate(proj.date);
             return (
-              <Link
-                key={proj.id || i}
-                to={`/projects/${proj.id}`}
-                className="project-preview-card card card-cover group flex flex-col"
-                style={{ padding: 0 }}
-              >
-                {/* Miniature */}
-                <div className="relative w-full overflow-hidden" style={{ height: '200px' }}>
-                  {proj.image ? (
-                    <img src={proj.image} alt={proj.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center" style={{ background: '#F3F4F6' }}>
-                      <svg className="w-10 h-10" fill="none" stroke="#9CA3AF" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159" />
-                      </svg>
-                    </div>
-                  )}
-                  <div className="absolute top-3 left-3 text-white text-xs font-bold px-3 py-1 rounded-full" style={{ background: '#1D4ED8' }}>
-                    {proj.type}
-                  </div>
-                </div>
-
-                {/* Corps */}
-                <div style={{ padding: '16px 20px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <div className="card-row mb-3">
-                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${statusBadge[proj.status] || 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
-                      {proj.status}
-                    </span>
-                    <span className="flex items-center gap-1" style={{ color: '#6B7280', fontSize: '0.75rem' }}>
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="#1D4ED8" viewBox="0 0 24 24" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                      </svg>
-                      {proj.location}
-                    </span>
+              <li key={proj.id} className="project-card-item">
+                <Link
+                  to={`/projects/${proj.id}`}
+                  className="project-card-link"
+                  aria-label={`${proj.title}, ${dateInfo.accessible}`}
+                >
+                  {/* Photo : hauteur fixe 170px, ratio 16:9 sur <600px */}
+                  <div className="project-card-image-wrap">
+                    {proj.image ? (
+                      <img
+                        src={proj.image}
+                        alt=""
+                        loading="lazy"
+                        className="project-card-image"
+                      />
+                    ) : (
+                      <div className="project-card-image-fallback" aria-hidden="true">
+                        <svg className="w-10 h-10 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
 
-                  <h3 className="font-heading font-bold mb-2 group-hover:transition-colors line-clamp-2" style={{ color: '#111827', fontSize: '1rem', lineHeight: 1.35 }}>
-                    {proj.title}
-                  </h3>
-
-                  {excerpt && (
-                    <p className="line-clamp-2 flex-1 mb-4" style={{ color: '#000000', fontSize: '0.8rem', lineHeight: 1.5 }}>{excerpt}</p>
-                  )}
-
-                  <div className="card-footer" style={{ marginTop: 'auto' }}>
-                    <span className="flex items-center gap-1.5 font-semibold" style={{ color: '#1D4ED8', fontSize: '0.75rem' }}>
-                      Voir les détails
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                      </svg>
-                    </span>
+                  {/* Panneau coloré bleu (#1F4FDB) */}
+                  <div className="project-card-body">
+                    <h3 className="project-card-title">
+                      {proj.title}
+                    </h3>
+                    <time dateTime={dateInfo.iso} className="project-card-date">
+                      {dateInfo.display}
+                    </time>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </section>
   );

@@ -67,6 +67,7 @@ export interface Project {
   color: string;
   image: string;
   images?: ProjectImage[];
+  date?: string;
 }
 
 export interface ContactInfo {

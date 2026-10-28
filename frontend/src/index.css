@@ -1933,3 +1933,173 @@ html.lenis body {
     transition: none !important;
   }
 }
+
+
+/* ===================================================
+   PROJETS (cartes accueil & listing — inspirées IDDC)
+   =================================================== */
+:root {
+  --card-date-color: #FFD4A3; /* orange clair optimisé pour contraste >= 4.5:1 sur #1F4FDB (actuel: 4.75:1) */
+}
+
+/* Grille responsive de cartes */
+.projects-grid {
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* ≥ 1200 px : 4 colonnes */
+@media (min-width: 1200px) {
+  .projects-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* 900–1199 px : 3 colonnes */
+@media (min-width: 900px) and (max-width: 1199px) {
+  .projects-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 600–899 px : 2 colonnes */
+@media (min-width: 600px) and (max-width: 899px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* < 600 px : 1 colonne pleine largeur */
+@media (max-width: 599px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Item de liste */
+.project-card-item {
+  display: flex;
+  height: 100%;
+}
+
+/* Carte projet (lien englobant) */
+.project-card-link {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #1F4FDB;
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.12);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+  outline-offset: 3px;
+}
+
+.project-card-link:hover,
+.project-card-link:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.18);
+}
+
+.project-card-link:focus-visible {
+  outline: 3px solid #1F4FDB;
+  outline-offset: 3px;
+}
+
+/* Conteneur photo */
+.project-card-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 170px;
+  overflow: hidden;
+  background: #193EB0;
+}
+
+@media (max-width: 599px) {
+  .project-card-image-wrap {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+.project-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 400ms ease;
+  display: block;
+}
+
+.project-card-link:hover .project-card-image,
+.project-card-link:focus-visible .project-card-image {
+  transform: scale(1.04);
+}
+
+/* Image de remplacement si absente */
+.project-card-image-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1F4FDB 0%, #163697 100%);
+}
+
+/* Panneau coloré inférieur */
+.project-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  background-color: #1F4FDB;
+  padding: 18px 14px 16px;
+  gap: 8px;
+}
+
+.project-card-title {
+  color: #FFFFFF;
+  font-family: var(--font-heading, 'Outfit', 'Montserrat', sans-serif);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 599px) {
+  .project-card-title {
+    font-size: 17px;
+  }
+}
+
+.project-card-date {
+  color: var(--card-date-color, #FFD4A3);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .project-card-link,
+  .project-card-image {
+    transition: none !important;
+    transform: none !important;
+  }
+}
