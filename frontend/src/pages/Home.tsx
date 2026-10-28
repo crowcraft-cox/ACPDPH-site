@@ -346,7 +346,6 @@ function AboutSection() {
               className="about-heading-block"
             >
               <span className="about-line-light" aria-hidden="true">À propos</span>
-              <span className="about-line-strong">ACPDPH</span>
               <span className="sr-only">À propos de l'ACPDPH</span>
             </h2>
           </div>

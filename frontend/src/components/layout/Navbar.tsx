@@ -717,7 +717,7 @@ export default function Navbar() {
                     : 'text-white hover:text-[var(--color-accent-text)]'
                 }`}
               >
-                <span>Organisation</span>
+                <span>{t.nav_menu?.organisation ?? 'Organisation'}</span>
                 <svg
                   className={`w-3.5 h-3.5 transition-transform duration-150 ${openDropdown === 'org' ? 'rotate-180' : ''}`}
                   fill="none"
@@ -861,7 +861,7 @@ export default function Navbar() {
                     : 'text-white hover:text-[var(--color-accent-text)]'
                 }`}
               >
-                <span>Ressources</span>
+                <span>{t.nav_menu?.resources ?? 'Ressources'}</span>
                 <svg
                   className={`w-3.5 h-3.5 transition-transform duration-150 ${openDropdown === 'resources' ? 'rotate-180' : ''}`}
                   fill="none"
@@ -1165,7 +1165,7 @@ export default function Navbar() {
                 }`}
                 aria-expanded={mobileSubmenu === 'org'}
               >
-                <span>Organisation</span>
+                <span>{t.nav_menu?.organisation ?? 'Organisation'}</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-150 ${mobileSubmenu === 'org' ? 'rotate-180' : ''}`}
                   fill="none"
@@ -1238,7 +1238,7 @@ export default function Navbar() {
                 }`}
                 aria-expanded={mobileSubmenu === 'resources'}
               >
-                <span>Ressources</span>
+                <span>{t.nav_menu?.resources ?? 'Ressources'}</span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-150 ${mobileSubmenu === 'resources' ? 'rotate-180' : ''}`}
                   fill="none"

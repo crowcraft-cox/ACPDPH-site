@@ -28,7 +28,7 @@ export default function Footer() {
     if (honeypotRef.current?.value) return;
 
     if (!isEmailValid(email)) {
-      setNewsletterMsg({ type: 'error', text: 'Entrez une adresse e-mail valide.' });
+      setNewsletterMsg({ type: 'error', text: t.footer.newsletter_error_email ?? 'Entrez une adresse e-mail valide.' });
       return;
     }
 

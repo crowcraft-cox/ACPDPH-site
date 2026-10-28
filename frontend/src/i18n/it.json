@@ -172,6 +172,33 @@
     "newsletter_title": "Iscriviti alla nostra newsletter",
     "newsletter_placeholder": "Il tuo indirizzo email",
     "newsletter_submit": "Iscriviti",
+    "newsletter_subscribed": "Iscritto/a",
+    "newsletter_success": "Grazie, sei iscritto/a!",
+    "newsletter_error_email": "Inserisci un indirizzo email valido.",
+    "newsletter_error_generic": "Errore durante l'iscrizione.",
+    "our_office": "Il nostro ufficio",
+    "follow_us": "Seguici",
+    "quick_links_label": "Link rapidi",
     "rights": "Tutti i diritti riservati."
+  },
+  "nav_menu": {
+    "organisation": "Organizzazione",
+    "resources": "Risorse"
+  },
+  "home": {
+    "impact_desc": "Progressi concreti, misurabili e sostenibili per l'inclusione delle persone con disabilità nella Repubblica Democratica del Congo.",
+    "pillars_desc": "L'ACPDPH concentra la sua azione su assi d'intervento prioritari per garantire il pieno sviluppo e la partecipazione civica delle persone con disabilità.",
+    "projects_title": "I nostri progetti",
+    "projects_all": "Tutti i progetti",
+    "projects_desc": "Scopri le nostre realizzazioni concrete e le iniziative strategiche sul campo in RDC per l'inclusione delle persone con disabilità.",
+    "news_desc": "Segui le nostre azioni sul campo, i laboratori di sensibilizzazione e le testimonianze dei nostri membri.",
+    "read_more": "Leggi di più",
+    "region": "Regione Nord Kivu",
+    "field_report": "Rapporto sul campo 2026",
+    "audit": "Audit annuale conforme",
+    "learn_more": "Scopri di più"
+  },
+  "accessibility": {
+    "skip_to_content": "Vai al contenuto principale"
   }
 }

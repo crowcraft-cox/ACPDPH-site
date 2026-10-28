@@ -172,6 +172,33 @@
     "newsletter_title": "Abonnieren Sie unseren Newsletter",
     "newsletter_placeholder": "Ihre E-Mail-Adresse",
     "newsletter_submit": "Abonnieren",
+    "newsletter_subscribed": "Abonniert",
+    "newsletter_success": "Danke, Sie sind abonniert!",
+    "newsletter_error_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    "newsletter_error_generic": "Beim Abonnieren ist ein Fehler aufgetreten.",
+    "our_office": "Unser Büro",
+    "follow_us": "Folgen Sie uns",
+    "quick_links_label": "Schnelllinks",
     "rights": "Alle Rechte vorbehalten."
+  },
+  "nav_menu": {
+    "organisation": "Organisation",
+    "resources": "Ressourcen"
+  },
+  "home": {
+    "impact_desc": "Konkrete, messbare und nachhaltige Fortschritte für die Inklusion von Menschen mit Behinderungen in der Demokratischen Republik Kongo.",
+    "pillars_desc": "Die ACPDPH konzentriert ihre Arbeit auf vorrangige Handlungsfelder, um die vollständige Entfaltung und gesellschaftliche Teilhabe von Menschen mit Behinderungen zu gewährleisten.",
+    "projects_title": "Unsere Projekte",
+    "projects_all": "Alle Projekte",
+    "projects_desc": "Entdecken Sie unsere konkreten Errungenschaften und strategischen Initiativen im Feld in der DRK für die Inklusion von Menschen mit Behinderungen.",
+    "news_desc": "Verfolgen Sie unsere Feldaktionen, Sensibilisierungsworkshops und die inspirierenden Zeugnisse unserer Mitglieder.",
+    "read_more": "Weiterlesen",
+    "region": "Region Nord-Kivu",
+    "field_report": "Feldbericht 2026",
+    "audit": "Jahresprüfung bestanden",
+    "learn_more": "Mehr erfahren"
+  },
+  "accessibility": {
+    "skip_to_content": "Zum Hauptinhalt springen"
   }
 }

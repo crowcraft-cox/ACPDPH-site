@@ -78,7 +78,7 @@
   },
   "partners": {
     "title": "Our Partners",
-    "subtitle": "Donors, public institutions, NGOs, and partner networks united for inclusion"
+    "subtitle": "Donors, public institutions, NGOs, and partner networks united for inclusion in the DRC"
   },
   "cta": {
     "title": "Together for an inclusive society without discrimination",
@@ -121,10 +121,6 @@
     "docs_title": "Publications & Official Documents",
     "download_statuts": "Download ACPDPH Statutes (PDF)",
     "download_roi": "Download Internal Regulations"
-  },
-  "partners": {
-    "title": "Our Partners",
-    "subtitle": "Donors, public institutions, NGOs, and partner networks united for inclusion in the DRC"
   },
   "publications": {
     "title": "Publications & Studies",
@@ -176,6 +172,33 @@
     "newsletter_title": "Subscribe to our newsletter",
     "newsletter_placeholder": "Your email address",
     "newsletter_submit": "Subscribe",
+    "newsletter_subscribed": "Subscribed",
+    "newsletter_success": "Thank you, you are subscribed!",
+    "newsletter_error_email": "Please enter a valid email address.",
+    "newsletter_error_generic": "An error occurred during subscription.",
+    "our_office": "Our office",
+    "follow_us": "Follow us",
+    "quick_links_label": "Quick links",
     "rights": "All rights reserved."
+  },
+  "nav_menu": {
+    "organisation": "Organisation",
+    "resources": "Resources"
+  },
+  "home": {
+    "impact_desc": "Concrete, measurable and sustainable progress for the inclusion of persons with disabilities in the Democratic Republic of Congo.",
+    "pillars_desc": "ACPDPH focuses its work on priority intervention axes to ensure the full development and civic participation of persons with disabilities.",
+    "projects_title": "Our Projects",
+    "projects_all": "All projects",
+    "projects_desc": "Discover our concrete achievements and strategic initiatives carried out in the field in the DRC for the inclusion of persons with disabilities.",
+    "news_desc": "Follow our field actions, awareness workshops, and inspiring testimonies shared by our members.",
+    "read_more": "Read more",
+    "region": "North Kivu Region",
+    "field_report": "2026 Field Report",
+    "audit": "Annual audit compliant",
+    "learn_more": "Learn more"
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to main content"
   }
 }
