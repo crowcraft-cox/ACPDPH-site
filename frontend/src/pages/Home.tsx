@@ -975,11 +975,6 @@ function NewsPreviewSection() {
                     </div>
                   </div>
                 )}
-                <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-bold text-white" style={{ background: '#1D4ED8' }}>
-                    {article.category}
-                  </span>
-                </div>
               </div>
 
               {/* Corps */}

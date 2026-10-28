@@ -32,3 +32,4 @@ export function formatProjectDate(dateStr?: string) {
 
   return { iso, display, accessible };
 }
+
