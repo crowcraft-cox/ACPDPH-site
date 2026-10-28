@@ -9,6 +9,7 @@ export default function Home() {
   return (
     <div>
       <HeroSection />
+      <AboutSection />
       <ImpactSection />
       <PillarsSection />
       <ValuesSection />
@@ -312,6 +313,64 @@ function HeroSection() {
   );
 }
 
+
+
+/* ===== ABOUT SECTION (INSPIRED BY IDDC) ===== */
+function AboutSection() {
+  const { ref: sectionRef, isVisible } = useScrollReveal();
+
+  const paragraphs = [
+    "L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH‑ASBL) est une organisation non gouvernementale nationale, apolitique et sans but lucratif, créée le 3 décembre 2018 à Beni, Nord-Kivu, en République Démocratique du Congo. Notre mission est de promouvoir et protéger les droits des personnes handicapées, de lutter contre toutes les formes de discrimination et de favoriser leur inclusion ainsi que leur autonomisation. L’objectif commun qui rassemble notre organisation est de garantir la dignité et le bien-être socio-économique de chaque personne en situation de handicap, sur un pied d’égalité avec tous les autres citoyens.",
+    "Nous accompagnons les personnes vivant avec un handicap, leurs familles et leurs communautés à travers la province du Nord-Kivu et au-delà. Notre champ d’action couvre l’éducation inclusive, la santé et la réadaptation fonctionnelle, la protection humanitaire, l’autonomisation économique, l’égalité de genre et la défense des droits fondamentaux. En plaçant les bénéficiaires au cœur de chaque programme, nous veillons à ce que les services et les ressources atteignent ceux qui en ont le plus besoin.",
+    "Notre force réside dans une approche communautaire fondée sur les droits humains et la participation active des personnes handicapées elles-mêmes. Nous travaillons à travers des groupes de travail thématiques, des projets de terrain concertés et des actions de sensibilisation et de formation visant à combattre les perceptions négatives du handicap. Cette méthode participative garantit des réponses adaptées, durables et ancrages dans les réalités locales de chaque communauté.",
+    "Nous construisons des partenariats durables avec des organisations de la société civile, des institutions publiques, des bailleurs de fonds et des experts nationaux et internationaux partageant notre vision. Cette confiance mutuelle, bâtie sur la transparence, la redevabilité et des résultats mesurables, nous permet d’amplifier notre impact et de contribuer à une société congolaise inclusive, équitable et solidaire, sans discrimination fondée sur le handicap.",
+  ];
+
+  return (
+    <section
+      className="bg-white"
+      style={{ paddingTop: 'clamp(48px, 8vw, 96px)', paddingBottom: 'clamp(48px, 8vw, 96px)' }}
+      aria-labelledby="about-heading"
+    >
+      <div
+        ref={sectionRef}
+        className={`container-ba transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+      >
+        <div className="about-grid">
+
+          {/* ── Colonne gauche : bloc titre ── */}
+          <div className="about-title-col" aria-hidden="false">
+            <h2
+              id="about-heading"
+              className="about-heading-block"
+            >
+              <span className="about-line-light" aria-hidden="true">À propos</span>
+              <span className="about-line-strong">ACPDPH</span>
+              <span className="sr-only">À propos de l'ACPDPH</span>
+            </h2>
+          </div>
+
+          {/* ── Colonne droite : texte + bouton ── */}
+          <div className="about-content-col">
+            <div className="about-paragraphs">
+              {paragraphs.map((p, i) => (
+                <p key={i} className="about-para">{p}</p>
+              ))}
+            </div>
+            <Link
+              to="/about"
+              className="about-cta-btn"
+              aria-label="Lire plus sur l'ACPDPH"
+            >
+              Lire plus
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
 
 /* ===== IMPACT COUNTERS (DE-AI RULES APPLIED: 1 PRIMARY, 3 SECONDARY, THE NUMBER IS THE HERO) ===== */
 function ImpactSection() {

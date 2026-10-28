@@ -1760,3 +1760,176 @@ html.lenis body {
     transition: none !important;
   }
 }
+
+
+/* ===================================================
+   ABOUT SECTION (accueil — inspirée IDDC)
+   =================================================== */
+:root {
+  --about-title-tint: #B9C9F6;   /* bleu principal ~30% opacité sur blanc */
+  --about-accent:     #C4540A;   /* orange/brun bouton */
+  --about-accent-dk:  #A84507;   /* survol bouton */
+  --about-text:       #000000;   /* texte paragraphes — noir pur (demande utilisateur) */
+}
+
+/* Grille deux colonnes */
+.about-grid {
+  display: grid;
+  grid-template-columns: 0.62fr 1.38fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ── Colonne gauche ── */
+.about-title-col {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.about-heading-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  line-height: 0.95;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ligne 1 : « À propos » — bleu clair, très grand */
+.about-line-light {
+  display: block;
+  font-family: var(--font-heading, 'Outfit', 'Montserrat', sans-serif);
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
+  font-weight: 700;
+  color: var(--about-title-tint);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Ligne 2 : « ACPDPH » — bleu principal, ajusté à même largeur que ligne 1 */
+.about-line-strong {
+  display: block;
+  font-family: var(--font-heading, 'Outfit', 'Montserrat', sans-serif);
+  font-size: clamp(1.55rem, 3.05vw, 2.55rem);
+  font-weight: 700;
+  color: #1F4FDB;
+  letter-spacing: 0.22em;          /* espacement pour égaler la largeur de « À propos » */
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.15;
+  width: 100%;
+  text-align: right;
+}
+
+/* ── Colonne droite ── */
+.about-content-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.about-paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 46rem;
+}
+
+.about-para {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--about-text);
+  line-height: 1.95;
+  text-align: justify;
+}
+
+/* Bouton « Lire plus » */
+.about-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+  padding: 14px 30px;
+  min-height: 44px;
+  background-color: var(--about-accent);
+  color: #ffffff;
+  font-family: var(--font-heading, 'Outfit', 'Montserrat', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 0;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+  outline-offset: 3px;
+}
+
+.about-cta-btn:hover {
+  background-color: var(--about-accent-dk);
+}
+
+.about-cta-btn:focus-visible {
+  outline: 3px solid #1F4FDB;
+  outline-offset: 3px;
+}
+
+/* ── Responsive 768–1023 px ── */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .about-grid {
+    grid-template-columns: 0.5fr 1.5fr;
+    gap: 28px;
+  }
+
+  .about-line-light {
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+
+  .about-line-strong {
+    font-size: clamp(1.2rem, 2.4vw, 1.85rem);
+  }
+}
+
+/* ── Responsive < 768 px : une seule colonne ── */
+@media (max-width: 767px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .about-title-col {
+    justify-content: flex-start;
+  }
+
+  .about-heading-block {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .about-line-light {
+    font-size: clamp(2.4rem, 8vw, 3rem);
+    white-space: normal;
+  }
+
+  .about-line-strong {
+    font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+    text-align: left;
+    letter-spacing: 0.18em;
+  }
+
+  .about-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* prefers-reduced-motion : pas d'animation */
+@media (prefers-reduced-motion: reduce) {
+  .about-cta-btn {
+    transition: none !important;
+  }
+}
