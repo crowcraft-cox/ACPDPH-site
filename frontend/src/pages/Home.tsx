@@ -332,8 +332,8 @@ function ImpactSection() {
 
       <div ref={sectionRef} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="w-full mb-10 impact-title-offset">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4" style={{ color: '#111827' }}>{t.impact.title}</h2>
-          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#4B5563' }}>
+          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-center" style={{ color: '#1F4FDB' }}>{t.impact.title}</h2>
+          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
             Des avancées concrètes, mesurables et durables pour l'inclusion des personnes handicapées en République Démocratique du Congo. À travers nos programmes intégrés d'accompagnement juridique, de réadaptation fonctionnelle, d'éducation inclusive et d'insertion socio-économique, nous œuvrons sans relâche pour transformer le quotidien des personnes vulnérables et de leurs familles. Chaque action menée sur le terrain renforce l'autonomie, restaure la dignité humaine et favorise une participation citoyenne équitable et respectueuse des droits fondamentaux.
           </p>
         </div>
@@ -388,7 +388,7 @@ function PrimaryCounterCard({ value, label, description }: { value: number; labe
           </h3>
         </div>
 
-        <p className="text-sm mb-6" style={{ color: '#6B7280', lineHeight: 1.5 }}>
+        <p className="text-sm mb-6" style={{ color: '#000000', lineHeight: 1.5 }}>
           {description}
         </p>
       </div>
@@ -435,8 +435,8 @@ function PillarsSection() {
     <section className="section-padding relative">
       <div className="container-ba">
         <div className="w-full mb-10">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4" style={{ color: '#111827' }}>{t.pillars.title}</h2>
-          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#4B5563' }}>
+          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-center" style={{ color: '#1F4FDB' }}>{t.pillars.title}</h2>
+          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
             L'ACPDPH déploie une approche globale et multisectorielle structurée autour d'axes d'intervention prioritaires pour garantir l'épanouissement intégral, l'égalité des chances et la pleine participation citoyenne des personnes en situation de handicap. De la promotion des droits et de l'accessibilité universelle du cadre bâti jusqu'à l'accès prioritaire à l'éducation inclusive, aux soins adaptés et à l'autonomie financière, nous construisons des solutions pérennes pour surmonter les barrières discriminatoires et promouvoir une société congolaise juste et solidaire.
           </p>
         </div>
@@ -464,7 +464,7 @@ function PillarsSection() {
 
               {/* Corps */}
               <div style={{ padding: '20px 24px 24px', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <p style={{ color: '#6B7280', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>{pillar.description}</p>
+                <p style={{ color: '#000000', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>{pillar.description}</p>
                 <div className="card-footer">
                   <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>En savoir plus</span>
                   <div className="flex items-center gap-2 font-bold group-hover:translate-x-1.5 transition-transform duration-200" style={{ color: '#1D4ED8', fontSize: '0.875rem' }}>
@@ -748,7 +748,7 @@ function ValuesSection() {
                 </h3>
 
                 {/* Explication : 16px, gris foncé, interligne ~1.9, largeur <= 65ch */}
-                <p className="text-[#4B5563] text-[16px] leading-[1.9] max-w-[65ch] text-justify">
+                <p className="text-[#000000] text-[16px] leading-[1.9] max-w-[65ch] text-justify">
                   {currentVal.explanation}
                 </p>
               </div>
@@ -785,16 +785,24 @@ function ProjectsPreviewSection() {
     <section className="section-padding relative">
       <div className="container-ba">
         <div className="mb-10 w-full">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold" style={{ color: '#111827' }}>Nos Projets</h2>
-            <Link to="/projects" className="btn btn-outline btn-sm shrink-0">
+          <div className="relative flex items-center justify-center mb-4">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>Nos Projets</h2>
+            <Link to="/projects" className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
               Tous les projets
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
           </div>
-          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#4B5563' }}>
+          <div className="flex justify-center sm:hidden mb-4">
+            <Link to="/projects" className="btn btn-outline btn-sm">
+              Tous les projets
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
             Découvrez nos réalisations concrètes et nos initiatives stratégiques menées directement sur le terrain en République Démocratique du Congo. Qu'il s'agisse de la mise aux normes d'accessibilité des bâtiments publics, du renforcement des capacités économiques par l'apprentissage de métiers adaptés, de la scolarisation d'enfants vivant avec handicap ou de la fourniture d'aides techniques à la mobilité, chaque projet est élaboré en concertation étroite avec les bénéficiaires afin d'assurer un impact tangible, mesurable et pérenne dans leurs milieux de vie.
           </p>
         </div>
@@ -847,7 +855,7 @@ function ProjectsPreviewSection() {
                   </h3>
 
                   {excerpt && (
-                    <p className="line-clamp-2 flex-1 mb-4" style={{ color: '#6B7280', fontSize: '0.8rem', lineHeight: 1.5 }}>{excerpt}</p>
+                    <p className="line-clamp-2 flex-1 mb-4" style={{ color: '#000000', fontSize: '0.8rem', lineHeight: 1.5 }}>{excerpt}</p>
                   )}
 
                   <div className="card-footer" style={{ marginTop: 'auto' }}>
@@ -884,16 +892,24 @@ function NewsPreviewSection() {
     <section className="section-padding">
       <div className="container-ba">
         <div className="mb-8 w-full">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold" style={{ color: '#111827' }}>{t.news.title}</h2>
-            <Link to="/news" className="btn btn-outline btn-sm shrink-0">
+          <div className="relative flex items-center justify-center mb-4">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>{t.news.title}</h2>
+            <Link to="/news" className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
               {t.news.all_news}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
           </div>
-          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#4B5563' }}>
+          <div className="flex justify-center sm:hidden mb-4">
+            <Link to="/news" className="btn btn-outline btn-sm">
+              {t.news.all_news}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
             Suivez au quotidien nos actions de terrain, nos prises de position publiques, nos ateliers de sensibilisation et les témoignages inspirants de résilience portés par nos membres. À travers nos publications, articles et plaidoyers institutionnels réguliers, l'ACPDPH informe la société civile, interpelle les pouvoirs publics et partage les progrès accomplis dans la promotion et la protection des droits des personnes en situation de handicap en République Démocratique du Congo.
           </p>
         </div>
@@ -940,7 +956,7 @@ function NewsPreviewSection() {
                     {article.title}
                   </h3>
 
-                  <p className="line-clamp-2 mb-4" style={{ color: '#6B7280', fontSize: '0.85rem', lineHeight: 1.5 }}>{article.excerpt}</p>
+                  <p className="line-clamp-2 mb-4" style={{ color: '#000000', fontSize: '0.85rem', lineHeight: 1.5 }}>{article.excerpt}</p>
                 </div>
 
                 <div className="card-footer">
