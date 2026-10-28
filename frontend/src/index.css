@@ -1619,7 +1619,7 @@ html.lenis body {
 :root {
   --values-tile-bg: #1F4FDB;
   --values-tile-hover-bg: #2B5BF0;
-  --values-tile-selected-border: #162E80;
+  --values-tile-selected-border: #000000;
   --values-accent: #C4540A;
   --values-accent-hover: #A84507;
 }
@@ -1631,7 +1631,7 @@ html.lenis body {
   }
 }
 
-/* Base tile styling */
+/* Base tile styling (angles droits, pas d'arrondi) */
 .values-tile {
   position: relative;
   display: flex;
@@ -1639,8 +1639,8 @@ html.lenis body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  border-radius: 4px;
-  padding: 16px;
+  border-radius: 0;
+  padding: 10px 16px;
   cursor: pointer;
   border: 2px solid transparent;
   transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
@@ -1648,35 +1648,37 @@ html.lenis body {
   font-family: "Montserrat", sans-serif;
 }
 
-/* Desktop sizing (approx 266x170px, ratio ~1.55:1) */
+/* Desktop sizing (approx 266x170px) */
 @media (min-width: 1024px) {
   .values-tile {
     width: 100%;
     max-width: 266px;
     height: 170px;
+    padding: 16px;
   }
 }
 
-/* Tablet sizing (approx 200x140px) */
+/* Tablet sizing (approx hauteur 112-140px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .values-tile {
     width: 100%;
     max-width: 220px;
-    height: 140px;
+    height: 112px;
+    padding: 10px 12px;
   }
 }
 
-/* Mobile sizing (approx height 120px) */
+/* Mobile sizing (approx hauteur 112px) */
 @media (max-width: 767px) {
   .values-tile {
     width: 100%;
-    min-height: 120px;
-    height: 120px;
-    padding: 12px;
+    min-height: 112px;
+    height: 112px;
+    padding: 10px;
   }
 }
 
-/* Tile Normal State */
+/* Tuile non sélectionnée : fond bleu principal, icône et texte blancs */
 .values-tile:not([aria-selected="true"]) {
   background-color: var(--values-tile-bg);
   color: #FFFFFF;
@@ -1687,22 +1689,23 @@ html.lenis body {
   transition: background-color 150ms ease;
 }
 
-/* Tile Selected State (Becomes white) */
+/* Tuile sélectionnée : fond blanc, texte et icône NOIRS (#000000), contour noir 2px, ombre douce */
 .values-tile[aria-selected="true"] {
   background-color: #FFFFFF;
-  border-color: var(--values-tile-selected-border);
-  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.18);
-  color: var(--values-accent);
+  border-color: #000000;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+  color: #000000;
+  border-radius: 0;
 }
 
-/* High contrast & visible focus */
+/* Focus clavier visible contrasté */
 .values-tile:focus-visible {
   outline: 3px solid #1F4FDB;
   outline-offset: 3px;
   z-index: 10;
 }
 
-/* Lire plus Button */
+/* Bouton Lire plus : rectangle à angles droits */
 .values-btn-more {
   display: inline-flex;
   align-items: center;
@@ -1732,7 +1735,7 @@ html.lenis body {
   outline-offset: 3px;
 }
 
-/* Content Fade & Slide Transition */
+/* Transition du contenu */
 .values-fade-enter {
   opacity: 0;
   transform: translateY(8px);

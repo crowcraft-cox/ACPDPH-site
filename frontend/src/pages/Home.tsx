@@ -487,75 +487,71 @@ function PillarsSection() {
 interface ValueItem {
   id: string;
   name: string;
-  icon: (props: { isSelected: boolean }) => React.ReactNode;
+  icon: () => React.ReactNode;
   explanation: string;
   link: string;
 }
 
-function IconProfessionnalisme({ isSelected }: { isSelected: boolean }) {
-  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+/* ─── Icônes SVG au trait (stroke: currentColor, fill: none, épaisseur 2px, monochrome) ─── */
+function IconProfessionnalisme() {
   return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
-      <rect x="8" y="16" width="40" height="28" rx="2" />
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0">
+      <rect x="8" y="16" width="40" height="28" />
       <path d="M20 16V10a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6" />
       <path d="M8 26h40" />
-      <circle cx="28" cy="26" r="5" stroke={accentColor} />
-      <path d="M28 23.5v5M25.5 26h5" stroke={accentColor} />
+      <circle cx="28" cy="26" r="5" />
+      <path d="M28 23.5v5M25.5 26h5" />
     </svg>
   );
 }
 
-function IconSolidarite({ isSelected }: { isSelected: boolean }) {
-  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+function IconSolidarite() {
   return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0">
       <circle cx="16" cy="15" r="5" />
       <path d="M8 38v-5a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v5" />
       <circle cx="40" cy="15" r="5" />
       <path d="M32 38v-5a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v5" />
-      <path d="M22 31c2 4 10 4 12 0" stroke={accentColor} />
-      <circle cx="28" cy="38" r="3" stroke={accentColor} />
+      <path d="M22 31c2 4 10 4 12 0" />
+      <circle cx="28" cy="38" r="3" />
     </svg>
   );
 }
 
-function IconNonDiscrimination({ isSelected }: { isSelected: boolean }) {
-  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+function IconNonDiscrimination() {
   return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0">
       <path d="M28 14v28" />
       <path d="M18 42h20" />
       <path d="M12 18h32" />
       <path d="M12 18l-5 13h10l-5-13z" />
       <path d="M44 18l-5 13h10l-5-13z" />
-      <circle cx="28" cy="14" r="3.5" stroke={accentColor} />
-      <path d="M28 8v4" stroke={accentColor} />
+      <circle cx="28" cy="14" r="3.5" />
+      <path d="M28 8v4" />
     </svg>
   );
 }
 
-function IconDigniteHumaine({ isSelected }: { isSelected: boolean }) {
-  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+function IconDigniteHumaine() {
   return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0">
       <path d="M10 32a18 18 0 0 1 36 0" />
       <circle cx="28" cy="24" r="5" />
       <path d="M19 44v-4a9 9 0 0 1 18 0v4" />
-      <path d="M28 8v4" stroke={accentColor} />
-      <path d="M22 10l2 3" stroke={accentColor} />
-      <path d="M34 10l-2 3" stroke={accentColor} />
+      <path d="M28 8v4" />
+      <path d="M22 10l2 3" />
+      <path d="M34 10l-2 3" />
     </svg>
   );
 }
 
-function IconBienEtre({ isSelected }: { isSelected: boolean }) {
-  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+function IconBienEtre() {
   return (
-    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0">
       <path d="M28 8v4M28 44v4M8 28h4M44 28h4" />
       <path d="M14 14l3 3M39 39l3 3M14 42l3-3M39 17l3-3" />
       <circle cx="28" cy="28" r="10" />
-      <path d="M28 22v8M28 25c2-2 4-1 4 1s-2 2-4 2" stroke={accentColor} />
+      <path d="M28 22v8M28 25c2-2 4-1 4 1s-2 2-4 2" />
     </svg>
   );
 }
@@ -671,25 +667,24 @@ function ValuesSection() {
     <section className="py-20 md:py-24 bg-white relative overflow-hidden" aria-labelledby="values-heading">
       <div className="container-ba">
 
-        {/* Titre affiché en premier sur mobile (< 768px) */}
-        <div className="block md:hidden mb-8 text-left">
-          <h2
-            id="values-heading-mobile"
-            className="font-heading font-bold text-[#1F4FDB] text-3xl sm:text-4xl"
-          >
-            Nos valeurs
-          </h2>
-        </div>
+        {/* 1. Titre de section centré au-dessus des deux colonnes */}
+        <h2
+          id="values-heading"
+          className="font-heading font-bold text-[#1F4FDB] text-center mb-[26px] leading-tight"
+          style={{ fontSize: "clamp(2.4rem, 4vw, 3.4rem)" }}
+        >
+          Nos valeurs
+        </h2>
 
-        {/* Disposition responsive : 2 colonnes dès md (>= 768px) */}
-        <div className="flex flex-col md:flex-row items-start justify-between gap-8 md:gap-10 lg:gap-14">
+        {/* 2. Disposition à deux colonnes (grid-template-columns: 1fr 1.02fr; gap: 40px) */}
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.02fr] gap-10 items-start">
 
-          {/* Colonne gauche : Grille de tuiles (role="tablist") */}
-          <div className="w-full md:w-[46%] lg:w-[49%] shrink-0">
+          {/* Colonne gauche : Grille 2 colonnes de tuiles (espacement 16px) */}
+          <div className="w-full">
             <div
               role="tablist"
               aria-label="Nos valeurs"
-              className="grid grid-cols-2 gap-6 values-grid-staggered justify-items-start"
+              className="grid grid-cols-2 gap-4 values-grid-staggered justify-items-start"
             >
               {VALUES_DATA.map((val, idx) => {
                 const isSelected = selectedIndex === idx;
@@ -705,15 +700,15 @@ function ValuesSection() {
                     tabIndex={isSelected ? 0 : -1}
                     onClick={() => handleTileClick(idx)}
                     onKeyDown={(e) => handleKeyDown(e, idx)}
-                    className="values-tile"
+                    className="values-tile rounded-none"
                   >
                     <div className="mb-2.5 flex items-center justify-center">
-                      <IconComponent isSelected={isSelected} />
+                      <IconComponent />
                     </div>
                     <span
                       className={`text-center leading-snug transition-colors duration-200 ${
                         isSelected
-                          ? "text-[#C4540A] font-bold"
+                          ? "text-black font-bold"
                           : "text-white font-semibold"
                       } text-[14px] sm:text-[15px] lg:text-[16px]`}
                       style={{ fontFamily: "'Montserrat', sans-serif" }}
@@ -726,18 +721,8 @@ function ValuesSection() {
             </div>
           </div>
 
-          {/* Colonne droite : Contenu de la valeur sélectionnée */}
-          <div className="w-full md:w-[54%] lg:w-[51%] md:pt-1">
-            {/* Titre affiché sur tablette et desktop */}
-            <h2
-              id="values-heading"
-              className="hidden md:block font-heading font-bold text-[#1F4FDB] mb-6 leading-tight"
-              style={{ fontSize: "clamp(2.4rem, 4vw, 3.2rem)" }}
-            >
-              Nos valeurs
-            </h2>
-
-            {/* Panneau accessible avec hauteur minimale fixe */}
+          {/* Colonne droite : Contenu de la valeur sélectionnée, aligné en haut avec les tuiles */}
+          <div className="w-full">
             <div
               ref={panelRef}
               role="tabpanel"
@@ -745,7 +730,7 @@ function ValuesSection() {
               aria-labelledby={`value-tab-${currentVal.id}`}
               tabIndex={0}
               aria-live="polite"
-              className="min-h-[280px] md:min-h-[360px] lg:min-h-[380px] flex flex-col justify-start focus:outline-none"
+              className="min-h-[280px] md:min-h-[340px] lg:min-h-[360px] flex flex-col justify-start focus:outline-none"
             >
               <div
                 className={`transition-all duration-200 ease-out ${
@@ -762,16 +747,16 @@ function ValuesSection() {
                   {currentVal.name}
                 </h3>
 
-                {/* Explication concise de 2 à 4 phrases */}
+                {/* Explication : 16px, gris foncé, interligne ~1.9, largeur <= 65ch */}
                 <p className="text-[#4B5563] text-[16px] leading-[1.9] max-w-[65ch] text-justify mb-6">
                   {currentVal.explanation}
                 </p>
 
-                {/* Bouton Lire plus */}
+                {/* Bouton Lire plus : rectangle à angles droits */}
                 <div className="mt-6">
                   <Link
                     to={currentVal.link}
-                    className="values-btn-more w-full sm:w-auto"
+                    className="values-btn-more rounded-none w-full sm:w-auto"
                     aria-label={`Lire plus sur la valeur ${currentVal.name}`}
                   >
                     Lire plus
