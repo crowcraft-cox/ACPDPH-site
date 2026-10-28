@@ -1348,20 +1348,32 @@ export default function Navbar() {
 
         {/* Panneau tiroir */}
         <div
-          className={`fixed top-0 left-0 bottom-0 z-[120] flex flex-col transition-transform duration-300 ease-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
-          style={{ width: '75%', maxWidth: '320px', background: '#ffffff' }}
           role="dialog"
           aria-modal={isMobileOpen ? 'true' : undefined}
           aria-label="Menu principal"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            width: '75%',
+            maxWidth: '320px',
+            background: '#ffffff',
+            display: 'flex',
+            flexDirection: 'column',
+            zIndex: 120,
+            transform: isMobileOpen ? 'translateX(0)' : 'translateX(-100%)',
+            transition: 'transform 300ms ease-out',
+            overflowY: 'auto',
+          }}
         >
           {/* Barre sombre du haut avec bouton fermer */}
-          <div className="flex items-center h-14 shrink-0" style={{ background: '#222222' }}>
+          <div style={{ display: 'flex', alignItems: 'center', height: '56px', flexShrink: 0, background: '#222222' }}>
             <button
               ref={drawerCloseBtnRef}
               type="button"
               onClick={closeMobileMenu}
-              className="w-14 h-14 flex items-center justify-center shrink-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset"
-              style={{ background: '#F26A4F' }}
+              style={{ width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: '#F26A4F', cursor: 'pointer', border: 'none', outline: 'none' }}
               aria-label="Fermer le menu"
             >
               <span className="text-white text-2xl font-bold leading-none" aria-hidden="true">&times;</span>
@@ -1370,7 +1382,7 @@ export default function Navbar() {
           </div>
 
           {/* Liens de navigation verticaux */}
-          <nav className="flex-1 overflow-y-auto" aria-label="Navigation mobile">
+          <nav aria-label="Navigation mobile" style={{ flex: 1, overflowY: 'auto' }}>
             <ul className="py-2 list-none m-0 p-0">
               {/* Accueil */}
               <li>
@@ -1499,7 +1511,7 @@ export default function Navbar() {
           </nav>
 
           {/* Bas du tiroir : Nous soutenir */}
-          <div className="shrink-0 p-4 border-t border-gray-100">
+          <div style={{ flexShrink: 0, padding: '16px', borderTop: '1px solid #F3F4F6' }}>
             <Link
               to="/support"
               onClick={closeMobileMenu}
