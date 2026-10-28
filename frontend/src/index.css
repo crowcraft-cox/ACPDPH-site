@@ -1614,3 +1614,146 @@ html.lenis body {
     padding-bottom: 16px;
   }
 }
+
+/* ===== Interactive Values Section (IDDC-inspired) ===== */
+:root {
+  --values-tile-bg: #1F4FDB;
+  --values-tile-hover-bg: #2B5BF0;
+  --values-tile-selected-border: #162E80;
+  --values-accent: #C4540A;
+  --values-accent-hover: #A84507;
+}
+
+/* Staggered grid on tablet & desktop */
+@media (min-width: 768px) {
+  .values-grid-staggered > :nth-child(even) {
+    transform: translateY(20px);
+  }
+}
+
+/* Base tile styling */
+.values-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 4px;
+  padding: 16px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  user-select: none;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Desktop sizing (approx 266x170px, ratio ~1.55:1) */
+@media (min-width: 1024px) {
+  .values-tile {
+    width: 100%;
+    max-width: 266px;
+    height: 170px;
+  }
+}
+
+/* Tablet sizing (approx 200x140px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .values-tile {
+    width: 100%;
+    max-width: 220px;
+    height: 140px;
+  }
+}
+
+/* Mobile sizing (approx height 120px) */
+@media (max-width: 767px) {
+  .values-tile {
+    width: 100%;
+    min-height: 120px;
+    height: 120px;
+    padding: 12px;
+  }
+}
+
+/* Tile Normal State */
+.values-tile:not([aria-selected="true"]) {
+  background-color: var(--values-tile-bg);
+  color: #FFFFFF;
+}
+
+.values-tile:not([aria-selected="true"]):hover {
+  background-color: var(--values-tile-hover-bg);
+  transition: background-color 150ms ease;
+}
+
+/* Tile Selected State (Becomes white) */
+.values-tile[aria-selected="true"] {
+  background-color: #FFFFFF;
+  border-color: var(--values-tile-selected-border);
+  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.18);
+  color: var(--values-accent);
+}
+
+/* High contrast & visible focus */
+.values-tile:focus-visible {
+  outline: 3px solid #1F4FDB;
+  outline-offset: 3px;
+  z-index: 10;
+}
+
+/* Lire plus Button */
+.values-btn-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  background-color: var(--values-accent);
+  color: #FFFFFF;
+  text-transform: uppercase;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  padding: 14px 30px;
+  min-height: 44px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+  text-decoration: none;
+}
+
+.values-btn-more:hover {
+  background-color: var(--values-accent-hover);
+}
+
+.values-btn-more:focus-visible {
+  outline: 3px solid #1F4FDB;
+  outline-offset: 3px;
+}
+
+/* Content Fade & Slide Transition */
+.values-fade-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.values-fade-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 250ms ease-out, transform 250ms ease-out;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .values-fade-enter,
+  .values-fade-active {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .values-tile,
+  .values-btn-more {
+    transition: none !important;
+  }
+}

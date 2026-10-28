@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '../i18n';
 import { useScrollReveal, useCountUp, useAnimeReveal } from '../hooks/useScrollReveal';
@@ -483,93 +483,307 @@ function PillarsSection() {
   );
 }
 
-/* ===== NOS VALEURS SECTION (CARDS AVEC ICONES, SANS EXPLICATIONS) ===== */
-function ValuesSection() {
-  const { t } = useI18n();
-  const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
-    variant: 'stagger-cards',
-    itemSelector: '.value-card',
-    staggerDelay: 80,
-  });
+/* ===== NOS VALEURS SECTION (INTERACTIVE IDDC-INSPIRED TABLIST) ===== */
+interface ValueItem {
+  id: string;
+  name: string;
+  icon: (props: { isSelected: boolean }) => React.ReactNode;
+  explanation: string;
+  link: string;
+}
 
-  const valuesList = [
-    {
-      title: t.about?.values?.[0] || 'Professionnalisme',
-      number: '01',
-      icon: (
-        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      ),
-    },
-    {
-      title: t.about?.values?.[1] || 'Solidarité',
-      number: '02',
-      icon: (
-        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-        </svg>
-      ),
-    },
-    {
-      title: t.about?.values?.[2] || 'Non-discrimination',
-      number: '03',
-      icon: (
-        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-        </svg>
-      ),
-    },
-    {
-      title: t.about?.values?.[3] || 'Respect de la dignité humaine',
-      number: '04',
-      icon: (
-        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-        </svg>
-      ),
-    },
-    {
-      title: t.about?.values?.[4] || 'Bien-être',
-      number: '05',
-      icon: (
-        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-        </svg>
-      ),
-    },
-  ];
+function IconProfessionnalisme({ isSelected }: { isSelected: boolean }) {
+  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+  return (
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+      <rect x="8" y="16" width="40" height="28" rx="2" />
+      <path d="M20 16V10a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6" />
+      <path d="M8 26h40" />
+      <circle cx="28" cy="26" r="5" stroke={accentColor} />
+      <path d="M28 23.5v5M25.5 26h5" stroke={accentColor} />
+    </svg>
+  );
+}
+
+function IconSolidarite({ isSelected }: { isSelected: boolean }) {
+  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+  return (
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+      <circle cx="16" cy="15" r="5" />
+      <path d="M8 38v-5a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v5" />
+      <circle cx="40" cy="15" r="5" />
+      <path d="M32 38v-5a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v5" />
+      <path d="M22 31c2 4 10 4 12 0" stroke={accentColor} />
+      <circle cx="28" cy="38" r="3" stroke={accentColor} />
+    </svg>
+  );
+}
+
+function IconNonDiscrimination({ isSelected }: { isSelected: boolean }) {
+  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+  return (
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+      <path d="M28 14v28" />
+      <path d="M18 42h20" />
+      <path d="M12 18h32" />
+      <path d="M12 18l-5 13h10l-5-13z" />
+      <path d="M44 18l-5 13h10l-5-13z" />
+      <circle cx="28" cy="14" r="3.5" stroke={accentColor} />
+      <path d="M28 8v4" stroke={accentColor} />
+    </svg>
+  );
+}
+
+function IconDigniteHumaine({ isSelected }: { isSelected: boolean }) {
+  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+  return (
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+      <path d="M10 32a18 18 0 0 1 36 0" />
+      <circle cx="28" cy="24" r="5" />
+      <path d="M19 44v-4a9 9 0 0 1 18 0v4" />
+      <path d="M28 8v4" stroke={accentColor} />
+      <path d="M22 10l2 3" stroke={accentColor} />
+      <path d="M34 10l-2 3" stroke={accentColor} />
+    </svg>
+  );
+}
+
+function IconBienEtre({ isSelected }: { isSelected: boolean }) {
+  const accentColor = isSelected ? "var(--values-accent, #C4540A)" : "currentColor";
+  return (
+    <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="w-10 h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 shrink-0 transition-colors duration-200">
+      <path d="M28 8v4M28 44v4M8 28h4M44 28h4" />
+      <path d="M14 14l3 3M39 39l3 3M14 42l3-3M39 17l3-3" />
+      <circle cx="28" cy="28" r="10" />
+      <path d="M28 22v8M28 25c2-2 4-1 4 1s-2 2-4 2" stroke={accentColor} />
+    </svg>
+  );
+}
+
+const VALUES_DATA: ValueItem[] = [
+  {
+    id: "professionnalisme",
+    name: "Professionnalisme",
+    icon: IconProfessionnalisme,
+    explanation:
+      "L'ACPDPH applique une rigueur exemplaire, de la transparence et des standards éthiques élevés dans la conduite de tous ses projets sur le terrain. Nos interventions reposent sur une gestion responsable des ressources, une expertise technique éprouvée et une obligation constante de redevabilité envers nos bénéficiaires et nos partenaires institutionnels. Cette exigence garantit un impact durable et mesurable pour l'inclusion des personnes en situation de handicap.",
+    link: "/about",
+  },
+  {
+    id: "solidarite",
+    name: "Solidarité",
+    icon: IconSolidarite,
+    explanation:
+      "Nous croyons fermement à la force de l'entraide communautaire et à l'action collective pour surmonter les barrières de l'exclusion. L'ACPDPH mobilise les personnes vivant avec handicap, leurs familles et les acteurs locaux dans un esprit de fraternité et de soutien mutuel. En unissant nos forces au quotidien, nous construisons un filet de protection sociale et favorisons une véritable résilience communautaire.",
+    link: "/about",
+  },
+  {
+    id: "non-discrimination",
+    name: "Non-discrimination",
+    icon: IconNonDiscrimination,
+    explanation:
+      "L'égalité absolue de traitement et l'égalité des chances pour chaque individu constituent le fondement inaliénable de notre engagement. Nous luttons vigoureusement contre tous les préjugés, les stigmatisations et les disparités d'accès qui marginalisent les personnes handicapées dans la société congolaise. Chaque citoyen, sans distinction aucune, a le droit légitime de participer pleinement à la vie publique, économique et citoyenne.",
+    link: "/about",
+  },
+  {
+    id: "dignite-humaine",
+    name: "Respect de la dignité humaine",
+    icon: IconDigniteHumaine,
+    explanation:
+      "Chaque personne possède une valeur intrinsèque inestimable et des droits universels qui doivent être reconnus, protégés et promus sans réserve. Notre approche place l'individu au cœur de nos actions en valorisant son autonomie, sa voix et sa capacité d'autodétermination. Préserver et restaurer la dignité de chacun est au centre de notre combat pour la justice sociale.",
+    link: "/about",
+  },
+  {
+    id: "bien-etre",
+    name: "Bien-être",
+    icon: IconBienEtre,
+    explanation:
+      "L'épanouissement global de la personne, tant sur le plan physique et psychologique que social et économique, guide nos programmes intégrés. Nous facilitons l'accès aux soins de santé adaptés, à la réadaptation fonctionnelle, à l'éducation inclusive et aux opportunités de subsistance autonome. Favoriser le bien-être, c'est offrir à chacun la possibilité de mener une vie équilibrée, autonome et digne.",
+    link: "/about",
+  },
+];
+
+function ValuesSection() {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const currentVal = VALUES_DATA[displayIndex] || VALUES_DATA[0];
+
+  const handleSelect = (idx: number) => {
+    if (idx === selectedIndex) return;
+    setSelectedIndex(idx);
+
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReduced) {
+      setDisplayIndex(idx);
+      return;
+    }
+
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setDisplayIndex(idx);
+      setIsTransitioning(false);
+    }, 125);
+  };
+
+  const handleTileClick = (idx: number) => {
+    handleSelect(idx);
+    if (typeof window !== "undefined" && window.innerWidth < 768 && panelRef.current) {
+      const rect = panelRef.current.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight || rect.top < 0) {
+        panelRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    const count = VALUES_DATA.length;
+    let nextIndex = index;
+
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      nextIndex = (index + 1) % count;
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      nextIndex = (index - 1 + count) % count;
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      nextIndex = 0;
+    } else if (e.key === "End") {
+      e.preventDefault();
+      nextIndex = count - 1;
+    } else {
+      return;
+    }
+
+    handleSelect(nextIndex);
+    tabRefs.current[nextIndex]?.focus();
+  };
 
   return (
-    <section className="section-padding bg-slate-50/80 dark:bg-ba-surface-elevated relative border-y border-gray-100 dark:border-zinc-800">
+    <section className="py-20 md:py-24 bg-white relative overflow-hidden" aria-labelledby="values-heading">
       <div className="container-ba">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-bold uppercase tracking-widest text-ba-blue bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/40 px-3.5 py-1 rounded-full inline-block mb-3.5">
-            Éthique & Engagement
-          </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-3" style={{ color: "#111827" }}>
+
+        {/* Titre affiché en premier sur mobile (< 768px) */}
+        <div className="block md:hidden mb-8 text-left">
+          <h2
+            id="values-heading-mobile"
+            className="font-heading font-bold text-[#1F4FDB] text-3xl sm:text-4xl"
+          >
             Nos valeurs
           </h2>
         </div>
 
-        <div ref={containerRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-          {valuesList.map((val) => (
+        {/* Disposition responsive : 2 colonnes dès md (>= 768px) */}
+        <div className="flex flex-col md:flex-row items-start justify-between gap-8 md:gap-10 lg:gap-14">
+
+          {/* Colonne gauche : Grille de tuiles (role="tablist") */}
+          <div className="w-full md:w-[46%] lg:w-[49%] shrink-0">
             <div
-              key={val.number}
-              className="value-card bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200/80 dark:border-zinc-800 shadow-sm hover:shadow-md hover:border-ba-blue/50 dark:hover:border-blue-500/50 transition-all duration-300 flex flex-col items-center text-center group"
+              role="tablist"
+              aria-label="Nos valeurs"
+              className="grid grid-cols-2 gap-6 values-grid-staggered justify-items-start"
             >
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-ba-blue transition-all duration-300 [&>svg]:group-hover:text-white">
-                {val.icon}
-              </div>
-              <span className="text-xs font-bold text-ba-blue/70 dark:text-blue-400/70 tracking-wider mb-2">
-                {val.number}
-              </span>
-              <h3 className="font-heading text-base font-bold text-gray-900 dark:text-white leading-snug">
-                {val.title}
-              </h3>
+              {VALUES_DATA.map((val, idx) => {
+                const isSelected = selectedIndex === idx;
+                const IconComponent = val.icon;
+                return (
+                  <button
+                    key={val.id}
+                    ref={(el) => { tabRefs.current[idx] = el; }}
+                    role="tab"
+                    id={`value-tab-${val.id}`}
+                    aria-controls={`value-tabpanel-${val.id}`}
+                    aria-selected={isSelected}
+                    tabIndex={isSelected ? 0 : -1}
+                    onClick={() => handleTileClick(idx)}
+                    onKeyDown={(e) => handleKeyDown(e, idx)}
+                    className="values-tile"
+                  >
+                    <div className="mb-2.5 flex items-center justify-center">
+                      <IconComponent isSelected={isSelected} />
+                    </div>
+                    <span
+                      className={`text-center leading-snug transition-colors duration-200 ${
+                        isSelected
+                          ? "text-[#C4540A] font-bold"
+                          : "text-white font-semibold"
+                      } text-[14px] sm:text-[15px] lg:text-[16px]`}
+                      style={{ fontFamily: "'Montserrat', sans-serif" }}
+                    >
+                      {val.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
-          ))}
+          </div>
+
+          {/* Colonne droite : Contenu de la valeur sélectionnée */}
+          <div className="w-full md:w-[54%] lg:w-[51%] md:pt-1">
+            {/* Titre affiché sur tablette et desktop */}
+            <h2
+              id="values-heading"
+              className="hidden md:block font-heading font-bold text-[#1F4FDB] mb-6 leading-tight"
+              style={{ fontSize: "clamp(2.4rem, 4vw, 3.2rem)" }}
+            >
+              Nos valeurs
+            </h2>
+
+            {/* Panneau accessible avec hauteur minimale fixe */}
+            <div
+              ref={panelRef}
+              role="tabpanel"
+              id={`value-tabpanel-${currentVal.id}`}
+              aria-labelledby={`value-tab-${currentVal.id}`}
+              tabIndex={0}
+              aria-live="polite"
+              className="min-h-[280px] md:min-h-[360px] lg:min-h-[380px] flex flex-col justify-start focus:outline-none"
+            >
+              <div
+                className={`transition-all duration-200 ease-out ${
+                  isTransitioning
+                    ? "opacity-0 translate-y-2"
+                    : "opacity-100 translate-y-0"
+                }`}
+              >
+                {/* Nom de la valeur sélectionnée */}
+                <h3
+                  className="font-bold text-[#C4540A] text-[22px] md:text-[24px] mb-4 leading-snug"
+                  style={{ fontFamily: "'Montserrat', sans-serif" }}
+                >
+                  {currentVal.name}
+                </h3>
+
+                {/* Explication concise de 2 à 4 phrases */}
+                <p className="text-[#4B5563] text-[16px] leading-[1.9] max-w-[65ch] text-justify mb-6">
+                  {currentVal.explanation}
+                </p>
+
+                {/* Bouton Lire plus */}
+                <div className="mt-6">
+                  <Link
+                    to={currentVal.link}
+                    className="values-btn-more w-full sm:w-auto"
+                    aria-label={`Lire plus sur la valeur ${currentVal.name}`}
+                  >
+                    Lire plus
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
     </section>
   );
