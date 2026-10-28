@@ -11,6 +11,7 @@ export default function Home() {
       <HeroSection />
       <ImpactSection />
       <PillarsSection />
+      <ValuesSection />
       <ProjectsPreviewSection />
       <NewsPreviewSection />
       <CTASection />
@@ -475,6 +476,98 @@ function PillarsSection() {
                 </div>
               </div>
             </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ===== NOS VALEURS SECTION (CARDS AVEC ICONES, SANS EXPLICATIONS) ===== */
+function ValuesSection() {
+  const { t } = useI18n();
+  const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
+    variant: 'stagger-cards',
+    itemSelector: '.value-card',
+    staggerDelay: 80,
+  });
+
+  const valuesList = [
+    {
+      title: t.about?.values?.[0] || 'Professionnalisme',
+      number: '01',
+      icon: (
+        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
+      title: t.about?.values?.[1] || 'Solidarité',
+      number: '02',
+      icon: (
+        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+        </svg>
+      ),
+    },
+    {
+      title: t.about?.values?.[2] || 'Non-discrimination',
+      number: '03',
+      icon: (
+        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+        </svg>
+      ),
+    },
+    {
+      title: t.about?.values?.[3] || 'Respect de la dignité humaine',
+      number: '04',
+      icon: (
+        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+        </svg>
+      ),
+    },
+    {
+      title: t.about?.values?.[4] || 'Bien-être',
+      number: '05',
+      icon: (
+        <svg className="w-7 h-7 text-ba-blue transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <section className="section-padding bg-slate-50/80 dark:bg-ba-surface-elevated relative border-y border-gray-100 dark:border-zinc-800">
+      <div className="container-ba">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs font-bold uppercase tracking-widest text-ba-blue bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/40 px-3.5 py-1 rounded-full inline-block mb-3.5">
+            Éthique & Engagement
+          </span>
+          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-3" style={{ color: "#111827" }}>
+            Nos valeurs
+          </h2>
+        </div>
+
+        <div ref={containerRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+          {valuesList.map((val) => (
+            <div
+              key={val.number}
+              className="value-card bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-gray-200/80 dark:border-zinc-800 shadow-sm hover:shadow-md hover:border-ba-blue/50 dark:hover:border-blue-500/50 transition-all duration-300 flex flex-col items-center text-center group"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-ba-blue transition-all duration-300 [&>svg]:group-hover:text-white">
+                {val.icon}
+              </div>
+              <span className="text-xs font-bold text-ba-blue/70 dark:text-blue-400/70 tracking-wider mb-2">
+                {val.number}
+              </span>
+              <h3 className="font-heading text-base font-bold text-gray-900 dark:text-white leading-snug">
+                {val.title}
+              </h3>
+            </div>
           ))}
         </div>
       </div>
