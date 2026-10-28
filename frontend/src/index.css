@@ -1835,7 +1835,7 @@ html.lenis body {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  max-width: 46rem;
+  max-width: 74ch;
 }
 
 .about-para {
