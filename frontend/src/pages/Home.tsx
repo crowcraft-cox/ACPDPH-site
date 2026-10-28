@@ -748,20 +748,9 @@ function ValuesSection() {
                 </h3>
 
                 {/* Explication : 16px, gris foncé, interligne ~1.9, largeur <= 65ch */}
-                <p className="text-[#4B5563] text-[16px] leading-[1.9] max-w-[65ch] text-justify mb-6">
+                <p className="text-[#4B5563] text-[16px] leading-[1.9] max-w-[65ch] text-justify">
                   {currentVal.explanation}
                 </p>
-
-                {/* Bouton Lire plus : rectangle à angles droits */}
-                <div className="mt-6">
-                  <Link
-                    to={currentVal.link}
-                    className="values-btn-more rounded-none w-full sm:w-auto"
-                    aria-label={`Lire plus sur la valeur ${currentVal.name}`}
-                  >
-                    Lire plus
-                  </Link>
-                </div>
               </div>
             </div>
 
