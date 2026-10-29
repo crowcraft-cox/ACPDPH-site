@@ -386,7 +386,7 @@ export default function Navbar() {
         <div className="header-top-bar-content container-ba h-full flex items-center justify-between">
           
           {/* GAUCHE : Logo mobile (< 1024px) OU Titre décalé (>= 1024px) */}
-          <div className="h-full flex items-center">
+          <div className="h-full flex items-center lg:hidden">
             
             {/* Version Mobile & Tablette (< 1024px) : Logo contenu dans la barre blanche (se réduit à ~44px en compact) */}
             <Link
@@ -415,26 +415,10 @@ export default function Navbar() {
                 </span>
               </div>
             </Link>
-
-            {/* Version Desktop (>= 1024px) : Titre décalé après le logo */}
-            <Link
-              to="/"
-              className="hidden lg:flex flex-col justify-center h-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
-              style={{ paddingLeft: 'var(--menu-reserved-space, 250px)' }}
-              tabIndex={isCompact ? -1 : 0}
-              aria-label="ACPDPH – Droits & Inclusion - Retour à l'accueil"
-            >
-              <span className="font-heading font-extrabold text-2xl lg:text-[2.1rem] leading-none text-gray-900 dark:text-white tracking-tight transition-colors group-hover:text-[var(--color-primary)]">
-                ACPDPH
-              </span>
-              <span className="font-heading font-bold text-xs lg:text-[0.95rem] tracking-wider uppercase text-[var(--color-accent)] mt-1.5 leading-tight">
-                Droits &amp; Inclusion
-              </span>
-            </Link>
           </div>
 
           {/* DROITE : Accessibilité (Soleil + RESET si actif) + Langue + Bouton Soutenir + Burger */}
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0 ml-auto">
             
             {/* RANGÉE D'ACCESSIBILITÉ (Symboles des handicaps + Icône soleil/contraste, RESET si actif) */}
             <div
@@ -673,7 +657,7 @@ export default function Navbar() {
         <div className="container-ba flex items-stretch justify-between h-[76px]">
           
           {/* LIENS DE NAVIGATION (Avec espace réservé à gauche pour aligner Accueil avec le titre) */}
-          <div className="flex items-center gap-7 xl:gap-10">
+          <div className="flex items-center gap-5 xl:gap-8 2xl:gap-10 shrink-0">
             
             {/* Espace réservé pour que les liens ne passent pas sous le logo qui déborde (glisse vers 18px en compact) */}
             <div
@@ -685,7 +669,7 @@ export default function Navbar() {
             <Link
               to="/"
               aria-current={isHomeActive ? 'page' : undefined}
-              className={`h-full flex items-center text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+              className={`h-full flex items-center whitespace-nowrap shrink-0 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
                 isHomeActive
                   ? 'text-[var(--color-accent-text)]'
                   : 'text-white hover:text-[var(--color-accent-text)]'
@@ -711,7 +695,7 @@ export default function Navbar() {
                 aria-expanded={openDropdown === 'org'}
                 aria-haspopup="true"
                 aria-current={isOrgActive ? 'true' : undefined}
-                className={`h-full flex items-center gap-1.5 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                className={`h-full flex items-center gap-1.5 whitespace-nowrap shrink-0 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
                   isOrgActive
                     ? 'text-[var(--color-accent-text)]'
                     : 'text-white hover:text-[var(--color-accent-text)]'
@@ -816,7 +800,7 @@ export default function Navbar() {
             <Link
               to="/projects"
               aria-current={isProjectsActive ? 'page' : undefined}
-              className={`h-full flex items-center text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+              className={`h-full flex items-center whitespace-nowrap shrink-0 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
                 isProjectsActive
                   ? 'text-[var(--color-accent-text)]'
                   : 'text-white hover:text-[var(--color-accent-text)]'
@@ -829,7 +813,7 @@ export default function Navbar() {
             <Link
               to="/news"
               aria-current={isNewsActive ? 'page' : undefined}
-              className={`h-full flex items-center text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+              className={`h-full flex items-center whitespace-nowrap shrink-0 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
                 isNewsActive
                   ? 'text-[var(--color-accent-text)]'
                   : 'text-white hover:text-[var(--color-accent-text)]'
@@ -855,7 +839,7 @@ export default function Navbar() {
                 aria-expanded={openDropdown === 'resources'}
                 aria-haspopup="true"
                 aria-current={isResourcesActive ? 'true' : undefined}
-                className={`h-full flex items-center gap-1.5 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                className={`h-full flex items-center gap-1.5 whitespace-nowrap shrink-0 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
                   isResourcesActive
                     ? 'text-[var(--color-accent-text)]'
                     : 'text-white hover:text-[var(--color-accent-text)]'
@@ -1124,7 +1108,7 @@ export default function Navbar() {
             <Link
               to="/contact"
               aria-current={isContactActive ? 'page' : undefined}
-              className="h-full flex items-center justify-center px-8 xl:px-12 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-heading font-bold text-[14.5px] uppercase tracking-wider rounded-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset shrink-0"
+              className="h-full flex items-center justify-center px-6 xl:px-10 2xl:px-12 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-heading font-bold text-[14px] xl:text-[14.5px] uppercase tracking-wider rounded-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset shrink-0 whitespace-nowrap"
             >
               {t.nav.contact || 'CONTACT'}
             </Link>

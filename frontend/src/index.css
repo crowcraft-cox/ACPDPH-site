@@ -86,7 +86,7 @@
   --logo-offset: 14px;            /* Position haute dans le header */
   --logo-margin-left: 24px;       /* Marge gauche 20-25px */
   --logo-border-width: 3px;       /* Contour blanc réduit à 3px (sans ombre) */
-  --menu-reserved-space: 250px;   /* Espace réservé à gauche pour aligner Accueil avec ACPDPH */
+  --menu-reserved-space: 220px;   /* Espace réservé à gauche pour dégager le logo débordant */
 
   /* Header Scroll Animation Variables */
   --header-anim-duration: 480ms;
