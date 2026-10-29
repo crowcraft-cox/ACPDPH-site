@@ -386,7 +386,7 @@ export default function Navbar() {
         <div className="header-top-bar-content container-ba h-full flex items-center">
           
           {/* ESPACEUR DESKTOP : réserve la place du logo rond qui déborde absolument (≈ 240px) */}
-          <div className="hidden lg:block shrink-0" style={{ width: 'var(--menu-reserved-space, 240px)' }} aria-hidden="true" />
+          <div className="hidden lg:flex flex-1" style={{ minWidth: 'var(--menu-reserved-space, 240px)' }} aria-hidden="true" />
 
           {/* GAUCHE : Logo mobile (< 1024px) */}
           <div className="h-full flex items-center lg:hidden">
@@ -413,7 +413,7 @@ export default function Navbar() {
           </div>
 
           {/* DROITE : Accessibilité (Soleil + RESET si actif) + Langue + Bouton Soutenir + Burger */}
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0 ml-auto lg:ml-0">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0 ml-auto">
             
             {/* RANGÉE D'ACCESSIBILITÉ (Symboles des handicaps + Icône soleil/contraste, RESET si actif) */}
             <div
