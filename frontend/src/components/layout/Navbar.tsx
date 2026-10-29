@@ -253,7 +253,7 @@ export default function Navbar() {
         {/* ========================================================================================= */}
         <Link
           to="/"
-          className="header-logo-link hidden lg:block absolute z-40 transition-transform duration-200 hover:scale-[1.015] focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-accent)] rounded-full group shadow-none"
+          className="header-logo-link hidden lg:block absolute z-50 transition-transform duration-200 hover:scale-[1.015] focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-accent)] rounded-full group shadow-none"
           style={{
             left: 'var(--logo-margin-left, 24px)',
             top: 'var(--logo-offset, 14px)',
@@ -382,7 +382,7 @@ export default function Navbar() {
       {/* ========================================================================================= */}
       {/* 2. BARRE HAUTE (FOND BLANC, REPLIABLE AU SCROLL EN MODE COMPACT)                           */}
       {/* ========================================================================================= */}
-      <div className={`header-top-bar relative ${openDropdown === 'lang' ? 'z-30' : 'z-10'} overflow-visible w-full bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 transition-colors`}>
+      <div className="header-top-bar relative z-30 overflow-visible w-full bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 transition-colors">
         <div className="header-top-bar-content container-ba h-full flex items-center justify-between">
           
           {/* GAUCHE : Logo mobile (< 1024px) OU Titre décalé (>= 1024px) */}
