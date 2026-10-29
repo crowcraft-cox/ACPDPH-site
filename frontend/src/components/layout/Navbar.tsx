@@ -383,9 +383,12 @@ export default function Navbar() {
       {/* 2. BARRE HAUTE (FOND BLANC, REPLIABLE AU SCROLL EN MODE COMPACT)                           */}
       {/* ========================================================================================= */}
       <div className="header-top-bar relative z-30 overflow-visible w-full bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 transition-colors">
-        <div className="header-top-bar-content container-ba h-full flex items-center justify-between">
+        <div className="header-top-bar-content container-ba h-full flex items-center">
           
-          {/* GAUCHE : Logo mobile (< 1024px) OU Titre décalé (>= 1024px) */}
+          {/* ESPACEUR DESKTOP : réserve la place du logo rond qui déborde absolument (≈ 240px) */}
+          <div className="hidden lg:block shrink-0" style={{ width: 'var(--menu-reserved-space, 240px)' }} aria-hidden="true" />
+
+          {/* GAUCHE : Logo mobile (< 1024px) */}
           <div className="h-full flex items-center lg:hidden">
             
             {/* Version Mobile & Tablette (< 1024px) : Logo contenu dans la barre blanche (se réduit à ~44px en compact) */}
@@ -410,7 +413,7 @@ export default function Navbar() {
           </div>
 
           {/* DROITE : Accessibilité (Soleil + RESET si actif) + Langue + Bouton Soutenir + Burger */}
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0 ml-auto">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0 ml-auto lg:ml-0">
             
             {/* RANGÉE D'ACCESSIBILITÉ (Symboles des handicaps + Icône soleil/contraste, RESET si actif) */}
             <div
