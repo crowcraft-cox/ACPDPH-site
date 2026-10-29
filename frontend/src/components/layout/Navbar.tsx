@@ -406,31 +406,8 @@ export default function Navbar() {
                   filter: 'none',
                 }}
               />
-              <div className="flex flex-col justify-center">
-                <span className="font-heading font-extrabold text-lg leading-none text-gray-900 dark:text-white tracking-tight">
-                  ACPDPH
-                </span>
-                <span className="font-heading font-bold text-[10px] tracking-wider uppercase text-[var(--color-accent)] mt-0.5 leading-tight">
-                  Droits &amp; Inclusion
-                </span>
-              </div>
             </Link>
 
-            {/* Version Desktop (>= 1024px) : Titre décalé après le logo */}
-            <Link
-              to="/"
-              className="hidden lg:flex flex-col justify-center h-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2"
-              style={{ paddingLeft: 'var(--menu-reserved-space, 250px)' }}
-              tabIndex={isCompact ? -1 : 0}
-              aria-label="ACPDPH – Droits & Inclusion - Retour à l'accueil"
-            >
-              <span className="font-heading font-extrabold text-2xl lg:text-[2.1rem] leading-none text-gray-900 dark:text-white tracking-tight transition-colors group-hover:text-[var(--color-primary)]">
-                ACPDPH
-              </span>
-              <span className="font-heading font-bold text-xs lg:text-[0.95rem] tracking-wider uppercase text-[var(--color-accent)] mt-1.5 leading-tight">
-                Droits &amp; Inclusion
-              </span>
-            </Link>
           </div>
 
           {/* DROITE : Accessibilité (Soleil + RESET si actif) + Langue + Bouton Soutenir + Burger */}
