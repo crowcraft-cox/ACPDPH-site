@@ -86,7 +86,7 @@
   --logo-offset: 14px;            /* Position haute dans le header */
   --logo-margin-left: 24px;       /* Marge gauche 20-25px */
   --logo-border-width: 3px;       /* Contour blanc réduit à 3px (sans ombre) */
-  --menu-reserved-space: 250px;   /* Espace réservé à gauche pour aligner Accueil avec ACPDPH */
+  --menu-reserved-space: 220px;   /* Espace réservé à gauche pour dégager le logo débordant */
 
   /* Header Scroll Animation Variables */
   --header-anim-duration: 480ms;
@@ -165,7 +165,7 @@
 
 /* Logo desktop débordant : fondu + scale 0.45 + translateY(-34px) */
 .header-logo-link {
-  z-index: 40;
+  z-index: 50;
   transform-origin: top left;
   transition: transform var(--header-anim-duration) var(--header-anim-ease),
               opacity var(--header-fade-duration) var(--header-anim-ease),
@@ -182,7 +182,7 @@
 
 /* Barre haute blanche */
 .header-top-bar {
-  z-index: 10;
+  z-index: 30;
   transition: max-height var(--header-anim-duration) var(--header-anim-ease),
               height var(--header-anim-duration) var(--header-anim-ease),
               opacity var(--header-fade-duration) var(--header-anim-ease),
