@@ -649,7 +649,7 @@ export default function Navbar() {
         <div className="container-ba flex items-stretch justify-between h-[76px]">
           
           {/* LIENS DE NAVIGATION (Avec espace réservé à gauche pour aligner Accueil avec le titre) */}
-          <div className="flex items-center gap-5 xl:gap-8 2xl:gap-10 shrink-0">
+          <div className="flex items-center gap-3 xl:gap-5 2xl:gap-7 shrink-0">
             
             {/* Espace réservé pour que les liens ne passent pas sous le logo qui déborde (glisse vers 18px en compact) */}
             <div
@@ -840,9 +840,21 @@ export default function Navbar() {
             >
               {t.nav.careers || 'OFFRES & EMPLOIS'}
             </Link>
+
+            {/* GALERIES */}
+            <Link
+              to="/galerie"
+              aria-current={isGalerieActive ? 'page' : undefined}
+              className={`h-full flex items-center whitespace-nowrap shrink-0 text-[13px] xl:text-[14px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                isGalerieActive
+                  ? 'text-[var(--color-accent-text)]'
+                  : 'text-white hover:text-[var(--color-accent-text)]'
+              }`}
+            >
+              GALERIES
+            </Link>
           </div>
 
-          {/* EXTRÉMITÉ DROITE
           {/* EXTRÉMITÉ DROITE : Actions compactes (FR + Nous soutenir) + BLOC CONTACT */}
           <div className="flex items-stretch shrink-0">
             {/* ACTIONS COMPACTES (FR + Nous soutenir) - Visible uniquement en mode compact */}
