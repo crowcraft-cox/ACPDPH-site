@@ -16,13 +16,12 @@ export default function Pillars() {
     <div className="pt-24 sm:pt-28 md:pt-32 pb-20">
       <div 
         ref={headerRef} 
-        className="container-ba text-center mb-16"
+        className="container-ba mb-8"
       >
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
-          Cadre d'intervention stratégique
-        </span>
         <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4">{t.pillars.title}</h1>
-        <p className="text-ba-text-secondary text-lg max-w-3xl mx-auto leading-relaxed">{t.pillars.subtitle}</p>
+        <p className="w-full text-left md:text-justify hyphens-auto text-ba-text-secondary text-lg leading-relaxed">
+          {t.pillars.subtitle}
+        </p>
       </div>
 
       <div ref={pillarsContainerRef} className="container-ba space-y-12">
