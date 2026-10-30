@@ -71,8 +71,8 @@ export default function Governance() {
     <div className="pt-24 sm:pt-28 md:pt-32 pb-20 bg-slate-50 dark:bg-ba-dark min-h-screen">
       <div className="container-ba">
         {/* ── SECTION GOUVERNANCE ── */}
-        <section ref={headerRef} className="mb-16">
-          <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 dark:text-white tracking-tight mb-4 text-left">
+        <section ref={headerRef} className="mb-10 md:mb-14">
+          <h1 className="text-4xl md:text-5xl font-semibold text-ba-blue dark:text-blue-400 tracking-tight mb-4 text-left">
             Gouvernance
           </h1>
           <p className="w-full text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 mb-8">
@@ -105,7 +105,7 @@ export default function Governance() {
 
         {/* ── SECTION CONSEIL D'ADMINISTRATION ── */}
         <section>
-          <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white mb-4 text-left">
+          <h2 className="text-2xl md:text-3xl font-semibold text-ba-blue dark:text-blue-400 mb-4 text-left">
             Conseil d'Administration
           </h2>
           <p className="w-full text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 mb-8">
