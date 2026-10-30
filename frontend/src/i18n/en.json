@@ -12,7 +12,8 @@
     "support": "Support Us",
     "contact": "Contact",
     "donate": "Donate",
-    "language": "FR"
+    "language": "FR",
+    "gallery": "OUR GALLERY"
   },
   "projects": {
     "title": "Our Projects",
@@ -200,5 +201,17 @@
   },
   "accessibility": {
     "skip_to_content": "Skip to main content"
+  },
+  "gallery": {
+    "title": "Our Gallery",
+    "subtitle": "Relive the highlights of our actions for inclusion and the rights of persons with disabilities in the DRC.",
+    "filter_all": "All",
+    "filter_photos": "Photos",
+    "filter_videos": "Videos",
+    "see_more": "Load more",
+    "no_items": "No media available",
+    "lightbox_close": "Close",
+    "lightbox_prev": "Previous",
+    "lightbox_next": "Next"
   }
 }

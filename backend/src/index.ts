@@ -14,6 +14,7 @@ import membershipRoutes from './routes/membership';
 import newsletterRoutes from './routes/newsletter';
 import authRoutes from './routes/auth';
 import contentRoutes from './routes/content';
+import galleryRoutes from './routes/gallery';
 
 dotenv.config();
 
@@ -46,6 +47,11 @@ app.use('/api/v1/donations', donationRoutes);
 app.use('/api/v1/membership', membershipRoutes);
 app.use('/api/v1/newsletter', newsletterRoutes);
 app.use('/api/v1/content', contentRoutes);
+app.use('/api/v1/gallery', galleryRoutes);
+
+// Serve uploaded files statically
+import path from 'path';
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // API Root Status & Welcome
 app.get('/', (req, res) => {

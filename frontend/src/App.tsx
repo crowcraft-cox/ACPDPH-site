@@ -22,6 +22,8 @@ const NewsDetail = lazy(() => import('./pages/NewsDetail'));
 const Contact = lazy(() => import('./pages/Contact'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
+const Gallery = lazy(() => import('./pages/Gallery'));
+const GalleryManager = lazy(() => import('./pages/admin/GalleryManager'));
 
 function PageLoader() {
   return (
@@ -73,6 +75,7 @@ function MainLayout() {
         <Routes>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/galerie" element={<GalleryManager />} />
         </Routes>
       </Suspense>
     );
@@ -104,6 +107,7 @@ function MainLayout() {
                 <Route path="/news" element={<News />} />
                 <Route path="/news/:id" element={<NewsDetail />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/galerie" element={<Gallery />} />
               </Routes>
             </AnimatedPage>
           </Suspense>

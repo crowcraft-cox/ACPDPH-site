@@ -8,11 +8,12 @@
     "news": "Actualités",
     "partners": "Nos Partenaires",
     "publications": "Publications",
-    "careers": "Offres & Emplois",
+    "careers": "Offres & Emploi",
     "support": "Nous soutenir",
     "contact": "Contact",
     "donate": "Faire un Don",
-    "language": "EN"
+    "language": "EN",
+    "gallery": "NOTRE GALERIE"
   },
   "projects": {
     "title": "Nos Projets",
@@ -96,24 +97,24 @@
     "mission_title": "Notre Mission",
     "mission_text": "Promouvoir et protéger les droits des personnes handicapées, lutter contre toutes les formes de discrimination et favoriser leur inclusion, leur autonomisation et leur participation active au développement communautaire, en vue de garantir leur dignité et leur bien-être socio-économique.",
     "social_objective_title": "Objectif Social",
-    "social_objective_text": "Combattre, par la sensibilisation et la formation, les perceptions négatives du handicap et promouvoir l’exercice des droits humains des personnes handicapées à travers l’action humanitaire et le développement inclusif à base communautaire.",
-    "values_title": "Valeurs fondamentales",
-    "values": [
-      "Professionnalisme",
-      "Solidarité",
-      "Non-discrimination",
-      "Respect de la dignité humaine",
-      "Bien-être"
-    ],
-    "governance_title": "Organes de Gouvernance & Équipe",
-    "ag": "Assemblée Générale",
-    "ag_desc": "Organe souverain de l’organisation, regroupant les membres fondateurs et adhérents pour définir les grandes orientations stratégiques.",
-    "ca": "Conseil d’Administration",
-    "ca_desc": "Organe d’orientation et de supervision garantissant la bonne gouvernance, l’administration générale et le suivi des programmes.",
-    "commission": "Commission de contrôle",
-    "commission_desc": "Organe de contrôle interne chargé de veiller à la régularité, à la conformité statutaire et à la transparence financière.",
-    "secretariat": "Secrétariat exécutif",
-    "secretariat_desc": "Organe de gestion quotidienne et opérationnelle chargé de la mise en œuvre des décisions et de la coordination des projets.",
+    "social_objective_text": "Combattre, par la sensibilisation et la formation, les perceptions négatives du handicap et promouvoir l’exercice des droits humains des personnes handicapées à travers l’action humanitaire et le développement inclusif à base communautaire.",
+    "values_title": "Valeurs fondamentales",
+    "values": [
+      "Professionnalisme",
+      "Solidarité",
+      "Non-discrimination",
+      "Respect de la dignité humaine",
+      "Bien-être"
+    ],
+    "governance_title": "Organes de Gouvernance & Équipe",
+    "ag": "Assemblée Générale",
+    "ag_desc": "Organe souverain de l’organisation, regroupant les membres fondateurs et adhérents pour définir les grandes orientations stratégiques.",
+    "ca": "Conseil d’Administration",
+    "ca_desc": "Organe d’orientation et de supervision garantissant la bonne gouvernance, l’administration générale et le suivi des programmes.",
+    "commission": "Commission de contrôle",
+    "commission_desc": "Organe de contrôle interne chargé de veiller à la régularité, à la conformité statutaire et à la transparence financière.",
+    "secretariat": "Secrétariat exécutif",
+    "secretariat_desc": "Organe de gestion quotidienne et opérationnelle chargé de la mise en œuvre des décisions et de la coordination des projets.",
     "bureau": "Coordination Exécutive",
     "bureau_desc": "Équipe de coordination opérationnelle chargée du suivi technique des projets, des partenariats et du plaidoyer.",
     "direction": "Direction des Programmes",
@@ -200,5 +201,17 @@
   },
   "accessibility": {
     "skip_to_content": "Aller au contenu principal"
+  },
+  "gallery": {
+    "title": "Notre Galerie",
+    "subtitle": "Revivez les moments forts de nos actions pour l'inclusion et les droits des personnes vivant avec handicap en RDC.",
+    "filter_all": "Tout",
+    "filter_photos": "Photos",
+    "filter_videos": "Videos",
+    "see_more": "Voir plus",
+    "no_items": "Aucun media disponible",
+    "lightbox_close": "Fermer",
+    "lightbox_prev": "Element precedent",
+    "lightbox_next": "Element suivant"
   }
 }
