@@ -36,12 +36,12 @@ export default function News() {
             const photoCount = article.images ? article.images.length : article.image ? 1 : 0;
 
             return (
-              <article 
-                key={article.id} 
+              <article
+                key={article.id}
                 className="news-article-card group flex flex-col h-full bg-white border border-slate-200 rounded-2xl overflow-hidden"
               >
-                {/* Cover Photo */}
-                <div className="relative h-56 w-full overflow-hidden shrink-0 bg-slate-100">
+                {/* Image pleine largeur, sans padding */}
+                <div className="relative h-48 w-full overflow-hidden shrink-0 bg-slate-100">
                   {article.image ? (
                     <img
                       src={article.image}
@@ -66,11 +66,11 @@ export default function News() {
                   )}
                 </div>
 
-                {/* Card Body */}
+                {/* Contenu texte avec padding */}
                 <div className="p-5 flex flex-col flex-1">
-                  {/* Date au-dessus du titre, alignée à gauche */}
-                  <div className="flex items-center gap-1.5 text-sm font-bold text-black mb-2">
-                    <svg className="w-4 h-4 text-black shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+                  {/* Date en bleu, au-dessus du titre */}
+                  <div className="flex items-center gap-1.5 text-sm font-bold text-ba-blue mb-2.5">
+                    <svg className="w-4 h-4 text-ba-blue shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                     </svg>
                     <span>{formatNewsDate(article.date)}</span>
@@ -78,21 +78,21 @@ export default function News() {
 
                   {/* Titre */}
                   <Link to={`/news/${article.id}`} className="block group/title">
-                    <h3 className="font-heading font-bold text-lg sm:text-xl text-slate-900 group-hover/title:text-ba-blue transition-colors line-clamp-2 leading-snug mb-3">
+                    <h3 className="font-heading font-bold text-lg sm:text-xl text-slate-900 group-hover/title:text-ba-blue transition-colors line-clamp-2 leading-snug mb-2.5">
                       {article.title}
                     </h3>
                   </Link>
 
-                  {/* Description */}
-                  <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed break-words flex-1">
+                  {/* Description - flex-1 pour pousser le bouton en bas */}
+                  <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed break-words flex-1 mb-5">
                     {article.excerpt}
                   </p>
 
-                  {/* Bouton LIRE PLUS */}
-                  <div className="mt-4">
+                  {/* Bouton LIRE PLUS aligne a droite avec ligne de separation */}
+                  <div className="flex items-center justify-end border-t border-slate-100 mt-auto pt-4">
                     <Link
                       to={`/news/${article.id}`}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-xs sm:text-sm font-bold uppercase tracking-wider text-white bg-[#C2530A] hover:bg-[#A84508] transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2530A] focus-visible:ring-offset-2 group/btn"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-white bg-[#C2530A] hover:bg-[#A84508] transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2530A] focus-visible:ring-offset-2 group/btn"
                     >
                       <span>LIRE PLUS</span>
                       <svg
