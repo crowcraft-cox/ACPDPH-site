@@ -18,14 +18,11 @@ export default function About() {
       {/* ── HEADER ── */}
       <div
         ref={headerRef}
-        className="container-ba text-center mb-16"
+        className="container-ba text-center mb-12 sm:mb-16"
       >
-        <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4" style={{ color: '#111827' }}>
+        <h1 className="font-heading text-4xl md:text-5xl font-bold" style={{ color: '#111827' }}>
           {t.about.title}
         </h1>
-        <p className="text-lg text-justify max-w-3xl mx-auto" style={{ color: '#374151' }}>
-          {t.about.subtitle}
-        </p>
       </div>
 
       {/* ── HISTORY & CONTEXT ── */}
@@ -36,8 +33,11 @@ export default function About() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div className="space-y-8">
+              {/* HISTORIQUE */}
               <div>
-                <h2 className="font-heading text-3xl font-bold mb-5 text-ba-blue">{t.about.history_title}</h2>
+                <h2 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                  {t.about.history_title}
+                </h2>
                 <div className="space-y-4 text-base md:text-lg leading-relaxed text-justify" style={{ color: '#374151' }}>
                   {t.about.history_text.split('\n\n').map((paragraph, idx) => (
                     <p key={idx}>{paragraph}</p>
@@ -45,37 +45,44 @@ export default function About() {
                 </div>
               </div>
 
+              {/* NOTRE VISION */}
               <div>
-                <h3 className="font-heading text-2xl font-bold mb-3 text-ba-blue">{t.about.vision_title}</h3>
+                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                  {t.about.vision_title}
+                </h3>
                 <p className="text-base md:text-lg leading-loose text-justify" style={{ color: '#374151' }}>
                   {t.about.vision_text}
                 </p>
               </div>
 
+              {/* NOTRE MISSION */}
               <div>
-                <h3 className="font-heading text-2xl font-bold mb-3 text-ba-blue">{t.about.mission_title}</h3>
+                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                  {t.about.mission_title}
+                </h3>
                 <p className="text-base md:text-lg leading-loose text-justify" style={{ color: '#374151' }}>
                   {t.about.mission_text}
                 </p>
               </div>
 
+              {/* OBJECTIF SOCIAL */}
               <div>
-                <h3 className="font-heading text-2xl font-bold mb-3 text-ba-blue">{t.about.social_objective_title}</h3>
+                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                  {t.about.social_objective_title}
+                </h3>
                 <p className="text-base md:text-lg leading-loose text-justify" style={{ color: '#374151' }}>
                   {t.about.social_objective_text}
                 </p>
               </div>
 
-              {/* Statuts & Reconnaissance Juridique */}
-              <div className="pt-6 border-t border-gray-200 space-y-6">
-                <div>
-                  <h4 className="font-heading font-bold text-xl mb-3" style={{ color: '#111827' }}>
-                    Statut juridique
-                  </h4>
-                  <p className="text-sm md:text-base leading-relaxed text-justify" style={{ color: '#4B5563' }}>
-                    L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une Organisation Nationale (ONG) de droit congolais, constituée conformément à la législation de la République démocratique du Congo applicable aux associations sans but lucratif, notamment la <strong>Loi n° 004/2001 du 20 juillet 2001</strong>.
-                  </p>
-                </div>
+              {/* STATUT JURIDIQUE */}
+              <div>
+                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                  Statut juridique
+                </h3>
+                <p className="text-sm md:text-base leading-relaxed text-justify mb-4" style={{ color: '#4B5563' }}>
+                  L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une Organisation Nationale (ONG) de droit congolais, constituée conformément à la législation de la République démocratique du Congo applicable aux associations sans but lucratif, notamment la <strong>Loi n° 004/2001 du 20 juillet 2001</strong>.
+                </p>
 
                 {/* Synthèse Identité */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm">
@@ -96,67 +103,67 @@ export default function About() {
                     </div>
                   ))}
                 </div>
+              </div>
 
-                {/* Reconnaissance administrative et juridique */}
-                <div className="space-y-4 pt-2">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-ba-blue shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <h5 className="font-heading font-bold text-base md:text-lg uppercase tracking-wide" style={{ color: '#111827' }}>
-                      Reconnaissance Administrative et Juridique
-                    </h5>
-                  </div>
-                  <p className="text-sm leading-relaxed" style={{ color: '#4B5563' }}>
-                    L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) a connu les étapes suivantes dans son processus de reconnaissance institutionnelle :
-                  </p>
+              {/* RECONNAISSANCE ADMINISTRATIVE ET JURIDIQUE */}
+              <div>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-ba-blue dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400">
+                    Reconnaissance Administrative et Juridique
+                  </h3>
+                </div>
+                <p className="text-sm leading-relaxed mb-4" style={{ color: '#4B5563' }}>
+                  L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) a connu les étapes suivantes dans son processus de reconnaissance institutionnelle :
+                </p>
 
-                  <div className="space-y-3">
-                    {[
-                      {
-                        date: '3 décembre 2018',
-                        badge: 'Création',
-                        title: 'Création officielle de l’association et adoption de ses statuts à Beni.',
-                        ref: null,
-                      },
-                      {
-                        date: '25 novembre 2020',
-                        badge: 'Agrément Ministériel',
-                        title: 'Obtention de l’Agrément Ministériel',
-                        ref: 'Arrêté ministériel N° 064/CAB.MIN/AFF.SOC./RBM/AS/2020',
-                      },
-                      {
-                        date: '10 février 2024',
-                        badge: 'Personnalité Juridique',
-                        title: 'Obtention de la personnalité juridique',
-                        ref: 'Arrêté ministériel N° 367/CAB/ME/MIN/J&GS/2024',
-                      },
-                    ].map((step, idx) => (
-                      <div
-                        key={idx}
-                        className="p-4 rounded-xl border border-gray-200 bg-white hover:border-ba-blue hover:shadow-sm transition-all duration-200 flex flex-col sm:flex-row sm:items-start gap-3.5"
-                      >
-                        <div className="shrink-0 flex items-center sm:flex-col sm:items-start gap-2 sm:gap-1 sm:w-36">
-                          <span className="text-xs font-bold text-ba-blue bg-ba-blue/10 px-2.5 py-0.5 rounded-full inline-block">
-                            {step.date}
-                          </span>
-                          <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
-                            {step.badge}
-                          </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 leading-snug">
-                            {step.title}
-                          </p>
-                          {step.ref && (
-                            <p className="text-xs font-mono text-ba-blue mt-1.5 bg-ba-blue/5 px-2.5 py-1 rounded inline-block border border-ba-blue/15">
-                              {step.ref}
-                            </p>
-                          )}
-                        </div>
+                <div className="space-y-3">
+                  {[
+                    {
+                      date: '3 décembre 2018',
+                      badge: 'Création',
+                      title: 'Création officielle de l’association et adoption de ses statuts à Beni.',
+                      ref: null,
+                    },
+                    {
+                      date: '25 novembre 2020',
+                      badge: 'Agrément Ministériel',
+                      title: 'Obtention de l’Agrément Ministériel',
+                      ref: 'Arrêté ministériel N° 064/CAB.MIN/AFF.SOC./RBM/AS/2020',
+                    },
+                    {
+                      date: '10 février 2024',
+                      badge: 'Personnalité Juridique',
+                      title: 'Obtention de la personnalité juridique',
+                      ref: 'Arrêté ministériel N° 367/CAB/ME/MIN/J&GS/2024',
+                    },
+                  ].map((step, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-xl border border-gray-200 bg-white hover:border-ba-blue hover:shadow-sm transition-all duration-200 flex flex-col sm:flex-row sm:items-start gap-3.5"
+                    >
+                      <div className="shrink-0 flex items-center sm:flex-col sm:items-start gap-2 sm:gap-1 sm:w-36">
+                        <span className="text-xs font-bold text-ba-blue bg-ba-blue/10 px-2.5 py-0.5 rounded-full inline-block">
+                          {step.date}
+                        </span>
+                        <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                          {step.badge}
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900 leading-snug">
+                          {step.title}
+                        </p>
+                        {step.ref && (
+                          <p className="text-xs font-mono text-ba-blue mt-1.5 bg-ba-blue/5 px-2.5 py-1 rounded inline-block border border-ba-blue/15">
+                            {step.ref}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -181,10 +188,7 @@ export default function About() {
       <div style={{ background: '#ffffff', paddingTop: '5rem', paddingBottom: '5rem' }}>
         <div className="container-ba">
           <div className="text-center mb-14">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
-              Structure & Organisation
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4" style={{ color: '#111827' }}>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold" style={{ color: '#111827' }}>
               {t.about.governance_title}
             </h2>
           </div>
