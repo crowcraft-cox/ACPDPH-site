@@ -321,11 +321,12 @@ function AboutSection() {
   const { ref: sectionRef, isVisible } = useScrollReveal();
 
   const paragraphs = [
-    "L’ACPDPH est une ONG nationale créée en 2018 à Beni, au Nord-Kivu. Notre mission est de promouvoir les droits fondamentaux et de combattre toute forme de discrimination. Notre objectif commun rassemble nos énergies pour garantir la pleine dignité et l’autonomie de chaque personne.",
-    "Nous accompagnons les personnes en situation de handicap et leurs familles dans toute la région. Notre champ d’action couvre l’éducation inclusive, la réadaptation, l’autonomie économique et la protection, afin de délivrer un soutien concret adapté à chaque bénéficiaire.",
-    "Notre force repose sur une démarche communautaire guidée par la participation active des personnes concernées. Par nos groupes de travail thématiques et nos projets de proximité, nous levons les barrières sociales pour apporter des solutions pérennes et ancrées localement.",
-    "Nous nouons des partenariats durables avec les institutions, les bailleurs de fonds et la société civile. Cette relation de confiance, fondée sur la transparence et l'exigence de résultats, renforce notre impact pour bâtir une société congolaise équitable et solidaire.",
-  ];
+    "L'Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une ONG nationale, apolitique et sans but lucratif, créée le 3 décembre 2018 à Beni, dans la province du Nord-Kivu, en République démocratique du Congo.",
+    "Notre mission est de promouvoir les droits, l'inclusion et l'autonomisation des personnes handicapées, en favorisant l'égalité des chances, l'accès aux services essentiels et la pleine participation à la vie sociale, économique et communautaire.",
+    "À travers une approche communautaire fondée sur les droits humains, nous intervenons notamment dans l'éducation inclusive, la santé, la protection, l'assistance humanitaire, la lutte contre les violences basées sur le genre et l'autonomisation économique.",
+    "Nous œuvrons pour une société inclusive, juste et solidaire, dans laquelle chaque personne handicapée peut exercer pleinement ses droits, développer son potentiel et contribuer activement au développement de sa communauté.",
+    "Notre vision : bâtir une société sans discrimination fondée sur le handicap, où chaque personne handicapée vit dans un état de bien-être socio-économique.",
+  ]
 
   return (
     <section
