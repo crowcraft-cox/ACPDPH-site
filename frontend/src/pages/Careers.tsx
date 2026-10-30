@@ -136,7 +136,7 @@ export default function Careers() {
           Opportunités & Recrutement Inclusif
         </span>
         <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4">
-          Offres et Emploi
+          Offres & Emplois
         </h1>
         <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
           Rejoignez une équipe engagée et passionnée par la justice sociale. L'ACPDPH garantit un cadre de travail bienveillant, accessible et fondé sur l'égalité des chances.

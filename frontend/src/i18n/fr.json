@@ -8,7 +8,7 @@
     "news": "Actualités",
     "partners": "Nos Partenaires",
     "publications": "Publications",
-    "careers": "Offres & Emploi",
+    "careers": "Offres & Emplois",
     "support": "Nous soutenir",
     "contact": "Contact",
     "donate": "Faire un Don",
@@ -127,7 +127,7 @@
     "subtitle": "Rapports institutionnels, documents de plaidoyer, textes légaux et études thématiques"
   },
   "careers": {
-    "title": "Offres et Emploi",
+    "title": "Offres & Emplois",
     "subtitle": "Opportunités professionnelles, stages et volontariat inclusif à l'ACPDPH"
   },
   "governance": {

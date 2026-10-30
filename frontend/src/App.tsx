@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { animate } from 'animejs';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -14,7 +14,7 @@ const Pillars = lazy(() => import('./pages/Pillars'));
 const Projects = lazy(() => import('./pages/Projects'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const Partners = lazy(() => import('./pages/Partners'));
-const Publications = lazy(() => import('./pages/Publications'));
+
 const Support = lazy(() => import('./pages/Support'));
 const Careers = lazy(() => import('./pages/Careers'));
 const News = lazy(() => import('./pages/News'));
@@ -97,7 +97,7 @@ function MainLayout() {
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />
                 <Route path="/partners" element={<Partners />} />
-                <Route path="/publications" element={<Publications />} />
+                <Route path="/publications" element={<Navigate to="/partners" replace />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/act" element={<Support />} />
                 <Route path="/careers" element={<Careers />} />

@@ -128,7 +128,7 @@ function HeroSection() {
       }, 'news'),
       rawTitle: news[2]?.title || 'Publication du rapport d\'évaluation sur l\'inclusion scolaire',
       description: news[2]?.excerpt || 'Rapport diagnostique et recommandations stratégiques pour l\'accès universel à l\'éducation inclusive dans le Grand Nord-Kivu.',
-      link: news[2]?.id ? `/news/${news[2].id}` : '/publications',
+      link: news[2]?.id ? `/news/${news[2].id}` : '/news',
       image: news[2]?.image || '/images/hero/photo_accueil.jpg',
     },
   ];
@@ -199,7 +199,7 @@ function HeroSection() {
       onKeyDown={handleKeyDown}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      aria-label="Carousel de projets et publications"
+      aria-label="Carousel de projets et actualités"
       aria-roledescription="carousel"
     >
       {/* Background Image avec fondu */}
