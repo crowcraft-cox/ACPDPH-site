@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useAdminData } from '../../context/adminData';
+import { OFFICE_ADDRESS } from '../../constants/contact';
 
 export default function ContactManager() {
   const { data, updateContact } = useAdminData();
   const [form, setForm] = useState({
-    address: data.contact?.address || 'Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.',
+    address: data.contact?.address || OFFICE_ADDRESS,
     email: data.contact?.email || 'info.acpdph.asbl.rdc@gmail.com',
     phone: data.contact?.phone || '+243 976 992 466',
     whatsapp: data.contact?.whatsapp || '+243 852 799 553',
@@ -35,7 +36,7 @@ export default function ContactManager() {
               rows={3}
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
-              placeholder="Ex: Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC."
+              placeholder={`Ex: ${OFFICE_ADDRESS}`}
               required
             />
           </div>

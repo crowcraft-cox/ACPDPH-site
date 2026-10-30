@@ -110,7 +110,7 @@ router.post('/broadcast', authMiddleware, [
 
             <div style="margin-top: 30px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; text-align: center;">
               Vous recevez ce message car vous êtes abonné(e) à la newsletter de l'ACPDPH.<br/>
-              Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC
+              Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.
             </div>
           </div>
         `,

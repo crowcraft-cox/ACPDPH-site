@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, ContactInfo, AdminUser, Subscriber, NewsletterLog } from '../types';
 import { apiFetch } from '../services/api';
+import { OFFICE_ADDRESS } from '../constants/contact';
 
 /* ===== DONNÉES PAR DÉFAUT (affichées pendant le chargement initial) ===== */
 const DEFAULT_DATA: AdminData = {
@@ -193,7 +194,7 @@ const DEFAULT_DATA: AdminData = {
     },
   ],
   contact: {
-    address: 'Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.',
+    address: OFFICE_ADDRESS,
     email: 'info.acpdph.asbl.rdc@gmail.com',
     phone: '+243 976 992 466',
     whatsapp: '+243 852 799 553',

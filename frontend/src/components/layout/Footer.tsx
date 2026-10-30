@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '../../i18n';
 import { useAdminData } from '../../context/adminData';
+import { OFFICE_ADDRESS } from '../../constants/contact';
 
 /* ─── Utilities ─────────────────────────────────────── */
 const isEmailValid = (v: string) =>
@@ -90,7 +91,7 @@ export default function Footer() {
                   <span className="footer-contact-icon" aria-hidden="true">
                     <PinIcon />
                   </span>
-                  <span>{data?.contact?.address && data.contact.address !== 'Beni — Nord-Kivu, RDC' ? data.contact.address : 'Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.'}</span>
+                  <span>{data?.contact?.address && data.contact.address !== 'Beni — Nord-Kivu, RDC' ? data.contact.address : OFFICE_ADDRESS}</span>
                 </li>
                 <li>
                   <span className="footer-contact-icon" aria-hidden="true">

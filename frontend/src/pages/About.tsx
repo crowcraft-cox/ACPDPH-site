@@ -1,6 +1,7 @@
 
 import { useI18n } from '../i18n';
 import { useScrollReveal, useAnimeReveal } from '../hooks/useScrollReveal';
+import { OFFICE_ADDRESS } from '../constants/contact';
 
 export default function About() {
   const { t } = useI18n();
@@ -90,7 +91,7 @@ export default function About() {
                     { label: 'Organisation', value: 'ACPDPH' },
                     { label: 'Forme Juridique', value: 'ONG Nationale & ASBL (RDC)' },
                     { label: 'Cadre Légal', value: 'Loi n° 004/2001 du 20 juillet 2001' },
-                    { label: 'Siège Social', value: 'Beni (Nord-Kivu, RDC)' },
+                    { label: 'Siège Social', value: OFFICE_ADDRESS },
                   ].map((item) => (
                     <div
                       key={item.label}
@@ -99,7 +100,7 @@ export default function About() {
                       <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
                         {item.label}
                       </span>
-                      <span className="text-base font-semibold text-slate-900 dark:text-white">
+                      <span className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white leading-snug">
                         {item.value}
                       </span>
                     </div>

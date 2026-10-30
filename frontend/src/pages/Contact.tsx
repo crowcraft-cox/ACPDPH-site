@@ -3,6 +3,7 @@ import { useI18n } from '../i18n';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useAdminData } from '../context/adminData';
 import { apiFetch } from '../services/api';
+import { OFFICE_ADDRESS, OFFICE_MAPS_EMBED_URL, OFFICE_MAPS_VIEW_URL } from '../constants/contact';
 
 export default function Contact() {
   const { t } = useI18n();
@@ -22,7 +23,7 @@ export default function Contact() {
   // Coordonnées officielles réelles avec fallback garanti
   const contactAddress = data?.contact?.address && !data.contact.address.includes('XX') && data.contact.address !== 'Beni — Nord-Kivu, RDC'
     ? data.contact.address
-    : 'Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.';
+    : OFFICE_ADDRESS;
 
   const contactEmail = data?.contact?.email && data.contact.email !== 'contact@acpdph.org'
     ? data.contact.email
@@ -175,14 +176,14 @@ export default function Contact() {
             <div className="card overflow-hidden h-72 relative border border-gray-200 rounded-2xl shadow-sm bg-gray-100">
               <iframe
                 title="Localisation Siège ACPDPH — Beni, Nord-Kivu, RDC"
-                src="https://maps.google.com/maps?q=Quartier%20Kasanga-Pa%C3%AFda%2C%20Commune%20de%20Ruwenzori%2C%20Beni%2C%20Nord-Kivu%2C%20RDC&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                src={OFFICE_MAPS_EMBED_URL}
                 className="w-full h-full border-0"
                 loading="lazy"
               />
               <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-sm px-3.5 py-2 rounded-xl text-xs text-gray-700 shadow-sm border border-gray-100 flex items-center justify-between">
-                <span className="font-medium truncate">Quartier KASANGA-PAÏDA, Commune de Ruwenzori, Beni</span>
+                <span className="font-medium truncate">{OFFICE_ADDRESS}</span>
                 <a
-                  href="https://maps.google.com/?q=Quartier+Kasanga-Pa%C3%AFda+Commune+de+Ruwenzori+Beni+Nord-Kivu+RDC"
+                  href={OFFICE_MAPS_VIEW_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-ba-blue font-semibold hover:underline shrink-0 ml-2"

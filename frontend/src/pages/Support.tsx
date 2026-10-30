@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { OFFICE_ADDRESS } from '../constants/contact';
 
 export default function Support() {
   // État pour le bouton copier (id du champ copié affiché pendant 2 secondes)
@@ -687,7 +688,7 @@ export default function Support() {
                 Les colis et équipements peuvent être réceptionnés directement à notre siège de Beni ou via nos référents à Goma et Kinshasa.
               </p>
               <div className="p-3 rounded-[10px] bg-slate-50 border border-slate-200 text-xs text-gray-700">
-                <strong>Adresse :</strong> Bureau ACPDPH, Ville de Beni, Province du Nord-Kivu, RDC <span className="text-gray-400 font-normal">[À remplacer]</span>.<br />
+                <strong>Adresse :</strong> {OFFICE_ADDRESS}<br />
                 <strong>Contact logistique :</strong> info.acpdph.asbl.rdc@gmail.com &bull; +243 97 127 7581
               </div>
             </div>
