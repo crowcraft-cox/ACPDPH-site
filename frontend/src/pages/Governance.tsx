@@ -69,9 +69,9 @@ export default function Governance() {
 
   return (
     <div className="pt-24 sm:pt-28 md:pt-32 pb-20 bg-slate-50 dark:bg-ba-dark min-h-screen">
-      <div className="container-ba">
+      <div className="container-ba flex flex-col gap-10 md:gap-14">
         {/* ── SECTION GOUVERNANCE ── */}
-        <section ref={headerRef} className="mb-10 md:mb-14">
+        <section ref={headerRef}>
           <h1 className="text-4xl md:text-5xl font-semibold text-ba-blue dark:text-blue-400 tracking-tight mb-4 text-left">
             Gouvernance
           </h1>
