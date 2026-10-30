@@ -7,7 +7,6 @@
     "projects": "Nos Projets",
     "news": "Actualités",
     "partners": "Nos Partenaires",
-    "publications": "Publications",
     "careers": "Offres & Emploi",
     "support": "Nous soutenir",
     "contact": "Contact",
@@ -183,8 +182,7 @@
     "rights": "Tous droits réservés."
   },
   "nav_menu": {
-    "organisation": "Organisation",
-    "resources": "Ressources"
+    "organisation": "Organisation"
   },
   "home": {
     "impact_desc": "Des avancées concrètes, mesurables et durables pour l'inclusion des personnes handicapées en République Démocratique du Congo.",

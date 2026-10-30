@@ -7,7 +7,6 @@
     "projects": "I nostri progetti",
     "news": "Notizie",
     "partners": "I nostri partner",
-    "publications": "Pubblicazioni",
     "careers": "Offerte & Lavoro",
     "support": "Sostienici",
     "contact": "Contatti",
@@ -183,8 +182,7 @@
     "rights": "Tutti i diritti riservati."
   },
   "nav_menu": {
-    "organisation": "Organizzazione",
-    "resources": "Risorse"
+    "organisation": "Organizzazione"
   },
   "home": {
     "impact_desc": "Progressi concreti, misurabili e sostenibili per l'inclusione delle persone con disabilità nella Repubblica Democratica del Congo.",

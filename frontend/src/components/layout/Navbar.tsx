@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useI18n } from '../../i18n';
 import DisabilitySymbols from './DisabilitySymbols';
 
-type DropdownKey = 'org' | 'resources' | 'lang' | 'lang-compact' | null;
-type MobileSubmenu = 'org' | 'resources' | null;
+type DropdownKey = 'org' | 'lang' | 'lang-compact' | null;
+type MobileSubmenu = 'org' | null;
 
 const COMPACT_THRESHOLD_DOWN = 80;
 const COMPACT_THRESHOLD_UP = 10;
@@ -37,7 +37,6 @@ export default function Navbar() {
   // Références DOM pour le focus clavier
   const navContainerRef = useRef<HTMLElement>(null);
   const orgBtnRef = useRef<HTMLButtonElement>(null);
-  const resourcesBtnRef = useRef<HTMLButtonElement>(null);
   const langBtnRef = useRef<HTMLButtonElement>(null);
   const compactLangBtnRef = useRef<HTMLButtonElement>(null);
   const langTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -203,9 +202,6 @@ export default function Navbar() {
       if (openDropdown === 'org') {
         setOpenDropdown(null);
         orgBtnRef.current?.focus();
-      } else if (openDropdown === 'resources') {
-        setOpenDropdown(null);
-        resourcesBtnRef.current?.focus();
       } else if (openDropdown === 'lang') {
         setOpenDropdown(null);
         langBtnRef.current?.focus();
@@ -223,7 +219,6 @@ export default function Navbar() {
   const isOrgActive = ['/about', '/governance', '/pillars'].includes(location.pathname);
   const isProjectsActive = location.pathname.startsWith('/projects');
   const isNewsActive = location.pathname.startsWith('/news');
-  const isResourcesActive = ['/publications', '/partners', '/careers'].includes(location.pathname);
   const isContactActive = location.pathname === '/contact';
   const isGalerieActive = location.pathname === '/galerie';
 
@@ -819,125 +814,35 @@ export default function Navbar() {
               {t.nav.news}
             </Link>
 
-            {/* RESSOURCES ▾ (Menu déroulant accessible) */}
-            <div
-              className="relative h-full flex items-center"
-              onMouseEnter={() => setOpenDropdown('resources')}
-              onMouseLeave={() => {
-                setTimeout(() => {
-                  setOpenDropdown((prev) => (prev === 'resources' ? null : prev));
-                }, 150);
-              }}
-            >
-              <button
-                ref={resourcesBtnRef}
-                type="button"
-                onClick={() => setOpenDropdown(openDropdown === 'resources' ? null : 'resources')}
-                aria-expanded={openDropdown === 'resources'}
-                aria-haspopup="true"
-                aria-current={isResourcesActive ? 'true' : undefined}
-                className={`h-full flex items-center gap-1.5 whitespace-nowrap shrink-0 text-[14px] xl:text-[15px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
-                  isResourcesActive
-                    ? 'text-[var(--color-accent-text)]'
-                    : 'text-white hover:text-[var(--color-accent-text)]'
-                }`}
-              >
-                <span>{t.nav_menu?.resources ?? 'Ressources'}</span>
-                <svg
-                  className={`w-3.5 h-3.5 transition-transform duration-150 ${openDropdown === 'resources' ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
 
-              {/* Panneau déroulant Ressources */}
-              {openDropdown === 'resources' && (
-                <div
-                  className="absolute z-50"
-                  style={{
-                    top: '100%',
-                    left: '-14px',
-                    minWidth: '230px',
-                    width: 'max-content',
-                  }}
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-label="Ressources"
-                  onMouseEnter={() => setOpenDropdown('resources')}
-                >
-                  {/* Pont invisible pour éviter le vide entre le bouton et le panneau */}
-                  <div style={{ height: '4px' }} />
-                  <div
-                    style={{
-                      background: '#FFFFFF',
-                      border: '1px solid #D9DEEA',
-                      borderTop: '3px solid var(--color-accent)',
-                      borderRadius: '0 0 8px 8px',
-                      paddingTop: '6px',
-                      paddingBottom: '6px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                    }}
-                  >
-                    {[
-                      { to: '/publications', label: t.nav.publications || 'Publications' },
-                      { to: '/partners', label: t.nav.partners || 'Nos Partenaires' },
-                      { to: '/careers', label: t.nav.careers || 'Offres & Emploi' },
-                    ].map((item, idx, arr) => (
-                      <div key={item.to}>
-                        <Link
-                          to={item.to}
-                          role="menuitem"
-                          aria-current={location.pathname === item.to ? 'page' : undefined}
-                          onClick={() => setOpenDropdown(null)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            width: '100%',
-                            padding: '11px 18px',
-                            minHeight: '44px',
-                            fontSize: '13px',
-                            fontWeight: location.pathname === item.to ? 700 : 600,
-                            color: location.pathname === item.to ? '#1D4ED8' : '#101828',
-                            background: location.pathname === item.to ? '#EEF2FF' : 'transparent',
-                            borderLeft: location.pathname === item.to ? '3px solid #1D4ED8' : '3px solid transparent',
-                            transition: 'background 150ms, color 150ms, border-left-color 150ms',
-                            textDecoration: 'none',
-                            whiteSpace: 'nowrap',
-                            boxSizing: 'border-box',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em',
-                          }}
-                          onMouseEnter={(e) => {
-                            if (location.pathname !== item.to) {
-                              (e.currentTarget as HTMLElement).style.background = '#EEF2FF';
-                              (e.currentTarget as HTMLElement).style.color = '#1D4ED8';
-                              (e.currentTarget as HTMLElement).style.borderLeftColor = '#1D4ED8';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (location.pathname !== item.to) {
-                              (e.currentTarget as HTMLElement).style.background = 'transparent';
-                              (e.currentTarget as HTMLElement).style.color = '#101828';
-                              (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent';
-                            }
-                          }}
-                        >
-                          {item.label}
-                        </Link>
-                        {idx < arr.length - 1 && (
-                          <div style={{ height: '1px', background: '#EEF1F7', margin: '0 18px' }} />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* NOS PARTENAIRES */}
+            <Link
+              to="/partners"
+              aria-current={location.pathname === '/partners' ? 'page' : undefined}
+              className={`h-full flex items-center whitespace-nowrap shrink-0 text-[13px] xl:text-[14px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                location.pathname === '/partners'
+                  ? 'text-[var(--color-accent-text)]'
+                  : 'text-white hover:text-[var(--color-accent-text)]'
+              }`}
+            >
+              {t.nav.partners || 'NOS PARTENAIRES'}
+            </Link>
+
+            {/* OFFRES & EMPLOIS */}
+            <Link
+              to="/careers"
+              aria-current={location.pathname.startsWith('/careers') ? 'page' : undefined}
+              className={`h-full flex items-center whitespace-nowrap shrink-0 text-[13px] xl:text-[14px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-primary)] ${
+                location.pathname.startsWith('/careers')
+                  ? 'text-[var(--color-accent-text)]'
+                  : 'text-white hover:text-[var(--color-accent-text)]'
+              }`}
+            >
+              {t.nav.careers || 'OFFRES & EMPLOIS'}
+            </Link>
           </div>
 
+          {/* EXTRÉMITÉ DROITE
           {/* EXTRÉMITÉ DROITE : Actions compactes (FR + Nous soutenir) + BLOC CONTACT */}
           <div className="flex items-stretch shrink-0">
             {/* ACTIONS COMPACTES (FR + Nous soutenir) - Visible uniquement en mode compact */}
@@ -1220,58 +1125,29 @@ export default function Navbar() {
               {isNewsActive && <span className="w-2 h-2 bg-[var(--color-accent-text)]" />}
             </Link>
 
-            {/* RESSOURCES (Accordéon) */}
-            <div>
-              <button
-                type="button"
-                onClick={() => setMobileSubmenu(mobileSubmenu === 'resources' ? null : 'resources')}
-                className={`w-full flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] cursor-pointer ${
-                  isResourcesActive ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
-                }`}
-                aria-expanded={mobileSubmenu === 'resources'}
-              >
-                <span>{t.nav_menu?.resources ?? 'Ressources'}</span>
-                <svg
-                  className={`w-4 h-4 transition-transform duration-150 ${mobileSubmenu === 'resources' ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+            {/* NOS PARTENAIRES */}
+            <Link
+              to="/partners"
+              className={`flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] ${
+                location.pathname === '/partners' ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
+              }`}
+            >
+              <span>{t.nav.partners || 'NOS PARTENAIRES'}</span>
+              {location.pathname === '/partners' && <span className="w-2 h-2 bg-[var(--color-accent-text)]" />}
+            </Link>
 
-              {mobileSubmenu === 'resources' && (
-                <div className="pl-4 pr-2 py-1 space-y-1 bg-black/15">
-                  <Link
-                    to="/publications"
-                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
-                      location.pathname === '/publications' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {t.nav.publications || 'Publications'}
-                  </Link>
-                  <Link
-                    to="/partners"
-                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
-                      location.pathname === '/partners' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {t.nav.partners || 'Nos Partenaires'}
-                  </Link>
-                  <Link
-                    to="/careers"
-                    className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
-                      location.pathname === '/careers' ? 'text-[var(--color-accent-text)]' : 'text-white/90 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {t.nav.careers || 'Offres & Emploi'}
-                  </Link>
-                </div>
-              )}
-            </div>
+            {/* OFFRES & EMPLOIS */}
+            <Link
+              to="/careers"
+              className={`flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] ${
+                location.pathname.startsWith('/careers') ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
+              }`}
+            >
+              <span>{t.nav.careers || 'OFFRES & EMPLOIS'}</span>
+              {location.pathname.startsWith('/careers') && <span className="w-2 h-2 bg-[var(--color-accent-text)]" />}
+            </Link>
 
-            {/* SECTION D'ACCESSIBILITÉ MOBILE */}
+                        {/* SECTION D'ACCESSIBILITÉ MOBILE */}
             <div className="pt-3 pb-2 border-t border-white/15 px-3">
               <div className="text-xs font-bold uppercase tracking-wider text-white/80 mb-2">Accessibilité &amp; Handicaps</div>
               
@@ -1456,43 +1332,27 @@ export default function Navbar() {
               }}
             >{t.nav.news}</Link>
 
-            {/* Ressources (accordéon) */}
-            <div>
-              <button
-                type="button"
-                onClick={() => setMobileSubmenu(mobileSubmenu === 'resources' ? null : 'resources')}
-                aria-expanded={mobileSubmenu === 'resources'}
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  width: '100%', minHeight: 52, padding: '0 24px',
-                  fontSize: 18, fontWeight: 500,
-                  color: isResourcesActive ? '#1D4ED8' : '#111827',
-                  background: 'transparent', border: 'none', borderBottom: '1px solid #F3F4F6',
-                  cursor: 'pointer',
-                }}
-              >
-                <span>Ressources</span>
-                <svg
-                  width="16" height="16" fill="none" stroke="#9CA3AF" viewBox="0 0 24 24"
-                  style={{ transition: 'transform 200ms', transform: mobileSubmenu === 'resources' ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {mobileSubmenu === 'resources' && (
-                <div style={{ background: '#F9FAFB', paddingLeft: 40, paddingRight: 24, paddingBottom: 4 }}>
-                  <Link to="/publications" onClick={closeMobileMenu}
-                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/publications' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/publications' ? 600 : 400 }}
-                  >{t.nav.publications || 'Publications'}</Link>
-                  <Link to="/partners" onClick={closeMobileMenu}
-                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/partners' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/partners' ? 600 : 400 }}
-                  >{t.nav.partners || 'Nos Partenaires'}</Link>
-                  <Link to="/careers" onClick={closeMobileMenu}
-                    style={{ display: 'flex', alignItems: 'center', minHeight: 44, fontSize: 15, color: location.pathname === '/careers' ? '#1D4ED8' : '#4B5563', textDecoration: 'none', fontWeight: location.pathname === '/careers' ? 600 : 400 }}
-                  >{t.nav.careers || 'Offres & Emploi'}</Link>
-                </div>
-              )}
-            </div>
+            {/* Nos Partenaires */}
+            <Link to="/partners" onClick={closeMobileMenu}
+              style={{
+                display: 'flex', alignItems: 'center', minHeight: 52,
+                padding: '0 24px', fontSize: 18, fontWeight: 500,
+                color: location.pathname === '/partners' ? '#1D4ED8' : '#111827',
+                textDecoration: 'none', background: 'transparent',
+                borderBottom: '1px solid #F3F4F6',
+              }}
+            >{t.nav.partners || 'Nos Partenaires'}</Link>
+
+            {/* Offres & Emplois */}
+            <Link to="/careers" onClick={closeMobileMenu}
+              style={{
+                display: 'flex', alignItems: 'center', minHeight: 52,
+                padding: '0 24px', fontSize: 18, fontWeight: 500,
+                color: location.pathname.startsWith('/careers') ? '#1D4ED8' : '#111827',
+                textDecoration: 'none', background: 'transparent',
+                borderBottom: '1px solid #F3F4F6',
+              }}
+            >{t.nav.careers || 'Offres & Emplois'}</Link>
 
             {/* Notre galerie */}
             <Link to="/galerie" onClick={closeMobileMenu}
@@ -1503,7 +1363,7 @@ export default function Navbar() {
                 textDecoration: 'none', background: 'transparent',
                 borderBottom: '1px solid #F3F4F6',
               }}
-            >Notre galerie</Link>
+            >GALERIES</Link>
 
             {/* Contact */}
             <Link to="/contact" onClick={closeMobileMenu}

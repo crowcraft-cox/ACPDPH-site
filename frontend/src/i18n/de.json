@@ -7,7 +7,6 @@
     "projects": "Unsere Projekte",
     "news": "Aktuelles",
     "partners": "Unsere Partner",
-    "publications": "Publikationen",
     "careers": "Karriere & Stellen",
     "support": "Unterstützen Sie uns",
     "contact": "Kontakt",
@@ -183,8 +182,7 @@
     "rights": "Alle Rechte vorbehalten."
   },
   "nav_menu": {
-    "organisation": "Organisation",
-    "resources": "Ressourcen"
+    "organisation": "Organisation"
   },
   "home": {
     "impact_desc": "Konkrete, messbare und nachhaltige Fortschritte für die Inklusion von Menschen mit Behinderungen in der Demokratischen Republik Kongo.",
