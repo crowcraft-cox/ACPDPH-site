@@ -85,7 +85,7 @@ export default function About() {
                 </p>
 
                 {/* Synthèse Identité */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
                   {[
                     { label: 'Organisation', value: 'ACPDPH' },
                     { label: 'Forme Juridique', value: 'ONG Nationale & ASBL (RDC)' },
@@ -94,12 +94,14 @@ export default function About() {
                   ].map((item) => (
                     <div
                       key={item.label}
-                      className="p-3.5 rounded-xl border border-gray-200 bg-gray-50/70 hover:border-ba-blue hover:bg-white transition-all duration-200"
+                      className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-4 h-full flex flex-col justify-center"
                     >
-                      <span className="font-bold text-xs uppercase tracking-wider block text-ba-blue mb-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
                         {item.label}
                       </span>
-                      <span className="text-gray-900 text-sm font-semibold">{item.value}</span>
+                      <span className="text-base font-semibold text-slate-900 dark:text-white">
+                        {item.value}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -107,19 +109,30 @@ export default function About() {
 
               {/* RECONNAISSANCE ADMINISTRATIVE ET JURIDIQUE */}
               <div>
-                <div className="flex items-center gap-2.5 mb-4">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-ba-blue dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                <div className="flex items-center gap-3">
+                  <svg
+                    className="w-7 h-7 text-blue-600 dark:text-blue-400 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                    <path d="m9 12 2 2 4-4" />
                   </svg>
-                  <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400">
+                  <h3 className="text-xl md:text-2xl font-semibold uppercase text-blue-600 dark:text-blue-400 leading-tight">
                     Reconnaissance Administrative et Juridique
                   </h3>
                 </div>
-                <p className="text-sm leading-relaxed mb-4" style={{ color: '#4B5563' }}>
+
+                <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl mt-3 mb-6">
                   L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) a connu les étapes suivantes dans son processus de reconnaissance institutionnelle :
                 </p>
 
-                <div className="space-y-3">
+                <ol className="border-t border-slate-200 dark:border-slate-700 list-none p-0 m-0">
                   {[
                     {
                       date: '3 décembre 2018',
@@ -140,31 +153,31 @@ export default function About() {
                       ref: 'Arrêté ministériel N° 367/CAB/ME/MIN/J&GS/2024',
                     },
                   ].map((step, idx) => (
-                    <div
+                    <li
                       key={idx}
-                      className="p-4 rounded-xl border border-gray-200 bg-white hover:border-ba-blue hover:shadow-sm transition-all duration-200 flex flex-col sm:flex-row sm:items-start gap-3.5"
+                      className="border-b border-slate-200 dark:border-slate-700 py-4 sm:py-5 grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-x-5 gap-y-1"
                     >
-                      <div className="shrink-0 flex items-center sm:flex-col sm:items-start gap-2 sm:gap-1 sm:w-36">
-                        <span className="text-xs font-bold text-ba-blue bg-ba-blue/10 px-2.5 py-0.5 rounded-full inline-block">
+                      <div className="flex flex-col">
+                        <span className="text-base font-semibold text-blue-600 dark:text-blue-400">
                           {step.date}
                         </span>
-                        <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                        <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">
                           {step.badge}
                         </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 leading-snug">
+                      <div className="flex flex-col justify-center">
+                        <p className="text-base font-semibold text-slate-900 dark:text-white leading-snug">
                           {step.title}
                         </p>
                         {step.ref && (
-                          <p className="text-xs font-mono text-ba-blue mt-1.5 bg-ba-blue/5 px-2.5 py-1 rounded inline-block border border-ba-blue/15">
+                          <p className="font-mono text-xs text-slate-500 dark:text-slate-400 mt-1 break-all">
                             {step.ref}
                           </p>
                         )}
                       </div>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </div>
             </div>
 
