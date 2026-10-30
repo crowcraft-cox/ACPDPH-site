@@ -46,3 +46,4 @@ export const PARTNER_LOGOS: PartnerLogo[] = [
     url: '#', // TODO: URL à confirmer (Groupe de Travail Protection de l'Enfance - sous-cluster RDC / CP AoR)
   },
 ];
+
