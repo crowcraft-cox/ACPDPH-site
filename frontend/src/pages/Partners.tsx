@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useScrollReveal, useAnimeReveal } from '../hooks/useScrollReveal';
+import { PARTNER_LOGOS } from '../constants/partnerLogos';
 
 interface Partner {
   id: string;
@@ -117,7 +118,7 @@ export default function Partners() {
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue dark:bg-ba-blue/25 dark:text-blue-300 mb-3">
           Synergie & Coopération
         </span>
-        <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4">
+        <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-ba-blue dark:text-blue-400 uppercase tracking-tight mb-4">
           Nos Partenaires
         </h1>
         <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
@@ -374,6 +375,41 @@ export default function Partners() {
               )}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── SECTION LOGOS DES PARTENAIRES ── */}
+      <section className="container-ba mt-20 pb-10">
+        <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-12 max-w-5xl mx-auto">
+          {PARTNER_LOGOS.map((partner) => {
+            const isClickable = partner.url && partner.url !== '#';
+            return (
+              <a
+                key={partner.name}
+                href={partner.url}
+                target={isClickable ? '_blank' : undefined}
+                rel={isClickable ? 'noopener noreferrer' : undefined}
+                aria-label={`Site de ${partner.name}`}
+                className="w-[calc(50%-1rem)] md:w-[calc((100%-4rem)/3)] flex items-center justify-center p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition-transform duration-200 hover:scale-105 cursor-pointer"
+                onClick={!isClickable ? (e) => e.preventDefault() : undefined}
+              >
+                <div className="h-20 sm:h-24 w-full max-w-[220px] mx-auto flex items-center justify-center">
+                  {partner.logo ? (
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      loading="lazy"
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  ) : (
+                    <span className="text-xs sm:text-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center leading-snug">
+                      {partner.name}
+                    </span>
+                  )}
+                </div>
+              </a>
+            );
+          })}
         </div>
       </section>
     </div>
