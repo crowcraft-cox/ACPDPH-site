@@ -32,10 +32,10 @@ export default function About() {
           className="container-ba"
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <div className="space-y-8">
+            <div className="flex flex-col gap-10 md:gap-14">
               {/* HISTORIQUE */}
               <div>
-                <h2 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                <h2 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-3">
                   {t.about.history_title}
                 </h2>
                 <div className="space-y-4 text-base md:text-lg leading-relaxed text-justify" style={{ color: '#374151' }}>
@@ -47,7 +47,7 @@ export default function About() {
 
               {/* NOTRE VISION */}
               <div>
-                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-3">
                   {t.about.vision_title}
                 </h3>
                 <p className="text-base md:text-lg leading-loose text-justify" style={{ color: '#374151' }}>
@@ -57,7 +57,7 @@ export default function About() {
 
               {/* NOTRE MISSION */}
               <div>
-                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-3">
                   {t.about.mission_title}
                 </h3>
                 <p className="text-base md:text-lg leading-loose text-justify" style={{ color: '#374151' }}>
@@ -67,7 +67,7 @@ export default function About() {
 
               {/* OBJECTIF SOCIAL */}
               <div>
-                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-3">
                   {t.about.social_objective_title}
                 </h3>
                 <p className="text-base md:text-lg leading-loose text-justify" style={{ color: '#374151' }}>
@@ -77,7 +77,7 @@ export default function About() {
 
               {/* STATUT JURIDIQUE */}
               <div>
-                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-4">
+                <h3 className="font-heading font-bold text-xl sm:text-2xl uppercase tracking-wide text-ba-blue dark:text-blue-400 mb-3">
                   Statut juridique
                 </h3>
                 <p className="text-sm md:text-base leading-relaxed text-justify mb-4" style={{ color: '#4B5563' }}>
@@ -85,7 +85,7 @@ export default function About() {
                 </p>
 
                 {/* Synthèse Identité */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     { label: 'Organisation', value: 'ACPDPH' },
                     { label: 'Forme Juridique', value: 'ONG Nationale & ASBL (RDC)' },
@@ -109,7 +109,7 @@ export default function About() {
 
               {/* RECONNAISSANCE ADMINISTRATIVE ET JURIDIQUE */}
               <div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 mb-3">
                   <svg
                     className="w-7 h-7 text-blue-600 dark:text-blue-400 shrink-0"
                     fill="none"
@@ -128,7 +128,7 @@ export default function About() {
                   </h3>
                 </div>
 
-                <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl mt-3 mb-6">
+                <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl mb-6">
                   L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) a connu les étapes suivantes dans son processus de reconnaissance institutionnelle :
                 </p>
 
