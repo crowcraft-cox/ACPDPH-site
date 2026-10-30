@@ -12,7 +12,8 @@
     "support": "Unterstützen Sie uns",
     "contact": "Kontakt",
     "donate": "Spenden",
-    "language": "DE"
+    "language": "DE",
+    "gallery": "UNSERE GALERIE"
   },
   "projects": {
     "title": "Unsere Projekte",
@@ -200,5 +201,17 @@
   },
   "accessibility": {
     "skip_to_content": "Zum Hauptinhalt springen"
+  },
+  "gallery": {
+    "title": "Unsere Galerie",
+    "subtitle": "Erleben Sie die Höhepunkte unseres Engagements für Inklusion und die Rechte von Menschen mit Behinderungen in der DR Kongo.",
+    "filter_all": "Alle",
+    "filter_photos": "Fotos",
+    "filter_videos": "Videos",
+    "see_more": "Mehr laden",
+    "no_items": "Keine Medien verfügbar",
+    "lightbox_close": "Schließen",
+    "lightbox_prev": "Vorheriges",
+    "lightbox_next": "Nächstes"
   }
 }

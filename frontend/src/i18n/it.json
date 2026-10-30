@@ -12,7 +12,8 @@
     "support": "Sostienici",
     "contact": "Contatti",
     "donate": "Dona ora",
-    "language": "IT"
+    "language": "IT",
+    "gallery": "LA NOSTRA GALLERIA"
   },
   "projects": {
     "title": "I nostri progetti",
@@ -200,5 +201,17 @@
   },
   "accessibility": {
     "skip_to_content": "Vai al contenuto principale"
+  },
+  "gallery": {
+    "title": "La Nostra Galleria",
+    "subtitle": "Rivivi i momenti salienti delle nostre azioni per l'inclusione e i diritti delle persone con disabilità nella RDC.",
+    "filter_all": "Tutti",
+    "filter_photos": "Foto",
+    "filter_videos": "Video",
+    "see_more": "Carica altro",
+    "no_items": "Nessun elemento disponibile",
+    "lightbox_close": "Chiudi",
+    "lightbox_prev": "Precedente",
+    "lightbox_next": "Successivo"
   }
 }
