@@ -367,12 +367,20 @@
 
 
 /* ===== Base Styles ===== */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* IMPORTANT : dans @layer base pour que les utilitaires Tailwind (p-5, px-4...) le surpassent. */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* Corps des cartes actualites - hors @layer pour garantir 20px de padding */
+.news-card-body {
+  padding: 20px;
 }
 
 html {
