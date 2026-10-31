@@ -214,7 +214,7 @@ export default function Navbar() {
     [openDropdown, isMobileOpen]
   );
 
-  // Fonction stricte pour déterminer l'état actif (exactement UN lien actif à la fois)
+  // Détection stricte de la route active
   const isItemActive = useCallback(
     (item: NavItem): boolean => {
       if (item.exact || item.to === '/') {
@@ -653,47 +653,47 @@ export default function Navbar() {
         </div>
 
         {/* ========================================================================================= */}
-        {/* 3. BARRE DE NAVIGATION BLEUE (Desktop xl+ >=1280px, hauteur 76px)                          */}
+        {/* 3. BARRE DE NAVIGATION BLEUE PLEINE LARGEUR (w-full, pr-0, sans max-w-*, sans mx-auto)    */}
         {/* ========================================================================================= */}
         <nav
           aria-label="Navigation principale"
-          className="header-nav-bar relative z-20 overflow-visible hidden xl:block w-full bg-[var(--color-primary)]"
+          className="header-nav-bar relative z-20 overflow-visible hidden xl:flex w-full items-stretch justify-between bg-[var(--color-primary)] h-[76px] pr-0"
         >
-          <div className="container-ba flex items-stretch justify-between h-[76px] pr-0">
-            {/* ZONE GAUCHE & CENTRE : Logo + Liens NAV_ITEMS */}
-            <div className="flex items-center gap-1.5 xl:gap-2.5 2xl:gap-4 flex-1 min-w-0">
-              {/* Avant scroll : Espace réservé pour le grand logo rond débordant */}
-              {!isCompact && (
-                <div
-                  className="shrink-0 header-menu-spacer"
-                  style={{ width: 'var(--menu-reserved-space, 220px)' }}
-                  aria-hidden="true"
+          {/* ZONE GAUCHE & CENTRE : Logo + Liste des liens */}
+          <div className="flex flex-1 min-w-0 items-center h-full">
+            {/* Avant scroll : Espace réservé pour le grand logo rond débordant */}
+            {!isCompact && (
+              <div
+                className="shrink-0 header-menu-spacer"
+                style={{ width: 'var(--menu-reserved-space, 225px)' }}
+                aria-hidden="true"
+              />
+            )}
+
+            {/* Après scroll : Petit logo rond compact (40px) */}
+            {isCompact && (
+              <Link
+                to="/"
+                className="flex items-center shrink-0 pl-4 xl:pl-6 mr-3 xl:mr-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-full"
+                aria-label="ACPDPH - Accueil"
+              >
+                <img
+                  src="/logo_ACPDPH.jpg"
+                  alt="ACPDPH"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-white bg-white shrink-0 shadow-sm"
                 />
-              )}
+              </Link>
+            )}
 
-              {/* Après scroll : Petit logo rond compact (40px) */}
-              {isCompact && (
-                <Link
-                  to="/"
-                  className="flex items-center shrink-0 mr-2 xl:mr-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-full"
-                  aria-label="ACPDPH - Accueil"
-                >
-                  <img
-                    src="/logo_ACPDPH.jpg"
-                    alt="ACPDPH"
-                    className="w-10 h-10 rounded-full object-cover border-2 border-white bg-white shrink-0 shadow-sm"
-                  />
-                </Link>
-              )}
-
-              {/* Mapping unifié depuis NAV_ITEMS */}
+            {/* Liste des liens de navigation */}
+            <ul className="flex items-center gap-3 xl:gap-4 2xl:gap-5 whitespace-nowrap h-full list-none m-0 p-0">
               {NAV_ITEMS.map((item) => {
                 const active = isItemActive(item);
 
                 // Cas 1 : Dropdown (ORGANISATION)
                 if (item.dropdown) {
                   return (
-                    <div
+                    <li
                       key={item.label}
                       className="relative h-full flex items-center shrink-0"
                       onMouseEnter={() => setOpenDropdown('org')}
@@ -710,7 +710,7 @@ export default function Navbar() {
                         aria-expanded={openDropdown === 'org'}
                         aria-haspopup="true"
                         aria-current={active ? 'true' : undefined}
-                        className={`h-full flex items-center gap-1.5 px-2 xl:px-2.5 2xl:px-3 whitespace-nowrap shrink-0 text-[13px] xl:text-[13.5px] 2xl:text-[14px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                        className={`h-full flex items-center gap-1.5 px-2 xl:px-2.5 whitespace-nowrap shrink-0 text-[13px] xl:text-[13.5px] 2xl:text-[14px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${
                           active
                             ? 'text-[var(--color-accent-text)] font-extrabold'
                             : 'text-white hover:text-white/85 hover:underline underline-offset-8'
@@ -803,38 +803,83 @@ export default function Navbar() {
                           </div>
                         </div>
                       )}
-                    </div>
+                    </li>
                   );
                 }
 
                 // Cas 2 : Lien direct
                 return (
-                  <Link
-                    key={item.to}
-                    to={item.to || '/'}
-                    aria-current={active ? 'page' : undefined}
-                    className={`h-full flex items-center px-2 xl:px-2.5 2xl:px-3 whitespace-nowrap shrink-0 text-[13px] xl:text-[13.5px] 2xl:text-[14px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-                      active
-                        ? 'text-[var(--color-accent-text)] font-extrabold'
-                        : 'text-white hover:text-white/85 hover:underline underline-offset-8'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
+                  <li key={item.to} className="h-full flex items-center shrink-0">
+                    <Link
+                      to={item.to || '/'}
+                      aria-current={active ? 'page' : undefined}
+                      className={`h-full flex items-center px-2 xl:px-2.5 whitespace-nowrap shrink-0 text-[13px] xl:text-[13.5px] 2xl:text-[14px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                        active
+                          ? 'text-[var(--color-accent-text)] font-extrabold'
+                          : 'text-white hover:text-white/85 hover:underline underline-offset-8'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
+          </div>
 
-            {/* ZONE DROITE : Actions compactes (FR + NOUS SOUTENIR) + Bouton CONTACT */}
-            <div className="flex items-stretch shrink-0">
-              {/* Visible UNIQUEMENT après scroll (isCompact) : FR + NOUS SOUTENIR (contour blanc) */}
-              {isCompact && (
-                <div className="flex items-center gap-2 xl:gap-2.5 pr-2 xl:pr-3">
-                  {/* Sélecteur de langue compact */}
+          {/* ZONE DROITE APRÈS SCROLL : FR + NOUS SOUTENIR (Contour blanc) */}
+          {isCompact && (
+            <div className="flex items-center gap-2 xl:gap-2.5 shrink-0 ml-auto mr-0">
+              {/* Sélecteur de langue compact */}
+              <div
+                className="relative z-50"
+                onMouseEnter={() => {
+                  if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
+                }}
+                onMouseLeave={() => {
+                  if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
+                  compactLangTimeoutRef.current = setTimeout(() => {
+                    setOpenDropdown((prev) => (prev === 'lang-compact' ? null : prev));
+                  }, 300);
+                }}
+              >
+                <button
+                  ref={compactLangBtnRef}
+                  type="button"
+                  onClick={() => setOpenDropdown(openDropdown === 'lang-compact' ? null : 'lang-compact')}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-heading font-bold text-white bg-white/10 hover:bg-white/20 border border-white/25 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-none min-h-[38px]"
+                  aria-expanded={openDropdown === 'lang-compact'}
+                  aria-haspopup="true"
+                  aria-label={`Langue : ${currentLang.name}. Cliquez pour changer`}
+                >
+                  <svg className="w-4 h-4 text-teal-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                  <span className="tracking-wide uppercase">{currentLang.label}</span>
+                  <svg
+                    className={`w-3.5 h-3.5 text-white/80 transition-transform duration-150 ${openDropdown === 'lang-compact' ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {openDropdown === 'lang-compact' && (
                   <div
-                    className="relative z-50"
+                    className="absolute z-[100] shadow-2xl"
+                    style={{
+                      top: 'calc(100% + 4px)',
+                      right: '0',
+                      minWidth: '170px',
+                      width: 'max-content',
+                    }}
+                    role="menu"
+                    aria-label="Sélecteur de langue"
                     onMouseEnter={() => {
                       if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
+                      setOpenDropdown('lang-compact');
                     }}
                     onMouseLeave={() => {
                       if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
@@ -843,141 +888,96 @@ export default function Navbar() {
                       }, 300);
                     }}
                   >
-                    <button
-                      ref={compactLangBtnRef}
-                      type="button"
-                      onClick={() => setOpenDropdown(openDropdown === 'lang-compact' ? null : 'lang-compact')}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-heading font-bold text-white bg-white/10 hover:bg-white/20 border border-white/25 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-none min-h-[38px]"
-                      aria-expanded={openDropdown === 'lang-compact'}
-                      aria-haspopup="true"
-                      aria-label={`Langue : ${currentLang.name}. Cliquez pour changer`}
+                    <div style={{ height: '4px' }} />
+                    <div
+                      style={{
+                        background: '#FFFFFF',
+                        border: '1px solid #D9DEEA',
+                        borderTop: '3px solid var(--color-accent)',
+                        borderRadius: '0 0 8px 8px',
+                        paddingTop: '6px',
+                        paddingBottom: '6px',
+                        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
+                      }}
                     >
-                      <svg className="w-4 h-4 text-teal-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                      </svg>
-                      <span className="tracking-wide uppercase">{currentLang.label}</span>
-                      <svg
-                        className={`w-3.5 h-3.5 text-white/80 transition-transform duration-150 ${openDropdown === 'lang-compact' ? 'rotate-180' : ''}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-
-                    {openDropdown === 'lang-compact' && (
-                      <div
-                        className="absolute z-[100] shadow-2xl"
-                        style={{
-                          top: 'calc(100% + 4px)',
-                          right: '0',
-                          minWidth: '170px',
-                          width: 'max-content',
-                        }}
-                        role="menu"
-                        aria-label="Sélecteur de langue"
-                        onMouseEnter={() => {
-                          if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
-                          setOpenDropdown('lang-compact');
-                        }}
-                        onMouseLeave={() => {
-                          if (compactLangTimeoutRef.current) clearTimeout(compactLangTimeoutRef.current);
-                          compactLangTimeoutRef.current = setTimeout(() => {
-                            setOpenDropdown((prev) => (prev === 'lang-compact' ? null : prev));
-                          }, 300);
-                        }}
-                      >
-                        <div style={{ height: '4px' }} />
-                        <div
-                          style={{
-                            background: '#FFFFFF',
-                            border: '1px solid #D9DEEA',
-                            borderTop: '3px solid var(--color-accent)',
-                            borderRadius: '0 0 8px 8px',
-                            paddingTop: '6px',
-                            paddingBottom: '6px',
-                            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
-                          }}
-                        >
-                          {languages.map((item, idx) => {
-                            const isSelected = item.code === lang;
-                            return (
-                              <div key={item.code}>
-                                <button
-                                  type="button"
-                                  role="menuitem"
-                                  aria-current={isSelected ? 'true' : undefined}
-                                  onClick={() => {
-                                    setLang(item.code);
-                                    setOpenDropdown(null);
-                                    compactLangBtnRef.current?.focus();
-                                  }}
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    width: '100%',
-                                    padding: '11px 18px',
-                                    minHeight: '44px',
-                                    fontSize: '13px',
-                                    fontWeight: isSelected ? 700 : 600,
-                                    color: isSelected ? '#1D4ED8' : '#101828',
-                                    background: isSelected ? '#EEF2FF' : 'transparent',
-                                    borderLeft: isSelected ? '3px solid #1D4ED8' : '3px solid transparent',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.05em',
-                                    cursor: 'pointer',
-                                    textAlign: 'left',
-                                  }}
-                                >
-                                  <span>{item.name}</span>
-                                  <span
-                                    style={{
-                                      fontSize: '11px',
-                                      fontWeight: 700,
-                                      color: isSelected ? '#1D4ED8' : '#6B7280',
-                                      marginLeft: '10px',
-                                    }}
-                                  >
-                                    {item.label}
-                                  </span>
-                                </button>
-                                {idx < languages.length - 1 && (
-                                  <div style={{ height: '1px', background: '#EEF1F7', margin: '0 18px' }} />
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
+                      {languages.map((item, idx) => {
+                        const isSelected = item.code === lang;
+                        return (
+                          <div key={item.code}>
+                            <button
+                              type="button"
+                              role="menuitem"
+                              aria-current={isSelected ? 'true' : undefined}
+                              onClick={() => {
+                                setLang(item.code);
+                                setOpenDropdown(null);
+                                compactLangBtnRef.current?.focus();
+                              }}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                padding: '11px 18px',
+                                minHeight: '44px',
+                                fontSize: '13px',
+                                fontWeight: isSelected ? 700 : 600,
+                                color: isSelected ? '#1D4ED8' : '#101828',
+                                background: isSelected ? '#EEF2FF' : 'transparent',
+                                borderLeft: isSelected ? '3px solid #1D4ED8' : '3px solid transparent',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                              }}
+                            >
+                              <span>{item.name}</span>
+                              <span
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  color: isSelected ? '#1D4ED8' : '#6B7280',
+                                  marginLeft: '10px',
+                                }}
+                              >
+                                {item.label}
+                              </span>
+                            </button>
+                            {idx < languages.length - 1 && (
+                              <div style={{ height: '1px', background: '#EEF1F7', margin: '0 18px' }} />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
+                )}
+              </div>
 
-                  {/* Bouton NOUS SOUTENIR compact (Contour blanc, fond transparent) */}
-                  <Link
-                    to="/support"
-                    title={t.nav.support || 'Nous soutenir'}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-white bg-transparent hover:bg-white/10 text-white font-heading font-bold text-xs uppercase tracking-wider rounded-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white shrink-0 min-h-[38px]"
-                  >
-                    <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                    <span>{t.nav.support || 'Nous soutenir'}</span>
-                  </Link>
-                </div>
-              )}
-
-              {/* Bouton CONTACT orange : Toujours présent, collé à l'extrême droite */}
+              {/* Bouton NOUS SOUTENIR compact (Contour blanc, fond transparent) */}
               <Link
-                to={CONTACT_ITEM.to}
-                aria-current={isContactActive ? 'page' : undefined}
-                className="h-full flex items-center justify-center px-6 xl:px-8 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-heading font-bold text-[13.5px] xl:text-[14px] uppercase tracking-wider rounded-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset shrink-0 whitespace-nowrap ml-1"
+                to="/support"
+                title={t.nav.support || 'Nous soutenir'}
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-white bg-transparent hover:bg-white/10 text-white font-heading font-bold text-xs uppercase tracking-wider rounded-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white shrink-0 min-h-[38px]"
               >
-                {CONTACT_ITEM.label}
+                <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span>{t.nav.support || 'Nous soutenir'}</span>
               </Link>
             </div>
-          </div>
+          )}
+
+          {/* BLOC CONTACT : Collé à l'extrémité droite de l'écran (mr-0, pr-0 sur nav) */}
+          <Link
+            to={CONTACT_ITEM.to}
+            aria-current={isContactActive ? 'page' : undefined}
+            className={`shrink-0 flex items-center justify-center bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] px-8 xl:px-10 font-heading font-semibold uppercase text-white text-[13.5px] xl:text-[14px] tracking-wider rounded-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset whitespace-nowrap h-full mr-0 ${
+              isCompact ? 'ml-6' : 'ml-auto'
+            }`}
+          >
+            {CONTACT_ITEM.label}
+          </Link>
         </nav>
 
         {/* ========================================================================================= */}
