@@ -1852,14 +1852,16 @@ html.lenis body {
 /* ── Colonne gauche ── */
 .about-title-col {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .about-heading-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
+  align-items: flex-start;
+  text-align: left;
   line-height: 0.95;
   gap: 0;
   margin: 0;

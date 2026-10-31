@@ -340,7 +340,7 @@ function AboutSection() {
       >
         <div className="about-grid">
 
-          {/* ── Colonne gauche : bloc titre ── */}
+          {/* ── Colonne gauche : bloc titre & image ── */}
           <div className="about-title-col" aria-hidden="false">
             <h2
               id="about-heading"
@@ -349,6 +349,15 @@ function AboutSection() {
               <span className="about-line-light" aria-hidden="true">À propos</span>
               <span className="sr-only">À propos de l'ACPDPH</span>
             </h2>
+            <img
+              src="/images/a-propos-equipe.jpg"
+              alt="Équipe de l'ACPDPH à l'issue d'un atelier de formation à l'entrepreneuriat pour femmes et filles handicapées déplacées internes"
+              loading="lazy"
+              decoding="async"
+              width={1200}
+              height={800}
+              className="w-full h-auto block mt-6 md:mt-24 rounded-md"
+            />
           </div>
 
           {/* ── Colonne droite : texte + bouton ── */}
