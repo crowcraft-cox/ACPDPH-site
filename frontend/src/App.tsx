@@ -100,7 +100,7 @@ function MainLayout() {
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />
                 <Route path="/partners" element={<Partners />} />
-                <Route path="/publications" element={<Navigate to="/partners" replace />} />
+                <Route path="/publications" element={<Navigate to="/" replace />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/act" element={<Support />} />
                 <Route path="/careers" element={<Careers />} />
