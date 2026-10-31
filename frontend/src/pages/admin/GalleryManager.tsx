@@ -1,597 +1,911 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
+import { useAdminData } from '../../context/adminData';
+import type { GalleryItem } from '../../types';
+import {
+  extractYoutubeId,
+  getYoutubeThumbnail,
+  detectMediaType,
+  aggregateAllGalleryItems,
+} from '../../utils/galleryAggregator';
 
-interface GalleryItem {
-  _id: string;
-  title: string;
-  alt: string;
-  caption?: string;
-  type: 'image' | 'video' | 'youtube';
-  url: string;
-  thumbnailUrl?: string;
-  youtubeId?: string;
-  date: string;
-  order: number;
-  active: boolean;
-  fileSize?: number;
-  mimeType?: string;
+/* Compression d'image via canvas HTML5 */
+function compressImage(file: File, maxWidth = 1400, maxHeight = 1400, quality = 0.82): Promise<string> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const srcUrl = event.target?.result as string;
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        } else {
+          resolve(srcUrl);
+        }
+      };
+      img.onerror = () => resolve(srcUrl);
+      img.src = srcUrl;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
 }
 
-interface UploadFile {
-  file: File;
-  title: string;
-  alt: string;
-  caption: string;
-  progress: number;
-  status: 'pending' | 'uploading' | 'done' | 'error';
-  error?: string;
+function formatDate(dateStr?: string) {
+  if (!dateStr) return 'Date non spécifiée';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch {
+    return dateStr;
+  }
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;  // 5 MB
-const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100 MB
-
-function getAuthHeader(): Record<string, string> {
-  const token = localStorage.getItem('adminToken') || 'admin-session-active';
-  return { Authorization: `Bearer ${token}` };
-}
-
-function formatBytes(bytes: number) {
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
-}
-
-function formatDate(s: string) {
-  return new Date(s).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-}
-
-// ─── Delete confirm modal ─────────────────────────────────────────────────────
-function DeleteModal({ item, onConfirm, onCancel }: { item: GalleryItem; onConfirm: () => void; onCancel: () => void }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-            </svg>
-          </div>
-          <div>
-            <h3 className="font-heading font-bold text-gray-900">Confirmer la suppression</h3>
-            <p className="text-sm text-gray-500 mt-0.5">Cette action est irreversible.</p>
-          </div>
-        </div>
-        <p className="text-sm text-gray-700 mb-6">
-          Supprimer <strong>"{item.title}"</strong> ?
-        </p>
-        <div className="flex gap-3">
-          <button onClick={onCancel}
-            className="flex-1 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
-            Annuler
-          </button>
-          <button onClick={onConfirm}
-            className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-semibold text-white transition-colors">
-            Supprimer
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Edit modal ───────────────────────────────────────────────────────────────
-function EditModal({ item, onSave, onCancel }: {
-  item: GalleryItem;
-  onSave: (data: { title: string; alt: string; caption: string; order: number; active: boolean }) => void;
-  onCancel: () => void;
-}) {
-  const [title, setTitle] = useState(item.title);
-  const [alt, setAlt] = useState(item.alt);
-  const [caption, setCaption] = useState(item.caption || '');
-  const [order, setOrder] = useState(item.order);
-  const [active, setActive] = useState(item.active);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-xl p-6 max-w-lg w-full mx-4">
-        <h3 className="font-heading font-bold text-gray-900 text-lg mb-5">Modifier l&rsquo;element</h3>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Titre <span className="text-red-500">*</span></label>
-            <input value={title} onChange={e => setTitle(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Texte alternatif (alt) <span className="text-red-500">*</span></label>
-            <input value={alt} onChange={e => setAlt(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Legende</label>
-            <input value={caption} onChange={e => setCaption(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-          </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Ordre</label>
-              <input type="number" value={order} onChange={e => setOrder(parseInt(e.target.value) || 0)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-            </div>
-            <div className="flex items-end pb-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={active} onChange={e => setActive(e.target.checked)} className="w-4 h-4 accent-[var(--color-primary)]" />
-                <span className="text-sm font-semibold text-gray-700">Visible</span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-3 mt-6">
-          <button onClick={onCancel}
-            className="flex-1 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
-            Annuler
-          </button>
-          <button onClick={() => onSave({ title, alt, caption, order, active })}
-            disabled={!title || !alt}
-            className="flex-1 py-2.5 bg-[var(--color-primary)] hover:opacity-90 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-50">
-            Enregistrer
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Admin Gallery Manager ───────────────────────────────────────────────
 export default function GalleryManager() {
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
-  const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [youtubeTitle, setYoutubeTitle] = useState('');
-  const [youtubeAlt, setYoutubeAlt] = useState('');
-  const [youtubeCaption, setYoutubeCaption] = useState('');
-  const [isDragging, setIsDragging] = useState(false);
+  const { data, gallery, addGalleryItem, updateGalleryItem, deleteGalleryItem } = useAdminData();
+
+  // Onglet courant : 'manual' (médias galerie), 'sync' (médias synchronisés projets/actualités), 'all' (aperçu complet)
+  const [activeTab, setActiveTab] = useState<'manual' | 'sync' | 'all'>('manual');
+
+  // Modales
+  const [isAddingImage, setIsAddingImage] = useState(false);
+  const [isAddingVideo, setIsAddingVideo] = useState(false);
+  const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<GalleryItem | null>(null);
-  const [editTarget, setEditTarget] = useState<GalleryItem | null>(null);
-  const [tab, setTab] = useState<'upload' | 'youtube'>('upload');
+
+  // Formulaire ajout Image
+  const [imageFiles, setImageFiles] = useState<{ file: File; dataUrl: string; title: string; caption: string; alt: string }[]>([]);
+  const [isProcessingFiles, setIsProcessingFiles] = useState(false);
+  const [imageManualUrl, setImageManualUrl] = useState('');
+  const [imageManualTitle, setImageManualTitle] = useState('');
+  const [imageManualCaption, setImageManualCaption] = useState('');
+  const [imageManualAlt, setImageManualAlt] = useState('');
+
+  // Formulaire ajout Vidéo
+  const [videoMode, setVideoMode] = useState<'youtube' | 'file' | 'url'>('youtube');
+  const [videoTitle, setVideoTitle] = useState('');
+  const [videoCaption, setVideoCaption] = useState('');
+  const [videoAlt, setVideoAlt] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
+
+  // Formulaire édition
+  const [editTitle, setEditTitle] = useState('');
+  const [editCaption, setEditCaption] = useState('');
+  const [editAlt, setEditAlt] = useState('');
+  const [editOrder, setEditOrder] = useState(0);
+  const [editActive, setEditActive] = useState(true);
+
+  // Notification
   const [notification, setNotification] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const notify = (msg: string) => {
     setNotification(msg);
-    setTimeout(() => setNotification(''), 3500);
+    setTimeout(() => setNotification(''), 4000);
   };
 
-  // Fetch all items
-  const fetchItems = useCallback(async () => {
+  // Médias automatiques agrégés (projets, actualités, domaines)
+  const autoSyncedItems = aggregateAllGalleryItems(data.projects, data.news, data.pillars, []).filter(
+    (item) => item.sourceCategory !== 'Galerie'
+  );
+
+  // Tous les médias publics combinés
+  const allAggregatedItems = aggregateAllGalleryItems(data.projects, data.news, data.pillars, gallery);
+
+  // ── Gestion de la sélection de fichiers images depuis l'appareil ──
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsProcessingFiles(true);
     try {
-      const r = await fetch(`${API_BASE}/api/v1/gallery/all`, { headers: getAuthHeader() });
-      const d = await r.json();
-      if (d.success) setItems(d.data);
-    } catch {
-      // ignore
+      const newItems: { file: File; dataUrl: string; title: string; caption: string; alt: string }[] = [];
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue;
+        const compressed = await compressImage(file);
+        const defaultName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+        newItems.push({
+          file,
+          dataUrl: compressed,
+          title: defaultName,
+          caption: '',
+          alt: defaultName,
+        });
+      }
+      setImageFiles((prev) => [...prev, ...newItems]);
+    } catch (err) {
+      console.error('Erreur compression image:', err);
+      notify('Erreur lors de la lecture des fichiers.');
     } finally {
-      setLoading(false);
+      setIsProcessingFiles(false);
+      e.target.value = '';
     }
-  }, []);
-
-  useEffect(() => { fetchItems(); }, [fetchItems]);
-
-  // File validation
-  const validateFile = (file: File): string | null => {
-    const isImage = file.type.startsWith('image/');
-    const isVideo = file.type.startsWith('video/');
-    if (!isImage && !isVideo) return `Type non supporte: ${file.type}`;
-    if (isImage && file.size > MAX_IMAGE_SIZE) return `Image trop grande (max 5 Mo, fichier: ${formatBytes(file.size)})`;
-    if (isVideo && file.size > MAX_VIDEO_SIZE) return `Video trop grande (max 100 Mo, fichier: ${formatBytes(file.size)})`;
-    return null;
   };
 
-  const addFiles = (files: FileList | File[]) => {
-    const arr = Array.from(files);
-    const newUploads: UploadFile[] = arr.map(file => {
-      const validErr = validateFile(file);
-      return {
-        file,
-        title: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
-        alt: '',
-        caption: '',
-        progress: 0,
-        status: validErr ? 'error' : 'pending',
-        error: validErr || undefined,
-      };
+  // Enregistrer les photos sélectionnées
+  const handleSaveImages = async () => {
+    if (imageFiles.length === 0 && !imageManualUrl.trim()) {
+      notify('Veuillez sélectionner au moins une image ou entrer une URL.');
+      return;
+    }
+
+    try {
+      // Images depuis fichiers locaux
+      for (const item of imageFiles) {
+        if (!item.dataUrl) continue;
+        await addGalleryItem({
+          title: item.title.trim() || 'Photo sans titre',
+          alt: item.alt.trim() || item.title.trim() || 'Photo galerie',
+          caption: item.caption.trim() || undefined,
+          type: 'image',
+          url: item.dataUrl,
+          date: new Date().toISOString(),
+          order: 0,
+          active: true,
+          sourceCategory: 'Galerie',
+        });
+      }
+
+      // Image manuelle par URL
+      if (imageManualUrl.trim()) {
+        const type = detectMediaType(imageManualUrl.trim());
+        await addGalleryItem({
+          title: imageManualTitle.trim() || 'Photo galerie',
+          alt: imageManualAlt.trim() || imageManualTitle.trim() || 'Photo galerie',
+          caption: imageManualCaption.trim() || undefined,
+          type,
+          url: imageManualUrl.trim(),
+          date: new Date().toISOString(),
+          order: 0,
+          active: true,
+          sourceCategory: 'Galerie',
+        });
+      }
+
+      notify(`${imageFiles.length + (imageManualUrl ? 1 : 0)} photo(s) ajoutée(s) à la galerie avec succès.`);
+      setImageFiles([]);
+      setImageManualUrl('');
+      setImageManualTitle('');
+      setImageManualCaption('');
+      setImageManualAlt('');
+      setIsAddingImage(false);
+    } catch (err) {
+      console.error('Erreur ajout galerie:', err);
+      notify('Une erreur est survenue lors de l\'enregistrement.');
+    }
+  };
+
+  // ── Gestion de l'ajout de vidéo ──
+  const handleSaveVideo = async () => {
+    if (!videoUrl.trim()) {
+      notify('Veuillez renseigner l\'URL de la vidéo ou le lien YouTube.');
+      return;
+    }
+
+    try {
+      const url = videoUrl.trim();
+      const ytId = extractYoutubeId(url);
+      const isYoutube = Boolean(ytId);
+      const type = isYoutube ? 'youtube' : 'video';
+
+      await addGalleryItem({
+        title: videoTitle.trim() || (isYoutube ? 'Vidéo YouTube' : 'Vidéo ACPDPH'),
+        alt: videoAlt.trim() || videoTitle.trim() || 'Vidéo ACPDPH',
+        caption: videoCaption.trim() || undefined,
+        type,
+        url,
+        youtubeId: ytId || undefined,
+        thumbnailUrl: ytId ? getYoutubeThumbnail(ytId) : undefined,
+        date: new Date().toISOString(),
+        order: 0,
+        active: true,
+        sourceCategory: 'Galerie',
+      });
+
+      notify('Vidéo ajoutée à la galerie avec succès.');
+      setVideoUrl('');
+      setVideoTitle('');
+      setVideoCaption('');
+      setVideoAlt('');
+      setIsAddingVideo(false);
+    } catch (err) {
+      console.error('Erreur ajout vidéo:', err);
+      notify('Erreur lors de l\'ajout de la vidéo.');
+    }
+  };
+
+  // ── Ouvrir édition ──
+  const openEdit = (item: GalleryItem) => {
+    setEditingItem(item);
+    setEditTitle(item.title);
+    setEditCaption(item.caption || '');
+    setEditAlt(item.alt || '');
+    setEditOrder(item.order || 0);
+    setEditActive(item.active !== false);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingItem) return;
+    updateGalleryItem(editingItem._id, {
+      title: editTitle.trim() || editingItem.title,
+      caption: editCaption.trim() || undefined,
+      alt: editAlt.trim() || editingItem.alt,
+      order: editOrder,
+      active: editActive,
     });
-    setUploadFiles(prev => [...prev, ...newUploads]);
+    setEditingItem(null);
+    notify('Élément mis à jour avec succès.');
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    addFiles(e.dataTransfer.files);
+  // ── Suppression ──
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
+    deleteGalleryItem(deleteTarget._id);
+    setDeleteTarget(null);
+    notify('Élément supprimé de la galerie.');
   };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) addFiles(e.target.files);
-  };
-
-  const updateUploadField = (idx: number, field: keyof UploadFile, value: string) => {
-    setUploadFiles(prev => prev.map((u, i) => i === idx ? { ...u, [field]: value } : u));
-  };
-
-  const removeUploadFile = (idx: number) => {
-    setUploadFiles(prev => prev.filter((_, i) => i !== idx));
-  };
-
-  const uploadSingle = async (idx: number) => {
-    const uf = uploadFiles[idx];
-    if (!uf.title || !uf.alt) {
-      setUploadFiles(prev => prev.map((u, i) => i === idx ? { ...u, error: 'Titre et alt requis', status: 'error' } : u));
-      return;
-    }
-    setUploadFiles(prev => prev.map((u, i) => i === idx ? { ...u, status: 'uploading', progress: 0 } : u));
-
-    const formData = new FormData();
-    formData.append('file', uf.file);
-    formData.append('title', uf.title);
-    formData.append('alt', uf.alt);
-    formData.append('caption', uf.caption);
-
-    try {
-      // Simulate progress (XHR would be more accurate but fetch is simpler)
-      const interval = setInterval(() => {
-        setUploadFiles(prev => prev.map((u, i) => i === idx && u.progress < 85 ? { ...u, progress: u.progress + 15 } : u));
-      }, 200);
-
-      const r = await fetch(`${API_BASE}/api/v1/gallery/upload`, {
-        method: 'POST',
-        headers: getAuthHeader(),
-        body: formData,
-      });
-      clearInterval(interval);
-      const d = await r.json();
-      if (d.success) {
-        setUploadFiles(prev => prev.map((u, i) => i === idx ? { ...u, status: 'done', progress: 100 } : u));
-        fetchItems();
-        notify('Fichier uploade avec succes');
-      } else {
-        setUploadFiles(prev => prev.map((u, i) => i === idx ? { ...u, status: 'error', error: d.error, progress: 0 } : u));
-      }
-    } catch {
-      setUploadFiles(prev => prev.map((u, i) => i === idx ? { ...u, status: 'error', error: 'Erreur reseau', progress: 0 } : u));
-    }
-  };
-
-  const uploadAll = async () => {
-    const pending = uploadFiles.map((u, i) => ({ u, i })).filter(x => x.u.status === 'pending');
-    for (const { i } of pending) await uploadSingle(i);
-  };
-
-  const addYoutube = async () => {
-    if (!youtubeUrl || !youtubeTitle || !youtubeAlt) {
-      notify('URL, titre et alt requis');
-      return;
-    }
-    try {
-      const r = await fetch(`${API_BASE}/api/v1/gallery/youtube`, {
-        method: 'POST',
-        headers: { ...getAuthHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ youtubeUrl, title: youtubeTitle, alt: youtubeAlt, caption: youtubeCaption }),
-      });
-      const d = await r.json();
-      if (d.success) {
-        setYoutubeUrl(''); setYoutubeTitle(''); setYoutubeAlt(''); setYoutubeCaption('');
-        fetchItems();
-        notify('Video YouTube ajoutee');
-      } else {
-        notify(d.error || 'Erreur');
-      }
-    } catch {
-      notify('Erreur reseau');
-    }
-  };
-
-  const handleDelete = async (item: GalleryItem) => {
-    try {
-      await fetch(`${API_BASE}/api/v1/gallery/${item._id}`, {
-        method: 'DELETE', headers: getAuthHeader(),
-      });
-      setItems(prev => prev.filter(i => i._id !== item._id));
-      setDeleteTarget(null);
-      notify('Element supprime');
-    } catch {
-      notify('Erreur lors de la suppression');
-    }
-  };
-
-  const handleEdit = async (data: { title: string; alt: string; caption: string; order: number; active: boolean }) => {
-    if (!editTarget) return;
-    try {
-      const r = await fetch(`${API_BASE}/api/v1/gallery/${editTarget._id}`, {
-        method: 'PUT',
-        headers: { ...getAuthHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const d = await r.json();
-      if (d.success) {
-        setItems(prev => prev.map(i => i._id === editTarget._id ? d.data : i));
-        setEditTarget(null);
-        notify('Element modifie');
-      }
-    } catch {
-      notify('Erreur lors de la modification');
-    }
-  };
-
-  const thumb = (item: GalleryItem) => {
-    if (item.type === 'youtube') return item.thumbnailUrl || `https://img.youtube.com/vi/${item.youtubeId}/default.jpg`;
-    if (item.url.startsWith('/')) return `${API_BASE}${item.url}`;
-    return item.url;
-  };
-
-  const pendingCount = uploadFiles.filter(u => u.status === 'pending').length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-[var(--color-primary)] text-white px-6 py-5 shadow-sm">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="font-heading font-black text-xl uppercase tracking-wider">Gestion de la Galerie</h1>
-            <p className="text-white/70 text-sm mt-0.5">{items.length} element{items.length !== 1 ? 's' : ''} au total</p>
-          </div>
-          <a href="/galerie" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-white/15 hover:bg-white/25 rounded-lg text-sm font-semibold transition-colors">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+    <div>
+      {/* Toast Notification */}
+      {notification && (
+        <div style={{ position: 'fixed', top: '1.5rem', right: '1.5rem', zIndex: 100, background: '#1D4ED8', color: '#FFFFFF', padding: '0.75rem 1.25rem', borderRadius: '0.625rem', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.5)', fontSize: '0.875rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+          {notification}
+        </div>
+      )}
+
+      {/* Header & Boutons d'action */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div>
+          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: '1.25rem', fontWeight: 700, color: '#FFFFFF', margin: 0 }}>
+            Gestion de la Galerie & Médias
+          </h2>
+          <p style={{ color: '#E5E7EB', fontSize: '0.85rem', marginTop: '0.25rem' }}>
+            Ajoutez des images/vidéos manuellement ou visualisez les médias automatiquement synchronisés depuis les Projets, Domaines d'intervention et Actualités.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button className="admin-btn admin-btn-blue" onClick={() => setIsAddingImage(true)}>
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18" />
             </svg>
-            Voir la galerie
-          </a>
+            Ajouter des photos
+          </button>
+          <button className="admin-btn admin-btn-ghost" onClick={() => setIsAddingVideo(true)}>
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            Ajouter une vidéo
+          </button>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        {/* Notification */}
-        {notification && (
-          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm font-semibold">
-            {notification}
+      {/* Cartes statistiques */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div className="admin-stat-card" style={{ cursor: 'default' }}>
+          <div className="admin-stat-icon" style={{ background: 'rgba(59, 130, 246, 0.15)' }}>
+            <svg width="22" height="22" fill="none" stroke="#60A5FA" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18" />
+            </svg>
           </div>
-        )}
-
-        {/* ── Upload section ── */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-heading font-bold text-gray-900 text-base uppercase tracking-wider mb-5">
-            Ajouter des medias
-          </h2>
-
-          {/* Tabs */}
-          <div className="flex gap-2 mb-6">
-            {(['upload', 'youtube'] as const).map(t => (
-              <button key={t} onClick={() => setTab(t)}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${tab === t ? 'bg-[var(--color-primary)] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-                {t === 'upload' ? 'Photos / Videos' : 'Lien YouTube'}
-              </button>
-            ))}
+          <div>
+            <div className="admin-stat-value" style={{ color: '#60A5FA' }}>{allAggregatedItems.length}</div>
+            <div className="admin-stat-label">Total médias publics</div>
           </div>
+        </div>
 
-          {tab === 'upload' ? (
-            <div className="space-y-4">
-              {/* Drop zone */}
-              <div
-                onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${isDragging ? 'border-[var(--color-primary)] bg-blue-50' : 'border-gray-300 hover:border-[var(--color-primary)] hover:bg-blue-50/30'}`}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
-                  className={`w-12 h-12 mx-auto mb-3 ${isDragging ? 'text-[var(--color-primary)]' : 'text-gray-400'}`}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p className="font-semibold text-gray-700">Glissez-deposez vos fichiers ici</p>
-                <p className="text-sm text-gray-400 mt-1">ou cliquez pour selectionner</p>
-                <p className="text-xs text-gray-400 mt-2">JPG, PNG, WEBP (max 5 Mo) — MP4 (max 100 Mo)</p>
-                <input ref={fileInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
-                  className="hidden" onChange={handleFileInput} />
-              </div>
-
-              {/* File list */}
-              {uploadFiles.length > 0 && (
-                <div className="space-y-3">
-                  {uploadFiles.map((uf, idx) => (
-                    <div key={idx} className={`border rounded-lg p-4 ${uf.status === 'error' ? 'border-red-200 bg-red-50' : uf.status === 'done' ? 'border-green-200 bg-green-50' : 'border-gray-200'}`}>
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
-                          {uf.file.type.startsWith('image/') ? (
-                            <img src={URL.createObjectURL(uf.file)} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 text-gray-400">
-                              <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                            </svg>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0 space-y-2">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs text-gray-500 truncate">{uf.file.name} ({formatBytes(uf.file.size)})</span>
-                            {uf.status === 'done' ? (
-                              <span className="text-xs font-semibold text-green-700 shrink-0">Termine</span>
-                            ) : uf.status === 'error' ? (
-                              <span className="text-xs font-semibold text-red-600 shrink-0">Erreur</span>
-                            ) : null}
-                            <button onClick={() => removeUploadFile(idx)} aria-label="Supprimer" className="text-gray-400 hover:text-red-500 shrink-0">
-                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                              </svg>
-                            </button>
-                          </div>
-                          {uf.status === 'error' && uf.error && (
-                            <p className="text-xs text-red-600">{uf.error}</p>
-                          )}
-                          {uf.status !== 'error' && uf.status !== 'done' && (
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                              <input placeholder="Titre *" value={uf.title}
-                                onChange={e => updateUploadField(idx, 'title', e.target.value)}
-                                className="border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]" />
-                              <input placeholder="Texte alt *" value={uf.alt}
-                                onChange={e => updateUploadField(idx, 'alt', e.target.value)}
-                                className="border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]" />
-                              <input placeholder="Legende (optionnel)" value={uf.caption}
-                                onChange={e => updateUploadField(idx, 'caption', e.target.value)}
-                                className="border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]" />
-                            </div>
-                          )}
-                          {/* Progress bar */}
-                          {uf.status === 'uploading' && (
-                            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                              <div className="h-full bg-[var(--color-primary)] rounded-full transition-all duration-200" style={{ width: `${uf.progress}%` }} />
-                            </div>
-                          )}
-                        </div>
-                        {uf.status === 'pending' && (
-                          <button onClick={() => uploadSingle(idx)}
-                            className="shrink-0 px-3 py-1.5 bg-[var(--color-primary)] text-white text-xs font-semibold rounded hover:opacity-90 transition-opacity">
-                            Uploader
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-
-                  {pendingCount > 1 && (
-                    <button onClick={uploadAll}
-                      className="w-full py-2.5 bg-[var(--color-primary)] text-white text-sm font-bold uppercase tracking-wider rounded-lg hover:opacity-90 transition-opacity">
-                      Uploader tous ({pendingCount} fichiers)
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          ) : (
-            /* YouTube form */
-            <div className="space-y-4 max-w-lg">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">URL YouTube <span className="text-red-500">*</span></label>
-                <input value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)}
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Titre <span className="text-red-500">*</span></label>
-                <input value={youtubeTitle} onChange={e => setYoutubeTitle(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Texte alt <span className="text-red-500">*</span></label>
-                <input value={youtubeAlt} onChange={e => setYoutubeAlt(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Legende</label>
-                <input value={youtubeCaption} onChange={e => setYoutubeCaption(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]" />
-              </div>
-              <button onClick={addYoutube}
-                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors">
-                Ajouter la video YouTube
-              </button>
-            </div>
-          )}
-        </section>
-
-        {/* ── Media table ── */}
-        <section className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="font-heading font-bold text-gray-900 text-base uppercase tracking-wider">
-              Medias ({items.length})
-            </h2>
-            <button onClick={fetchItems} aria-label="Rafraichir"
-              className="p-2 text-gray-400 hover:text-[var(--color-primary)] transition-colors">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-                <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
-                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
-              </svg>
-            </button>
+        <div className="admin-stat-card" style={{ cursor: 'pointer' }} onClick={() => setActiveTab('manual')}>
+          <div className="admin-stat-icon" style={{ background: 'rgba(194, 83, 10, 0.15)' }}>
+            <svg width="22" height="22" fill="none" stroke="#FB923C" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
           </div>
+          <div>
+            <div className="admin-stat-value" style={{ color: '#FB923C' }}>{gallery.length}</div>
+            <div className="admin-stat-label">Ajoutés manuellement</div>
+          </div>
+        </div>
 
-          {loading ? (
-            <div className="flex justify-center py-16">
-              <div className="w-8 h-8 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : items.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
-              <p className="font-semibold">Aucun media pour l&rsquo;instant</p>
-              <p className="text-sm mt-1">Ajoutez des photos ou videos ci-dessus</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    <th className="px-4 py-3 w-16">Apercu</th>
-                    <th className="px-4 py-3">Titre / Alt</th>
-                    <th className="px-4 py-3 hidden md:table-cell">Type</th>
-                    <th className="px-4 py-3 hidden lg:table-cell">Date</th>
-                    <th className="px-4 py-3 hidden lg:table-cell">Ordre</th>
-                    <th className="px-4 py-3 hidden md:table-cell">Visible</th>
-                    <th className="px-4 py-3 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {items.map(item => (
-                    <tr key={item._id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3">
-                        <div className="w-12 h-12 rounded overflow-hidden bg-gray-100 shrink-0">
-                          <img src={thumb(item)} alt={item.alt}
-                            className="w-full h-full object-cover" loading="lazy" />
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 max-w-xs">
-                        <p className="font-semibold text-gray-900 truncate">{item.title}</p>
-                        <p className="text-gray-400 text-xs truncate mt-0.5">{item.alt}</p>
-                        {item.caption && <p className="text-gray-400 text-xs truncate italic">{item.caption}</p>}
-                      </td>
-                      <td className="px-4 py-3 hidden md:table-cell">
-                        <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold uppercase ${
-                          item.type === 'image' ? 'bg-blue-100 text-blue-700' :
-                          item.type === 'youtube' ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700'
-                        }`}>
-                          {item.type === 'image' ? 'Photo' : item.type === 'youtube' ? 'YouTube' : 'Video'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 hidden lg:table-cell text-gray-500 text-xs">{formatDate(item.date)}</td>
-                      <td className="px-4 py-3 hidden lg:table-cell text-gray-500 text-center">{item.order}</td>
-                      <td className="px-4 py-3 hidden md:table-cell">
-                        <span className={`inline-block w-2.5 h-2.5 rounded-full ${item.active ? 'bg-green-500' : 'bg-gray-300'}`} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-2">
-                          <button onClick={() => setEditTarget(item)} aria-label="Modifier"
-                            className="p-1.5 text-gray-400 hover:text-[var(--color-primary)] transition-colors">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                          </button>
-                          <button onClick={() => setDeleteTarget(item)} aria-label="Supprimer"
-                            className="p-1.5 text-gray-400 hover:text-red-600 transition-colors">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
-                            </svg>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
+        <div className="admin-stat-card" style={{ cursor: 'pointer' }} onClick={() => setActiveTab('sync')}>
+          <div className="admin-stat-icon" style={{ background: 'rgba(34, 197, 94, 0.15)' }}>
+            <svg width="22" height="22" fill="none" stroke="#4ADE80" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+          </div>
+          <div>
+            <div className="admin-stat-value" style={{ color: '#4ADE80' }}>{autoSyncedItems.length}</div>
+            <div className="admin-stat-label">Synchronisés (Projets, Actualités, Piliers)</div>
+          </div>
+        </div>
       </div>
 
-      {/* Modals */}
-      {deleteTarget && (
-        <DeleteModal item={deleteTarget} onConfirm={() => handleDelete(deleteTarget)} onCancel={() => setDeleteTarget(null)} />
+      {/* Onglets de navigation interne */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.75rem' }}>
+        <button
+          className={`admin-btn ${activeTab === 'manual' ? 'admin-btn-blue' : 'admin-btn-ghost'}`}
+          onClick={() => setActiveTab('manual')}
+        >
+          Médias Galerie ({gallery.length})
+        </button>
+        <button
+          className={`admin-btn ${activeTab === 'sync' ? 'admin-btn-blue' : 'admin-btn-ghost'}`}
+          onClick={() => setActiveTab('sync')}
+        >
+          Médias Synchronisés Auto ({autoSyncedItems.length})
+        </button>
+        <button
+          className={`admin-btn ${activeTab === 'all' ? 'admin-btn-blue' : 'admin-btn-ghost'}`}
+          onClick={() => setActiveTab('all')}
+        >
+          Vue Complète Galerie Publique ({allAggregatedItems.length})
+        </button>
+      </div>
+
+      {/* ── ONGLET 1 : Médias Galerie ajoutés manuellement ── */}
+      {activeTab === 'manual' && (
+        <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '80px' }}>Aperçu</th>
+                  <th>Titre & Légende</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {gallery.map((item) => (
+                  <tr key={item._id}>
+                    <td>
+                      <div style={{ width: '56px', height: '42px', borderRadius: '6px', overflow: 'hidden', background: '#111827', position: 'relative', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <img
+                          src={item.thumbnailUrl || item.url}
+                          alt={item.alt}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                        {item.type !== 'image' && (
+                          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <div>
+                        <div style={{ fontWeight: 600, color: '#FFFFFF' }}>{item.title}</div>
+                        {item.caption && (
+                          <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: '2px', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {item.caption}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 600, padding: '2px 8px', borderRadius: '4px', background: item.type === 'youtube' ? 'rgba(239, 68, 68, 0.2)' : item.type === 'video' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.1)', color: item.type === 'youtube' ? '#EF4444' : item.type === 'video' ? '#60A5FA' : '#E5E7EB' }}>
+                        {item.type === 'youtube' ? 'YouTube' : item.type === 'video' ? 'Vidéo' : 'Photo'}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: '0.8rem', color: '#E5E7EB' }}>{formatDate(item.date)}</td>
+                    <td>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: item.active !== false ? '#4ADE80' : '#9CA3AF' }}>
+                        {item.active !== false ? 'Visible' : 'Masqué'}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                        <button
+                          onClick={() => openEdit(item)}
+                          style={{ background: 'none', border: 'none', color: '#60A5FA', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() => setDeleteTarget(item)}
+                          style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '0.25rem' }}
+                        >
+                          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {gallery.length === 0 && (
+            <div className="admin-empty" style={{ padding: '2.5rem 1rem', textAlign: 'center' }}>
+              <p style={{ color: '#E5E7EB', marginBottom: '1rem' }}>
+                Aucun média n'a encore été ajouté directement à la galerie.
+              </p>
+              <button className="admin-btn admin-btn-blue" onClick={() => setIsAddingImage(true)}>
+                Ajouter une photo maintenant
+              </button>
+            </div>
+          )}
+        </div>
       )}
-      {editTarget && (
-        <EditModal item={editTarget} onSave={handleEdit} onCancel={() => setEditTarget(null)} />
+
+      {/* ── ONGLET 2 : Médias synchronisés automatiquement ── */}
+      {activeTab === 'sync' && (
+        <div className="admin-card">
+          <div style={{ background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', borderRadius: '0.75rem', padding: '1rem', marginBottom: '1.25rem', color: '#4ADE80', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} style={{ flexShrink: 0 }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <strong>Synchronisation automatique active :</strong> Les {autoSyncedItems.length} photos publiées dans vos Projets, Domaines d'intervention et Actualités sont automatiquement récupérées et présentées dans la galerie publique.
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+            {autoSyncedItems.map((item) => (
+              <div
+                key={item._id}
+                style={{ background: '#111827', borderRadius: '0.625rem', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column' }}
+              >
+                <div style={{ position: 'relative', height: '120px', background: '#000' }}>
+                  <img src={item.url} alt={item.alt} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <span style={{ position: 'absolute', top: 6, left: 6, background: item.sourceCategory === 'Projets' ? '#10B981' : item.sourceCategory === 'Actualités' ? '#3B82F6' : '#8B5CF6', color: '#FFFFFF', fontSize: '0.65rem', fontWeight: 700, padding: '2px 6px', borderRadius: '4px' }}>
+                    {item.sourceCategory}
+                  </span>
+                </div>
+                <div style={{ padding: '0.75rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ fontWeight: 600, color: '#FFFFFF', fontSize: '0.825rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {item.title}
+                  </div>
+                  {item.caption && (
+                    <div style={{ fontSize: '0.7rem', color: '#9CA3AF', marginTop: '4px', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {item.caption}
+                    </div>
+                  )}
+                  {item.sourceLink && (
+                    <a
+                      href={item.sourceLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ marginTop: 'auto', paddingTop: '0.5rem', fontSize: '0.75rem', color: '#60A5FA', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                    >
+                      Voir la source
+                      <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── ONGLET 3 : Vue Complète Galerie Publique ── */}
+      {activeTab === 'all' && (
+        <div className="admin-card">
+          <p style={{ color: '#E5E7EB', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+            Voici la liste complète des {allAggregatedItems.length} médias visibles sur la page publique <code>/galeries</code>.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
+            {allAggregatedItems.map((item) => (
+              <div
+                key={item._id}
+                style={{ background: '#111827', borderRadius: '0.625rem', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <div style={{ position: 'relative', height: '130px', background: '#000' }}>
+                  <img src={item.thumbnailUrl || item.url} alt={item.alt} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <span style={{ position: 'absolute', top: 6, left: 6, background: item.sourceCategory === 'Projets' ? '#10B981' : item.sourceCategory === 'Actualités' ? '#3B82F6' : item.sourceCategory === 'Domaines d\'intervention' ? '#8B5CF6' : '#C2530A', color: '#FFFFFF', fontSize: '0.65rem', fontWeight: 700, padding: '2px 6px', borderRadius: '4px' }}>
+                    {item.sourceCategory}
+                  </span>
+                  {item.type !== 'image' && (
+                    <span style={{ position: 'absolute', bottom: 6, right: 6, background: 'rgba(0,0,0,0.7)', color: '#FFF', fontSize: '0.65rem', fontWeight: 700, padding: '2px 6px', borderRadius: '4px' }}>
+                      {item.type === 'youtube' ? 'YouTube' : 'Vidéo'}
+                    </span>
+                  )}
+                </div>
+                <div style={{ padding: '0.75rem' }}>
+                  <div style={{ fontWeight: 600, color: '#FFFFFF', fontSize: '0.825rem', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {item.title}
+                  </div>
+                  {item.caption && (
+                    <div style={{ fontSize: '0.7rem', color: '#9CA3AF', marginTop: '2px', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {item.caption}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── MODALE AJOUT PHOTO(S) DEPUIS LE STOCKAGE DE L'APPAREIL ── */}
+      {isAddingImage && (
+        <div className="admin-modal-overlay" onClick={() => setIsAddingImage(false)}>
+          <div className="admin-modal" style={{ maxWidth: '680px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <h2 className="admin-modal-title">Ajouter des photos à la galerie</h2>
+              <button className="admin-modal-close" onClick={() => setIsAddingImage(false)}>
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="admin-modal-body">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {/* Zone de sélection de fichier depuis le stockage */}
+                <label
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '1.75rem',
+                    border: '2px dashed #4B5563',
+                    borderRadius: '0.75rem',
+                    background: '#1F2937',
+                    cursor: isProcessingFiles ? 'not-allowed' : 'pointer',
+                    textAlign: 'center',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <svg width="36" height="36" fill="none" stroke="#3B82F6" viewBox="0 0 24 24" strokeWidth={1.5} style={{ marginBottom: '0.5rem' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                  <span style={{ fontWeight: 600, color: '#FFFFFF', fontSize: '0.95rem' }}>
+                    {isProcessingFiles ? 'Optimisation des images en cours...' : 'Sélectionner des images depuis votre appareil'}
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: '4px' }}>
+                    Cliquez pour choisir un ou plusieurs fichiers (JPG, PNG, WEBP). Les photos sont compressées automatiquement.
+                  </span>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageFileChange}
+                    disabled={isProcessingFiles}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+
+                {/* Liste des images sélectionnées avec titre/légende */}
+                {imageFiles.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '280px', overflowY: 'auto' }}>
+                    {imageFiles.map((item, idx) => (
+                      <div
+                        key={idx}
+                        style={{ display: 'flex', gap: '0.75rem', background: '#111827', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.1)', alignItems: 'center' }}
+                      >
+                        <img src={item.dataUrl} alt={item.title} style={{ width: '56px', height: '42px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0 }} />
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                          <input
+                            type="text"
+                            className="admin-input"
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                            value={item.title}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setImageFiles((prev) => prev.map((it, i) => (i === idx ? { ...it, title: val, alt: val } : it)));
+                            }}
+                            placeholder="Titre de la photo..."
+                          />
+                          <input
+                            type="text"
+                            className="admin-input"
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', color: '#9CA3AF' }}
+                            value={item.caption}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setImageFiles((prev) => prev.map((it, i) => (i === idx ? { ...it, caption: val } : it)));
+                            }}
+                            placeholder="Légende (optionnelle)..."
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          className="admin-btn admin-btn-danger admin-btn-sm"
+                          onClick={() => setImageFiles((prev) => prev.filter((_, i) => i !== idx))}
+                          style={{ padding: '0.25rem 0.5rem' }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Option URL manuelle */}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#E5E7EB', marginBottom: '0.5rem' }}>
+                    Ou ajouter une image via une URL web
+                  </div>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    value={imageManualUrl}
+                    onChange={(e) => setImageManualUrl(e.target.value)}
+                    placeholder="https://exemple.org/photo.jpg ou /images/photo.jpg"
+                    style={{ marginBottom: '0.5rem' }}
+                  />
+                  {imageManualUrl && (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        value={imageManualTitle}
+                        onChange={(e) => setImageManualTitle(e.target.value)}
+                        placeholder="Titre de l'image..."
+                      />
+                      <input
+                        type="text"
+                        className="admin-input"
+                        value={imageManualCaption}
+                        onChange={(e) => setImageManualCaption(e.target.value)}
+                        placeholder="Légende..."
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-modal-footer">
+              <button className="admin-btn admin-btn-ghost" onClick={() => setIsAddingImage(false)}>
+                Annuler
+              </button>
+              <button
+                className="admin-btn admin-btn-blue"
+                onClick={handleSaveImages}
+                disabled={imageFiles.length === 0 && !imageManualUrl.trim()}
+              >
+                Enregistrer {imageFiles.length > 0 ? `(${imageFiles.length})` : ''}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODALE AJOUT VIDÉO / YOUTUBE ── */}
+      {isAddingVideo && (
+        <div className="admin-modal-overlay" onClick={() => setIsAddingVideo(false)}>
+          <div className="admin-modal" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <h2 className="admin-modal-title">Ajouter une vidéo à la galerie</h2>
+              <button className="admin-modal-close" onClick={() => setIsAddingVideo(false)}>
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="admin-modal-body">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {/* Type de vidéo */}
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    type="button"
+                    className={`admin-btn ${videoMode === 'youtube' ? 'admin-btn-blue' : 'admin-btn-ghost'}`}
+                    onClick={() => setVideoMode('youtube')}
+                  >
+                    Lien YouTube
+                  </button>
+                  <button
+                    type="button"
+                    className={`admin-btn ${videoMode === 'url' ? 'admin-btn-blue' : 'admin-btn-ghost'}`}
+                    onClick={() => setVideoMode('url')}
+                  >
+                    URL Vidéo (MP4/WebM)
+                  </button>
+                </div>
+
+                <div>
+                  <label className="admin-label">
+                    {videoMode === 'youtube' ? 'URL de la vidéo YouTube *' : 'URL directe du fichier vidéo *'}
+                  </label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
+                    placeholder={videoMode === 'youtube' ? 'https://www.youtube.com/watch?v=... ou https://youtu.be/...' : 'https://domaine.org/video.mp4'}
+                  />
+                  {videoMode === 'youtube' && videoUrl && extractYoutubeId(videoUrl) && (
+                    <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <img src={getYoutubeThumbnail(extractYoutubeId(videoUrl)!)} alt="Miniature YouTube" style={{ width: '80px', height: '45px', objectFit: 'cover', borderRadius: '4px' }} />
+                      <span style={{ fontSize: '0.75rem', color: '#4ADE80' }}>Vidéo YouTube détectée</span>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="admin-label">Titre de la vidéo *</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    value={videoTitle}
+                    onChange={(e) => setVideoTitle(e.target.value)}
+                    placeholder="Ex: Témoignage d'un bénéficiaire à Beni"
+                  />
+                </div>
+
+                <div>
+                  <label className="admin-label">Légende / Description</label>
+                  <textarea
+                    className="admin-textarea"
+                    rows={3}
+                    value={videoCaption}
+                    onChange={(e) => setVideoCaption(e.target.value)}
+                    placeholder="Brève description de la vidéo..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-modal-footer">
+              <button className="admin-btn admin-btn-ghost" onClick={() => setIsAddingVideo(false)}>
+                Annuler
+              </button>
+              <button
+                className="admin-btn admin-btn-blue"
+                onClick={handleSaveVideo}
+                disabled={!videoUrl.trim() || !videoTitle.trim()}
+              >
+                Ajouter la vidéo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODALE MODIFICATION ÉLÉMENT ── */}
+      {editingItem && (
+        <div className="admin-modal-overlay" onClick={() => setEditingItem(null)}>
+          <div className="admin-modal" style={{ maxWidth: '580px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <h2 className="admin-modal-title">Modifier l'élément de la galerie</h2>
+              <button className="admin-modal-close" onClick={() => setEditingItem(null)}>
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="admin-modal-body">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <img
+                    src={editingItem.thumbnailUrl || editingItem.url}
+                    alt={editingItem.alt}
+                    style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.15)' }}
+                  />
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: '#9CA3AF' }}>Type : {editingItem.type}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#9CA3AF' }}>Date : {formatDate(editingItem.date)}</div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="admin-label">Titre *</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="admin-label">Légende</label>
+                  <textarea
+                    className="admin-textarea"
+                    rows={3}
+                    value={editCaption}
+                    onChange={(e) => setEditCaption(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="admin-label">Texte alternatif (accessibilité)</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    value={editAlt}
+                    onChange={(e) => setEditAlt(e.target.value)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                  <div>
+                    <label className="admin-label">Ordre d'affichage</label>
+                    <input
+                      type="number"
+                      className="admin-input"
+                      style={{ width: '100px' }}
+                      value={editOrder}
+                      onChange={(e) => setEditOrder(parseInt(e.target.value, 10) || 0)}
+                    />
+                  </div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginTop: '1.25rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={editActive}
+                      onChange={(e) => setEditActive(e.target.checked)}
+                      style={{ width: '18px', height: '18px' }}
+                    />
+                    <span style={{ fontSize: '0.875rem', color: '#FFFFFF', fontWeight: 600 }}>Visible dans la galerie publique</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-modal-footer">
+              <button className="admin-btn admin-btn-ghost" onClick={() => setEditingItem(null)}>
+                Annuler
+              </button>
+              <button className="admin-btn admin-btn-blue" onClick={handleSaveEdit}>
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODALE SUPPRESSION ── */}
+      {deleteTarget && (
+        <div className="admin-confirm-overlay" onClick={() => setDeleteTarget(null)}>
+          <div className="admin-confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <div style={{ width: 56, height: 56, borderRadius: '1rem', background: 'rgba(239,68,68,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+              <svg width="28" height="28" fill="none" stroke="#EF4444" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+            </div>
+            <h3 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '1.125rem', color: '#F1F5F9', marginBottom: '0.5rem' }}>
+              Supprimer cet élément ?
+            </h3>
+            <p style={{ color: '#E5E7EB', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+              "{deleteTarget.title}" sera retiré de la galerie. Cette action est irréversible.
+            </p>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+              <button className="admin-btn admin-btn-ghost" onClick={() => setDeleteTarget(null)}>
+                Annuler
+              </button>
+              <button className="admin-btn admin-btn-danger" onClick={handleConfirmDelete}>
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

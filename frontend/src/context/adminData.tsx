@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, ContactInfo, AdminUser, Subscriber, NewsletterLog } from '../types';
+import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem } from '../types';
 import { apiFetch } from '../services/api';
 import { OFFICE_ADDRESS } from '../constants/contact';
 
@@ -200,6 +200,7 @@ const DEFAULT_DATA: AdminData = {
     whatsapp: '+243 852 799 553',
   },
   users: [],
+  gallery: [],
 };
 
 /* ===== Context Type ===== */
@@ -241,6 +242,11 @@ interface AdminDataContextType {
   removeSubscriber: (email: string) => void;
   broadcastNewsletter: (params: { subject: string; content: string; type: 'PROJECT' | 'NEWS' | 'DIRECT' }) => void;
   notifySubscribersNewContent: (params: { title: string; excerpt: string; type: 'PROJECT' | 'NEWS'; id: string }) => void;
+  // Gallery
+  gallery: GalleryItem[];
+  addGalleryItem: (item: Omit<GalleryItem, '_id'>) => Promise<GalleryItem>;
+  updateGalleryItem: (id: string, updates: Partial<GalleryItem>) => void;
+  deleteGalleryItem: (id: string) => void;
   // Auth
   isAuthenticated: boolean;
   currentUser: AdminUser | null;
@@ -596,6 +602,81 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     persist({ ...data, projects: data.projects.filter(p => p.id !== id) });
   }, [data, persist]);
 
+  // ── Gallery CRUD ──
+  const [gallery, setGallery] = useState<GalleryItem[]>(() => {
+    try {
+      const stored = localStorage.getItem('ACPDPH_GALLERY_ITEMS');
+      if (stored) return JSON.parse(stored);
+    } catch {
+      // ignore
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    apiFetch('/gallery/all')
+      .then(res => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setGallery(prev => {
+            const map = new Map<string, GalleryItem>();
+            res.data.forEach((item: GalleryItem) => map.set(item._id || item.url, item));
+            prev.forEach(item => {
+              if (!map.has(item._id) && !map.has(item.url)) {
+                map.set(item._id, item);
+              }
+            });
+            const merged = Array.from(map.values());
+            try {
+              localStorage.setItem('ACPDPH_GALLERY_ITEMS', JSON.stringify(merged));
+            } catch {}
+            return merged;
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const persistGallery = useCallback((updated: GalleryItem[]) => {
+    setGallery(updated);
+    try {
+      localStorage.setItem('ACPDPH_GALLERY_ITEMS', JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('gallery-updated', { detail: updated }));
+    } catch (e) {
+      console.warn('Could not save gallery to localStorage', e);
+    }
+  }, []);
+
+  const addGalleryItem = useCallback(async (item: Omit<GalleryItem, '_id'>): Promise<GalleryItem> => {
+    const newItem: GalleryItem = {
+      ...item,
+      _id: 'gal-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      date: item.date || new Date().toISOString(),
+      order: item.order ?? 0,
+      active: item.active ?? true,
+    };
+    persistGallery([newItem, ...gallery]);
+    return newItem;
+  }, [gallery, persistGallery]);
+
+  const updateGalleryItem = useCallback((id: string, updates: Partial<GalleryItem>) => {
+    const updated = gallery.map(item => item._id === id ? { ...item, ...updates } : item);
+    persistGallery(updated);
+    if (!id.startsWith('gal-') && !id.startsWith('proj-') && !id.startsWith('news-') && !id.startsWith('pillar-')) {
+      apiFetch('/gallery/' + id, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+      }).catch(() => {});
+    }
+  }, [gallery, persistGallery]);
+
+  const deleteGalleryItem = useCallback((id: string) => {
+    const updated = gallery.filter(item => item._id !== id);
+    persistGallery(updated);
+    if (!id.startsWith('gal-') && !id.startsWith('proj-') && !id.startsWith('news-') && !id.startsWith('pillar-')) {
+      apiFetch('/gallery/' + id, { method: 'DELETE' }).catch(() => {});
+    }
+  }, [gallery, persistGallery]);
+
   // ── Contact ──────────────────────────────────────────────────────────────
   const updateContact = useCallback((info: Partial<ContactInfo>) => {
     persist({ ...data, contact: { ...data.contact, ...info } });
@@ -618,7 +699,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
         updateContact,
         addUser, deleteUser, updateUser,
         subscribers, newsletterLogs, addSubscriber, removeSubscriber, broadcastNewsletter, notifySubscribersNewContent,
-        isAuthenticated, currentUser, login, logout,
+        gallery, addGalleryItem, updateGalleryItem, deleteGalleryItem, isAuthenticated, currentUser, login, logout,
       }}
     >
       {children}

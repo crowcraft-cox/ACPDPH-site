@@ -1,5 +1,23 @@
 /* ===== ACPDPH — Shared Types ===== */
 
+export interface GalleryItem {
+  _id: string;
+  title: string;
+  alt: string;
+  caption?: string;
+  type: 'image' | 'video' | 'youtube';
+  url: string;
+  thumbnailUrl?: string;
+  youtubeId?: string;
+  date: string;
+  order: number;
+  active?: boolean;
+  sourceCategory?: string;
+  sourceLink?: string;
+  fileSize?: number;
+  mimeType?: string;
+}
+
 export interface ImpactCounter {
   id: string;
   value: number;
@@ -111,5 +129,5 @@ export interface AdminData {
   users?: AdminUser[];
   subscribers?: Subscriber[];
   newsletterLogs?: NewsletterLog[];
+  gallery?: GalleryItem[];
 }
-

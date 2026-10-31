@@ -9,9 +9,10 @@ import ContactManager from './ContactManager';
 import SettingsManager from './SettingsManager';
 import NewsletterManager from './NewsletterManager';
 import MessagesManager from './MessagesManager';
+import GalleryManager from './GalleryManager';
 import '../../admin.css';
 
-type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'contact' | 'newsletter' | 'messages' | 'settings';
+type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
 
 export default function AdminDashboard() {
   const { data, isAuthenticated, logout, currentUser, isSyncing, syncError, dbConnected, dbError, isLoading, retryConnection } = useAdminData();
@@ -79,6 +80,15 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'gallery',
+      label: 'Galerie & Médias',
+      icon: (
+        <svg className="admin-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18" />
+        </svg>
+      ),
+    },
+    {
       id: 'newsletter',
       label: 'Newsletter & Abonnés',
       icon: (
@@ -128,6 +138,7 @@ export default function AdminDashboard() {
     pillars: 'Piliers d\'Intervention',
     news: 'Dernières Actualités',
     projects: 'Nos Projets',
+    gallery: 'Galerie & Médias',
     contact: 'Coordonnées',
     newsletter: 'Newsletter & Abonnés',
     messages: 'Messages Reçus',
@@ -362,6 +373,12 @@ export default function AdminDashboard() {
                     </svg>
                     Nouvelle actualité
                   </button>
+                  <button className="admin-btn admin-btn-blue" onClick={() => setActiveSection('gallery')}>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5" />
+                    </svg>
+                    Ajouter à la galerie
+                  </button>
                   <button className="admin-btn admin-btn-green" onClick={() => setActiveSection('projects')}>
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -418,6 +435,7 @@ export default function AdminDashboard() {
           {activeSection === 'pillars' && !isEditor && <PillarsManager />}
           {activeSection === 'news' && <NewsManager />}
           {activeSection === 'projects' && <ProjectsManager />}
+          {activeSection === 'gallery' && <GalleryManager />}
           {activeSection === 'contact' && !isEditor && <ContactManager />}
           {activeSection === 'newsletter' && <NewsletterManager />}
           {activeSection === 'messages' && <MessagesManager />}
