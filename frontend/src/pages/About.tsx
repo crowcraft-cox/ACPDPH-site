@@ -1,4 +1,3 @@
-
 import { useI18n } from '../i18n';
 import { useScrollReveal, useAnimeReveal } from '../hooks/useScrollReveal';
 import { OFFICE_ADDRESS } from '../constants/contact';
@@ -21,7 +20,7 @@ export default function About() {
         ref={headerRef}
         className="container-ba text-center mb-12 sm:mb-16"
       >
-        <h1 className="font-heading text-4xl md:text-5xl font-bold" style={{ color: '#111827' }}>
+        <h1 className="font-heading text-4xl md:text-5xl font-bold uppercase text-ba-blue dark:text-blue-400">
           {t.about.title}
         </h1>
       </div>
@@ -182,10 +181,11 @@ export default function About() {
               </div>
             </div>
 
-            {/* Logo Card */}
+            {/* Logo Card & Photo Équipe */}
             <div className="relative lg:sticky lg:top-28">
               <div
-                className="relative rounded-2xl overflow-hidden aspect-square flex items-center justify-center card p-8 shadow-sm"
+                className="relative rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-8 bg-slate-50 border-none shadow-none"
+                style={{ border: 'none', boxShadow: 'none' }}
               >
                 <img
                   src="/logo_ACPDPH.jpg"
@@ -193,6 +193,16 @@ export default function About() {
                   className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
                 />
               </div>
+
+              <img
+                src="/images/a-propos-equipe.jpg"
+                alt="Équipe de l'ACPDPH à l'issue d'un atelier de formation à l'entrepreneuriat pour femmes et filles handicapées déplacées internes"
+                loading="lazy"
+                decoding="async"
+                width={1200}
+                height={800}
+                className="w-full h-auto block mt-5 rounded-md"
+              />
             </div>
           </div>
         </div>
