@@ -1,6 +1,46 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAdminData } from '../../context/adminData';
 import type { Pillar } from '../../types';
+
+/* Compress image using HTML5 canvas to keep size under 150KB for fast saving */
+function compressImage(file: File, maxWidth = 1200, maxHeight = 1200, quality = 0.82): Promise<string> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const srcUrl = event.target?.result as string;
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        } else {
+          resolve(srcUrl);
+        }
+      };
+      img.onerror = () => resolve(srcUrl);
+      img.src = srcUrl;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+}
 
 const emptyPillar: Omit<Pillar, 'id'> = {
   title: '',
@@ -17,6 +57,23 @@ export default function PillarsManager() {
   const [isAdding, setIsAdding] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [form, setForm] = useState(emptyPillar);
+  const [isUploadingPillar, setIsUploadingPillar] = useState(false);
+  const pillarFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePillarImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingPillar(true);
+    try {
+      const compressed = await compressImage(file);
+      setForm((prev) => ({ ...prev, image: compressed }));
+    } catch (err) {
+      console.error('Image compression failed:', err);
+    } finally {
+      setIsUploadingPillar(false);
+      e.target.value = '';
+    }
+  };
 
   const openAdd = () => {
     setForm(emptyPillar);
@@ -187,8 +244,74 @@ export default function PillarsManager() {
                   <textarea className="admin-textarea" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description détaillée du pilier..." />
                 </div>
                 <div>
-                  <label className="admin-label">URL de l'image</label>
-                  <input type="text" className="admin-input" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="Ex: /pillars/protection.jpg" />
+                  <label className="admin-label">Image du domaine d'intervention</label>
+
+                  {/* Aperçu de l'image courante */}
+                  {form.image && (
+                    <div style={{ position: 'relative', width: '100%', height: '140px', marginBottom: '0.75rem', borderRadius: '0.625rem', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' }}>
+                      <img src={form.image} alt="Aperçu" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button
+                        type="button"
+                        onClick={() => setForm((prev) => ({ ...prev, image: '' }))}
+                        style={{ position: 'absolute', top: 6, right: 6, background: 'rgba(239,68,68,0.85)', border: 'none', color: '#fff', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '14px', lineHeight: 1 }}
+                        title="Supprimer l'image"
+                      >
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Zone d'upload */}
+                  <label
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '1.25rem',
+                      border: '2px dashed #4B5563',
+                      borderRadius: '0.75rem',
+                      background: '#1F2937',
+                      cursor: isUploadingPillar ? 'not-allowed' : 'pointer',
+                      textAlign: 'center',
+                      marginBottom: '0.75rem',
+                      opacity: isUploadingPillar ? 0.6 : 1,
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <svg width="28" height="28" fill="none" stroke="#3B82F6" viewBox="0 0 24 24" strokeWidth={1.5} style={{ marginBottom: '0.4rem' }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    <span style={{ fontWeight: 600, color: '#FFFFFF', fontSize: '0.875rem' }}>
+                      {isUploadingPillar ? 'Compression en cours...' : (form.image ? "Changer l'image" : 'Choisir une image depuis votre appareil')}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: '4px' }}>
+                      JPG, PNG, WEBP — compressée automatiquement
+                    </span>
+                    <input
+                      ref={pillarFileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePillarImageUpload}
+                      disabled={isUploadingPillar}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+
+                  {/* Champ URL manuelle (alternative) */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+                    <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }} />
+                    <span style={{ fontSize: '0.7rem', color: '#6B7280', whiteSpace: 'nowrap' }}>ou entrer une URL manuellement</span>
+                    <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }} />
+                  </div>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    style={{ marginTop: '0.5rem' }}
+                    value={form.image.startsWith('data:') ? '' : form.image}
+                    onChange={(e) => setForm({ ...form, image: e.target.value })}
+                    placeholder="Ex: /pillars/protection.jpg"
+                  />
                 </div>
                 <div>
                   <label className="admin-label">Couleur d'accent</label>
