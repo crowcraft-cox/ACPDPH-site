@@ -5,7 +5,6 @@ import type { GalleryItem } from '../types';
 import { aggregateAllGalleryItems, getYoutubeThumbnail } from '../utils/galleryAggregator';
 
 type MediaTypeFilter = 'all' | 'image' | 'video';
-type SourceCategoryFilter = 'all' | 'Projets' | 'Actualités' | 'Domaines d\'intervention' | 'Galerie';
 
 const ITEMS_PER_PAGE = 12;
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
@@ -202,16 +201,6 @@ function MediaCard({ item, onClick }: CardProps) {
       ? `${API_BASE}${thumb}`
       : thumb;
 
-  // Badge couleur selon la provenance
-  const badgeBg =
-    item.sourceCategory === 'Projets'
-      ? 'bg-emerald-600'
-      : item.sourceCategory === 'Actualités'
-      ? 'bg-blue-600'
-      : item.sourceCategory === 'Domaines d\'intervention'
-      ? 'bg-purple-600'
-      : 'bg-amber-600';
-
   return (
     <article
       className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-100 flex flex-col"
@@ -223,7 +212,7 @@ function MediaCard({ item, onClick }: CardProps) {
       role="button"
       aria-label={`Ouvrir: ${item.title}`}
     >
-      {/* Miniature */}
+      {/* Miniature pleine largeur sans rien par-dessus */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         <img
           src={resolvedThumb}
@@ -232,14 +221,7 @@ function MediaCard({ item, onClick }: CardProps) {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
-        {/* Badge de provenance */}
-        {item.sourceCategory && (
-          <span className={`absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded text-[10px] font-heading font-bold uppercase tracking-wider text-white shadow-sm ${badgeBg}`}>
-            {item.sourceCategory}
-          </span>
-        )}
-
-        {/* Badge de type vidéo / YouTube */}
+        {/* Indicateur de lecture pour les vidéos */}
         {item.type !== 'image' && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/15 transition-colors">
             <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 ${item.type === 'youtube' ? 'bg-red-600 text-white' : 'bg-white text-[var(--color-primary)]'}`}>
@@ -247,14 +229,11 @@ function MediaCard({ item, onClick }: CardProps) {
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
-            <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-black/70 text-white">
-              {item.type === 'youtube' ? 'YouTube' : 'Vidéo'}
-            </span>
           </div>
         )}
       </div>
 
-      {/* Texte */}
+      {/* Texte et pied de carte */}
       <div className="p-3.5 flex flex-col flex-grow">
         <h3 className="font-heading font-bold text-sm text-gray-900 line-clamp-1 group-hover:text-[var(--color-primary)] transition-colors">
           {item.title}
@@ -265,12 +244,18 @@ function MediaCard({ item, onClick }: CardProps) {
           </p>
         )}
         <div className="mt-auto pt-2 flex items-center justify-between text-gray-400 text-[11px]">
-          <span>{formatDate(item.date)}</span>
-          {item.sourceLink && (
-            <span className="text-[var(--color-primary)] font-semibold text-[11px] group-hover:underline">
-              Voir
-            </span>
-          )}
+          <span className="font-medium text-gray-500">
+            {item.sourceCategory === 'Projets'
+              ? 'Projet'
+              : item.sourceCategory === 'Actualités'
+              ? 'Actualité'
+              : item.sourceCategory === "Domaines d'intervention"
+              ? 'Domaine'
+              : item.sourceCategory || (item.date ? formatDate(item.date) : 'Galerie')}
+          </span>
+          <span className="text-[var(--color-primary)] font-semibold text-[11px] group-hover:underline">
+            Voir
+          </span>
         </div>
       </div>
     </article>
@@ -282,12 +267,16 @@ export default function Gallery() {
   const { data, gallery } = useAdminData();
 
   const [mediaTypeFilter, setMediaTypeFilter] = useState<MediaTypeFilter>('all');
-  const [sourceFilter, setSourceFilter] = useState<SourceCategoryFilter>('all');
   const [page, setPage] = useState(1);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [backendItems, setBackendItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
+
+  // Définir le titre du document
+  useEffect(() => {
+    document.title = 'Galeries - ACPDPH';
+  }, []);
 
   // Synchronisation avec l'API backend si disponible
   useEffect(() => {
@@ -303,13 +292,8 @@ export default function Gallery() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Agrégation dynamique complète des médias :
-  // - Projets (photos de couverture + galeries photos associées)
-  // - Domaines d'intervention (piliers)
-  // - Actualités (photos de couverture + galeries photos associées)
-  // - Galerie personnalisée (locale + API)
+  // Agrégation dynamique complète des médias de toutes les sources
   const allItems = useMemo(() => {
-    // Fusionner galerie locale et galerie backend en évitant les doublons
     const combinedCustom: GalleryItem[] = [...gallery];
     backendItems.forEach((b) => {
       if (!combinedCustom.some((c) => c._id === b._id || c.url === b.url)) {
@@ -320,24 +304,18 @@ export default function Gallery() {
     return aggregateAllGalleryItems(data.projects, data.news, data.pillars, combinedCustom);
   }, [data.projects, data.news, data.pillars, gallery, backendItems]);
 
-  // Filtrage combiné : par Type de média (Photo / Vidéo) ET par Provenance (Projet / Actualité / Pilier / Galerie)
+  // Filtrage par Type de média (Tout / Photos / Vidéos), affichant toutes les sources simultanément
   const filteredItems = useMemo(() => {
     return allItems.filter((item) => {
-      // Filtre Type
       if (mediaTypeFilter === 'video') {
-        if (item.type !== 'video' && item.type !== 'youtube') return false;
-      } else if (mediaTypeFilter === 'image') {
-        if (item.type !== 'image') return false;
+        return item.type === 'video' || item.type === 'youtube';
       }
-
-      // Filtre Provenance
-      if (sourceFilter !== 'all') {
-        if (item.sourceCategory !== sourceFilter) return false;
+      if (mediaTypeFilter === 'image') {
+        return item.type === 'image';
       }
-
       return true;
     });
-  }, [allItems, mediaTypeFilter, sourceFilter]);
+  }, [allItems, mediaTypeFilter]);
 
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
   const paginated = filteredItems.slice(0, page * ITEMS_PER_PAGE);
@@ -353,16 +331,11 @@ export default function Gallery() {
     setPage(1);
   };
 
-  const handleSourceChange = (s: SourceCategoryFilter) => {
-    setSourceFilter(s);
-    setPage(1);
-  };
-
   const handleLoadMore = () => {
     setPage((p) => p + 1);
   };
 
-  // Compteurs pour les onglets
+  // Compteurs pour les filtres (indépendants de la source)
   const photosCount = allItems.filter((i) => i.type === 'image').length;
   const videosCount = allItems.filter((i) => i.type === 'video' || i.type === 'youtube').length;
 
@@ -370,7 +343,7 @@ export default function Gallery() {
     <div className="min-h-screen bg-gray-50" ref={topRef}>
       {/* ── Hero ── */}
       <section
-        className="relative py-20 text-white"
+        className="relative py-12 md:py-16 text-white mb-8"
         style={{ background: 'linear-gradient(135deg, #1F4FDB 0%, #1a3fad 100%)' }}
       >
         <div
@@ -382,22 +355,17 @@ export default function Gallery() {
           }}
         />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="font-heading font-black text-4xl md:text-5xl uppercase tracking-wider mb-4">
-            Galeries & Médiathèque
+          <h1 className="font-heading font-black text-4xl md:text-5xl uppercase tracking-wider">
+            Galeries
           </h1>
-          <p className="text-white/85 text-lg max-w-2xl mx-auto leading-relaxed">
-            Revivez les moments forts de nos actions, projets humanitaires, formations et interventions en faveur
-            de l'inclusion et des droits des personnes handicapées en RDC.
-          </p>
         </div>
       </section>
 
       {/* ── Contenu ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        {/* Barre de filtres doubles : Type de média & Provenance */}
-        <div className="space-y-4 mb-8 border-b border-gray-200 pb-6">
-          {/* Ligne 1 : Type de média (Tout / Photos / Vidéos) */}
-          <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="Filtrer par type de média">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+        {/* Barre de filtres : Type de média */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 border-b border-gray-200 pb-4" role="tablist" aria-label="Filtrer par type de média">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               role="tab"
               aria-selected={mediaTypeFilter === 'all'}
@@ -434,39 +402,11 @@ export default function Gallery() {
             >
               Vidéos ({videosCount})
             </button>
-
-            <span className="ml-auto text-xs font-semibold text-gray-400 hidden sm:block">
-              {filteredItems.length} élément{filteredItems.length > 1 ? 's' : ''} affiché{filteredItems.length > 1 ? 's' : ''}
-            </span>
           </div>
 
-          {/* Ligne 2 : Filtre par Provenance / Catégorie */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mr-2">
-              Source :
-            </span>
-            {(
-              [
-                { id: 'all', label: 'Toutes les sources' },
-                { id: 'Projets', label: 'Projets' },
-                { id: 'Actualités', label: 'Actualités' },
-                { id: 'Domaines d\'intervention', label: 'Domaines' },
-                { id: 'Galerie', label: 'Galerie générale' },
-              ] as { id: SourceCategoryFilter; label: string }[]
-            ).map((s) => (
-              <button
-                key={s.id}
-                onClick={() => handleSourceChange(s.id)}
-                className={`px-3 py-1 rounded-md text-xs font-heading font-semibold transition-colors cursor-pointer ${
-                  sourceFilter === s.id
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
+          <span className="text-xs font-semibold text-gray-400">
+            {filteredItems.length} élément{filteredItems.length > 1 ? 's' : ''} affiché{filteredItems.length > 1 ? 's' : ''}
+          </span>
         </div>
 
         {/* Chargement */}
@@ -486,7 +426,7 @@ export default function Gallery() {
             </svg>
             <p className="font-heading font-semibold text-lg text-gray-700">Aucun média dans cette sélection</p>
             <p className="text-sm text-gray-400 mt-1">
-              Essayez de sélectionner "Toutes les sources" ou "Tous les médias" pour voir l'ensemble des éléments.
+              Sélectionnez "Tous les médias" pour voir l'ensemble des éléments disponibles.
             </p>
           </div>
         )}
