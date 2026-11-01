@@ -6,6 +6,7 @@ import PillarsManager from './PillarsManager';
 import NewsManager from './NewsManager';
 import ProjectsManager from './ProjectsManager';
 import JobsManager from './JobsManager';
+import ApplicationsManager from './ApplicationsManager';
 import ContactManager from './ContactManager';
 import SettingsManager from './SettingsManager';
 import NewsletterManager from './NewsletterManager';
@@ -13,7 +14,7 @@ import MessagesManager from './MessagesManager';
 import GalleryManager from './GalleryManager';
 import '../../admin.css';
 
-type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'jobs' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
+type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'jobs' | 'applications' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
 
 export default function AdminDashboard() {
   const { data, isAuthenticated, logout, currentUser, isSyncing, syncError, dbConnected, dbError, isLoading, retryConnection } = useAdminData();
@@ -90,6 +91,15 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'applications',
+      label: 'Candidatures',
+      icon: (
+        <svg className="admin-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      ),
+    },
+    {
       id: 'gallery',
       label: 'Galerie & Médias',
       icon: (
@@ -149,6 +159,7 @@ export default function AdminDashboard() {
     news: 'Dernières Actualités',
     projects: 'Nos Projets',
     jobs: 'Offres & Emplois',
+    applications: 'Candidatures Recrutement',
     gallery: 'Galerie & Médias',
     contact: 'Coordonnées',
     newsletter: 'Newsletter & Abonnés',
@@ -425,6 +436,7 @@ export default function AdminDashboard() {
           {activeSection === 'news' && <NewsManager />}
           {activeSection === 'projects' && <ProjectsManager />}
           {activeSection === 'jobs' && <JobsManager />}
+          {activeSection === 'applications' && <ApplicationsManager />}
           {activeSection === 'gallery' && <GalleryManager />}
           {activeSection === 'contact' && !isEditor && <ContactManager />}
           {activeSection === 'newsletter' && <NewsletterManager />}

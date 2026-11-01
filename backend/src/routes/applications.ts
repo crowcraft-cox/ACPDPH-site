@@ -298,13 +298,17 @@ router.post('/', (req: Request, res: Response, next: any) => {
         </div>
       `;
 
-      await sendEmail({
-        to: recruitmentEmail,
-        subject: `[Candidature] ${jobTitle} – ${nom.toUpperCase()} ${prenom}`,
-        text: `Nouvelle candidature pour le poste ${jobTitle} reçue de ${nom} ${prenom} (${email}, ${telephone}).`,
-        html: emailHtml,
-        attachments: emailAttachments,
-      });
+      try {
+        await sendEmail({
+          to: recruitmentEmail,
+          subject: `[Candidature] ${jobTitle} – ${nom.toUpperCase()} ${prenom}`,
+          text: `Nouvelle candidature pour le poste ${jobTitle} reçue de ${nom} ${prenom} (${email}, ${telephone}).`,
+          html: emailHtml,
+          attachments: emailAttachments,
+        });
+      } catch (recEmailErr: any) {
+        console.warn("[Application Recruitment Email Warning]: Envoi e-mail RH échoué :", recEmailErr.message);
+      }
 
       // 8. E-mail d'accusé de réception automatique au candidat
       try {
@@ -378,7 +382,7 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
 });
 
 // ── GET application document download (Admin Protected) ──────────────────────
-router.get('/:id/document/:type/:index?', authMiddleware, async (req: Request, res: Response) => {
+const handleDocumentDownload = async (req: Request, res: Response) => {
   try {
     const id = String(req.params.id);
     const type = String(req.params.type);
@@ -406,7 +410,10 @@ router.get('/:id/document/:type/:index?', authMiddleware, async (req: Request, r
   } catch (error: any) {
     res.status(500).json({ success: false, message: 'Erreur de téléchargement.' });
   }
-});
+};
+
+router.get('/:id/document/:type', authMiddleware, handleDocumentDownload);
+router.get('/:id/document/:type/:index', authMiddleware, handleDocumentDownload);
 
 // ── DELETE application (Admin Protected) ─────────────────────────────────────
 router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {

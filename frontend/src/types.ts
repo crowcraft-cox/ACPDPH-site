@@ -103,6 +103,46 @@ export interface JobOffer {
   createdAt: string;
 }
 
+export interface CandidateApplicationDocument {
+  filename: string;
+  originalname: string;
+  size: number;
+  mimetype: string;
+  path?: string;
+}
+
+export interface CandidateApplication {
+  _id?: string;
+  id?: string;
+  jobId: string;
+  jobTitle: string;
+  nom: string;
+  postnom?: string;
+  prenom: string;
+  dateNaissance: string;
+  sexe: 'Homme' | 'Femme';
+  email: string;
+  telephone: string;
+  adresse?: string;
+  ville?: string;
+  province?: string;
+  pays?: string;
+  niveauEducation: string;
+  langues?: Array<{ langue: string; niveau: string }>;
+  experiences?: Array<{ titrePoste: string; organisation: string; anneesExperience: string }>;
+  enSituationHandicap?: 'Oui' | 'Non' | 'Préfère ne pas répondre';
+  amenagementsSouhaites?: string;
+  documents?: {
+    cv?: CandidateApplicationDocument;
+    coverLetter?: CandidateApplicationDocument;
+    certificates?: CandidateApplicationDocument[];
+  };
+  cvFileName?: string;
+  coverLetterFileName?: string;
+  certificatesCount?: number;
+  createdAt: string;
+}
+
 export interface ContactInfo {
   address: string;
   email: string;
@@ -141,6 +181,7 @@ export interface AdminData {
   news: NewsArticle[];
   projects: Project[];
   jobs?: JobOffer[];
+  applications?: CandidateApplication[];
   contact: ContactInfo;
   users?: AdminUser[];
   subscribers?: Subscriber[];

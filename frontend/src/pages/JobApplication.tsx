@@ -428,20 +428,80 @@ export default function JobApplication() {
   if (submitted) {
     return (
       <div className="pt-28 pb-20 bg-slate-50 dark:bg-ba-dark min-h-screen">
-        <div className="container-ba max-w-2xl text-center py-12">
-          <div className="card p-8 sm:p-12 border border-emerald-200 dark:border-emerald-800/40 bg-white dark:bg-zinc-900 rounded-2xl shadow-xs">
-            <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center mb-5">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+        <div className="container-ba max-w-2xl py-12">
+          {/* Notification Toast/Bannière supérieure demandée */}
+          <div className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs sm:text-sm font-semibold flex items-center gap-3 shadow-xs">
+            <div className="w-8 h-8 rounded-full bg-emerald-600 text-white shrink-0 flex items-center justify-center">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
             </div>
-            <h1 className="font-heading text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mb-3">
-              Candidature envoyée
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed mb-8 max-w-lg mx-auto">
-              Merci pour votre candidature. Nous l'examinerons avec attention. Seules les personnes présélectionnées seront contactées.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
+            <div>
+              <p className="font-bold text-emerald-950 dark:text-emerald-100">
+                Félicitation ! Votre candidature au poste de « {job.title} » vient d'être envoyée.
+              </p>
+              <p className="text-xs text-emerald-800 dark:text-emerald-300 font-normal mt-0.5">
+                Cette candidature sera visible sur l'espace administrateur et envoyée aussi à l'adresse mail de l'ACPDPH.
+              </p>
+            </div>
+          </div>
+
+          <div className="card p-8 sm:p-10 border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm text-left">
+            <div className="flex items-center gap-4 border-b border-slate-100 dark:border-zinc-800 pb-6 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-[#2350D9]/10 text-[#2350D9] dark:bg-blue-950/50 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                  Accusé d'enregistrement officiel
+                </span>
+                <h1 className="font-heading text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                  Candidature bien reçue
+                </h1>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-8">
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-800/60 border border-slate-100 dark:border-zinc-800">
+                <div className="w-8 h-8 rounded-lg bg-[#2350D9] text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                  </svg>
+                </div>
+                <div className="text-xs sm:text-sm">
+                  <strong className="text-slate-900 dark:text-white block font-bold">Poste visé :</strong>
+                  <span className="text-[#2350D9] dark:text-blue-400 font-semibold">{job.title}</span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-800/60 border border-slate-100 dark:border-zinc-800">
+                <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                </div>
+                <div className="text-xs sm:text-sm">
+                  <strong className="text-slate-900 dark:text-white block font-bold">Visible sur l'espace administrateur :</strong>
+                  <span className="text-slate-600 dark:text-zinc-300">Votre dossier est immédiatement disponible dans la rubrique « Candidatures » de l'espace administration de l'ACPDPH pour évaluation.</span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-800/60 border border-slate-100 dark:border-zinc-800">
+                <div className="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                </div>
+                <div className="text-xs sm:text-sm">
+                  <strong className="text-slate-900 dark:text-white block font-bold">Transmission par e-mail :</strong>
+                  <span className="text-slate-600 dark:text-zinc-300">Votre dossier complet a également été envoyé par e-mail à l'adresse officielle de l'ACPDPH (<strong>info.acpdph.asbl.rdc@gmail.com</strong>).</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2">
               <Link
                 to="/offres-emplois"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#2350D9] hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-xs"
@@ -455,7 +515,7 @@ export default function JobApplication() {
                 to="/"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 text-xs font-bold uppercase tracking-wider transition-colors"
               >
-                <span>Accueil</span>
+                <span>Accueil du site</span>
               </Link>
             </div>
           </div>
@@ -1172,7 +1232,7 @@ export default function JobApplication() {
                 submitting ? 'opacity-70 cursor-not-allowed' : ''
               }`}
             >
-              <span>{submitting ? 'Envoi en cours…' : 'ENVOYER MA CANDIDATURE'}</span>
+              <span>{submitting ? 'Envoi en cours…' : 'SOUMETTRE MA CANDIDATURE'}</span>
               {!submitting && (
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
