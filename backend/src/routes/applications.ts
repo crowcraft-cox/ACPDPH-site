@@ -174,9 +174,14 @@ router.post('/', (req: Request, res: Response, next: any) => {
       }
 
       // 5. Enregistrement dans MongoDB (si connecté)
+      const currentYear = new Date().getFullYear();
+      const randomSuffix = String(Math.floor(1000 + Math.random() * 9000));
+      const reference = req.body.reference?.trim() || `CAND-${currentYear}-${randomSuffix}`;
+
       let savedApplication: any = null;
       try {
         savedApplication = await Application.create({
+          reference,
           jobId,
           jobTitle,
           nom: nom.trim(),
@@ -257,7 +262,7 @@ router.post('/', (req: Request, res: Response, next: any) => {
           <div style="border: 1px solid #E2E8F0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px; background: #FFFFFF;">
             <div style="background: #F1F5F9; padding: 12px 16px; border-radius: 6px; margin-bottom: 20px;">
               <strong style="color: #2350D9; font-size: 15px;">Poste :</strong> ${jobTitle} <br/>
-              <span style="font-size: 12px; color: #64748B;">Identifiant offre : ${jobId} | Date d'envoi : ${applicationDate}</span>
+              <span style="font-size: 12px; color: #64748B;">Référence : <strong>${reference}</strong> | Identifiant offre : ${jobId} | Date d'envoi : ${applicationDate}</span>
             </div>
 
             <h3 style="color: #0F172A; font-size: 15px; border-bottom: 2px solid #2350D9; padding-bottom: 4px; margin-top: 20px;">1. IDENTITÉ & CONTACT</h3>
@@ -324,8 +329,9 @@ router.post('/', (req: Request, res: Response, next: any) => {
               <div style="border: 1px solid #E2E8F0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px; background: #FFFFFF;">
                 <p>Bonjour <strong>${prenom} ${nom}</strong>,</p>
                 <p>Nous vous remercions pour l'intérêt que vous portez à l'<strong>ACPDPH ONG</strong>. Nous accusons bonne réception de votre dossier de candidature pour le poste :</p>
-                <div style="background: #F1F5F9; padding: 12px; border-radius: 6px; font-weight: bold; color: #2350D9; margin: 15px 0;">
-                  ${jobTitle}
+                <div style="background: #F1F5F9; padding: 12px; border-radius: 6px; margin: 15px 0;">
+                  <strong style="color: #2350D9; font-size: 15px;">${jobTitle}</strong><br/>
+                  <span style="font-size: 12px; color: #64748B;">Numéro de référence : <strong style="font-family: monospace; color: #0F172A;">${reference}</strong></span>
                 </div>
                 <p style="font-size: 14px; color: #475569;">
                   Notre équipe de recrutement examinera votre candidature avec la plus grande attention. Seules les personnes présélectionnées seront contactées pour les étapes suivantes.
@@ -349,7 +355,10 @@ router.post('/', (req: Request, res: Response, next: any) => {
       return res.status(201).json({
         success: true,
         message: 'Candidature envoyée avec succès.',
-        data: savedApplication ? { id: savedApplication._id } : undefined,
+        data: {
+          id: savedApplication?._id,
+          reference: savedApplication?.reference || reference,
+        },
       });
     } catch (processErr: any) {
       console.error('[Application Processing Error]:', processErr);

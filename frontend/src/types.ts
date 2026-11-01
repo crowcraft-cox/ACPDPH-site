@@ -114,6 +114,7 @@ export interface CandidateApplicationDocument {
 export interface CandidateApplication {
   _id?: string;
   id?: string;
+  reference?: string;
   jobId: string;
   jobTitle: string;
   nom: string;

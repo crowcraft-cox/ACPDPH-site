@@ -9,6 +9,7 @@ export interface IApplicationDocument {
 }
 
 export interface IApplication extends Document {
+  reference?: string;
   jobId: string;
   jobTitle: string;
   nom: string;
@@ -37,6 +38,7 @@ export interface IApplication extends Document {
 }
 
 const ApplicationSchema: Schema = new Schema({
+  reference: { type: String, index: true },
   jobId: { type: String, required: true },
   jobTitle: { type: String, required: true },
   nom: { type: String, required: true },

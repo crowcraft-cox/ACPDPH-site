@@ -247,6 +247,11 @@ export default function ApplicationsManager() {
                       <span className="text-xs font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
                         {app.jobTitle}
                       </span>
+                      {app.reference && (
+                        <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-semibold">
+                          {app.reference}
+                        </span>
+                      )}
                       {app.enSituationHandicap === 'Oui' && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wider">
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -512,3 +517,4 @@ export default function ApplicationsManager() {
     </div>
   );
 }
+
