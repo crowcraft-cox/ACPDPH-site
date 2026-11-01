@@ -203,13 +203,13 @@ export default function Support() {
   return (
     <main
       id="main-content"
-      className="min-h-screen pt-20 sm:pt-24 md:pt-28 lg:pt-32 bg-slate-50 dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
+      className="min-h-screen bg-slate-50 dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
     >
       {/* ========================================================================= */}
       {/* 1. VISUEL D'ACCUEIL (HERO) AVEC IMAGE DU PETIT GARÇON                     */}
       {/* ========================================================================= */}
       <section
-        className="relative h-96 sm:h-[480px] md:h-[580px] lg:h-[660px] xl:h-[720px] w-full overflow-hidden bg-slate-900"
+        className="relative h-64 sm:h-72 md:h-80 lg:h-[380px] w-full overflow-hidden bg-slate-900"
         aria-label="Photographie d'un enfant soutenu par l'ACPDPH"
       >
         {/* Image du petit garçon cadrée par le haut pour voir nettement sa tête */}
@@ -222,7 +222,7 @@ export default function Support() {
         />
 
         {/* Logo officiel au coin supérieur gauche de l'image (seul élément visible sur la photo) */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
+        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20">
           <Link
             to="/"
             className="block rounded-full p-1 bg-white/95 dark:bg-slate-900/90 shadow-md border-2 border-white hover:scale-105 transition-transform"
@@ -231,7 +231,7 @@ export default function Support() {
             <img
               src="/logo_ACPDPH.jpg"
               alt="Logo ACPDPH"
-              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full object-cover bg-white"
+              className="w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover bg-white"
             />
           </Link>
         </div>
