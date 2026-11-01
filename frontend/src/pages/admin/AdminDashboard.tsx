@@ -7,6 +7,7 @@ import NewsManager from './NewsManager';
 import ProjectsManager from './ProjectsManager';
 import JobsManager from './JobsManager';
 import ApplicationsManager from './ApplicationsManager';
+import DonationsManager from './DonationsManager';
 import ContactManager from './ContactManager';
 import SettingsManager from './SettingsManager';
 import NewsletterManager from './NewsletterManager';
@@ -14,7 +15,7 @@ import MessagesManager from './MessagesManager';
 import GalleryManager from './GalleryManager';
 import '../../admin.css';
 
-type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'jobs' | 'applications' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
+type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'jobs' | 'applications' | 'donations' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
 
 export default function AdminDashboard() {
   const { data, isAuthenticated, logout, currentUser, isSyncing, syncError, dbConnected, dbError, isLoading, retryConnection } = useAdminData();
@@ -100,6 +101,15 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'donations',
+      label: 'Dons & Soutiens',
+      icon: (
+        <svg className="admin-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+        </svg>
+      ),
+    },
+    {
       id: 'gallery',
       label: 'Galerie & Médias',
       icon: (
@@ -160,6 +170,7 @@ export default function AdminDashboard() {
     projects: 'Nos Projets',
     jobs: 'Offres & Emplois',
     applications: 'Candidatures Recrutement',
+    donations: 'Dons & Intentions de Soutien',
     gallery: 'Galerie & Médias',
     contact: 'Coordonnées',
     newsletter: 'Newsletter & Abonnés',
@@ -437,6 +448,7 @@ export default function AdminDashboard() {
           {activeSection === 'projects' && <ProjectsManager />}
           {activeSection === 'jobs' && <JobsManager />}
           {activeSection === 'applications' && <ApplicationsManager />}
+          {activeSection === 'donations' && <DonationsManager />}
           {activeSection === 'gallery' && <GalleryManager />}
           {activeSection === 'contact' && !isEditor && <ContactManager />}
           {activeSection === 'newsletter' && <NewsletterManager />}

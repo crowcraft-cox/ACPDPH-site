@@ -1,24 +1,198 @@
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { Link } from 'react-router-dom';
-import { OFFICE_ADDRESS } from '../constants/contact';
+import { DONATION_CONFIG } from '../config/donationConfig';
+import { OFFICE_ADDRESS, OFFICE_EMAIL, OFFICE_PHONE } from '../constants/contact';
+import { apiFetch } from '../services/api';
 
 export default function Support() {
-  // État pour le bouton copier (id du champ copié affiché pendant 2 secondes)
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  // ── États du formulaire de don en 2 étapes ──
+  const [step, setStep] = useState<1 | 2>(1);
+  const [frequency, setFrequency] = useState<'monthly' | 'single'>('monthly');
+  const [selectedAmount, setSelectedAmount] = useState<number>(25);
+  const [customAmount, setCustomAmount] = useState<string>('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('+243 ');
+  const [newsletter, setNewsletter] = useState(false);
 
-  // État de l'accordéon FAQ (index de la question ouverte)
+  // Étape 2 : Moyen de paiement
+  const [paymentMethod, setPaymentMethod] = useState<'MOBILE_MONEY' | 'BANK_TRANSFER' | 'CARD'>('MOBILE_MONEY');
+  const [selectedMobileOperator, setSelectedMobileOperator] = useState<'mpesa' | 'airtel' | 'orange'>('mpesa');
+
+  // États de soumission et erreurs
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  // État de succès après confirmation
+  const [donationSuccess, setDonationSuccess] = useState<{
+    reference: string;
+    amount: number;
+    currency: string;
+    frequency: 'monthly' | 'single';
+    name: string;
+    email: string;
+    paymentMethod: string;
+    paymentProvider: string;
+    date: string;
+  } | null>(null);
+
+  // États d'interaction (copier, partage, accordéon FAQ)
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [shareSuccess, setShareSuccess] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const handleCopy = (text: string, fieldId: string) => {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text)
-        .then(() => {
-          setCopiedField(fieldId);
-          setTimeout(() => setCopiedField(null), 2000);
-        })
-        .catch(() => {
-          // Si l'API clipboard est bloquée, sélection manuelle silencieuse
+  const customAmountInputId = useId();
+  const firstNameInputId = useId();
+  const lastNameInputId = useId();
+  const emailInputId = useId();
+  const phoneInputId = useId();
+  const newsletterInputId = useId();
+
+  // Montant effectif (bouton prédéfini ou personnalisé)
+  const currentAmount = customAmount ? parseFloat(customAmount) || 0 : selectedAmount;
+
+  // Montants suggérés selon la fréquence
+  const suggestedAmounts =
+    frequency === 'monthly'
+      ? DONATION_CONFIG.suggestedMonthlyAmounts
+      : DONATION_CONFIG.suggestedSingleAmounts;
+
+  // Validation Étape 1
+  const validateStep1 = (): boolean => {
+    const errs: Record<string, string> = {};
+
+    if (!currentAmount || currentAmount < DONATION_CONFIG.minAmount) {
+      errs.amount = `Le montant minimum est de ${DONATION_CONFIG.minAmount} $.`;
+    }
+
+    if (!firstName.trim()) {
+      errs.firstName = 'Le prénom est requis.';
+    }
+
+    if (!lastName.trim()) {
+      errs.lastName = 'Le nom de famille est requis.';
+    }
+
+    if (!email.trim()) {
+      errs.email = 'L’adresse e-mail est requise.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errs.email = 'Veuillez saisir une adresse e-mail valide.';
+    }
+
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleNextStep = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateStep1()) {
+      setStep(2);
+      setServerError(null);
+      window.scrollTo({ top: 380, behavior: 'smooth' });
+    }
+  };
+
+  // Soumission finale du soutien
+  const handleConfirmDonation = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (paymentMethod === 'CARD') {
+      setServerError(DONATION_CONFIG.cardPayment.unavailableNotice);
+      return;
+    }
+
+    setSubmitting(true);
+    setServerError(null);
+
+    const providerLabel =
+      paymentMethod === 'MOBILE_MONEY'
+        ? DONATION_CONFIG.mobileMoney[selectedMobileOperator].name
+        : DONATION_CONFIG.bankTransfer.bankName;
+
+    try {
+      const payload = {
+        amount: currentAmount,
+        currency: DONATION_CONFIG.defaultCurrency,
+        frequency,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        name: `${firstName.trim()} ${lastName.trim()}`,
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        country: 'RDC',
+        newsletter,
+        paymentMethod,
+        paymentProvider: providerLabel,
+      };
+
+      const res = await apiFetch('/donations', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      setSubmitting(false);
+
+      if (res.success && res.data) {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
         });
+
+        setDonationSuccess({
+          reference: res.data.reference || `DON-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+          amount: currentAmount,
+          currency: DONATION_CONFIG.defaultCurrency,
+          frequency,
+          name: `${firstName.trim()} ${lastName.trim()}`,
+          email: email.trim().toLowerCase(),
+          paymentMethod:
+            paymentMethod === 'MOBILE_MONEY' ? 'Mobile Money (RDC)' : 'Virement bancaire',
+          paymentProvider: providerLabel,
+          date: formattedDate,
+        });
+
+        window.scrollTo({ top: 350, behavior: 'smooth' });
+      } else {
+        setServerError(
+          res.error ||
+            'Une erreur est survenue lors de l’enregistrement de votre engagement. Veuillez réessayer.'
+        );
+      }
+    } catch (err: any) {
+      setSubmitting(false);
+      setServerError(
+        'Impossible de contacter le serveur. Votre connexion internet ou le serveur est temporairement inaccessible.'
+      );
+    }
+  };
+
+  const handleCopyText = (text: string, key: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2500);
+    }
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: 'Soutenir l’ACPDPH',
+          text: 'Chaque enfant a le droit d’apprendre, de grandir et d’être inclus. Soutenez les actions de l’ACPDPH au Nord-Kivu.',
+          url: window.location.href,
+        })
+        .catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      setShareSuccess(true);
+      setTimeout(() => setShareSuccess(false), 3000);
     }
   };
 
@@ -27,841 +201,708 @@ export default function Support() {
   };
 
   return (
-    <main id="main-content" className="min-h-screen bg-[#F6F8FC] text-[#0F172A] font-body selection:bg-[#C2540A] selection:text-white">
+    <main
+      id="main-content"
+      className="min-h-screen bg-slate-50 dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
+    >
       {/* ========================================================================= */}
-      {/* 1. HERO BLEU AVEC CHIFFRES CLÉS                                          */}
+      {/* 1. VISUEL D'ACCUEIL (HERO) AVEC IMAGE FOURNIE                             */}
       {/* ========================================================================= */}
       <section
-        className="relative bg-gradient-to-b from-[#1F4FD8] to-[#163BB3] text-white pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden"
+        className="relative h-80 md:h-[520px] w-full overflow-hidden bg-slate-950 flex items-end"
         aria-labelledby="hero-title"
       >
-        {/* Motifs géométriques subtils d'arrière-plan sans surcharge */}
-        <div className="absolute inset-0 pointer-events-none opacity-10" aria-hidden="true">
-          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white blur-3xl" />
-          <div className="absolute bottom-0 -left-24 w-80 h-80 rounded-full bg-white blur-2xl" />
-        </div>
+        {/* Image hero avec dégradé sombre du bas vers le haut */}
+        <img
+          src="/images/soutenir-hero.jpg"
+          alt="Enfant assis sur une chaise dans une salle de classe, soutenu par l'ACPDPH"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          loading="eager"
+        />
 
-        <div className="container-ba relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            {/* Colonne Gauche : Titre et accroche (7 colonnes) */}
-            <div className="lg:col-span-7 space-y-6 text-left">
-              {/* Étiquette « Nous soutenir » */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 border border-white/25 text-white text-xs font-heading font-bold uppercase tracking-wider backdrop-blur-sm">
-                <span className="w-2 h-2 rounded-full bg-[#FFA04D]" aria-hidden="true" />
-                <span>Nous soutenir &bull; ACPDPH</span>
-              </div>
-
-              {/* Titre fort */}
-              <h1
-                id="hero-title"
-                className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-white"
-              >
-                Votre soutien transforme des vies et bâtit une société inclusive
-              </h1>
-
-              {/* Phrase d'accroche */}
-              <p className="text-white/90 text-base sm:text-lg leading-relaxed max-w-2xl">
-                En République Démocratique du Congo, des milliers de personnes handicapées luttent chaque jour pour leur dignité, leur autonomie et leurs droits. Chaque don permet de financer directement des aides techniques, la scolarisation d&apos;enfants et des actions concrètes de plaidoyer sur le terrain.
-              </p>
-
-              {/* Boutons d'action */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <a
-                  href="#coordonnees"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-[14px] bg-[#C2540A] hover:bg-[#9F4100] text-white font-heading font-bold text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F4FD8]"
-                >
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                  <span>Faire un don</span>
-                </a>
-
-                <a
-                  href="#impact"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-[14px] bg-transparent hover:bg-white/10 text-white font-heading font-bold text-sm uppercase tracking-wider border-2 border-white transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F4FD8]"
-                >
-                  <span>Voir l&apos;impact de votre don</span>
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-
-            {/* Colonne Droite : Carte chiffres clés (5 colonnes) */}
-            <div className="lg:col-span-5">
-              <div
-                className="rounded-[18px] bg-white p-7 sm:p-9 shadow-xl border border-white/20 text-[#0F172A]"
-                style={{ borderRadius: '18px' }}
-              >
-                <div className="border-b border-gray-100 pb-4 mb-6">
-                  <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#1F4FD8] block mb-1">
-                    Transparence &bull; RDC
-                  </span>
-                  <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-[#0F172A] leading-snug">
-                    L&apos;impact de vos contributions
-                  </h2>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Chiffre 1 */}
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-[14px] bg-blue-50 text-[#1F4FD8] flex items-center justify-center shrink-0 border border-blue-100">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-heading font-extrabold text-2xl sm:text-3xl text-[#1F4FD8] leading-tight">
-                        1 250+
-                      </div>
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mt-0.5">
-                        Personnes en situation de handicap accompagnées et outillées <span className="text-[11px] text-gray-400 font-normal">[À remplacer]</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Chiffre 2 */}
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-[14px] bg-amber-50 text-[#C2540A] flex items-center justify-center shrink-0 border border-amber-100">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-heading font-extrabold text-2xl sm:text-3xl text-[#0F172A] leading-tight">
-                        14
-                      </div>
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mt-0.5">
-                        Projets et initiatives actifs sur le terrain (Beni, Nord-Kivu, RDC) <span className="text-[11px] text-gray-400 font-normal">[À remplacer]</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Chiffre 3 */}
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-[14px] bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-700 leading-tight">
-                        85 %
-                      </div>
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 mt-0.5">
-                        Des dons alloués directement aux programmes de terrain <span className="text-[11px] text-gray-400 font-normal">[À remplacer]</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 2. TROIS CARTES « COMMENT DONNER » CHEVAUCHANT LE HERO                    */}
-      {/* ========================================================================= */}
-      <section className="relative z-20 -mt-8 sm:-mt-12 lg:-mt-16 container-ba mb-16 sm:mb-20" aria-label="Modes de contribution">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Carte 1 : Virement bancaire */}
-          <div
-            className="rounded-[18px] bg-white p-7 shadow-lg border border-gray-100 flex flex-col justify-between hover:translate-y-[-4px] hover:shadow-xl transition-all duration-200"
-            style={{ borderRadius: '18px' }}
-          >
-            <div>
-              <div className="w-13 h-13 rounded-[14px] bg-blue-50 text-[#1F4FD8] flex items-center justify-center mb-5 border border-blue-100">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                </svg>
-              </div>
-              <h3 className="font-heading font-bold text-xl text-[#0F172A] mb-2.5">
-                Virement bancaire
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-6">
-                Idéal pour les particuliers, les entreprises et les bailleurs souhaitant effectuer un don ponctuel ou récurrent en USD ou CDF, au niveau national et international.
-              </p>
-            </div>
-            <a
-              href="#virement-bancaire"
-              className="inline-flex items-center gap-2 text-sm font-heading font-bold text-[#1F4FD8] hover:text-[#163BB3] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4FD8] rounded-md py-1"
-            >
-              <span>Voir les coordonnées bancaires</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
-          </div>
-
-          {/* Carte 2 : Mobile Money */}
-          <div
-            className="rounded-[18px] bg-white p-7 shadow-lg border border-gray-100 flex flex-col justify-between hover:translate-y-[-4px] hover:shadow-xl transition-all duration-200"
-            style={{ borderRadius: '18px' }}
-          >
-            <div>
-              <div className="w-13 h-13 rounded-[14px] bg-amber-50 text-[#C2540A] flex items-center justify-center mb-5 border border-amber-100">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="font-heading font-bold text-xl text-[#0F172A] mb-2.5">
-                Mobile Money (RDC)
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-6">
-                Le moyen le plus simple et immédiat depuis votre téléphone en RDC via Vodacom M-Pesa, Airtel Money et Orange Money. Les dons sont directement perçus par l&apos;association.
-              </p>
-            </div>
-            <a
-              href="#mobile-money"
-              className="inline-flex items-center gap-2 text-sm font-heading font-bold text-[#C2540A] hover:text-[#9F4100] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2540A] rounded-md py-1"
-            >
-              <span>Voir les numéros Mobile Money</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
-          </div>
-
-          {/* Carte 3 : Don en nature & bénévolat */}
-          <div
-            className="rounded-[18px] bg-white p-7 shadow-lg border border-gray-100 flex flex-col justify-between hover:translate-y-[-4px] hover:shadow-xl transition-all duration-200"
-            style={{ borderRadius: '18px' }}
-          >
-            <div>
-              <div className="w-13 h-13 rounded-[14px] bg-emerald-50 text-emerald-700 flex items-center justify-center mb-5 border border-emerald-100">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-              </div>
-              <h3 className="font-heading font-bold text-xl text-[#0F172A] mb-2.5">
-                Don en nature &amp; bénévolat
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-6">
-                Fauteuils roulants, cannes blanches, matériel scolaire braille, outillage professionnel ou partage de compétences : votre contribution matérielle ou humaine est précieuse.
-              </p>
-            </div>
-            <a
-              href="#don-nature"
-              className="inline-flex items-center gap-2 text-sm font-heading font-bold text-emerald-700 hover:text-emerald-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 rounded-md py-1"
-            >
-              <span>Découvrir les besoins matériels</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 3. SECTION COORDONNÉES OFFICIELLES (DEUX CARTES CÔTE À CÔTE)              */}
-      {/* ========================================================================= */}
-      <section id="coordonnees" className="container-ba mb-20 sm:mb-24 scroll-mt-28" aria-labelledby="coordonnees-title">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#1F4FD8] bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-100 inline-block mb-3">
-            Canaux vérifiés
-          </span>
-          <h2 id="coordonnees-title" className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-[#0F172A] tracking-tight mb-3">
-            Coordonnées officielles pour vos dons
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-            Pour garantir la sécurité de votre contribution, utilisez exclusivement les comptes et numéros officiels de l&apos;ACPDPH certifiés ci-dessous.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* CARTE 1 : COMPTE BANCAIRE */}
-          <div
-            id="virement-bancaire"
-            className="rounded-[18px] bg-white p-6 sm:p-8 shadow-md border border-gray-100 scroll-mt-28"
-            style={{ borderRadius: '18px' }}
-          >
-            <div className="flex items-center justify-between pb-5 border-b border-gray-100 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-[12px] bg-blue-50 text-[#1F4FD8] flex items-center justify-center border border-blue-100">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-heading font-bold text-lg sm:text-xl text-[#0F172A]">
-                    Virement bancaire
-                  </h3>
-                  <span className="text-xs text-gray-500">National &bull; International</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="px-2.5 py-1 rounded-full text-xs font-heading font-bold bg-blue-50 text-[#1F4FD8] border border-blue-200">
-                  USD
-                </span>
-                <span className="px-2.5 py-1 rounded-full text-xs font-heading font-bold bg-amber-50 text-[#C2540A] border border-amber-200">
-                  CDF
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {/* Bénéficiaire */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-gray-500 block mb-0.5">
-                    Bénéficiaire
-                  </span>
-                  <p className="font-semibold text-sm text-[#0F172A] truncate">
-                    ACPDPH ASBL <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('ACPDPH ASBL', 'beneficiaire')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4FD8]"
-                  aria-label="Copier le nom du bénéficiaire"
-                >
-                  {copiedField === 'beneficiaire' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Banque */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-gray-500 block mb-0.5">
-                    Banque
-                  </span>
-                  <p className="font-semibold text-sm text-[#0F172A] truncate">
-                    RAWBANK — Agence de Beni <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('RAWBANK — Agence de Beni', 'banque')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4FD8]"
-                  aria-label="Copier le nom de la banque"
-                >
-                  {copiedField === 'banque' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Numéro de compte USD */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-gray-500 block mb-0.5">
-                    Numéro de compte (USD)
-                  </span>
-                  <p className="font-mono font-bold text-sm text-[#1F4FD8] truncate">
-                    01000-00000000-USD <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('01000-00000000-USD', 'compte_usd')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4FD8]"
-                  aria-label="Copier le numéro de compte USD"
-                >
-                  {copiedField === 'compte_usd' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Numéro de compte CDF */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-gray-500 block mb-0.5">
-                    Numéro de compte (CDF)
-                  </span>
-                  <p className="font-mono font-bold text-sm text-[#0F172A] truncate">
-                    01000-00000000-CDF <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('01000-00000000-CDF', 'compte_cdf')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4FD8]"
-                  aria-label="Copier le numéro de compte CDF"
-                >
-                  {copiedField === 'compte_cdf' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* IBAN */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-gray-500 block mb-0.5">
-                    IBAN (International)
-                  </span>
-                  <p className="font-mono font-semibold text-xs sm:text-sm text-[#0F172A] truncate">
-                    CD00 RAWB 0100 0000 0000 00 <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('CD00 RAWB 0100 0000 0000 00', 'iban')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4FD8]"
-                  aria-label="Copier le code IBAN"
-                >
-                  {copiedField === 'iban' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* SWIFT / BIC */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-gray-500 block mb-0.5">
-                    Code SWIFT / BIC
-                  </span>
-                  <p className="font-mono font-bold text-sm text-[#0F172A] truncate">
-                    RAWBKICDXXX <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('RAWBKICDXXX', 'swift')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4FD8]"
-                  aria-label="Copier le code SWIFT"
-                >
-                  {copiedField === 'swift' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* CARTE 2 : MOBILE MONEY */}
-          <div
-            id="mobile-money"
-            className="rounded-[18px] bg-white p-6 sm:p-8 shadow-md border border-gray-100 scroll-mt-28"
-            style={{ borderRadius: '18px' }}
-          >
-            <div className="flex items-center justify-between pb-5 border-b border-gray-100 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-[12px] bg-amber-50 text-[#C2540A] flex items-center justify-center border border-amber-100">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-heading font-bold text-lg sm:text-xl text-[#0F172A]">
-                    Mobile Money
-                  </h3>
-                  <span className="text-xs text-gray-500">RDC &bull; Transfert direct</span>
-                </div>
-              </div>
-              <span className="px-3 py-1 rounded-full text-xs font-heading font-bold bg-amber-50 text-[#C2540A] border border-amber-200">
-                Paiement local
-              </span>
-            </div>
-
-            <div className="space-y-4">
-              {/* Opérateur 1 : Vodacom M-Pesa */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-red-600 block mb-0.5">
-                    Opérateur 1 &bull; Vodacom M-Pesa
-                  </span>
-                  <p className="font-mono font-bold text-sm text-[#0F172A] truncate">
-                    +243 81 000 0000 <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('+243 81 000 0000', 'mpesa')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2540A]"
-                  aria-label="Copier le numéro Vodacom M-Pesa"
-                >
-                  {copiedField === 'mpesa' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Opérateur 2 : Airtel Money */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-red-700 block mb-0.5">
-                    Opérateur 2 &bull; Airtel Money
-                  </span>
-                  <p className="font-mono font-bold text-sm text-[#0F172A] truncate">
-                    +243 99 000 0000 <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('+243 99 000 0000', 'airtel')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2540A]"
-                  aria-label="Copier le numéro Airtel Money"
-                >
-                  {copiedField === 'airtel' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Opérateur 3 : Orange Money */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-orange-600 block mb-0.5">
-                    Opérateur 3 &bull; Orange Money
-                  </span>
-                  <p className="font-mono font-bold text-sm text-[#0F172A] truncate">
-                    +243 89 000 0000 <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('+243 89 000 0000', 'orange')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2540A]"
-                  aria-label="Copier le numéro Orange Money"
-                >
-                  {copiedField === 'orange' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Nom du compte bénéficiaire Mobile */}
-              <div className="p-3.5 rounded-[12px] bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-gray-500 block mb-0.5">
-                    Nom du compte bénéficiaire
-                  </span>
-                  <p className="font-semibold text-sm text-[#0F172A] truncate">
-                    ACPDPH ASBL <span className="text-xs font-normal text-gray-400">[À remplacer]</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy('ACPDPH ASBL', 'nom_mobile')}
-                  className="px-3 py-1.5 rounded-[8px] bg-white border border-gray-200 hover:bg-gray-50 text-xs font-heading font-semibold text-[#0F172A] transition-colors shrink-0 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2540A]"
-                  aria-label="Copier le nom du compte Mobile Money"
-                >
-                  {copiedField === 'nom_mobile' ? (
-                    <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>Copié</span>
-                    </span>
-                  ) : (
-                    <span>Copier</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Note sur la demande de reçu */}
-              <div className="p-4 rounded-[12px] bg-blue-50/70 border border-blue-100 text-xs sm:text-sm text-gray-700 space-y-1.5">
-                <div className="flex items-center gap-2 font-heading font-bold text-[#1F4FD8]">
-                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span>Demande de reçu officiel</span>
-                </div>
-                <p className="leading-relaxed text-gray-600">
-                  Après votre transfert, envoyez la référence ou une capture d&apos;écran par WhatsApp au <strong className="text-[#0F172A] font-semibold">+243 97 127 7581 <span className="font-normal text-gray-400">[À remplacer]</span></strong> ou par courriel à <strong className="text-[#0F172A] font-semibold">info.acpdph.asbl.rdc@gmail.com <span className="font-normal text-gray-400">[À remplacer]</span></strong>. Un reçu de contribution vous sera remis sous 24 à 48 heures.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bloc Don en nature & bénévolat */}
+        {/* Dégradé sombre pour lisibilité maximale */}
         <div
-          id="don-nature"
-          className="mt-8 rounded-[18px] bg-white p-6 sm:p-8 shadow-sm border border-gray-100 scroll-mt-28"
-          style={{ borderRadius: '18px' }}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5 mb-5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[12px] bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-heading font-bold text-lg sm:text-xl text-[#0F172A]">
-                  Dons en nature, matériels adaptés &amp; bénévolat
-                </h3>
-                <span className="text-xs text-gray-500">Appareillage &bull; Scolarité &bull; Compétences</span>
-              </div>
-            </div>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[12px] bg-[#1F4FD8] hover:bg-[#163BB3] text-white font-heading font-bold text-xs uppercase tracking-wider transition-colors shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F4FD8]"
+          className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent pointer-events-none"
+          aria-hidden="true"
+        />
+
+        {/* Contenu textuel digne et orienté vers les droits */}
+        <div className="container-ba relative z-10 pb-8 sm:pb-12 md:pb-16 text-left">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/30 border border-blue-400/40 text-blue-200 text-xs font-heading font-semibold uppercase tracking-wider mb-4 backdrop-blur-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FFA04D]" aria-hidden="true" />
+              Soutien Humanitaire &bull; RDC
+            </span>
+
+            <h1
+              id="hero-title"
+              className="text-2xl sm:text-3xl md:text-5xl font-bold leading-tight tracking-tight text-white font-heading"
             >
-              <span>Proposer un don matériel</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
-          </div>
+              Chaque enfant a le droit d&apos;apprendre, de grandir et d&apos;être inclus
+            </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-600 leading-relaxed">
-            <div>
-              <h4 className="font-heading font-bold text-[#0F172A] text-sm mb-2">
-                Équipements et matériels prioritaires recherchés :
-              </h4>
-              <ul className="space-y-1.5 list-disc list-inside">
-                <li>Aides à la mobilité : fauteuils roulants (manuels ou tricycles tout-terrain), béquilles, déambulateurs.</li>
-                <li>Cannes blanches et aides techniques pour personnes non-voyantes ou malvoyantes.</li>
-                <li>Matériel scolaire adapté : machines à écrire braille, papier braille, ordinateurs équipés de logiciels vocaux.</li>
-                <li>Équipements pour ateliers d&apos;apprentissage : machines à coudre, outillage de cordonnerie et vannerie.</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-heading font-bold text-[#0F172A] text-sm mb-2">
-                Points de dépôt et expédition :
-              </h4>
-              <p className="mb-2">
-                Les colis et équipements peuvent être réceptionnés directement à notre siège de Beni ou via nos référents à Goma et Kinshasa.
-              </p>
-              <div className="p-3 rounded-[10px] bg-slate-50 border border-slate-200 text-xs text-gray-700">
-                <strong>Adresse :</strong> {OFFICE_ADDRESS}<br />
-                <strong>Contact logistique :</strong> info.acpdph.asbl.rdc@gmail.com &bull; +243 97 127 7581
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 4. SECTION « À QUOI SERVENT VOS DONS ? »                                  */}
-      {/* ========================================================================= */}
-      <section id="impact" className="container-ba mb-20 sm:mb-24 scroll-mt-28" aria-labelledby="impact-title">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#C2540A] bg-amber-50 px-3.5 py-1.5 rounded-full border border-amber-200 inline-block mb-3">
-            Impact mesurable
-          </span>
-          <h2 id="impact-title" className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-[#0F172A] tracking-tight mb-3">
-            À quoi servent vos dons ?
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-            Chaque franc congolais et chaque dollar apportent une réponse tangible sur le terrain. Voici ce que permettent concrètement vos contributions indicatives.
-          </p>
-        </div>
-
-        {/* 4 Montants indicatifs */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {/* Montant 1 : 10 $ */}
-          <div
-            className="rounded-[18px] bg-white p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:border-blue-200 hover:shadow-md transition-all duration-200"
-            style={{ borderRadius: '18px' }}
-          >
-            <div>
-              <div className="font-heading font-extrabold text-3xl text-[#1F4FD8] mb-1">
-                10 $
-              </div>
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-heading font-bold uppercase tracking-wider bg-blue-50 text-[#1F4FD8] mb-3">
-                Kit scolaire adapté
-              </span>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                Fournitures scolaires de base et matériel adapté pour permettre à un enfant en situation de handicap de suivre sa scolarité pendant un trimestre.
-              </p>
-            </div>
-          </div>
-
-          {/* Montant 2 : 25 $ */}
-          <div
-            className="rounded-[18px] bg-white p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:border-amber-200 hover:shadow-md transition-all duration-200"
-            style={{ borderRadius: '18px' }}
-          >
-            <div>
-              <div className="font-heading font-extrabold text-3xl text-[#C2540A] mb-1">
-                25 $
-              </div>
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-heading font-bold uppercase tracking-wider bg-amber-50 text-[#C2540A] mb-3">
-                Mobilité &amp; béquilles
-              </span>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                Achat d&apos;une paire de béquilles métalliques ergonomiques et accompagnement kinésithérapeutique initial pour retrouver la mobilité quotidienne.
-              </p>
-            </div>
-          </div>
-
-          {/* Montant 3 : 50 $ */}
-          <div
-            className="rounded-[18px] bg-white p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:border-blue-200 hover:shadow-md transition-all duration-200"
-            style={{ borderRadius: '18px' }}
-          >
-            <div>
-              <div className="font-heading font-extrabold text-3xl text-[#1F4FD8] mb-1">
-                50 $
-              </div>
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-heading font-bold uppercase tracking-wider bg-blue-50 text-[#1F4FD8] mb-3">
-                Autonomisation
-              </span>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                Appui au démarrage d&apos;une activité génératrice de revenus (petit élevage, artisanat, atelier de couture) pour une femme ou un jeune handicapé.
-              </p>
-            </div>
-          </div>
-
-          {/* Montant 4 : 100 $ */}
-          <div
-            className="rounded-[18px] bg-white p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:border-emerald-200 hover:shadow-md transition-all duration-200"
-            style={{ borderRadius: '18px' }}
-          >
-            <div>
-              <div className="font-heading font-extrabold text-3xl text-emerald-700 mb-1">
-                100 $
-              </div>
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-heading font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 mb-3">
-                Fauteuil roulant &bull; Appareillage
-              </span>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                Contribution majeure à l&apos;acquisition et l&apos;adaptation sur mesure d&apos;un fauteuil roulant tout-terrain adapté aux routes difficiles de Beni.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* 3 Barres de répartition des fonds */}
-        <div
-          className="rounded-[18px] bg-white p-7 sm:p-9 shadow-md border border-gray-100"
-          style={{ borderRadius: '18px' }}
-        >
-          <div className="max-w-2xl mb-6">
-            <h3 className="font-heading font-bold text-xl text-[#0F172A] mb-1.5">
-              Répartition rigoureuse de chaque don
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-600">
-              L&apos;ACPDPH s&apos;engage à une gestion transparente de ses ressources conformément aux principes éthiques de l&apos;action communautaire inclusive.
+            <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed max-w-2xl">
+              Avec l&apos;ACPDPH, vous aidez les personnes handicapées du Nord-Kivu à accéder à
+              l&apos;éducation, aux soins et à l&apos;autonomie.
             </p>
           </div>
+        </div>
+      </section>
 
-          <div className="space-y-6">
-            {/* Barre 1 : Projets terrain (80%) */}
-            <div>
-              <div className="flex items-center justify-between text-xs sm:text-sm font-heading font-bold text-[#0F172A] mb-2">
-                <span className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-[#1F4FD8]" aria-hidden="true" />
-                  <span>Projets &amp; actions directes sur le terrain (aides techniques, santé, éducation)</span>
-                </span>
-                <span className="text-[#1F4FD8] font-extrabold">80 %</span>
+      {/* ========================================================================= */}
+      {/* 2. DISPOSITION 2 COLONNES : FORMULAIRE & INFORMATIONS D'IMPACT           */}
+      {/* (Sur mobile : le formulaire s'affiche en premier, directement sous le hero) */}
+      {/* ========================================================================= */}
+      <section className="container-ba py-10 sm:py-14 md:py-16" aria-label="Don et soutien">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+          {/* ======================================================================= */}
+          {/* FORMULAIRE DE DON (Col Droite sur Desktop, Ordre 1 sur Mobile)         */}
+          {/* ======================================================================= */}
+          <div className="order-1 lg:order-2 lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xs">
+            {/* Si confirmation réussie : écran de remerciement */}
+            {donationSuccess ? (
+              <div className="text-left space-y-6">
+                <div className="text-center pb-2">
+                  <div className="w-14 h-14 mx-auto text-[#2350D9] dark:text-blue-400 flex items-center justify-center mb-3">
+                    <svg className="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h2 className="font-heading text-xl sm:text-2xl font-bold uppercase tracking-tight text-[#2350D9] dark:text-blue-400">
+                    Merci pour votre générosité
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                    Votre engagement fait une différence concrète pour l&apos;inclusion des personnes handicapées au Nord-Kivu.
+                  </p>
+                </div>
+
+                {/* Récapitulatif en lignes simples sans cartes lourdes */}
+                <div className="border-t border-slate-200 dark:border-zinc-800 pt-4 space-y-3 text-xs sm:text-sm">
+                  <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
+                    <span className="text-slate-500">Référence de soutien</span>
+                    <span className="font-mono font-bold text-[#2350D9] dark:text-blue-400">
+                      {donationSuccess.reference}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
+                    <span className="text-slate-500">Montant engagé</span>
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      {donationSuccess.amount} {donationSuccess.currency} ({donationSuccess.frequency === 'monthly' ? 'Mensuel' : 'Ponctuel'})
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
+                    <span className="text-slate-500">Moyen choisi</span>
+                    <span className="font-medium text-slate-900 dark:text-white">
+                      {donationSuccess.paymentMethod}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
+                    <span className="text-slate-500">Donateur</span>
+                    <span className="font-medium text-slate-900 dark:text-white truncate max-w-[200px]">
+                      {donationSuccess.name}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
+                    <span className="text-slate-500">Enregistré le</span>
+                    <span className="text-slate-700 dark:text-slate-300">
+                      {donationSuccess.date}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Instructions étape par étape selon le mode */}
+                <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-2">
+                  <div className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
+                    Finalisation de votre versement
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Veuillez indiquer la référence <strong className="font-mono text-slate-900 dark:text-white">{donationSuccess.reference}</strong> lors de votre transfert.
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Un e-mail récapitulatif a été expédié à <strong className="text-slate-700 dark:text-slate-300">{donationSuccess.email}</strong>.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleCopyText(
+                        `ACPDPH Don Réf: ${donationSuccess.reference} - Montant: ${donationSuccess.amount} ${donationSuccess.currency} - Donateur: ${donationSuccess.name}`,
+                        'recap'
+                      )
+                    }
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2350D9] dark:text-blue-400 hover:underline pt-1 cursor-pointer"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.615v.75m-7.332 0c-.055.194-.084.4-.084.615v.75m7.332 0c0 .414-.336.75-.75.75H8.25a.75.75 0 01-.75-.75v-.75m7.332 0h1.668A2.25 2.25 0 0118.75 6v13.5A2.25 2.25 0 0116.5 21.75H7.5A2.25 2.25 0 015.25 19.5V6a2.25 2.25 0 012.25-2.25h1.668" />
+                    </svg>
+                    <span>{copiedKey === 'recap' ? 'Coordonnées copiées !' : 'Copier les coordonnées du don'}</span>
+                  </button>
+                </div>
+
+                {/* Boutons de redirection */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <Link
+                    to="/"
+                    className="flex-1 py-3 px-4 rounded-xl text-center bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-slate-200 text-xs font-heading font-bold uppercase tracking-wider transition-colors"
+                  >
+                    Retour à l&apos;accueil
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleShare}
+                    className="flex-1 py-3 px-4 rounded-xl text-center bg-[#C2530A] hover:bg-[#9F4100] text-white text-xs font-heading font-bold uppercase tracking-wider transition-colors shadow-xs"
+                  >
+                    {shareSuccess ? 'Lien copié !' : 'Partager notre action'}
+                  </button>
+                </div>
               </div>
-              <div
-                className="w-full h-3 rounded-full bg-slate-100 overflow-hidden"
-                role="progressbar"
-                aria-valuenow={80}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label="80% alloués aux projets et actions directes"
-              >
-                <div className="h-full bg-[#1F4FD8] rounded-full transition-all duration-500" style={{ width: '80%' }} />
+            ) : (
+              /* Formulaire Étape 1 & Étape 2 */
+              <div className="space-y-6">
+                {/* En-tête du formulaire avec indicateur d'étapes */}
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
+                  <div>
+                    <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
+                      {step === 1 ? 'Étape 1 sur 2' : 'Étape 2 sur 2'}
+                    </span>
+                    <h2 className="font-heading text-lg font-bold text-slate-900 dark:text-white">
+                      {step === 1 ? 'Votre soutien financier' : 'Mode de versement'}
+                    </h2>
+                  </div>
+
+                  {step === 2 && (
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="text-xs text-[#2350D9] dark:text-blue-400 hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                      </svg>
+                      Modifier
+                    </button>
+                  )}
+                </div>
+
+                {/* Alerte message d'erreur serveur */}
+                {serverError && (
+                  <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-xs flex items-start gap-2.5">
+                    <svg className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                    <span className="leading-relaxed">{serverError}</span>
+                  </div>
+                )}
+
+                {/* ── ÉTAPE 1 : Fréquence, montants et coordonnées ── */}
+                {step === 1 && (
+                  <form onSubmit={handleNextStep} noValidate className="space-y-6">
+                    {/* Fréquence : Tous les mois / Une seule fois */}
+                    <div>
+                      <label className="block text-xs font-heading font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                        Fréquence de soutien
+                      </label>
+                      <div className="grid grid-cols-2 gap-2" role="tablist" aria-label="Fréquence de don">
+                        <button
+                          type="button"
+                          role="tab"
+                          aria-selected={frequency === 'monthly'}
+                          onClick={() => setFrequency('monthly')}
+                          className={`py-2.5 px-3 rounded-xl text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                            frequency === 'monthly'
+                              ? 'bg-[#2350D9] text-white shadow-xs'
+                              : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-700'
+                          }`}
+                        >
+                          Tous les mois
+                        </button>
+                        <button
+                          type="button"
+                          role="tab"
+                          aria-selected={frequency === 'single'}
+                          onClick={() => setFrequency('single')}
+                          className={`py-2.5 px-3 rounded-xl text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                            frequency === 'single'
+                              ? 'bg-[#2350D9] text-white shadow-xs'
+                              : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-700'
+                          }`}
+                        >
+                          Une seule fois
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Montants prédéfinis */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-xs font-heading font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                          Montant du don ({DONATION_CONFIG.defaultCurrency})
+                        </label>
+                        <span className="text-[11px] text-slate-500">Devise : Dollar américain ($)</span>
+                      </div>
+
+                      <div className="grid grid-cols-4 gap-2 mb-3">
+                        {suggestedAmounts.map((amt) => {
+                          const isSelected = !customAmount && selectedAmount === amt;
+                          return (
+                            <button
+                              key={amt}
+                              type="button"
+                              onClick={() => {
+                                setSelectedAmount(amt);
+                                setCustomAmount('');
+                              }}
+                              className={`py-2.5 rounded-xl font-heading font-bold text-sm transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#2350D9] text-white ring-2 ring-[#2350D9] ring-offset-2 dark:ring-offset-slate-900 shadow-xs'
+                                  : 'bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-zinc-700 border border-slate-200 dark:border-zinc-700'
+                              }`}
+                            >
+                              {amt} $
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Champ Autre Montant */}
+                      <div className="relative">
+                        <label htmlFor={customAmountInputId} className="sr-only">
+                          Autre montant
+                        </label>
+                        <input
+                          id={customAmountInputId}
+                          type="number"
+                          min="1"
+                          step="any"
+                          placeholder="Autre montant libre (en $)"
+                          value={customAmount}
+                          onChange={(e) => setCustomAmount(e.target.value)}
+                          className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#2350D9] focus:ring-2 focus:ring-[#2350D9]/20"
+                        />
+                        <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">
+                          USD ($)
+                        </span>
+                      </div>
+                      {errors.amount && (
+                        <p className="text-rose-600 dark:text-rose-400 text-xs mt-1.5">{errors.amount}</p>
+                      )}
+                    </div>
+
+                    {/* Coordonnées du donateur */}
+                    <div className="space-y-3 pt-2 border-t border-slate-200 dark:border-zinc-800">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label htmlFor={firstNameInputId} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Prénom *
+                          </label>
+                          <input
+                            id={firstNameInputId}
+                            type="text"
+                            required
+                            placeholder="Votre prénom"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#2350D9]"
+                          />
+                          {errors.firstName && (
+                            <p className="text-rose-600 dark:text-rose-400 text-xs mt-1">{errors.firstName}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label htmlFor={lastNameInputId} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                            Nom *
+                          </label>
+                          <input
+                            id={lastNameInputId}
+                            type="text"
+                            required
+                            placeholder="Votre nom de famille"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#2350D9]"
+                          />
+                          {errors.lastName && (
+                            <p className="text-rose-600 dark:text-rose-400 text-xs mt-1">{errors.lastName}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor={emailInputId} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                          Adresse e-mail *
+                        </label>
+                        <input
+                          id={emailInputId}
+                          type="email"
+                          required
+                          placeholder="exemple@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#2350D9]"
+                        />
+                        {errors.email && (
+                          <p className="text-rose-600 dark:text-rose-400 text-xs mt-1">{errors.email}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label htmlFor={phoneInputId} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                          Numéro de téléphone (optionnel)
+                        </label>
+                        <input
+                          id={phoneInputId}
+                          type="tel"
+                          placeholder="+243 ..."
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#2350D9]"
+                        />
+                      </div>
+
+                      <div className="pt-1">
+                        <label htmlFor={newsletterInputId} className="flex items-start gap-2.5 cursor-pointer text-xs text-slate-600 dark:text-slate-300">
+                          <input
+                            id={newsletterInputId}
+                            type="checkbox"
+                            checked={newsletter}
+                            onChange={(e) => setNewsletter(e.target.checked)}
+                            className="mt-0.5 rounded border-slate-300 text-[#2350D9] focus:ring-[#2350D9]"
+                          />
+                          <span>J&apos;accepte de recevoir des nouvelles des actions de l&apos;ACPDPH sur le terrain</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Bouton vers l'étape 2 (Orange #C2530A) */}
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 px-6 rounded-xl bg-[#C2530A] hover:bg-[#9F4100] text-white font-heading font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300 cursor-pointer text-center"
+                    >
+                      Passer au paiement &bull; {currentAmount} $
+                    </button>
+                  </form>
+                )}
+
+                {/* ── ÉTAPE 2 : Choix du moyen de paiement ── */}
+                {step === 2 && (
+                  <form onSubmit={handleConfirmDonation} noValidate className="space-y-6">
+                    {/* Récapitulatif du don choisi */}
+                    <div className="p-3.5 bg-blue-50/70 dark:bg-blue-950/40 rounded-xl border border-blue-200 dark:border-blue-900 flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 block">
+                          Engagement sélectionné
+                        </span>
+                        <div className="font-heading font-bold text-base text-slate-900 dark:text-white">
+                          Don {frequency === 'monthly' ? 'mensuel' : 'ponctuel'} de {currentAmount} $
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="text-xs font-semibold text-[#2350D9] dark:text-blue-400 hover:underline cursor-pointer"
+                      >
+                        Changer
+                      </button>
+                    </div>
+
+                    {/* Options de paiement */}
+                    <div className="space-y-3">
+                      <label className="block text-xs font-heading font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                        Sélectionnez votre moyen de règlement
+                      </label>
+
+                      {/* 1. Mobile Money (Option Privilégiée RDC) */}
+                      <label
+                        className={`block p-4 rounded-xl border transition-all cursor-pointer ${
+                          paymentMethod === 'MOBILE_MONEY'
+                            ? 'border-[#2350D9] bg-blue-50/40 dark:bg-blue-950/30 ring-1 ring-[#2350D9]'
+                            : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="MOBILE_MONEY"
+                            checked={paymentMethod === 'MOBILE_MONEY'}
+                            onChange={() => setPaymentMethod('MOBILE_MONEY')}
+                            className="mt-1 text-[#2350D9] focus:ring-[#2350D9]"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="font-heading font-bold text-sm text-slate-900 dark:text-white">
+                                Mobile Money (RDC)
+                              </span>
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-[#C2530A] dark:text-amber-300 border border-amber-200 dark:border-amber-900">
+                                Recommandé
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-1">
+                              Vodacom M-Pesa, Airtel Money et Orange Money.
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Sous-sélection de l'opérateur si sélectionné */}
+                        {paymentMethod === 'MOBILE_MONEY' && (
+                          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-zinc-800 space-y-3">
+                            <div className="grid grid-cols-3 gap-2">
+                              {(['mpesa', 'airtel', 'orange'] as const).map((op) => {
+                                const operatorInfo = DONATION_CONFIG.mobileMoney[op];
+                                const isOpSelected = selectedMobileOperator === op;
+                                return (
+                                  <button
+                                    key={op}
+                                    type="button"
+                                    onClick={() => setSelectedMobileOperator(op)}
+                                    className={`py-2 px-1 text-center rounded-lg text-xs font-heading font-bold transition-all cursor-pointer ${
+                                      isOpSelected
+                                        ? 'bg-[#2350D9] text-white shadow-xs'
+                                        : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-700'
+                                    }`}
+                                  >
+                                    {operatorInfo.name}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            {/* Instructions spécifiques de l'opérateur */}
+                            <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-zinc-800 text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
+                              <div className="font-semibold text-slate-900 dark:text-white flex items-center justify-between">
+                                <span>Code rapide : {DONATION_CONFIG.mobileMoney[selectedMobileOperator].ussdPrompt}</span>
+                              </div>
+                              <p className="text-[11px] text-slate-500">
+                                Bénéficiaire officiel : <strong>{DONATION_CONFIG.mobileMoney[selectedMobileOperator].accountName}</strong>
+                              </p>
+                              <p className="text-[11px] text-slate-500">
+                                Numéro de compte : <span className="font-mono text-slate-700 dark:text-slate-300">{DONATION_CONFIG.mobileMoney[selectedMobileOperator].accountNumber}</span>
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </label>
+
+                      {/* 2. Virement bancaire */}
+                      <label
+                        className={`block p-4 rounded-xl border transition-all cursor-pointer ${
+                          paymentMethod === 'BANK_TRANSFER'
+                            ? 'border-[#2350D9] bg-blue-50/40 dark:bg-blue-950/30 ring-1 ring-[#2350D9]'
+                            : 'border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="BANK_TRANSFER"
+                            checked={paymentMethod === 'BANK_TRANSFER'}
+                            onChange={() => setPaymentMethod('BANK_TRANSFER')}
+                            className="mt-1 text-[#2350D9] focus:ring-[#2350D9]"
+                          />
+                          <div className="flex-1">
+                            <span className="font-heading font-bold text-sm text-slate-900 dark:text-white block">
+                              Virement bancaire
+                            </span>
+                            <p className="text-xs text-slate-500 mt-1">
+                              Comptes en USD et CDF pour dons nationaux et internationaux.
+                            </p>
+                          </div>
+                        </div>
+
+                        {paymentMethod === 'BANK_TRANSFER' && (
+                          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-zinc-800 text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
+                            <p><strong>Établissement :</strong> {DONATION_CONFIG.bankTransfer.bankName}</p>
+                            <p><strong>Bénéficiaire :</strong> {DONATION_CONFIG.bankTransfer.beneficiary}</p>
+                            <p><strong>Agence :</strong> {DONATION_CONFIG.bankTransfer.agency}</p>
+                          </div>
+                        )}
+                      </label>
+
+                      {/* 3. Carte bancaire (Bientôt disponible) */}
+                      <div className="p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-900/40 opacity-75">
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="radio"
+                            disabled
+                            name="paymentMethod"
+                            value="CARD"
+                            className="mt-1 text-slate-400 cursor-not-allowed"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="font-heading font-bold text-sm text-slate-700 dark:text-slate-300">
+                                Carte bancaire (Visa / Mastercard)
+                              </span>
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 dark:bg-zinc-800 text-slate-600 dark:text-slate-400">
+                                Bientôt disponible
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-1">
+                              Passerelle financière en ligne en cours d&apos;homologation.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Boutons d'action Étape 2 */}
+                    <div className="flex items-center gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="py-3.5 px-4 rounded-xl border border-slate-300 dark:border-zinc-700 hover:bg-slate-100 dark:hover:bg-zinc-800 text-xs font-heading font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+                      >
+                        Retour
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="flex-1 py-3.5 px-6 rounded-xl bg-[#C2530A] hover:bg-[#9F4100] text-white font-heading font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300 cursor-pointer disabled:opacity-60 text-center"
+                      >
+                        {submitting ? 'Enregistrement en cours...' : 'Confirmer mon soutien'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ======================================================================= */}
+          {/* COLONNE GAUCHE (Desktop) / ORDRE 2 (Mobile) : IMPACT & TRANSPARENCE   */}
+          {/* ======================================================================= */}
+          <div className="order-2 lg:order-1 lg:col-span-7 space-y-10 text-left">
+            {/* Section 2a : Votre soutien permet */}
+            <div className="space-y-4">
+              <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
+                <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
+                  Votre soutien permet
+                </h2>
+              </div>
+
+              {/* Liste de 3 lignes avec icônes Lucide SVG (zéro emoji) */}
+              <div className="space-y-4 pt-1">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#2350D9] dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                      Une éducation inclusive et du matériel scolaire adapté pour les enfants
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+                      Financement des frais de scolarité, fourniture de cannes blanches, papier et machines braille, aménagements physiques des classes à Beni et dans le Nord-Kivu.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-[#C2530A] dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-100 dark:border-amber-900">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                      Appareillage et réadaptation pour retrouver mobilité et autonomie
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+                      Distribution de fauteuils roulants tout-terrain, béquilles, prothèses et accès aux séances de kinésithérapie pour les personnes vulnérables.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-900">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                      Des activités génératrices de revenus et des formations adaptées
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+                      Ateliers de formation professionnelle, appui technique et micro-crédits pour l&apos;autonomisation économique des familles et des femmes vivant avec un handicap.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Barre 2 : Plaidoyer & droits (12%) */}
-            <div>
-              <div className="flex items-center justify-between text-xs sm:text-sm font-heading font-bold text-[#0F172A] mb-2">
-                <span className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-[#C2540A]" aria-hidden="true" />
-                  <span>Plaidoyer juridique, sensibilisation communautaire &amp; inclusion institutionnelle</span>
-                </span>
-                <span className="text-[#C2540A] font-extrabold">12 %</span>
+            {/* Section 2b : Que devient votre don ? (Transparence financière) */}
+            <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-zinc-800">
+              <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
+                <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
+                  Que devient votre don ?
+                </h2>
               </div>
-              <div
-                className="w-full h-3 rounded-full bg-slate-100 overflow-hidden"
-                role="progressbar"
-                aria-valuenow={12}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label="12% alloués au plaidoyer juridique et à la sensibilisation"
-              >
-                <div className="h-full bg-[#C2540A] rounded-full transition-all duration-500" style={{ width: '12%' }} />
+
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                L&apos;ACPDPH applique une rigueur stricte dans la gestion de ses ressources financières et matérielles.
+              </p>
+
+              {/* Barres de progression discrètes sans cartes lourdes */}
+              <div className="space-y-4 pt-1">
+                <div>
+                  <div className="flex justify-between items-center text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
+                    <span>Projets &amp; actions directes sur le terrain (santé, scolarité, réadaptation)</span>
+                    <span className="font-bold text-[#2350D9] dark:text-blue-400">80 %</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-zinc-800 overflow-hidden">
+                    <div className="h-full bg-[#2350D9] rounded-full" style={{ width: '80%' }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
+                    <span>Plaidoyer juridique, sensibilisation communautaire &amp; inclusion</span>
+                    <span className="font-bold text-[#C2530A]">12 %</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-zinc-800 overflow-hidden">
+                    <div className="h-full bg-[#C2530A] rounded-full" style={{ width: '12%' }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
+                    <span>Frais administratifs, contrôle financier &amp; gouvernance transparente</span>
+                    <span className="font-bold text-slate-600 dark:text-slate-400">8 %</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-zinc-800 overflow-hidden">
+                    <div className="h-full bg-slate-500 rounded-full" style={{ width: '8%' }} />
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Barre 3 : Fonctionnement (8%) */}
-            <div>
-              <div className="flex items-center justify-between text-xs sm:text-sm font-heading font-bold text-[#0F172A] mb-2">
-                <span className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-[#64748B]" aria-hidden="true" />
-                  <span>Frais administratifs, contrôle de gestion &amp; gouvernance transparente</span>
-                </span>
-                <span className="text-gray-600 font-extrabold">8 %</span>
+            {/* Section 2c : À propos de l'ACPDPH (Présentation ancrée et légale) */}
+            <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-zinc-800">
+              <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
+                <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
+                  À propos de l&apos;ACPDPH
+                </h2>
               </div>
-              <div
-                className="w-full h-3 rounded-full bg-slate-100 overflow-hidden"
-                role="progressbar"
-                aria-valuenow={8}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label="8% alloués aux frais administratifs et à la gouvernance"
-              >
-                <div className="h-full bg-[#64748B] rounded-full transition-all duration-500" style={{ width: '8%' }} />
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
+                L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une Organisation Non Gouvernementale (ONG) nationale de droit congolais, constituée conformément à la <strong>Loi n° 004/2001 du 20 juillet 2001</strong> régissant les associations sans but lucratif. Établie à Beni, dans la province du Nord-Kivu, elle intervient au quotidien pour l&apos;autonomie, l&apos;accès à l&apos;éducation et la défense des droits fondamentaux des personnes en situation de handicap.
+              </p>
+              <div className="pt-1">
+                <Link
+                  to="/a-propos"
+                  className="inline-flex items-center gap-1.5 text-xs font-heading font-bold text-[#2350D9] dark:text-blue-400 hover:underline uppercase tracking-wide"
+                >
+                  <span>En savoir plus sur notre gouvernance et nos statuts</span>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </Link>
               </div>
             </div>
           </div>
@@ -869,138 +910,119 @@ export default function Support() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. FAQ EN ACCORDÉON                                                       */}
+      {/* 3. SECTIONS D'INFORMATIONS COMPLÉMENTAIRES (PLEINE LARGEUR)               */}
       {/* ========================================================================= */}
-      <section className="container-ba mb-20 sm:mb-24" aria-labelledby="faq-title">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#1F4FD8] bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-100 inline-block mb-3">
-            Questions fréquentes
-          </span>
-          <h2 id="faq-title" className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-[#0F172A] tracking-tight mb-3">
-            Tout ce que vous devez savoir sur votre don
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-            Consultez les réponses aux questions les plus fréquentes concernant la sécurité de votre versement et le suivi de vos dons.
-          </p>
-        </div>
-
+      <section className="container-ba pb-20 space-y-16" aria-label="Informations complémentaires">
+        {/* Accordéon FAQ */}
         <div className="max-w-3xl mx-auto space-y-4">
+          <div className="text-center mb-8">
+            <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 block mb-1">
+              Transparence &bull; Sécurité
+            </span>
+            <h2 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 dark:text-white uppercase tracking-tight">
+              Questions fréquentes sur votre don
+            </h2>
+          </div>
+
           {[
             {
-              question: 'Mon don est-il sécurisé ?',
-              answer:
-                'Oui, absolument. Notre site web ne collecte aucune coordonnée bancaire, aucun mot de passe ni aucune donnée de carte de crédit. Vous effectuez votre transaction directement depuis votre propre compte bancaire ou via l’application de votre opérateur Mobile Money officiel, en utilisant nos identifiants officiels.',
+              q: 'Mon don est-il sécurisé ?',
+              a: 'Oui. Le site de l’ACPDPH ne collecte et ne stocke aucune coordonnée bancaire confidentielle ni code secret. Les transferts s’effectuent directement via votre opérateur Mobile Money ou auprès de votre établissement bancaire, à partir des identifiants et références officiels générés.',
             },
             {
-              question: 'Comment obtenir un reçu officiel de don ?',
-              answer:
-                'Dès que vous avez réalisé votre virement ou votre transfert Mobile Money, transmettez-nous la référence de transaction ou une capture d’écran par e-mail à info.acpdph.asbl.rdc@gmail.com ou par message WhatsApp au +243 97 127 7581. La trésorerie de l’ACPDPH vous délivrera une attestation officielle sous 24 à 48 heures.',
+              q: 'Comment obtenir mon reçu officiel ?',
+              a: 'Dès votre versement réalisé, transmettez votre référence ou justificatif par e-mail à info.acpdph.asbl.rdc@gmail.com ou par message au bureau de l’association. La trésorerie de l’ACPDPH émettra votre attestation officielle sous 24 à 48 heures.',
             },
             {
-              question: 'Puis-je mettre en place un don régulier ?',
-              answer:
-                'Oui. Pour les virements bancaires, vous pouvez programmer un ordre de virement périodique (mensuel ou trimestriel) auprès de votre agence bancaire. Pour le Mobile Money, nous pouvons convenir d’un rappel discret selon votre calendrier de préférence.',
+              q: 'Puis-je faire un don en nature (matériel médical, scolarité) ?',
+              a: 'Absolument. Fauteuils roulants, cannes blanches, machines braille, prothèses et matériel informatique adapté sont directement acheminés aux bénéficiaires. Vous pouvez nous contacter directement via notre page de contact pour convenir de l’acheminement.',
             },
             {
-              question: 'Comment suivre l’utilisation de mon don sur le terrain ?',
-              answer:
-                'L’ACPDPH publie des rapports d’activités et des bilans financiers réguliers. Les donateurs enregistrés reçoivent des informations concrètes et transparentes sur les remises de matériel, les scolarisations financées et les avancées concrètes obtenues grâce à leur soutien.',
+              q: 'Comment sont suivies les contributions sur le terrain ?',
+              a: 'L’ACPDPH publie des bilans périodiques d’activités. Les personnes ayant accepté de recevoir des informations sont tenues informées de la remise des matériels et de l’avancement des projets éducatifs et sanitaires à Beni.',
             },
           ].map((item, idx) => {
             const isOpen = openFaq === idx;
             return (
               <div
                 key={idx}
-                className="rounded-[18px] bg-white border border-gray-100 shadow-xs overflow-hidden transition-all duration-200"
-                style={{ borderRadius: '18px' }}
+                className="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-zinc-800 overflow-hidden transition-all"
               >
                 <button
                   type="button"
                   onClick={() => toggleFaq(idx)}
-                  className="w-full px-6 py-5 flex items-center justify-between text-left gap-4 font-heading font-bold text-base sm:text-lg text-[#0F172A] hover:text-[#1F4FD8] transition-colors focus:outline-none focus-visible:ring-3 focus-visible:ring-[#1F4FD8] focus-visible:ring-inset cursor-pointer"
+                  className="w-full px-5 py-4 flex items-center justify-between text-left gap-4 font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white hover:text-[#2350D9] dark:hover:text-blue-400 transition-colors cursor-pointer"
                   aria-expanded={isOpen}
-                  aria-controls={`faq-answer-${idx}`}
-                  id={`faq-question-${idx}`}
                 >
-                  <span>{item.question}</span>
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'bg-blue-50 text-[#1F4FD8] rotate-180' : 'bg-gray-100 text-gray-500'
+                  <span>{item.q}</span>
+                  <span
+                    className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-transform ${
+                      isOpen ? 'rotate-180 text-[#2350D9] dark:text-blue-400' : 'text-slate-400'
                     }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
-                  </div>
+                  </span>
                 </button>
-
                 {isOpen && (
-                  <div
-                    id={`faq-answer-${idx}`}
-                    role="region"
-                    aria-labelledby={`faq-question-${idx}`}
-                    className="px-6 pb-6 pt-1 text-sm sm:text-base text-gray-600 leading-relaxed border-t border-gray-50"
-                  >
-                    <p>{item.answer}</p>
+                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-zinc-800">
+                    <p>{item.a}</p>
                   </div>
                 )}
               </div>
             );
           })}
         </div>
-      </section>
 
-      {/* ========================================================================= */}
-      {/* 6. BANDEAU FINAL SOMBRE « UNE QUESTION SUR VOTRE DON ? »                  */}
-      {/* ========================================================================= */}
-      <section className="bg-[#0F172A] text-white py-16 sm:py-20" aria-labelledby="cta-title">
-        <div className="container-ba">
-          <div className="max-w-4xl mx-auto rounded-[18px] bg-slate-900/80 border border-slate-800 p-8 sm:p-12 text-center space-y-6">
-            <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#FFA04D] inline-block">
-              Échange &bull; Transparence &bull; Partenariat
-            </span>
+        {/* Section Contact Direct & Partenaires */}
+        <div className="max-w-4xl mx-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-zinc-800 p-8 sm:p-10 text-center space-y-6">
+          <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
+            Une question sur votre soutien ou un partenariat ?
+          </span>
 
-            <h2 id="cta-title" className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight">
-              Une question sur votre don ou un partenariat ?
-            </h2>
+          <h3 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 dark:text-white">
+            Notre équipe se tient à votre disposition
+          </h3>
 
-            <p className="text-sm sm:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
-              Notre équipe se tient à votre entière disposition pour échanger sur vos projets philanthropiques, convenir d&apos;un partenariat institutionnel ou organiser la remise d&apos;un don matériel.
-            </p>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
+            Pour échanger sur un projet philanthropique, un soutien institutionnel, ou organiser la remise d&apos;équipements médicaux ou scolaires :
+          </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <Link
-                to="/contact"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-[14px] bg-[#C2540A] hover:bg-[#9F4100] text-white font-heading font-bold text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]"
-              >
-                <span>Nous contacter</span>
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </Link>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-2 text-xs sm:text-sm font-medium">
+            <a
+              href={`mailto:${OFFICE_EMAIL}`}
+              className="flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:text-[#2350D9] dark:hover:text-blue-400 transition-colors"
+            >
+              <svg className="w-4 h-4 text-[#2350D9] dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+              </svg>
+              <span>{OFFICE_EMAIL}</span>
+            </a>
 
-            <div className="pt-6 border-t border-slate-800 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs sm:text-sm text-gray-400">
-              <a
-                href="mailto:info.acpdph.asbl.rdc@gmail.com"
-                className="flex items-center gap-2 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded py-1 px-2"
-              >
-                <svg className="w-4 h-4 text-[#FFA04D]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <span>info.acpdph.asbl.rdc@gmail.com</span>
-              </a>
+            <a
+              href={`tel:${OFFICE_PHONE.replace(/\s+/g, '')}`}
+              className="flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:text-[#2350D9] dark:hover:text-blue-400 transition-colors"
+            >
+              <svg className="w-4 h-4 text-[#2350D9] dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+              </svg>
+              <span>{OFFICE_PHONE}</span>
+            </a>
 
-              <a
-                href="tel:+243971277581"
-                className="flex items-center gap-2 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded py-1 px-2"
-              >
-                <svg className="w-4 h-4 text-[#FFA04D]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                <span>+243 97 127 7581</span>
-              </a>
-            </div>
+            <Link
+              to="/contact"
+              className="flex items-center gap-1.5 text-[#C2530A] hover:underline font-heading font-bold uppercase tracking-wider"
+            >
+              <span>Formulaire de contact</span>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 text-[11px] text-slate-400">
+            Siège : {OFFICE_ADDRESS}
           </div>
         </div>
       </section>

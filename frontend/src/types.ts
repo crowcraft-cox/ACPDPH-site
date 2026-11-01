@@ -167,6 +167,26 @@ export interface Subscriber {
   subscribedAt: string;
 }
 
+export interface DonationItem {
+  _id: string;
+  reference: string;
+  amount: number;
+  currency: string;
+  frequency: 'monthly' | 'single';
+  firstName?: string;
+  lastName?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  country?: string;
+  newsletter?: boolean;
+  paymentMethod: string;
+  paymentProvider?: string;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  notes?: string;
+  createdAt: string;
+}
+
 export interface NewsletterLog {
   id: string;
   subject: string;
@@ -183,6 +203,7 @@ export interface AdminData {
   projects: Project[];
   jobs?: JobOffer[];
   applications?: CandidateApplication[];
+  donations?: DonationItem[];
   contact: ContactInfo;
   users?: AdminUser[];
   subscribers?: Subscriber[];
