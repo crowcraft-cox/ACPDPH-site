@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+// @ts-ignore
 import multer from 'multer';
 import { authMiddleware } from '../middleware/authMiddleware';
 import Gallery from '../models/Gallery';
@@ -12,16 +13,16 @@ const UPLOAD_DIR = path.join(process.cwd(), 'uploads', 'gallery');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 // ── Multer configuration ──────────────────────────────────────────────────────
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
-  filename: (_req, file, cb) => {
+const storage = (multer as any).diskStorage({
+  destination: (_req: any, _file: any, cb: any) => cb(null, UPLOAD_DIR),
+  filename: (_req: any, file: any, cb: any) => {
     const ext = path.extname(file.originalname).toLowerCase();
     const name = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
     cb(null, name);
   },
 });
 
-function fileFilter(_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+function fileFilter(_req: any, file: any, cb: any) {
   const allowed = [
     'image/jpeg', 'image/png', 'image/webp', 'image/gif',
     'video/mp4', 'video/webm', 'video/ogg',
@@ -33,7 +34,7 @@ function fileFilter(_req: Request, file: Express.Multer.File, cb: multer.FileFil
   }
 }
 
-const upload = multer({
+const upload = (multer as any)({
   storage,
   fileFilter,
   limits: { fileSize: 100 * 1024 * 1024 }, // 100 MB max (images validated separately below)
@@ -78,7 +79,7 @@ router.get('/all', authMiddleware, async (_req: Request, res: Response) => {
 // ── POST /api/v1/gallery/upload — admin, upload file ─────────────────────────
 router.post('/upload', authMiddleware, upload.single('file'), async (req: Request, res: Response) => {
   try {
-    const file = req.file;
+    const file = (req as any).file;
     const { title, alt, caption, order } = req.body;
 
     if (!file) {
@@ -117,7 +118,7 @@ router.post('/upload', authMiddleware, upload.single('file'), async (req: Reques
 
     res.status(201).json({ success: true, data: item });
   } catch (err: any) {
-    if (req.file) fs.unlink(req.file.path, () => {});
+    if ((req as any).file) fs.unlink((req as any).file.path, () => {});
     res.status(500).json({ success: false, error: err.message });
   }
 });

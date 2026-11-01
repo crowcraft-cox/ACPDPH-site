@@ -6,6 +6,7 @@ export interface ISiteContent extends Document {
   pillars: any[];
   news: any[];
   projects: any[];
+  jobs: any[];
   contact: {
     address: string;
     email: string;
@@ -23,6 +24,7 @@ const SiteContentSchema: Schema = new Schema(
     pillars: { type: Array, default: [] },
     news: { type: Array, default: [] },
     projects: { type: Array, default: [] },
+    jobs: { type: Array, default: [] },
     contact: {
       address: { type: String, default: '' },
       email: { type: String, default: '' },

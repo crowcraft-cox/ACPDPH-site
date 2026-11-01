@@ -5,6 +5,7 @@ import ImpactManager from './ImpactManager';
 import PillarsManager from './PillarsManager';
 import NewsManager from './NewsManager';
 import ProjectsManager from './ProjectsManager';
+import JobsManager from './JobsManager';
 import ContactManager from './ContactManager';
 import SettingsManager from './SettingsManager';
 import NewsletterManager from './NewsletterManager';
@@ -12,7 +13,7 @@ import MessagesManager from './MessagesManager';
 import GalleryManager from './GalleryManager';
 import '../../admin.css';
 
-type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
+type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'jobs' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
 
 export default function AdminDashboard() {
   const { data, isAuthenticated, logout, currentUser, isSyncing, syncError, dbConnected, dbError, isLoading, retryConnection } = useAdminData();
@@ -80,6 +81,15 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'jobs',
+      label: 'Offres & Emplois',
+      icon: (
+        <svg className="admin-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+        </svg>
+      ),
+    },
+    {
       id: 'gallery',
       label: 'Galerie & Médias',
       icon: (
@@ -138,6 +148,7 @@ export default function AdminDashboard() {
     pillars: 'Piliers d\'Intervention',
     news: 'Dernières Actualités',
     projects: 'Nos Projets',
+    jobs: 'Offres & Emplois',
     gallery: 'Galerie & Médias',
     contact: 'Coordonnées',
     newsletter: 'Newsletter & Abonnés',
@@ -187,6 +198,17 @@ export default function AdminDashboard() {
       icon: (
         <svg width="24" height="24" fill="none" stroke="#FB923C" viewBox="0 0 24 24" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Offres d\'emploi',
+      value: (data.jobs || []).length,
+      color: 'rgba(194, 83, 10, 0.12)',
+      textColor: '#C2530A',
+      icon: (
+        <svg width="24" height="24" fill="none" stroke="#C2530A" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
         </svg>
       ),
     },
@@ -303,51 +325,12 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        {/* Bannière d'erreur base de données — notification admin visible */}
-        {!isLoading && !dbConnected && dbError && (
-          <div style={{ margin: '1rem 1.5rem 0', padding: '1rem 1.5rem', borderRadius: '0.75rem', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-            <div style={{ flexShrink: 0, width: '2.5rem', height: '2.5rem', borderRadius: '50%', background: 'rgba(239,68,68,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 2.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-              </svg>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, color: '#EF4444', fontSize: '0.95rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                </svg>
-                Base de données non connectée
-              </div>
-              <div style={{ color: '#FCA5A5', fontSize: '0.82rem', lineHeight: 1.5 }}>{dbError}</div>
-            </div>
-            <button
-              onClick={retryConnection}
-              style={{ flexShrink: 0, padding: '0.5rem 1rem', borderRadius: '0.5rem', background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.5)', color: '#FCA5A5', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
-            >
-              <svg style={{ width: '14px', height: '14px', marginRight: '0.3rem', display: 'inline' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-              </svg>
-              Réessayer
-            </button>
-          </div>
-        )}
-
-        {/* Bannière d'erreur de sauvegarde */}
-        {syncError && !isSyncing && (
-          <div style={{ margin: '0.75rem 1.5rem 0', padding: '0.75rem 1.25rem', borderRadius: '0.75rem', background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.4)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-            </svg>
-            <span style={{ color: '#FCD34D', fontSize: '0.82rem', flex: 1 }}>{syncError}</span>
-          </div>
-        )}
-
         {/* Content Area */}
         <div className="admin-content">
           {activeSection === 'overview' && (
             <div>
               {/* Stats Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                 {stats.map((stat, i) => (
                   <div key={i} className="admin-stat-card" onClick={() => setActiveSection(navItems[i + 1]?.id || 'overview')} style={{ cursor: 'pointer' }}>
                     <div className="admin-stat-icon" style={{ background: stat.color }}>
@@ -384,6 +367,12 @@ export default function AdminDashboard() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     Nouveau projet
+                  </button>
+                  <button className="admin-btn admin-btn-ghost" onClick={() => setActiveSection('jobs')}>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+                    </svg>
+                    Offres d'emploi
                   </button>
                   {!isEditor && (
                     <>
@@ -435,6 +424,7 @@ export default function AdminDashboard() {
           {activeSection === 'pillars' && !isEditor && <PillarsManager />}
           {activeSection === 'news' && <NewsManager />}
           {activeSection === 'projects' && <ProjectsManager />}
+          {activeSection === 'jobs' && <JobsManager />}
           {activeSection === 'gallery' && <GalleryManager />}
           {activeSection === 'contact' && !isEditor && <ContactManager />}
           {activeSection === 'newsletter' && <NewsletterManager />}

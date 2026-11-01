@@ -88,6 +88,21 @@ export interface Project {
   date?: string;
 }
 
+export interface JobOffer {
+  id: string;
+  title: string;
+  location: string;
+  contractType: 'CDI' | 'CDD' | 'Stage' | 'Consultance' | 'Bénévolat';
+  contractPrecision?: string;
+  description?: string;
+  missions?: string[];
+  profile?: string;
+  applicationDossier?: string;
+  deadline?: string;
+  applicationLink?: string;
+  createdAt: string;
+}
+
 export interface ContactInfo {
   address: string;
   email: string;
@@ -125,6 +140,7 @@ export interface AdminData {
   pillars: Pillar[];
   news: NewsArticle[];
   projects: Project[];
+  jobs?: JobOffer[];
   contact: ContactInfo;
   users?: AdminUser[];
   subscribers?: Subscriber[];

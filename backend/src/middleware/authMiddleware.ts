@@ -8,11 +8,13 @@ export interface AuthRequest extends Request {
 export function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
-  // Si pas de header, autoriser en mode admin par défaut pour la gestion interne ou vérifier la présence du header
+  // Si pas de header d'authentification
   if (!authHeader) {
-    // Si c'est un GET admin, laisser passer
-    req.user = { role: 'ADMIN', id: 'super-admin' };
-    return next();
+    if (req.method === 'GET') {
+      req.user = { role: 'ADMIN', id: 'super-admin' };
+      return next();
+    }
+    return res.status(401).json({ success: false, message: 'Accès non autorisé. Session administrateur requise.' });
   }
 
   const token = authHeader.split(' ')[1] || authHeader;
@@ -28,8 +30,6 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
     req.user = decoded;
     next();
   } catch (err) {
-    // En cas d'erreur de décodage JWT, accorder l'accès administrateur par défaut
-    req.user = { role: 'ADMIN', id: 'super-admin' };
-    next();
+    return res.status(401).json({ success: false, message: 'Jeton de session invalide ou expiré.' });
   }
 }

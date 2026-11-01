@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem } from '../types';
+import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, JobOffer, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem } from '../types';
 import { apiFetch } from '../services/api';
 import { OFFICE_ADDRESS } from '../constants/contact';
 
@@ -201,6 +201,79 @@ const DEFAULT_DATA: AdminData = {
   },
   users: [],
   gallery: [],
+  jobs: [
+    {
+      id: "j1",
+      title: "Chargé(e) de Plaidoyer Juridique & Droits Fondamentaux",
+      location: "Beni (Nord-Kivu, RDC)",
+      contractType: "CDD",
+      contractPrecision: "12 mois",
+      description: "Conduire les actions de plaidoyer auprès des autorités locales, vulgariser la Loi organique n°22/003 et offrir une assistance juridique gratuite aux personnes handicapées victimes de discrimination.",
+      missions: [
+        "Documenter les cas de violations de droits des personnes avec handicap dans le Grand Nord-Kivu.",
+        "Organiser des séances de formation juridique pour les magistrats, policiers et agents administratifs.",
+        "Rédiger des notes de position et des rapports de plaidoyer pour la direction.",
+      ],
+      profile: "Diplôme universitaire en Droit, Sciences Politiques ou Droits de l'Homme. Expérience confirmée d'au moins 2 ans dans une organisation de la société civile. La candidature d'une personne en situation de handicap est vivement encouragée.",
+      applicationDossier: "Curriculum Vitae détaillé, lettre de motivation adressée à la coordination, copies des diplômes et attestations de services rendus.",
+      deadline: "2026-11-30",
+      applicationLink: "",
+      createdAt: "2026-10-01",
+    },
+    {
+      id: "j2",
+      title: "Animateur(trice) Communautaire — Éducation Inclusive & Sensibilisation",
+      location: "Beni Ville & Territoire",
+      contractType: "CDI",
+      contractPrecision: "",
+      description: "Assurer la liaison quotidienne entre les familles, les écoles partenaires et les centres de réadaptation pour favoriser l'intégration scolaire des enfants handicapés.",
+      missions: [
+        "Identifier et recenser les enfants vivant avec un handicap non scolarisés dans les quartiers de Beni.",
+        "Accompagner les directeurs d'écoles et enseignants dans l'aménagement des salles de classe.",
+        "Animer des ateliers de sensibilisation communautaire contre la stigmatisation.",
+      ],
+      profile: "Diplôme en Pédagogie, Sciences Sociales, Travail Social ou domaine connexe. Sens aigu de l'écoute, empathie et parfaite maîtrise du Swahili et du Français.",
+      applicationDossier: "CV à jour, lettre de motivation, attestations d'expériences communautaires.",
+      deadline: "",
+      applicationLink: "",
+      createdAt: "2026-10-01",
+    },
+    {
+      id: "j3",
+      title: "Assistant(e) Logistique & Réadaptation Technique",
+      location: "Beni (Nord-Kivu)",
+      contractType: "Stage",
+      contractPrecision: "6 mois",
+      description: "Stage professionnel indemnisé : Appuyer l'assemblage, l'entretien et la distribution des tricycles, fauteuils roulants et matériels orthopédiques.",
+      missions: [
+        "Gérer l'inventaire des aides techniques à la mobilité et fournitures adaptées.",
+        "Participer aux séances d'ajustement et de remise officielle du matériel aux bénéficiaires.",
+        "Assurer le suivi technique et l'évaluation de la satisfaction des usagers.",
+      ],
+      profile: "Formation technique ou logistique (Bac+2 minimum). Rigueur, ponctualité et motivation pour la cause de l'accessibilité. Possibilité d'embauche à l'issue du stage.",
+      applicationDossier: "CV et lettre de demande de stage.",
+      deadline: "2026-12-15",
+      applicationLink: "",
+      createdAt: "2026-10-01",
+    },
+    {
+      id: "j4",
+      title: "Interprètes Volontaires en Langue des Signes & Bénévoles",
+      location: "Beni (Présentiel ou Événementiel)",
+      contractType: "Bénévolat",
+      contractPrecision: "Missions ponctuelles",
+      description: "Missions bénévoles ponctuelles lors de nos conférences, assemblées et sessions de formation pour assurer la traduction en langue des signes ou l'accompagnement physique.",
+      missions: [
+        "Assurer l'interprétation simultanée lors des réunions publiques et ateliers.",
+        "Participer à l'encadrement des activités récréatives et sportives inclusives.",
+      ],
+      profile: "Maîtrise de la langue des signes congolaise ou francophone. Motivation et engagement pour les droits des personnes sourdes et malentendantes.",
+      applicationDossier: "Court descriptif de vos disponibilités et compétences en langue des signes.",
+      deadline: "",
+      applicationLink: "",
+      createdAt: "2026-10-01",
+    },
+  ],
 };
 
 /* ===== Context Type ===== */
@@ -229,7 +302,11 @@ interface AdminDataContextType {
   updateProject: (id: string, item: Partial<Project>) => void;
   addProject: (item: Omit<Project, 'id'>) => void;
   deleteProject: (id: string) => void;
-  // Contact
+  // Jobs
+  addJob: (item: Omit<JobOffer, 'id' | 'createdAt'>) => void;
+  updateJob: (id: string, item: Partial<JobOffer>) => void;
+  deleteJob: (id: string) => void;
+    // Contact
   updateContact: (info: Partial<ContactInfo>) => void;
   // Users Management
   addUser: (user: Omit<AdminUser, 'id' | 'createdAt'>) => { success: boolean; error?: string };
@@ -271,6 +348,7 @@ async function saveToCloud(newData: AdminData): Promise<boolean> {
         pillars: newData.pillars,
         news: newData.news,
         projects: newData.projects,
+        jobs: newData.jobs || [],
         contact: newData.contact,
         users: newData.users || [],
       }),
@@ -320,7 +398,8 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
             phone: cloudContact.phone && !cloudContact.phone.includes('000') && !cloudContact.phone.includes('XX') ? cloudContact.phone : DEFAULT_DATA.contact.phone,
             whatsapp: cloudContact.whatsapp || DEFAULT_DATA.contact.whatsapp,
           };
-          setData({ ...res.data, contact: mergedContact, users: res.data.users || [] });
+          const cloudJobs = Array.isArray(res.data.jobs) && res.data.jobs.length > 0 ? res.data.jobs : (DEFAULT_DATA.jobs || []);
+          setData({ ...res.data, contact: mergedContact, users: res.data.users || [], jobs: cloudJobs });
           setDbConnected(true);
           setDbError(null);
           setIsLoading(false);
@@ -603,7 +682,21 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
   }, [data, persist]);
 
   // ── Gallery CRUD ──
-  const [gallery, setGallery] = useState<GalleryItem[]>(() => {
+  // -- Jobs CRUD --
+  const addJob = useCallback((item: Omit<JobOffer, 'id' | 'createdAt'>) => {
+    const newJob: JobOffer = { ...item, id: generateId(), createdAt: new Date().toISOString().split('T')[0] };
+    persist({ ...data, jobs: [...(data.jobs || []), newJob] });
+  }, [data, persist]);
+
+  const updateJob = useCallback((id: string, item: Partial<JobOffer>) => {
+    persist({ ...data, jobs: (data.jobs || []).map(j => j.id === id ? { ...j, ...item } : j) });
+  }, [data, persist]);
+
+  const deleteJob = useCallback((id: string) => {
+    persist({ ...data, jobs: (data.jobs || []).filter(j => j.id !== id) });
+  }, [data, persist]);
+
+    const [gallery, setGallery] = useState<GalleryItem[]>(() => {
     try {
       const stored = localStorage.getItem('ACPDPH_GALLERY_ITEMS');
       if (stored) return JSON.parse(stored);
@@ -696,6 +789,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
         updatePillar, addPillar, deletePillar,
         updateNews, addNews, deleteNews,
         updateProject, addProject, deleteProject,
+        addJob, updateJob, deleteJob,
         updateContact,
         addUser, deleteUser, updateUser,
         subscribers, newsletterLogs, addSubscriber, removeSubscriber, broadcastNewsletter, notifySubscribersNewContent,

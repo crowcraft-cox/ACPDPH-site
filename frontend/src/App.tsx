@@ -17,6 +17,7 @@ const Partners = lazy(() => import('./pages/Partners'));
 
 const Support = lazy(() => import('./pages/Support'));
 const Careers = lazy(() => import('./pages/Careers'));
+const JobDetail = lazy(() => import('./pages/JobDetail'));
 const News = lazy(() => import('./pages/News'));
 const NewsDetail = lazy(() => import('./pages/NewsDetail'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -104,6 +105,9 @@ function MainLayout() {
                 <Route path="/support" element={<Support />} />
                 <Route path="/act" element={<Support />} />
                 <Route path="/careers" element={<Careers />} />
+                <Route path="/offres-emplois" element={<Careers />} />
+                <Route path="/offres-emplois/:id" element={<JobDetail />} />
+                <Route path="/careers/:id" element={<JobDetail />} />
                 <Route path="/news" element={<News />} />
                 <Route path="/news/:id" element={<NewsDetail />} />
                 <Route path="/contact" element={<Contact />} />
@@ -127,4 +131,3 @@ function App() {
 }
 
 export default App;
-

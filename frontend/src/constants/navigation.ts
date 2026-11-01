@@ -23,7 +23,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/projects', label: 'NOS PROJETS' },
   { to: '/news', label: 'ACTUALITÉS' },
   { to: '/partners', label: 'NOS PARTENAIRES' },
-  { to: '/careers', label: 'OFFRES & EMPLOIS' },
+  { to: '/offres-emplois', label: 'OFFRES & EMPLOIS' },
   { to: '/galerie', label: 'GALERIES' },
 ];
 
@@ -31,4 +31,3 @@ export const CONTACT_ITEM = {
   to: '/contact',
   label: 'CONTACT',
 };
-
