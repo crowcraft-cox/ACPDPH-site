@@ -14,6 +14,7 @@ export interface ISiteContent extends Document {
     whatsapp?: string;
   };
   users?: any[];
+  bankAccounts?: any[];
   updatedAt: Date;
 }
 
@@ -32,6 +33,7 @@ const SiteContentSchema: Schema = new Schema(
       whatsapp: { type: String, default: '' },
     },
     users: { type: Array, default: [] },
+    bankAccounts: { type: Array, default: [] },
   },
   { timestamps: true }
 );

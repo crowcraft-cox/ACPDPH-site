@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../services/api';
+import { useAdminData } from '../../context/adminData';
 import type { DonationItem } from '../../types';
+import BankAccountsManager from './BankAccountsManager';
 
 export default function DonationsManager() {
+  const { data } = useAdminData();
+  const [activeTab, setActiveTab] = useState<'donations' | 'bankAccounts'>('donations');
   const [donations, setDonations] = useState<DonationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,28 +117,73 @@ export default function DonationsManager() {
   const totalPending = donations.filter((d) => d.status === 'pending').length;
   const totalConfirmed = donations.filter((d) => d.status === 'confirmed').length;
 
+  const bankAccountsCount = data.bankAccounts && data.bankAccounts.length > 0 ? data.bankAccounts.length : 1;
+
   return (
     <div className="space-y-6">
-      {/* En-tête de section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-heading font-bold text-white tracking-wide">
-            Intentions de Dons &amp; Soutiens
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Gestion, validation et suivi des promesses de dons enregistrées via le site web.
-          </p>
-        </div>
+      {/* Onglets de navigation Dons vs Comptes bancaires */}
+      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
         <button
-          onClick={fetchDonations}
-          className="admin-btn admin-btn-ghost text-xs flex items-center gap-1.5 self-start sm:self-auto"
+          type="button"
+          onClick={() => setActiveTab('donations')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer ${
+            activeTab === 'donations'
+              ? 'bg-[#2350D9] text-white shadow-xs'
+              : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
+          }`}
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
           </svg>
-          Actualiser
+          <span>Intentions de dons</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20 text-white font-mono">
+            {donations.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('bankAccounts')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-heading font-bold uppercase tracking-wider transition-all cursor-pointer ${
+            activeTab === 'bankAccounts'
+              ? 'bg-[#2350D9] text-white shadow-xs'
+              : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
+          }`}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+          </svg>
+          <span>Coordonnées bancaires &amp; RIB</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-blue-500/20 text-blue-300 font-mono">
+            {bankAccountsCount}
+          </span>
         </button>
       </div>
+
+      {activeTab === 'bankAccounts' ? (
+        <BankAccountsManager />
+      ) : (
+        <>
+          {/* En-tête de section */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-heading font-bold text-white tracking-wide">
+                Intentions de Dons &amp; Soutiens
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Gestion, validation et suivi des promesses de dons enregistrées via le site web.
+              </p>
+            </div>
+            <button
+              onClick={fetchDonations}
+              className="admin-btn admin-btn-ghost text-xs flex items-center gap-1.5 self-start sm:self-auto"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+              Actualiser
+            </button>
+          </div>
 
       {/* Cartes métriques */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -500,6 +549,8 @@ export default function DonationsManager() {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

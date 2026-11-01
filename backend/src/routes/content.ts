@@ -235,6 +235,20 @@ const DEFAULT_CONTENT = {
     },
   ],
   users: [],
+  bankAccounts: [
+    {
+      id: 'bank-equity-bcdc-usd',
+      bankName: 'EQUITY BCDC',
+      accountName: 'ACPDPH',
+      agency: 'AGENCE DE BENI',
+      accountNumber: '00011150666200168501311',
+      swift: 'BCDCCDKI',
+      currency: 'USD',
+      iban: '',
+      notes: 'Compte principal pour les virements en devises (USD). Indiquer la référence de don en communication.',
+      active: true,
+    },
+  ],
 };
 
 // GET /api/v1/content - Fetch site content (accessible to all devices)
@@ -248,6 +262,10 @@ router.get('/', async (req: Request, res: Response) => {
       console.log('[MongoDB] Initialized default site content in Atlas database');
     }
 
+    const bankAccounts = Array.isArray((content as any).bankAccounts) && (content as any).bankAccounts.length > 0
+      ? (content as any).bankAccounts
+      : DEFAULT_CONTENT.bankAccounts;
+
     res.status(200).json({
       success: true,
       data: {
@@ -258,6 +276,7 @@ router.get('/', async (req: Request, res: Response) => {
         jobs: (content as any).jobs || [],
         contact: content.contact,
         users: content.users || [],
+        bankAccounts,
       },
     });
   } catch (error: any) {
@@ -273,7 +292,7 @@ router.get('/', async (req: Request, res: Response) => {
 // PUT /api/v1/content - Update site content in MongoDB Atlas (saves admin changes to cloud)
 router.put('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { impact, pillars, news, projects, jobs, contact, users } = req.body;
+    const { impact, pillars, news, projects, jobs, contact, users, bankAccounts } = req.body;
 
     const updated = await SiteContent.findOneAndUpdate(
       { key: 'main_site_content' },
@@ -286,6 +305,7 @@ router.put('/', authMiddleware, async (req: Request, res: Response) => {
           jobs: jobs || [],
           contact: contact || {},
           users: users || [],
+          bankAccounts: bankAccounts || [],
         },
       },
       { new: true, upsert: true }
@@ -304,6 +324,7 @@ router.put('/', authMiddleware, async (req: Request, res: Response) => {
         jobs: (updated as any).jobs || [],
         contact: updated.contact,
         users: updated.users || [],
+        bankAccounts: (updated as any).bankAccounts || [],
       },
     });
   } catch (error: any) {

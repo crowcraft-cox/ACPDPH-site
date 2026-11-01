@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, JobOffer, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem } from '../types';
+import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, JobOffer, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem, BankAccount } from '../types';
 import { apiFetch } from '../services/api';
 import { OFFICE_ADDRESS } from '../constants/contact';
+import { DEFAULT_BANK_ACCOUNTS } from '../config/donationConfig';
 
 /* ===== DONNÉES PAR DÉFAUT (affichées pendant le chargement initial) ===== */
 const DEFAULT_DATA: AdminData = {
@@ -274,6 +275,7 @@ const DEFAULT_DATA: AdminData = {
       createdAt: "2026-10-01",
     },
   ],
+  bankAccounts: DEFAULT_BANK_ACCOUNTS,
 };
 
 /* ===== Context Type ===== */
@@ -324,6 +326,10 @@ interface AdminDataContextType {
   addGalleryItem: (item: Omit<GalleryItem, '_id'>) => Promise<GalleryItem>;
   updateGalleryItem: (id: string, updates: Partial<GalleryItem>) => void;
   deleteGalleryItem: (id: string) => void;
+  // Bank Accounts
+  updateBankAccount: (id: string, item: Partial<BankAccount>) => void;
+  addBankAccount: (item: Omit<BankAccount, 'id'>) => void;
+  deleteBankAccount: (id: string) => void;
   // Auth
   isAuthenticated: boolean;
   currentUser: AdminUser | null;
@@ -351,6 +357,7 @@ async function saveToCloud(newData: AdminData): Promise<boolean> {
         jobs: newData.jobs || [],
         contact: newData.contact,
         users: newData.users || [],
+        bankAccounts: newData.bankAccounts || [],
       }),
     });
     return res.success === true;
@@ -399,7 +406,10 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
             whatsapp: cloudContact.whatsapp || DEFAULT_DATA.contact.whatsapp,
           };
           const cloudJobs = Array.isArray(res.data.jobs) && res.data.jobs.length > 0 ? res.data.jobs : (DEFAULT_DATA.jobs || []);
-          setData({ ...res.data, contact: mergedContact, users: res.data.users || [], jobs: cloudJobs });
+          const cloudBankAccounts = Array.isArray((res.data as any).bankAccounts) && (res.data as any).bankAccounts.length > 0
+            ? (res.data as any).bankAccounts
+            : (DEFAULT_DATA.bankAccounts || DEFAULT_BANK_ACCOUNTS);
+          setData({ ...res.data, contact: mergedContact, users: res.data.users || [], jobs: cloudJobs, bankAccounts: cloudBankAccounts });
           setDbConnected(true);
           setDbError(null);
           setIsLoading(false);
@@ -770,6 +780,38 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     }
   }, [gallery, persistGallery]);
 
+  // ── Comptes Bancaires ─────────────────────────────────────────────────────
+  const updateBankAccount = useCallback((id: string, updatedFields: Partial<BankAccount>) => {
+    setData((prev) => {
+      const accounts = prev.bankAccounts || DEFAULT_DATA.bankAccounts || [];
+      const nextAccounts = accounts.map((acc) => (acc.id === id ? { ...acc, ...updatedFields } : acc));
+      const next = { ...prev, bankAccounts: nextAccounts };
+      persist(next);
+      return next;
+    });
+  }, [persist]);
+
+  const addBankAccount = useCallback((item: Omit<BankAccount, 'id'>) => {
+    const newAccount: BankAccount = { ...item, id: generateId() };
+    setData((prev) => {
+      const accounts = prev.bankAccounts || DEFAULT_DATA.bankAccounts || [];
+      const nextAccounts = [newAccount, ...accounts];
+      const next = { ...prev, bankAccounts: nextAccounts };
+      persist(next);
+      return next;
+    });
+  }, [persist]);
+
+  const deleteBankAccount = useCallback((id: string) => {
+    setData((prev) => {
+      const accounts = prev.bankAccounts || DEFAULT_DATA.bankAccounts || [];
+      const nextAccounts = accounts.filter((acc) => acc.id !== id);
+      const next = { ...prev, bankAccounts: nextAccounts };
+      persist(next);
+      return next;
+    });
+  }, [persist]);
+
   // ── Contact ──────────────────────────────────────────────────────────────
   const updateContact = useCallback((info: Partial<ContactInfo>) => {
     persist({ ...data, contact: { ...data.contact, ...info } });
@@ -791,6 +833,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
         updateProject, addProject, deleteProject,
         addJob, updateJob, deleteJob,
         updateContact,
+        updateBankAccount, addBankAccount, deleteBankAccount,
         addUser, deleteUser, updateUser,
         subscribers, newsletterLogs, addSubscriber, removeSubscriber, broadcastNewsletter, notifySubscribersNewContent,
         gallery, addGalleryItem, updateGalleryItem, deleteGalleryItem, isAuthenticated, currentUser, login, logout,

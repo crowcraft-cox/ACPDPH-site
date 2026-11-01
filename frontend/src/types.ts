@@ -196,6 +196,19 @@ export interface NewsletterLog {
   recipientCount: number;
 }
 
+export interface BankAccount {
+  id: string;
+  bankName: string;
+  accountName: string;
+  agency: string;
+  accountNumber: string;
+  swift: string;
+  currency: string;
+  iban?: string;
+  notes?: string;
+  active?: boolean;
+}
+
 export interface AdminData {
   impact: ImpactCounter[];
   pillars: Pillar[];
@@ -209,4 +222,5 @@ export interface AdminData {
   subscribers?: Subscriber[];
   newsletterLogs?: NewsletterLog[];
   gallery?: GalleryItem[];
+  bankAccounts?: BankAccount[];
 }

@@ -16,9 +16,14 @@ export const PARTNER_LOGOS: PartnerLogo[] = [
     url: 'https://www.icrc.org',
   },
   {
-    name: 'Servizio Diocesano per la Pastorale delle Persone con Disabilità',
-    logo: '/images/partners/diocesi-noto.png',
-    url: 'https://www.diocesinoto.it', // TODO: URL à confirmer (service diocésain de pastorale du handicap rattaché au Diocèse de Noto)
+    name: 'Fonds pour les Femmes Congolaises (FFC)',
+    logo: '/images/partners/ffc.jpg',
+    url: 'https://www.ffcrdc.org/',
+  },
+  {
+    name: 'Ministère en charge des Personnes Vivant avec Handicap et autres Personnes Vulnérables (RDC)',
+    logo: '/images/partners/minpvh.jpg',
+    url: 'https://x.com/Minpvh_apvRDC',
   },
   {
     name: 'Ministère des Affaires Sociales, Actions Humanitaires et Solidarité Nationale (RDC)',
@@ -26,9 +31,9 @@ export const PARTNER_LOGOS: PartnerLogo[] = [
     url: 'https://minas.gouv.cd',
   },
   {
-    name: 'Ministère en charge des Personnes Vivant avec Handicap et autres Personnes Vulnérables (RDC)',
-    logo: null, // Emplacement texte provisoire (logo officiel vectoriel non disponible publiquement)
-    url: '#', // TODO: URL à confirmer (département ministériel sans portail autonome public propre)
+    name: 'Servizio Diocesano per la Pastorale delle Persone con Disabilità',
+    logo: '/images/partners/diocesi-noto.png',
+    url: 'https://www.diocesinoto.it',
   },
   {
     name: 'Cluster Éducation',
@@ -43,7 +48,7 @@ export const PARTNER_LOGOS: PartnerLogo[] = [
   {
     name: 'GTPE',
     logo: '/images/partners/gtpe.png',
-    url: '#', // TODO: URL à confirmer (Groupe de Travail Protection de l'Enfance - sous-cluster RDC / CP AoR)
+    url: '#',
   },
 ];
 

@@ -25,6 +25,7 @@ export default function Partners() {
                 target={isClickable ? '_blank' : undefined}
                 rel={isClickable ? 'noopener noreferrer' : undefined}
                 aria-label={`Site de ${partner.name}`}
+                title={partner.name}
                 className="w-[calc(50%-1rem)] md:w-[calc((100%-4rem)/3)] flex items-center justify-center p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition-transform duration-200 hover:scale-105 cursor-pointer"
                 onClick={!isClickable ? (e) => e.preventDefault() : undefined}
               >
@@ -34,7 +35,7 @@ export default function Partners() {
                       src={partner.logo}
                       alt={partner.name}
                       loading="lazy"
-                      className="max-h-full max-w-full object-contain"
+                      className="max-h-full max-w-full object-contain rounded-md"
                     />
                   ) : (
                     <span className="text-xs sm:text-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center leading-snug">

@@ -1,10 +1,16 @@
 import { useState, useId } from 'react';
 import { Link } from 'react-router-dom';
-import { DONATION_CONFIG } from '../config/donationConfig';
+import { DONATION_CONFIG, DEFAULT_BANK_ACCOUNTS } from '../config/donationConfig';
 import { OFFICE_ADDRESS, OFFICE_EMAIL, OFFICE_PHONE } from '../constants/contact';
 import { apiFetch } from '../services/api';
+import { useAdminData } from '../context/adminData';
 
 export default function Support() {
+  const { data } = useAdminData();
+  const bankAccounts = (data?.bankAccounts && data.bankAccounts.length > 0
+    ? data.bankAccounts
+    : DEFAULT_BANK_ACCOUNTS).filter((acc) => acc.active !== false);
+
   // ── États du formulaire de don en 2 étapes ──
   const [step, setStep] = useState<1 | 2>(1);
   const [frequency, setFrequency] = useState<'monthly' | 'single'>('monthly');
@@ -109,7 +115,7 @@ export default function Support() {
     const providerLabel =
       paymentMethod === 'MOBILE_MONEY'
         ? DONATION_CONFIG.mobileMoney[selectedMobileOperator].name
-        : DONATION_CONFIG.bankTransfer.bankName;
+        : (bankAccounts[0]?.bankName || DONATION_CONFIG.bankTransfer.bankName);
 
     try {
       const payload = {
@@ -335,13 +341,50 @@ export default function Support() {
                 </div>
 
                 {/* Instructions étape par étape selon le mode */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-2">
+                <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-3">
                   <div className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
                     Finalisation de votre versement
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Veuillez indiquer la référence <strong className="font-mono text-slate-900 dark:text-white">{donationSuccess.reference}</strong> lors de votre transfert.
+                    Veuillez indiquer impérativement la référence <strong className="font-mono text-[#2350D9] dark:text-blue-400">{donationSuccess.reference}</strong> en motif ou libellé de votre versement.
                   </p>
+
+                  {donationSuccess.paymentMethod === 'Virement bancaire' && (
+                    <div className="space-y-2.5 pt-1">
+                      {bankAccounts.map((acc) => (
+                        <div key={acc.id} className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-zinc-800 text-xs space-y-1.5">
+                          <div className="flex items-center justify-between font-heading font-bold text-slate-900 dark:text-white">
+                            <span>{acc.bankName} ({acc.currency || 'USD'})</span>
+                            <span className="text-[10px] text-slate-500 font-normal">{acc.agency}</span>
+                          </div>
+                          <div className="text-slate-600 dark:text-slate-300">
+                            Bénéficiaire : <strong>{acc.accountName || 'ACPDPH'}</strong>
+                          </div>
+                          <div className="flex items-center justify-between bg-slate-50 dark:bg-zinc-800/60 p-1.5 rounded">
+                            <span className="font-mono font-bold text-slate-900 dark:text-white">{acc.accountNumber}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyText(acc.accountNumber, `success-acc-${acc.id}`)}
+                              className="text-[11px] font-semibold text-[#2350D9] dark:text-blue-400 hover:underline cursor-pointer"
+                            >
+                              {copiedKey === `success-acc-${acc.id}` ? 'Copié !' : 'Copier'}
+                            </button>
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] text-slate-500">
+                            <span>SWIFT : <strong className="font-mono text-slate-700 dark:text-slate-300">{acc.swift}</strong></span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyText(acc.swift, `success-swift-${acc.id}`)}
+                              className="text-[11px] text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:underline cursor-pointer"
+                            >
+                              {copiedKey === `success-swift-${acc.id}` ? 'Copié !' : 'Copier SWIFT'}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     Un e-mail récapitulatif a été expédié à <strong className="text-slate-700 dark:text-slate-300">{donationSuccess.email}</strong>.
                   </p>
@@ -349,7 +392,11 @@ export default function Support() {
                     type="button"
                     onClick={() =>
                       handleCopyText(
-                        `ACPDPH Don Réf: ${donationSuccess.reference} - Montant: ${donationSuccess.amount} ${donationSuccess.currency} - Donateur: ${donationSuccess.name}`,
+                        `ACPDPH Don Réf: ${donationSuccess.reference} - Montant: ${donationSuccess.amount} ${donationSuccess.currency} - Donateur: ${donationSuccess.name}${
+                          donationSuccess.paymentMethod === 'Virement bancaire' && bankAccounts[0]
+                            ? ` - Banque: ${bankAccounts[0].bankName} - Compte: ${bankAccounts[0].accountNumber} - SWIFT: ${bankAccounts[0].swift}`
+                            : ''
+                        }`,
                         'recap'
                       )
                     }
@@ -735,10 +782,70 @@ export default function Support() {
                         </div>
 
                         {paymentMethod === 'BANK_TRANSFER' && (
-                          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-zinc-800 text-xs text-slate-600 dark:text-slate-300 space-y-1.5">
-                            <p><strong>Établissement :</strong> {DONATION_CONFIG.bankTransfer.bankName}</p>
-                            <p><strong>Bénéficiaire :</strong> {DONATION_CONFIG.bankTransfer.beneficiary}</p>
-                            <p><strong>Agence :</strong> {DONATION_CONFIG.bankTransfer.agency}</p>
+                          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-zinc-800 space-y-3">
+                            {bankAccounts.map((acc) => (
+                              <div
+                                key={acc.id}
+                                className="p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-zinc-800 text-xs space-y-2"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="font-heading font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span>{acc.bankName}</span>
+                                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-950/60 text-[#2350D9] dark:text-blue-300 border border-blue-200 dark:border-blue-900">
+                                      {acc.currency || 'USD'}
+                                    </span>
+                                  </div>
+                                  <span className="text-[11px] text-slate-500">{acc.agency}</span>
+                                </div>
+
+                                <div className="space-y-1 text-slate-600 dark:text-slate-300">
+                                  <p>
+                                    Intitulé : <strong className="text-slate-900 dark:text-white">{acc.accountName || 'ACPDPH'}</strong>
+                                  </p>
+
+                                  <div className="flex items-center justify-between bg-slate-50 dark:bg-zinc-800/60 p-2 rounded-lg">
+                                    <span className="font-mono font-bold text-slate-900 dark:text-white">
+                                      {acc.accountNumber}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleCopyText(acc.accountNumber, `step2-acc-${acc.id}`);
+                                      }}
+                                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#2350D9] dark:text-blue-400 hover:underline cursor-pointer"
+                                    >
+                                      {copiedKey === `step2-acc-${acc.id}` ? 'Copié !' : 'Copier'}
+                                    </button>
+                                  </div>
+
+                                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                                    <span>Code SWIFT : <strong className="font-mono text-slate-700 dark:text-slate-300">{acc.swift}</strong></span>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleCopyText(acc.swift, `step2-swift-${acc.id}`);
+                                      }}
+                                      className="text-[11px] text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:underline cursor-pointer"
+                                    >
+                                      {copiedKey === `step2-swift-${acc.id}` ? 'Copié !' : 'Copier SWIFT'}
+                                    </button>
+                                  </div>
+
+                                  {acc.iban && (
+                                    <p className="text-[11px] text-slate-500">
+                                      IBAN : <span className="font-mono">{acc.iban}</span>
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                            <p className="text-[11px] text-slate-500 leading-relaxed italic">
+                              Les coordonnées bancaires complètes vous seront également rappelées avec votre référence unique dès la validation.
+                            </p>
                           </div>
                         )}
                       </label>

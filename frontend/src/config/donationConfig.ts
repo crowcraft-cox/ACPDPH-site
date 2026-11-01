@@ -1,11 +1,15 @@
+import type { BankAccount } from '../types';
+
 /**
  * Configuration centralisée des moyens de paiement et coordonnées pour les dons ACPDPH.
  *
  * NOTE IMPORTANTE POUR L'ACPDPH :
- * Les numéros de téléphone et coordonnées de comptes bancaires ci-dessous sont préparés
- * avec des mentions réservées "À FOURNIR PAR L'ACPDPH".
- * Dès que l'association disposera de ses comptes finaux, il suffira de mettre à jour
- * ce fichier pour que tout le site affiche immédiatement les coordonnées certifiées.
+ * Coordonnées bancaires officielles certifiées de l'ACPDPH :
+ * - Banque : EQUITY BCDC
+ * - Intitulé : ACPDPH
+ * - Agence : AGENCE DE BENI
+ * - Compte USD : 00011150666200168501311
+ * - SWIFT : BCDCCDKI
  */
 
 export interface MobileMoneyOperator {
@@ -125,19 +129,18 @@ export const DONATION_CONFIG: DonationConfig = {
     },
   },
 
-  // 2. VIREMENT BANCAIRE
-  // [À FOURNIR PAR L'ACPDPH] : Coordonnées bancaires institutionnelles
+  // 2. VIREMENT BANCAIRE OFFICIEL ACPDPH
   bankTransfer: {
-    bankName: 'Établissement bancaire à préciser par l\'ACPDPH (ex: RAWBANK Beni)',
-    agency: 'Agence de Beni, Nord-Kivu, RDC',
-    beneficiary: 'ACPDPH ASBL (Agence Congolaise de Promotion des Droits des Personnes Handicapées)',
-    accountUSD: 'Numéro de compte USD à fournir par l\'ACPDPH',
-    accountCDF: 'Numéro de compte CDF à fournir par l\'ACPDPH',
-    iban: 'Code IBAN international à fournir par l\'ACPDPH',
-    swift: 'Code SWIFT / BIC à fournir par l\'ACPDPH',
-    isConfigured: false,
+    bankName: 'EQUITY BCDC',
+    agency: 'AGENCE DE BENI',
+    beneficiary: 'ACPDPH',
+    accountUSD: '00011150666200168501311',
+    accountCDF: 'À préciser par l\'ACPDPH',
+    iban: '',
+    swift: 'BCDCCDKI',
+    isConfigured: true,
     instructions: [
-      'Initiez un virement depuis votre interface bancaire en ligne ou auprès de votre agence.',
+      'Initiez un virement depuis votre interface bancaire en ligne ou auprès de votre agence bancaire.',
       'Indiquez impérativement la Référence de soutien (ex: DON-2026-XXXX) en motif ou communication.',
       'Transmettez une copie de l\'avis d\'opération par e-mail à info.acpdph.asbl.rdc@gmail.com pour recevoir votre accusé officiel.',
     ],
@@ -151,4 +154,23 @@ export const DONATION_CONFIG: DonationConfig = {
       'Le paiement sécurisé direct par carte bancaire (Visa / Mastercard) est en cours de configuration auprès de notre prestataire agréé. En attendant son ouverture, merci de privilégier le transfert Mobile Money ou le virement bancaire.',
   },
 };
+
+/**
+ * Comptes bancaires par défaut de l'ACPDPH pour les virements.
+ * Synchronisés avec MongoDB Atlas et modifiables par les administrateurs.
+ */
+export const DEFAULT_BANK_ACCOUNTS: BankAccount[] = [
+  {
+    id: 'bank-equity-bcdc-usd',
+    bankName: 'EQUITY BCDC',
+    accountName: 'ACPDPH',
+    agency: 'AGENCE DE BENI',
+    accountNumber: '00011150666200168501311',
+    swift: 'BCDCCDKI',
+    currency: 'USD',
+    iban: '',
+    notes: 'Compte principal pour les virements en devises étrangères (USD). Indiquer la référence de don.',
+    active: true,
+  },
+];
 
