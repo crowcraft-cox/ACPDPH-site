@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import dotenv from 'dotenv';
+import path from 'path';
 import { apiLimiter } from './middleware/security';
 import { connectDB } from './config/db';
 
@@ -15,6 +16,7 @@ import newsletterRoutes from './routes/newsletter';
 import authRoutes from './routes/auth';
 import contentRoutes from './routes/content';
 import galleryRoutes from './routes/gallery';
+import applicationRoutes from './routes/applications';
 
 dotenv.config();
 
@@ -48,9 +50,9 @@ app.use('/api/v1/membership', membershipRoutes);
 app.use('/api/v1/newsletter', newsletterRoutes);
 app.use('/api/v1/content', contentRoutes);
 app.use('/api/v1/gallery', galleryRoutes);
+app.use('/api/v1/applications', applicationRoutes);
 
-// Serve uploaded files statically
-import path from 'path';
+// Serve uploaded public files statically (gallery, etc.)
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // API Root Status & Welcome

@@ -85,19 +85,13 @@ export default function JobDetail() {
   ) % GRADIENT_LIST.length;
   const gradientClass = GRADIENT_LIST[gradientIndex];
 
-  // URL et type de candidature
-  const contactEmail = data.contact?.email || 'info.acpdph.asbl.rdc@gmail.com';
-  const applicationUrl = job.applicationLink && job.applicationLink.trim()
-    ? (job.applicationLink.includes('@') && !job.applicationLink.startsWith('http')
-        ? `mailto:${job.applicationLink}?subject=${encodeURIComponent(`Candidature – ${job.title}`)}`
-        : job.applicationLink.trim())
-    : `mailto:${contactEmail}?subject=${encodeURIComponent(`Candidature – ${job.title}`)}`;
-
+  // Lien de candidature externe (si renseigné et commence par http)
   const isExternalLink = Boolean(
     job.applicationLink &&
     job.applicationLink.trim() &&
     job.applicationLink.startsWith('http')
   );
+  const externalUrl = isExternalLink ? job.applicationLink!.trim() : null;
 
   // Vérifier si l'offre est longue pour répéter le bouton en haut
   const isLongOffer = Boolean(
@@ -171,11 +165,11 @@ export default function JobDetail() {
                 <div className="px-6 py-3 rounded-xl bg-white/20 text-white font-heading font-bold uppercase tracking-wider text-xs">
                   Candidatures clôturées
                 </div>
-              ) : (
+              ) : isExternalLink && externalUrl ? (
                 <a
-                  href={applicationUrl}
-                  target={isExternalLink ? '_blank' : undefined}
-                  rel={isExternalLink ? 'noopener noreferrer' : undefined}
+                  href={externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#C2530A] hover:bg-[#a84408] text-white font-heading font-bold uppercase tracking-wider text-sm transition-colors shadow-sm"
                 >
                   <span>POSTULER À CETTE OFFRE</span>
@@ -183,6 +177,16 @@ export default function JobDetail() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                   </svg>
                 </a>
+              ) : (
+                <Link
+                  to={`/offres-emplois/${job.id}/postuler`}
+                  className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#C2530A] hover:bg-[#a84408] text-white font-heading font-bold uppercase tracking-wider text-sm transition-colors shadow-sm"
+                >
+                  <span>POSTULER À CETTE OFFRE</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </Link>
               )}
             </div>
           )}
@@ -274,11 +278,11 @@ export default function JobDetail() {
               <div className="px-8 py-3.5 rounded-xl bg-gray-200 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 font-heading font-bold uppercase tracking-wider text-xs">
                 Candidatures clôturées
               </div>
-            ) : (
+            ) : isExternalLink && externalUrl ? (
               <a
-                href={applicationUrl}
-                target={isExternalLink ? '_blank' : undefined}
-                rel={isExternalLink ? 'noopener noreferrer' : undefined}
+                href={externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#C2530A] hover:bg-[#a84408] text-white font-heading font-bold uppercase tracking-wider text-sm transition-colors shadow-sm"
               >
                 <span>POSTULER À CETTE OFFRE</span>
@@ -286,6 +290,16 @@ export default function JobDetail() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </a>
+            ) : (
+              <Link
+                to={`/offres-emplois/${job.id}/postuler`}
+                className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#C2530A] hover:bg-[#a84408] text-white font-heading font-bold uppercase tracking-wider text-sm transition-colors shadow-sm"
+              >
+                <span>POSTULER À CETTE OFFRE</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
             )}
           </div>
         </div>

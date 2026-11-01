@@ -16,9 +16,12 @@ export async function apiFetch<T = any>(
     const token = typeof window !== 'undefined' ? sessionStorage.getItem('ba-admin-token') : null;
     const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
+    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+    const defaultHeaders: Record<string, string> = isFormData ? {} : { 'Content-Type': 'application/json' };
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       headers: {
-        'Content-Type': 'application/json',
+        ...defaultHeaders,
         ...authHeaders,
         ...(options.headers || {}),
       },

@@ -1,10 +1,18 @@
 import nodemailer from 'nodemailer';
 
-interface EmailOptions {
+export interface EmailAttachment {
+  filename: string;
+  path?: string;
+  content?: Buffer | string;
+  contentType?: string;
+}
+
+export interface EmailOptions {
   to: string;
   subject: string;
   text: string;
   html?: string;
+  attachments?: EmailAttachment[];
 }
 
 export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
@@ -32,6 +40,7 @@ export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
         subject: options.subject,
         text: options.text,
         html: options.html || options.text.replace(/\n/g, '<br/>'),
+        attachments: options.attachments,
       });
 
       console.log(`[Email Sent] Real email sent to inbox: ${options.to}`);
