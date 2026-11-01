@@ -203,25 +203,26 @@ export default function Support() {
   return (
     <main
       id="main-content"
-      className="min-h-screen bg-slate-50 dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
+      className="min-h-screen pt-20 sm:pt-24 md:pt-28 lg:pt-32 bg-slate-50 dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
     >
       {/* ========================================================================= */}
       {/* 1. VISUEL D'ACCUEIL (HERO) AVEC IMAGE DU PETIT GARÇON                     */}
       {/* ========================================================================= */}
       <section
-        className="relative h-80 sm:h-96 md:h-[500px] lg:h-[560px] w-full overflow-hidden bg-slate-900"
+        className="relative h-96 sm:h-[480px] md:h-[580px] lg:h-[660px] xl:h-[720px] w-full overflow-hidden bg-slate-900"
         aria-label="Photographie d'un enfant soutenu par l'ACPDPH"
       >
-        {/* Image du petit garçon nette, sans superposition de texte */}
+        {/* Image du petit garçon cadrée par le haut pour voir nettement sa tête */}
         <img
           src="/images/soutenir-hero.jpg"
           alt="Enfant assis sur une chaise dans une salle de classe, soutenu par l'ACPDPH"
-          className="absolute inset-0 w-full h-full object-cover object-[center_20%]"
+          className="absolute inset-0 w-full h-full object-cover object-top"
+          style={{ objectPosition: 'center top' }}
           loading="eager"
         />
 
-        {/* Logo officiel au coin supérieur gauche de l'image */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-20">
+        {/* Logo officiel au coin supérieur gauche de l'image (seul élément visible sur la photo) */}
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
           <Link
             to="/"
             className="block rounded-full p-1 bg-white/95 dark:bg-slate-900/90 shadow-md border-2 border-white hover:scale-105 transition-transform"
@@ -230,7 +231,7 @@ export default function Support() {
             <img
               src="/logo_ACPDPH.jpg"
               alt="Logo ACPDPH"
-              className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover bg-white"
+              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full object-cover bg-white"
             />
           </Link>
         </div>
@@ -766,16 +767,10 @@ export default function Support() {
           <div className="order-2 lg:order-1 lg:col-span-7 space-y-10 text-left">
             {/* Section 2a : Votre soutien permet */}
             <div className="space-y-4">
-              <div className="border-b border-slate-200 dark:border-zinc-800 pb-3">
-                <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 block mb-1">
+              <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
+                <h1 className="font-heading text-base sm:text-lg font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
                   Votre soutien permet
-                </span>
-                <h1 className="font-heading text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white leading-tight">
-                  Chaque enfant a le droit d&apos;apprendre, de grandir et d&apos;être inclus
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
-                  Avec l&apos;ACPDPH, vous aidez les personnes handicapées du Nord-Kivu à accéder à l&apos;éducation, aux soins et à l&apos;autonomie.
-                </p>
               </div>
 
               {/* Liste de 3 lignes avec icônes Lucide SVG (zéro emoji) */}
