@@ -151,3 +151,4 @@ export const DONATION_CONFIG: DonationConfig = {
       'Le paiement sécurisé direct par carte bancaire (Visa / Mastercard) est en cours de configuration auprès de notre prestataire agréé. En attendant son ouverture, merci de privilégier le transfert Mobile Money ou le virement bancaire.',
   },
 };
+

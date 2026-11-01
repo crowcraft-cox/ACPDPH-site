@@ -206,46 +206,33 @@ export default function Support() {
       className="min-h-screen bg-slate-50 dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
     >
       {/* ========================================================================= */}
-      {/* 1. VISUEL D'ACCUEIL (HERO) AVEC IMAGE FOURNIE                             */}
+      {/* 1. VISUEL D'ACCUEIL (HERO) AVEC IMAGE DU PETIT GARÇON                     */}
       {/* ========================================================================= */}
       <section
-        className="relative h-80 md:h-[520px] w-full overflow-hidden bg-slate-950 flex items-end"
-        aria-labelledby="hero-title"
+        className="relative h-80 sm:h-96 md:h-[500px] lg:h-[560px] w-full overflow-hidden bg-slate-900"
+        aria-label="Photographie d'un enfant soutenu par l'ACPDPH"
       >
-        {/* Image hero avec dégradé sombre du bas vers le haut */}
+        {/* Image du petit garçon nette, sans superposition de texte */}
         <img
           src="/images/soutenir-hero.jpg"
           alt="Enfant assis sur une chaise dans une salle de classe, soutenu par l'ACPDPH"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-[center_20%]"
           loading="eager"
         />
 
-        {/* Dégradé sombre pour lisibilité maximale */}
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent pointer-events-none"
-          aria-hidden="true"
-        />
-
-        {/* Contenu textuel digne et orienté vers les droits */}
-        <div className="container-ba relative z-10 pb-8 sm:pb-12 md:pb-16 text-left">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/30 border border-blue-400/40 text-blue-200 text-xs font-heading font-semibold uppercase tracking-wider mb-4 backdrop-blur-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FFA04D]" aria-hidden="true" />
-              Soutien Humanitaire &bull; RDC
-            </span>
-
-            <h1
-              id="hero-title"
-              className="text-2xl sm:text-3xl md:text-5xl font-bold leading-tight tracking-tight text-white font-heading"
-            >
-              Chaque enfant a le droit d&apos;apprendre, de grandir et d&apos;être inclus
-            </h1>
-
-            <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed max-w-2xl">
-              Avec l&apos;ACPDPH, vous aidez les personnes handicapées du Nord-Kivu à accéder à
-              l&apos;éducation, aux soins et à l&apos;autonomie.
-            </p>
-          </div>
+        {/* Logo officiel au coin supérieur gauche de l'image */}
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-20">
+          <Link
+            to="/"
+            className="block rounded-full p-1 bg-white/95 dark:bg-slate-900/90 shadow-md border-2 border-white hover:scale-105 transition-transform"
+            aria-label="Accueil ACPDPH"
+          >
+            <img
+              src="/logo_ACPDPH.jpg"
+              alt="Logo ACPDPH"
+              className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover bg-white"
+            />
+          </Link>
         </div>
       </section>
 
@@ -779,10 +766,16 @@ export default function Support() {
           <div className="order-2 lg:order-1 lg:col-span-7 space-y-10 text-left">
             {/* Section 2a : Votre soutien permet */}
             <div className="space-y-4">
-              <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
-                <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
+              <div className="border-b border-slate-200 dark:border-zinc-800 pb-3">
+                <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 block mb-1">
                   Votre soutien permet
-                </h2>
+                </span>
+                <h1 className="font-heading text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white leading-tight">
+                  Chaque enfant a le droit d&apos;apprendre, de grandir et d&apos;être inclus
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                  Avec l&apos;ACPDPH, vous aidez les personnes handicapées du Nord-Kivu à accéder à l&apos;éducation, aux soins et à l&apos;autonomie.
+                </p>
               </div>
 
               {/* Liste de 3 lignes avec icônes Lucide SVG (zéro emoji) */}
