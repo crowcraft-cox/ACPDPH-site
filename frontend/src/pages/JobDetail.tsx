@@ -213,15 +213,15 @@ export default function JobDetail() {
           </div>
         )}
 
-        {/* Détails du poste dans une carte */}
-        <div className="card p-6 sm:p-10 mb-8 space-y-8 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-2xl shadow-xs">
+        {/* Détails du poste directement sur le fond de page (sans carte) */}
+        <div className="space-y-6 mb-12">
           {/* Section Description du poste / Contexte */}
           {job.description && (
             <section>
-              <h2 className="font-heading text-sm sm:text-base font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 mb-3">
+              <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
                 Description du poste
               </h2>
-              <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+              <div className="mt-2.5 text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300 text-left md:text-justify whitespace-pre-line">
                 {job.description}
               </div>
             </section>
@@ -229,13 +229,13 @@ export default function JobDetail() {
 
           {/* Section Missions principales (liste à puces stylée) */}
           {job.missions && job.missions.length > 0 && (
-            <section className="pt-6 border-t border-gray-100 dark:border-zinc-800">
-              <h2 className="font-heading text-sm sm:text-base font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 mb-4">
+            <section>
+              <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
                 Missions principales
               </h2>
-              <ul className="space-y-2.5 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
+              <ul className="mt-2.5 space-y-2 text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300">
                 {job.missions.map((mission, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
+                  <li key={idx} className="flex items-start gap-3 text-left md:text-justify">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#2350D9] dark:bg-blue-400 mt-2 shrink-0" />
                     <span>{mission}</span>
                   </li>
@@ -246,11 +246,11 @@ export default function JobDetail() {
 
           {/* Section Profil recherché */}
           {job.profile && (
-            <section className="pt-6 border-t border-gray-100 dark:border-zinc-800">
-              <h2 className="font-heading text-sm sm:text-base font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 mb-3">
+            <section>
+              <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
                 Profil recherché
               </h2>
-              <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+              <div className="mt-2.5 text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300 text-left md:text-justify whitespace-pre-line">
                 {job.profile}
               </div>
             </section>
@@ -258,18 +258,18 @@ export default function JobDetail() {
 
           {/* Section Dossier de candidature */}
           {job.applicationDossier && (
-            <section className="pt-6 border-t border-gray-100 dark:border-zinc-800">
-              <h2 className="font-heading text-sm sm:text-base font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 mb-3">
+            <section>
+              <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
                 Dossier de candidature
               </h2>
-              <div className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+              <div className="mt-2.5 text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300 text-left md:text-justify whitespace-pre-line">
                 {job.applicationDossier}
               </div>
             </section>
           )}
 
           {/* Bouton d'action principal bien visible : "POSTULER À CETTE OFFRE" obligatoirement en bas */}
-          <div className="pt-8 border-t border-gray-100 dark:border-zinc-800 flex justify-end">
+          <div className="pt-6 flex justify-end">
             {isExpired ? (
               <div className="px-8 py-3.5 rounded-xl bg-gray-200 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 font-heading font-bold uppercase tracking-wider text-xs">
                 Candidatures clôturées
@@ -288,16 +288,6 @@ export default function JobDetail() {
               </a>
             )}
           </div>
-        </div>
-
-        {/* Rappel Charte Inclusion */}
-        <div className="card p-6 border border-blue-100 dark:border-blue-900/30 bg-blue-50/50 dark:bg-blue-950/20 rounded-2xl">
-          <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#2350D9] dark:text-blue-400 mb-1">
-            Politique Institutionnelle d'Inclusion
-          </h3>
-          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-            À compétences égales, l'ACPDPH accorde une priorité absolue aux candidatures de personnes vivant avec un handicap. Des aménagements raisonnables sont systématiquement garantis durant le processus de recrutement et sur le lieu de travail.
-          </p>
         </div>
       </div>
     </div>

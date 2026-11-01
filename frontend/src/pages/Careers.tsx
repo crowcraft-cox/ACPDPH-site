@@ -104,34 +104,10 @@ export default function Careers() {
   return (
     <div className="pt-24 sm:pt-28 md:pt-32 pb-20 bg-slate-50 dark:bg-ba-dark min-h-screen">
       {/* ── HEADER HERO ── */}
-      <section ref={headerRef} className="container-ba text-center mb-8">
+      <section ref={headerRef} className="container-ba text-center mb-8 sm:mb-10">
         <h1 className="font-heading text-4xl sm:text-5xl font-extrabold uppercase text-[#2350D9] dark:text-blue-400 tracking-tight">
           Offres & Emplois
         </h1>
-      </section>
-
-      {/* ── CHARTE RECRUTEMENT INCLUSIF (INCHANGÉE) ── */}
-      <section className="container-ba mb-14">
-        <div className="card p-6 sm:p-8 border border-blue-200" style={{ background: '#ffffff' }}>
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-ba-blue">
-                Politique Institutionnelle d'Inclusion
-              </span>
-              <h2 className="font-heading text-xl sm:text-2xl font-bold" style={{ color: '#111827' }}>
-                Candidatures de Personnes en Situation de Handicap Prioritaires
-              </h2>
-              <p className="text-sm max-w-3xl leading-relaxed" style={{ color: '#6B7280' }}>
-                À compétences égales, l'ACPDPH accorde une priorité absolue aux candidatures de personnes vivant avec un handicap. Nous mettons en place tous les aménagements raisonnables nécessaires lors des entretiens de recrutement et dans l'environnement quotidien de travail.
-              </p>
-            </div>
-            <div className="shrink-0">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ba-blue text-white text-xs font-bold shadow-xs">
-                Aménagements garantis
-              </span>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ── SECTION OFFRES D'EMPLOI ── */}
