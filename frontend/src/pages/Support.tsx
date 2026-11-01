@@ -209,20 +209,32 @@ export default function Support() {
       {/* 1. VISUEL D'ACCUEIL (HERO) AVEC IMAGE DU PETIT GARÇON                     */}
       {/* ========================================================================= */}
       <section
-        className="relative h-64 sm:h-72 md:h-80 lg:h-[380px] w-full overflow-hidden bg-slate-900"
-        aria-label="Photographie d'un enfant soutenu par l'ACPDPH"
+        className="relative w-full h-[520px] md:h-[640px] lg:h-[720px] overflow-hidden bg-[#0a1432]"
+        aria-labelledby="hero-title"
       >
-        {/* Image du petit garçon cadrée par le haut pour voir nettement sa tête */}
-        <img
-          src="/images/soutenir-hero.jpg"
-          alt="Enfant assis sur une chaise dans une salle de classe, soutenu par l'ACPDPH"
-          className="absolute inset-0 w-full h-full object-cover object-top"
-          style={{ objectPosition: 'center top' }}
-          loading="eager"
+        {/* Conteneur d'image centré sur grand écran pour éviter tout zoom excessif */}
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none">
+          <img
+            src="/images/soutenir-hero.jpg"
+            alt="Enfant assis sur une chaise dans une salle de classe, soutenu par l'ACPDPH"
+            width={750}
+            height={1000}
+            loading="eager"
+            fetchPriority="high"
+            className="w-full h-full max-w-[1100px] object-cover object-top md:object-[50%_8%]"
+          />
+        </div>
+
+        {/* Dégradés superposés pour lisibilité :
+            - Mobile : de bas en haut (gradient-to-t)
+            - Desktop : horizontal de gauche à droite (gradient-to-r) */}
+        <div
+          className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#0a1432]/95 via-[#0a1432]/50 to-transparent md:bg-gradient-to-r md:from-[#0a1432]/90 md:via-[#0a1432]/55 md:via-[40%] md:to-transparent"
+          aria-hidden="true"
         />
 
-        {/* Logo officiel au coin supérieur gauche de l'image (seul élément visible sur la photo) */}
-        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20">
+        {/* Logo officiel au coin supérieur gauche */}
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-10 z-20">
           <Link
             to="/"
             className="block rounded-full p-1 bg-white/95 dark:bg-slate-900/90 shadow-md border-2 border-white hover:scale-105 transition-transform"
@@ -231,9 +243,29 @@ export default function Support() {
             <img
               src="/logo_ACPDPH.jpg"
               alt="Logo ACPDPH"
+              width={56}
+              height={56}
               className="w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover bg-white"
             />
           </Link>
+        </div>
+
+        {/* Bloc de texte à GAUCHE, aligné en bas à gauche (~38 % de la largeur max-w-md lg:max-w-lg) */}
+        <div className="relative z-10 w-full h-full flex items-end">
+          <div className="w-full p-6 sm:p-8 md:p-10 lg:p-14 text-left">
+            <div className="max-w-md lg:max-w-lg">
+              <h1
+                id="hero-title"
+                className="text-3xl lg:text-5xl font-bold leading-tight tracking-tight text-white font-heading"
+              >
+                Chaque enfant a le droit d&apos;apprendre, de grandir et d&apos;être inclus
+              </h1>
+
+              <p className="text-base lg:text-lg text-white/90 mt-3 leading-relaxed">
+                Avec l&apos;ACPDPH, vous aidez les personnes handicapées du Nord-Kivu à accéder à l&apos;éducation, aux soins et à l&apos;autonomie.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
