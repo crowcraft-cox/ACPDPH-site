@@ -1,7 +1,21 @@
 @import "tailwindcss";
+@import "@fontsource/barlow-condensed/700.css";
 
 /* Force dark mode class-based uniquement — jamais activé par le système OS */
 @variant dark (&:where(.dark, .dark *));
+
+/* Variable CSS pour la couleur des noms des membres de gouvernance */
+:root {
+  --member-name-color: #3A12F4;
+}
+
+.dark {
+  --member-name-color: #93C5FD;
+}
+
+.font-barlow-condensed {
+  font-family: 'Barlow Condensed', 'Oswald', 'Archivo Narrow', sans-serif;
+}
 
 /* ===== ACPDPH — Design System (Tailwind CSS v4) ===== */
 
@@ -39,6 +53,7 @@
   /* Fonts */
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
+  --font-barlow-condensed: 'Barlow Condensed', 'Oswald', 'Archivo Narrow', sans-serif;
 
   /* Shadows — only for truly floating overlays (Rule 4) */
   --shadow-glass: 0 12px 32px rgba(0, 0, 0, 0.14);

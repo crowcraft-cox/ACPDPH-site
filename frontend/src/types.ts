@@ -217,6 +217,7 @@ export interface GovernanceMember {
   role: string;
   organ: GovernanceOrganKey;
   order?: number;
+  photo?: string;
 }
 
 export interface AdminData {

@@ -1,31 +1,61 @@
 import { useAdminData } from '../context/adminData';
-import { GOVERNANCE_TEXTS, DEFAULT_GOVERNANCE_MEMBERS, getInitials, type GovernanceMember } from '../data/governanceData';
+import { GOVERNANCE_TEXTS, DEFAULT_GOVERNANCE_MEMBERS, type GovernanceMember } from '../data/governanceData';
 
 interface MemberCardProps {
   name: string;
   role: string;
+  photo?: string;
 }
 
-function MemberCard({ name, role }: MemberCardProps) {
-  const initials = getInitials(name);
-
+function MemberCard({ name, role, photo }: MemberCardProps) {
   return (
-    <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 h-full flex items-center gap-3">
-      <div
-        className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center justify-center shrink-0"
-        aria-hidden="true"
-      >
-        {initials}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="text-sm font-semibold text-slate-900 dark:text-white leading-snug">
+    <article className="flex bg-white dark:bg-slate-800 rounded-none min-h-[140px] md:min-h-0 md:aspect-[3.2/1] overflow-hidden items-stretch">
+      {/* Partie 1 : Photo ou Emplacement neutre */}
+      {photo ? (
+        <img
+          src={photo}
+          alt={`Photo de ${name}`}
+          loading="lazy"
+          decoding="async"
+          width={600}
+          height={600}
+          className="w-1/3 shrink-0 self-stretch object-cover object-top"
+        />
+      ) : (
+        <div
+          className="w-1/3 shrink-0 self-stretch flex items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900"
+          aria-hidden="true"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="w-10 h-10 md:w-12 md:h-12 text-white"
+          >
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </div>
+      )}
+
+      {/* Partie 2 : Nom, trait noir et fonction */}
+      <div className="flex flex-1 min-w-0 flex-col justify-center pl-4 pr-3 md:pl-6 md:pr-6 py-3">
+        <h3
+          className="font-barlow-condensed font-bold text-xl sm:text-2xl md:text-[28px] lg:text-[32px] leading-[1.05] break-words text-left"
+          style={{ color: 'var(--member-name-color, #3A12F4)' }}
+        >
           {name}
-        </div>
-        <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+        </h3>
+        <div className="h-[3px] bg-black dark:bg-white w-full my-3 shrink-0" />
+        <p className="font-sans font-bold text-black dark:text-white text-sm md:text-base lg:text-lg leading-tight m-0 text-left">
           {role}
-        </div>
+        </p>
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -84,10 +114,10 @@ export default function Governance() {
               {sections.board.intro}
             </p>
 
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 list-none p-0">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mt-5 list-none p-0 items-stretch">
               {boardMembers.map((member) => (
                 <li key={member.id} className="h-full">
-                  <MemberCard name={member.name} role={member.role} />
+                  <MemberCard name={member.name} role={member.role} photo={member.photo} />
                 </li>
               ))}
             </ul>
@@ -109,10 +139,10 @@ export default function Governance() {
               {sections.audit.intro}
             </p>
 
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 list-none p-0">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mt-5 list-none p-0 items-stretch">
               {auditMembers.map((member) => (
                 <li key={member.id} className="h-full">
-                  <MemberCard name={member.name} role={member.role} />
+                  <MemberCard name={member.name} role={member.role} photo={member.photo} />
                 </li>
               ))}
             </ul>
@@ -130,10 +160,10 @@ export default function Governance() {
               {sections.secretariat.intro}
             </p>
 
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 list-none p-0">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mt-5 list-none p-0 items-stretch">
               {secretariatMembers.map((member) => (
                 <li key={member.id} className="h-full">
-                  <MemberCard name={member.name} role={member.role} />
+                  <MemberCard name={member.name} role={member.role} photo={member.photo} />
                 </li>
               ))}
             </ul>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAdminData } from '../../context/adminData';
-import { getInitials, ORGAN_LABELS, type GovernanceOrganKey } from '../../data/governanceData';
+import { ORGAN_LABELS, type GovernanceOrganKey } from '../../data/governanceData';
 import type { GovernanceMember } from '../../types';
 
 export default function GovernanceManager() {
@@ -19,6 +19,7 @@ export default function GovernanceManager() {
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [organ, setOrgan] = useState<GovernanceOrganKey>('board');
+  const [photo, setPhoto] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
 
   const openAddModal = (defaultOrgan: GovernanceOrganKey = 'board') => {
@@ -26,6 +27,7 @@ export default function GovernanceManager() {
     setName('');
     setRole('');
     setOrgan(defaultOrgan);
+    setPhoto('');
     setFormError(null);
     setIsModalOpen(true);
   };
@@ -35,6 +37,7 @@ export default function GovernanceManager() {
     setName(member.name);
     setRole(member.role);
     setOrgan(member.organ);
+    setPhoto(member.photo || '');
     setFormError(null);
     setIsModalOpen(true);
   };
@@ -55,12 +58,14 @@ export default function GovernanceManager() {
         name: name.trim(),
         role: role.trim(),
         organ,
+        photo: photo.trim() || undefined,
       });
     } else {
       addGovernanceMember({
         name: name.trim(),
         role: role.trim(),
         organ,
+        photo: photo.trim() || undefined,
       });
     }
 
@@ -220,7 +225,6 @@ export default function GovernanceManager() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredMembers.map((member) => {
-            const initials = getInitials(member.name);
             const organBadgeColor =
               member.organ === 'board'
                 ? 'bg-blue-950/70 text-blue-300 border-blue-800'
@@ -265,9 +269,19 @@ export default function GovernanceManager() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-900/40 text-blue-300 font-semibold text-xs flex items-center justify-center shrink-0">
-                      {initials}
-                    </div>
+                    {member.photo ? (
+                      <img
+                        src={member.photo}
+                        alt={`Photo de ${member.name}`}
+                        className="w-10 h-10 rounded-lg object-cover shrink-0 border border-slate-700"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 font-semibold text-xs flex items-center justify-center shrink-0 border border-slate-700">
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                      </div>
+                    )}
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-white truncate">
                         {member.name}
@@ -349,6 +363,22 @@ export default function GovernanceManager() {
                   onChange={(e) => setRole(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
                 />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">
+                  Chemin ou URL de la photo (optionnel)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: /images/membres/emmanuel-kakule.jpg"
+                  value={photo}
+                  onChange={(e) => setPhoto(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                />
+                <span className="text-[11px] text-slate-500 mt-1 block">
+                  Laisser vide pour afficher l&apos;emplacement neutre tant que la photo n&apos;est pas disponible.
+                </span>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
