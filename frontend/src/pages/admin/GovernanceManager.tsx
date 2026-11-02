@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useAdminData } from '../../context/adminData';
 import { ORGAN_LABELS, type GovernanceOrganKey } from '../../data/governanceData';
 import type { GovernanceMember } from '../../types';
-import { apiFetch } from '../../services/api';
+import { resolveImageUrl, compressImageToDataUrl } from '../../utils/imageUrl';
 
 export default function GovernanceManager() {
   const { data, addGovernanceMember, updateGovernanceMember, deleteGovernanceMember, isSyncing } = useAdminData();
@@ -72,23 +72,13 @@ export default function GovernanceManager() {
     setIsUploadingPhoto(true);
 
     try {
-      const formData = new FormData();
-      formData.append('photo', file);
-
-      const res = await apiFetch<any>('/cvs/upload-photo', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const uploadedUrl = (res as any).url || (res.data as any)?.url;
-      if (res.success && uploadedUrl) {
-        setPhoto(uploadedUrl);
-        setPhotoUploadError(null);
-      } else {
-        setPhotoUploadError(res.message || 'Échec de l\'envoi de la photo sur le serveur.');
-      }
+      // Compression et encodage immédiat en Data URL (JPEG ~640x800)
+      // Garantit un affichage instantané, persistant et indépendant du serveur
+      const compressedDataUrl = await compressImageToDataUrl(file, 640, 800, 0.85);
+      setPhoto(compressedDataUrl);
+      setPhotoUploadError(null);
     } catch (err: any) {
-      setPhotoUploadError(err.message || 'Erreur lors du téléversement de l\'image.');
+      setPhotoUploadError(err.message || 'Erreur lors de la compression de l\'image.');
     } finally {
       setIsUploadingPhoto(false);
       if (photoInputRef.current) photoInputRef.current.value = '';
@@ -324,17 +314,25 @@ export default function GovernanceManager() {
                   <div className="flex items-center gap-3">
                     {member.photo ? (
                       <img
-                        src={member.photo}
+                        src={resolveImageUrl(member.photo)}
                         alt={`Photo de ${member.name}`}
                         className="w-10 h-10 rounded-lg object-cover shrink-0 border border-slate-700"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          target.style.display = 'none';
+                          const fallback = target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
                       />
-                    ) : (
-                      <div className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 font-semibold text-xs flex items-center justify-center shrink-0 border border-slate-700">
-                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                        </svg>
-                      </div>
-                    )}
+                    ) : null}
+                    <div
+                      style={{ display: member.photo ? 'none' : 'flex' }}
+                      className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 font-semibold text-xs items-center justify-center shrink-0 border border-slate-700"
+                    >
+                      <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.75}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                      </svg>
+                    </div>
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-white truncate">
                         {member.name}
@@ -434,9 +432,9 @@ export default function GovernanceManager() {
                 {photo ? (
                   <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-950 border border-slate-700">
                     <img
-                      src={photo}
+                      src={resolveImageUrl(photo)}
                       alt="Aperçu animateur"
-                      className="w-14 h-16 rounded-lg object-cover object-top border border-slate-600 shrink-0"
+                      className="w-14 h-16 rounded-lg object-cover object-top border border-slate-600 shrink-0 bg-slate-800"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-semibold text-emerald-400 flex items-center gap-1.5 mb-1">
@@ -446,7 +444,7 @@ export default function GovernanceManager() {
                         Photo sélectionnée
                       </div>
                       <div className="text-[11px] text-slate-400 truncate font-mono">
-                        {photo}
+                        {photo.startsWith('data:') ? 'Image chargée depuis votre appareil (optimisée)' : photo}
                       </div>
                     </div>
                     <div className="flex flex-col gap-1.5 shrink-0">

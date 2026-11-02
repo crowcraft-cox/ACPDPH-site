@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAdminData } from '../context/adminData';
 import { GOVERNANCE_TEXTS, DEFAULT_GOVERNANCE_MEMBERS, type GovernanceMember } from '../data/governanceData';
 import { generateSlug } from '../utils/slugify';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 interface MemberCardProps {
   name: string;
@@ -11,14 +13,19 @@ interface MemberCardProps {
 }
 
 function MemberCard({ name, role, photo, cvSlug }: MemberCardProps) {
-  const photoContent = photo ? (
+  const [imageError, setImageError] = useState(false);
+  const resolvedPhoto = photo ? resolveImageUrl(photo) : '';
+  const hasPhoto = Boolean(resolvedPhoto && !imageError);
+
+  const photoContent = hasPhoto ? (
     <img
-      src={photo}
+      src={resolvedPhoto}
       alt={`Photo de ${name}`}
       loading="lazy"
       decoding="async"
       width={600}
       height={600}
+      onError={() => setImageError(true)}
       className={`w-full h-full object-cover object-top ${cvSlug ? 'transition-transform duration-300 group-hover:scale-105' : ''}`}
     />
   ) : (

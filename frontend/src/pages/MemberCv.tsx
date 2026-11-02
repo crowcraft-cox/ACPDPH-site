@@ -4,6 +4,7 @@ import { useAdminData } from '../context/adminData';
 import type { MemberCv } from '../types';
 import { generateSlug } from '../utils/slugify';
 import { apiFetch } from '../services/api';
+import { resolveImageUrl } from '../utils/imageUrl';
 
 export default function MemberCvPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -156,17 +157,24 @@ export default function MemberCvPage() {
           >
             {cv.photo ? (
               <img
-                src={cv.photo}
+                src={resolveImageUrl(cv.photo)}
                 alt={`Photo de ${cv.givenNames} ${cv.familyNames}`}
                 className="w-full h-full object-cover object-top"
+                onError={(e) => {
+                  (e.currentTarget as HTMLElement).style.display = 'none';
+                  const fb = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (fb) fb.style.display = 'flex';
+                }}
               />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400">
-                <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-              </div>
-            )}
+            ) : null}
+            <div
+              style={{ display: cv.photo ? 'none' : 'flex' }}
+              className="w-full h-full items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400"
+            >
+              <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </div>
           </div>
 
           {/* Haut Gauche : Prénom(s) fin + Nom(s) gras + Fonction */}
@@ -191,20 +199,27 @@ export default function MemberCvPage() {
           className="md:hidden pt-8 pb-6 px-6 text-center text-white"
           style={{ backgroundColor: 'var(--cv-navy, #1F3757)' }}
         >
-          <div className="w-36 aspect-[0.7] mx-auto rounded-full border-[3px] border-white overflow-hidden shadow-lg mb-4 bg-slate-200">
+          <div className="w-36 aspect-[0.7] mx-auto rounded-full border-[3px] border-white overflow-hidden shadow-lg mb-4 bg-slate-200 flex items-center justify-center relative">
             {cv.photo ? (
               <img
-                src={cv.photo}
+                src={resolveImageUrl(cv.photo)}
                 alt={`Photo de ${cv.givenNames} ${cv.familyNames}`}
                 className="w-full h-full object-cover object-top"
+                onError={(e) => {
+                  (e.currentTarget as HTMLElement).style.display = 'none';
+                  const fb = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (fb) fb.style.display = 'flex';
+                }}
               />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500">
-                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-              </div>
-            )}
+            ) : null}
+            <div
+              style={{ display: cv.photo ? 'none' : 'flex' }}
+              className="w-full h-full items-center justify-center bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500"
+            >
+              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </div>
           </div>
           <h1 className="font-josefin font-light text-2xl uppercase tracking-tight text-slate-100 m-0">
             {cv.givenNames}
