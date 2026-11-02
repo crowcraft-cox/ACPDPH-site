@@ -1,151 +1,144 @@
-import { useScrollReveal, useAnimeReveal } from '../hooks/useScrollReveal';
+import { useAdminData } from '../context/adminData';
+import { GOVERNANCE_TEXTS, DEFAULT_GOVERNANCE_MEMBERS, getInitials, type GovernanceMember } from '../data/governanceData';
 
-interface Member {
+interface MemberCardProps {
   name: string;
   role: string;
-  bio: string;
-  isBoard?: boolean;
 }
 
-const BOARD_MEMBERS: Member[] = [
-  {
-    name: 'Me Moïse Kathembo',
-    role: 'Président du Conseil d\'Administration',
-    bio: 'Juriste et ardent défenseur des droits humains, spécialisé dans le plaidoyer pour les personnes vulnérables au Nord-Kivu.',
-    isBoard: true,
-  },
-  {
-    name: 'Mme Rachel Kavugho',
-    role: 'Vice-Présidente',
-    bio: 'Pédagogue et militante pour l\'éducation inclusive des enfants vivant avec un handicap physique et sensoriel.',
-    isBoard: true,
-  },
-  {
-    name: 'M. Jean-Paul Paluku',
-    role: 'Secrétaire Général',
-    bio: 'Expert en gestion associative et gouvernance démocratique des organisations de la société civile en RDC.',
-    isBoard: true,
-  },
-  {
-    name: 'Mme Sarah Masika',
-    role: 'Trésorière Générale',
-    bio: 'Auditrice comptable, garante de la transparence financière, de la redevabilité et de la traçabilité des fonds.',
-    isBoard: true,
-  },
-  {
-    name: 'Dr Justin Kambale',
-    role: 'Président de la Commission de Contrôle',
-    bio: 'Médecin spécialiste en réadaptation fonctionnelle et santé publique communautaire.',
-    isBoard: true,
-  },
-];
+function MemberCard({ name, role }: MemberCardProps) {
+  const initials = getInitials(name);
 
-const PRINCIPLES = [
-  {
-    title: 'Rien sur nous sans nous',
-    desc: 'Participation directe et majoritaire des personnes handicapées dans tous les organes délibérants.',
-  },
-  {
-    title: 'Transparence & Rigueur',
-    desc: 'Gestion financière rigoureusement tracée, double signature et audits annuels indépendants.',
-  },
-  {
-    title: 'Redevabilité Totale',
-    desc: 'Rapports d\'activités réguliers partagés avec nos membres, les communautés et nos bailleurs.',
-  },
-  {
-    title: 'Égalité des Chances',
-    desc: 'Promotion active du leadership des femmes et des jeunes vivant avec un handicap.',
-  },
-];
+  return (
+    <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 h-full flex items-center gap-3">
+      <div
+        className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center justify-center shrink-0"
+        aria-hidden="true"
+      >
+        {initials}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-semibold text-slate-900 dark:text-white leading-snug">
+          {name}
+        </div>
+        <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+          {role}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Governance() {
-  const { ref: headerRef } = useScrollReveal();
-  const { ref: cardsRef } = useAnimeReveal<HTMLDivElement>({
-    variant: 'stagger-cards',
-    itemSelector: '.team-card',
-    staggerDelay: 70,
-  });
+  const { data } = useAdminData();
+
+  const allMembers: GovernanceMember[] =
+    data.governanceMembers && data.governanceMembers.length > 0
+      ? data.governanceMembers
+      : DEFAULT_GOVERNANCE_MEMBERS;
+
+  const boardMembers = allMembers.filter((m) => m.organ === 'board');
+  const auditMembers = allMembers.filter((m) => m.organ === 'audit');
+  const secretariatMembers = allMembers.filter((m) => m.organ === 'secretariat');
+
+  const { sections, mainTitle } = GOVERNANCE_TEXTS;
 
   return (
     <div className="pt-24 sm:pt-28 md:pt-32 pb-20 bg-slate-50 dark:bg-ba-dark min-h-screen">
-      <div className="container-ba flex flex-col gap-10 md:gap-14">
-        {/* ── SECTION GOUVERNANCE ── */}
-        <section ref={headerRef}>
-          <h1 className="text-4xl md:text-5xl font-semibold text-ba-blue dark:text-blue-400 tracking-tight mb-4 text-left">
-            Gouvernance
-          </h1>
-          <p className="w-full text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 mb-8">
-            L'ACPDPH applique une gouvernance démocratique, transparente et inclusive. Conformément à notre principe fondamental « Rien sur nous sans nous », les personnes en situation de handicap sont au cœur de nos organes de décision.
-          </p>
+      <div className="max-w-5xl mx-auto px-4">
+        {/* Titre principal */}
+        <h1 className="font-heading text-4xl font-semibold tracking-wide text-blue-600 dark:text-blue-400 text-center uppercase mb-10">
+          {mainTitle}
+        </h1>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {PRINCIPLES.map((principle, idx) => (
-              <div
-                key={idx}
-                className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 h-full flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-                      {principle.title}
-                    </h3>
-                    <span className="font-mono text-xs text-slate-400 dark:text-slate-500 shrink-0">
-                      0{idx + 1}
-                    </span>
-                  </div>
-                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 mt-2">
-                    {principle.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── SECTION CONSEIL D'ADMINISTRATION ── */}
-        <section>
-          <h2 className="text-2xl md:text-3xl font-semibold text-ba-blue dark:text-blue-400 mb-4 text-left">
-            Conseil d'Administration
-          </h2>
-          <p className="w-full text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 mb-8">
-            Élu par l'Assemblée Générale, le Conseil d'Administration supervise l'orientation stratégique, garantit l'alignement sur notre mission sociale et valide les états financiers.
-          </p>
-
-          <div ref={cardsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {BOARD_MEMBERS.map((member, i) => (
-              <div
-                key={i}
-                className="team-card bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 h-full flex flex-col"
-              >
-                {/* Ligne du haut */}
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold flex items-center justify-center shrink-0">
-                    {member.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-base font-semibold text-slate-900 dark:text-white truncate">
-                      {member.name}
-                    </h3>
-                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                      {member.role}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 mt-3 flex-1">
-                  {member.bio}
+        <div className="flex flex-col gap-14">
+          {/* ── SECTION 1 : ASSEMBLÉE GÉNÉRALE ── */}
+          <section aria-labelledby="section-ag">
+            <h2
+              id="section-ag"
+              className="text-xl md:text-2xl font-semibold text-blue-600 dark:text-blue-400 uppercase text-left mb-3"
+            >
+              {sections.generalAssembly.title}
+            </h2>
+            <div className="space-y-4">
+              {sections.generalAssembly.paragraphs.map((p, idx) => (
+                <p
+                  key={idx}
+                  className="text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 m-0"
+                >
+                  {p}
                 </p>
+              ))}
+            </div>
+          </section>
 
-                {/* Pied de carte */}
-                <div className="border-t border-slate-200 dark:border-slate-700 mt-4 pt-3 text-xs font-medium text-slate-500 dark:text-slate-400 text-left">
-                  <span>Organe élu</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+          {/* ── SECTION 2 : CONSEIL D'ADMINISTRATION ── */}
+          <section aria-labelledby="section-ca">
+            <h2
+              id="section-ca"
+              className="text-xl md:text-2xl font-semibold text-blue-600 dark:text-blue-400 uppercase text-left mb-3"
+            >
+              {sections.board.title}
+            </h2>
+            <p className="text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 m-0">
+              {sections.board.intro}
+            </p>
+
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 list-none p-0">
+              {boardMembers.map((member) => (
+                <li key={member.id} className="h-full">
+                  <MemberCard name={member.name} role={member.role} />
+                </li>
+              ))}
+            </ul>
+
+            <p className="text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 mt-5 mb-0">
+              {sections.board.conclusion}
+            </p>
+          </section>
+
+          {/* ── SECTION 3 : COMMISSION DE CONTRÔLE ── */}
+          <section aria-labelledby="section-cc">
+            <h2
+              id="section-cc"
+              className="text-xl md:text-2xl font-semibold text-blue-600 dark:text-blue-400 uppercase text-left mb-3"
+            >
+              {sections.audit.title}
+            </h2>
+            <p className="text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 m-0">
+              {sections.audit.intro}
+            </p>
+
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 list-none p-0">
+              {auditMembers.map((member) => (
+                <li key={member.id} className="h-full">
+                  <MemberCard name={member.name} role={member.role} />
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* ── SECTION 4 : SECRÉTARIAT EXÉCUTIF ── */}
+          <section aria-labelledby="section-se">
+            <h2
+              id="section-se"
+              className="text-xl md:text-2xl font-semibold text-blue-600 dark:text-blue-400 uppercase text-left mb-3"
+            >
+              {sections.secretariat.title}
+            </h2>
+            <p className="text-left md:text-justify text-base leading-relaxed text-slate-600 dark:text-slate-300 m-0">
+              {sections.secretariat.intro}
+            </p>
+
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 list-none p-0">
+              {secretariatMembers.map((member) => (
+                <li key={member.id} className="h-full">
+                  <MemberCard name={member.name} role={member.role} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
       </div>
     </div>
   );

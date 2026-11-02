@@ -249,6 +249,120 @@ const DEFAULT_CONTENT = {
       active: true,
     },
   ],
+  governanceMembers: [
+    {
+      id: 'gov-board-1',
+      name: 'Emmanuel KAKULE SYAYUKUMBITA',
+      role: 'Initiateur et Président du Conseil d’administration',
+      organ: 'board',
+      order: 1,
+    },
+    {
+      id: 'gov-board-2',
+      name: 'Talent KASEREKA HANGI',
+      role: 'Vice-Président du Conseil d’administration',
+      organ: 'board',
+      order: 2,
+    },
+    {
+      id: 'gov-board-3',
+      name: 'KAMATE MULITSO Denis',
+      role: 'Secrétaire du Conseil d’administration',
+      organ: 'board',
+      order: 3,
+    },
+    {
+      id: 'gov-board-4',
+      name: 'PALUKU NYARUKE Jean-Faustin',
+      role: 'Trésorier du Conseil d’administration',
+      organ: 'board',
+      order: 4,
+    },
+    {
+      id: 'gov-board-5',
+      name: 'BWAKYANAKAZI MUKAVURA Achille',
+      role: 'Conseiller du Conseil d’administration',
+      organ: 'board',
+      order: 5,
+    },
+    {
+      id: 'gov-audit-1',
+      name: 'KASWERA KINAHWA Jacquis',
+      role: 'Présidente',
+      organ: 'audit',
+      order: 1,
+    },
+    {
+      id: 'gov-audit-2',
+      name: 'MULUME MOAVINGI Daniel',
+      role: 'Secrétaire rapporteur',
+      organ: 'audit',
+      order: 2,
+    },
+    {
+      id: 'gov-audit-3',
+      name: 'KAMBALE LYANABO Dédié',
+      role: 'Membre contrôleur',
+      organ: 'audit',
+      order: 3,
+    },
+    {
+      id: 'gov-sec-1',
+      name: 'KATEMBO TSONGO Moïse',
+      role: 'Secrétaire exécutif national',
+      organ: 'secretariat',
+      order: 1,
+    },
+    {
+      id: 'gov-sec-2',
+      name: 'PALUKU SINDANI',
+      role: 'Directeur des programmes',
+      organ: 'secretariat',
+      order: 2,
+    },
+    {
+      id: 'gov-sec-3',
+      name: 'KATHAKA KISWERE Christien',
+      role: 'Comptable',
+      organ: 'secretariat',
+      order: 3,
+    },
+    {
+      id: 'gov-sec-4',
+      name: 'MASIKA KALIPI Rachel',
+      role: 'Caissière',
+      organ: 'secretariat',
+      order: 4,
+    },
+    {
+      id: 'gov-sec-5',
+      name: 'MASIKA VINDUSIVYOLO Vinciane',
+      role: 'Logisticienne',
+      organ: 'secretariat',
+      order: 5,
+    },
+    {
+      id: 'gov-sec-6',
+      name: 'KAKULE SYASEMBA Olivier',
+      role: 'Chargé de communication',
+      organ: 'secretariat',
+      order: 6,
+    },
+    {
+      id: 'gov-sec-7',
+      name: 'KAVIRA BAHAKISI DIEU MERCI',
+      role: 'Interprète en langue des signes',
+      organ: 'secretariat',
+      order: 7,
+    },
+    {
+      id: 'gov-sec-8',
+      name: 'SOKI MUSYENENE Yvonne',
+      role: 'Agent Communautaire',
+      organ: 'secretariat',
+      order: 8,
+    },
+  ],
 };
 
 // GET /api/v1/content - Fetch site content (accessible to all devices)
@@ -266,6 +380,10 @@ router.get('/', async (req: Request, res: Response) => {
       ? (content as any).bankAccounts
       : DEFAULT_CONTENT.bankAccounts;
 
+    const governanceMembers = Array.isArray((content as any).governanceMembers) && (content as any).governanceMembers.length > 0
+      ? (content as any).governanceMembers
+      : DEFAULT_CONTENT.governanceMembers;
+
     res.status(200).json({
       success: true,
       data: {
@@ -277,6 +395,7 @@ router.get('/', async (req: Request, res: Response) => {
         contact: content.contact,
         users: content.users || [],
         bankAccounts,
+        governanceMembers,
       },
     });
   } catch (error: any) {
@@ -292,7 +411,7 @@ router.get('/', async (req: Request, res: Response) => {
 // PUT /api/v1/content - Update site content in MongoDB Atlas (saves admin changes to cloud)
 router.put('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { impact, pillars, news, projects, jobs, contact, users, bankAccounts } = req.body;
+    const { impact, pillars, news, projects, jobs, contact, users, bankAccounts, governanceMembers } = req.body;
 
     const updated = await SiteContent.findOneAndUpdate(
       { key: 'main_site_content' },
@@ -306,6 +425,7 @@ router.put('/', authMiddleware, async (req: Request, res: Response) => {
           contact: contact || {},
           users: users || [],
           bankAccounts: bankAccounts || [],
+          governanceMembers: governanceMembers || [],
         },
       },
       { new: true, upsert: true }
@@ -325,6 +445,7 @@ router.put('/', authMiddleware, async (req: Request, res: Response) => {
         contact: updated.contact,
         users: updated.users || [],
         bankAccounts: (updated as any).bankAccounts || [],
+        governanceMembers: (updated as any).governanceMembers || [],
       },
     });
   } catch (error: any) {

@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, JobOffer, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem, BankAccount } from '../types';
+import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, JobOffer, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem, BankAccount, GovernanceMember } from '../types';
 import { apiFetch } from '../services/api';
 import { OFFICE_ADDRESS } from '../constants/contact';
 import { DEFAULT_BANK_ACCOUNTS } from '../config/donationConfig';
+import { DEFAULT_GOVERNANCE_MEMBERS } from '../data/governanceData';
 
 /* ===== DONNÉES PAR DÉFAUT (affichées pendant le chargement initial) ===== */
 const DEFAULT_DATA: AdminData = {
@@ -276,6 +277,7 @@ const DEFAULT_DATA: AdminData = {
     },
   ],
   bankAccounts: DEFAULT_BANK_ACCOUNTS,
+  governanceMembers: DEFAULT_GOVERNANCE_MEMBERS,
 };
 
 /* ===== Context Type ===== */
@@ -330,6 +332,10 @@ interface AdminDataContextType {
   updateBankAccount: (id: string, item: Partial<BankAccount>) => void;
   addBankAccount: (item: Omit<BankAccount, 'id'>) => void;
   deleteBankAccount: (id: string) => void;
+  // Governance Members
+  updateGovernanceMember: (id: string, item: Partial<GovernanceMember>) => void;
+  addGovernanceMember: (item: Omit<GovernanceMember, 'id'>) => void;
+  deleteGovernanceMember: (id: string) => void;
   // Auth
   isAuthenticated: boolean;
   currentUser: AdminUser | null;
@@ -358,6 +364,7 @@ async function saveToCloud(newData: AdminData): Promise<boolean> {
         contact: newData.contact,
         users: newData.users || [],
         bankAccounts: newData.bankAccounts || [],
+        governanceMembers: newData.governanceMembers || [],
       }),
     });
     return res.success === true;
@@ -409,7 +416,17 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
           const cloudBankAccounts = Array.isArray((res.data as any).bankAccounts) && (res.data as any).bankAccounts.length > 0
             ? (res.data as any).bankAccounts
             : (DEFAULT_DATA.bankAccounts || DEFAULT_BANK_ACCOUNTS);
-          setData({ ...res.data, contact: mergedContact, users: res.data.users || [], jobs: cloudJobs, bankAccounts: cloudBankAccounts });
+          const cloudGovMembers = Array.isArray((res.data as any).governanceMembers) && (res.data as any).governanceMembers.length > 0
+            ? (res.data as any).governanceMembers
+            : (DEFAULT_DATA.governanceMembers || DEFAULT_GOVERNANCE_MEMBERS);
+          setData({
+            ...res.data,
+            contact: mergedContact,
+            users: res.data.users || [],
+            jobs: cloudJobs,
+            bankAccounts: cloudBankAccounts,
+            governanceMembers: cloudGovMembers,
+          });
           setDbConnected(true);
           setDbError(null);
           setIsLoading(false);
@@ -812,6 +829,38 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     });
   }, [persist]);
 
+  // ── Membres de la Gouvernance ─────────────────────────────────────────────
+  const updateGovernanceMember = useCallback((id: string, updatedFields: Partial<GovernanceMember>) => {
+    setData((prev) => {
+      const members = prev.governanceMembers || DEFAULT_DATA.governanceMembers || [];
+      const nextMembers = members.map((m) => (m.id === id ? { ...m, ...updatedFields } : m));
+      const next = { ...prev, governanceMembers: nextMembers };
+      persist(next);
+      return next;
+    });
+  }, [persist]);
+
+  const addGovernanceMember = useCallback((item: Omit<GovernanceMember, 'id'>) => {
+    const newMember: GovernanceMember = { ...item, id: generateId() };
+    setData((prev) => {
+      const members = prev.governanceMembers || DEFAULT_DATA.governanceMembers || [];
+      const nextMembers = [...members, newMember];
+      const next = { ...prev, governanceMembers: nextMembers };
+      persist(next);
+      return next;
+    });
+  }, [persist]);
+
+  const deleteGovernanceMember = useCallback((id: string) => {
+    setData((prev) => {
+      const members = prev.governanceMembers || DEFAULT_DATA.governanceMembers || [];
+      const nextMembers = members.filter((m) => m.id !== id);
+      const next = { ...prev, governanceMembers: nextMembers };
+      persist(next);
+      return next;
+    });
+  }, [persist]);
+
   // ── Contact ──────────────────────────────────────────────────────────────
   const updateContact = useCallback((info: Partial<ContactInfo>) => {
     persist({ ...data, contact: { ...data.contact, ...info } });
@@ -834,6 +883,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
         addJob, updateJob, deleteJob,
         updateContact,
         updateBankAccount, addBankAccount, deleteBankAccount,
+        updateGovernanceMember, addGovernanceMember, deleteGovernanceMember,
         addUser, deleteUser, updateUser,
         subscribers, newsletterLogs, addSubscriber, removeSubscriber, broadcastNewsletter, notifySubscribersNewContent,
         gallery, addGalleryItem, updateGalleryItem, deleteGalleryItem, isAuthenticated, currentUser, login, logout,

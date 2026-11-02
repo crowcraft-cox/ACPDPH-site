@@ -209,6 +209,16 @@ export interface BankAccount {
   active?: boolean;
 }
 
+export type GovernanceOrganKey = 'board' | 'audit' | 'secretariat';
+
+export interface GovernanceMember {
+  id: string;
+  name: string;
+  role: string;
+  organ: GovernanceOrganKey;
+  order?: number;
+}
+
 export interface AdminData {
   impact: ImpactCounter[];
   pillars: Pillar[];
@@ -223,4 +233,5 @@ export interface AdminData {
   newsletterLogs?: NewsletterLog[];
   gallery?: GalleryItem[];
   bankAccounts?: BankAccount[];
+  governanceMembers?: GovernanceMember[];
 }

@@ -15,6 +15,7 @@ export interface ISiteContent extends Document {
   };
   users?: any[];
   bankAccounts?: any[];
+  governanceMembers?: any[];
   updatedAt: Date;
 }
 
@@ -34,6 +35,7 @@ const SiteContentSchema: Schema = new Schema(
     },
     users: { type: Array, default: [] },
     bankAccounts: { type: Array, default: [] },
+    governanceMembers: { type: Array, default: [] },
   },
   { timestamps: true }
 );

@@ -13,9 +13,10 @@ import SettingsManager from './SettingsManager';
 import NewsletterManager from './NewsletterManager';
 import MessagesManager from './MessagesManager';
 import GalleryManager from './GalleryManager';
+import GovernanceManager from './GovernanceManager';
 import '../../admin.css';
 
-type Section = 'overview' | 'impact' | 'pillars' | 'news' | 'projects' | 'jobs' | 'applications' | 'donations' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
+type Section = 'overview' | 'impact' | 'pillars' | 'governance' | 'news' | 'projects' | 'jobs' | 'applications' | 'donations' | 'gallery' | 'contact' | 'newsletter' | 'messages' | 'settings';
 
 export default function AdminDashboard() {
   const { data, isAuthenticated, logout, currentUser, isSyncing, syncError, dbConnected, dbError, isLoading, retryConnection } = useAdminData();
@@ -61,6 +62,16 @@ export default function AdminDashboard() {
       icon: (
         <svg className="admin-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+        </svg>
+      ),
+    },
+    {
+      id: 'governance',
+      label: 'Gouvernance & Organes',
+      adminOnly: true,
+      icon: (
+        <svg className="admin-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.199l-.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
         </svg>
       ),
     },
@@ -166,6 +177,7 @@ export default function AdminDashboard() {
     overview: 'Vue d\'ensemble',
     impact: 'Impact en Chiffres',
     pillars: 'Piliers d\'Intervention',
+    governance: 'Gouvernance & Organes',
     news: 'Dernières Actualités',
     projects: 'Nos Projets',
     jobs: 'Offres & Emplois',
@@ -178,8 +190,9 @@ export default function AdminDashboard() {
     settings: isEditor ? 'Mon Profil' : 'Paramètres & Éditeurs',
   };
 
-  const stats = [
+  const stats: { id: Section; label: string; value: number; color: string; textColor: string; icon: ReactNode }[] = [
     {
+      id: 'impact',
       label: 'Compteurs d\'impact',
       value: data.impact.length,
       color: 'rgba(227, 6, 19, 0.12)',
@@ -191,6 +204,7 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'pillars',
       label: 'Piliers d\'intervention',
       value: data.pillars.length,
       color: 'rgba(26, 143, 10, 0.12)',
@@ -202,6 +216,19 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'governance',
+      label: 'Animateurs Gouvernance',
+      value: (data.governanceMembers || []).length,
+      color: 'rgba(35, 80, 217, 0.12)',
+      textColor: '#60A5FA',
+      icon: (
+        <svg width="24" height="24" fill="none" stroke="#60A5FA" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.199l-.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+        </svg>
+      ),
+    },
+    {
+      id: 'news',
       label: 'Articles publiés',
       value: data.news.length,
       color: 'rgba(59, 130, 246, 0.12)',
@@ -213,6 +240,7 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'projects',
       label: 'Projets',
       value: data.projects.length,
       color: 'rgba(249, 115, 22, 0.12)',
@@ -224,6 +252,7 @@ export default function AdminDashboard() {
       ),
     },
     {
+      id: 'jobs',
       label: 'Offres d\'emploi',
       value: (data.jobs || []).length,
       color: 'rgba(194, 83, 10, 0.12)',
@@ -354,7 +383,7 @@ export default function AdminDashboard() {
               {/* Stats Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                 {stats.map((stat, i) => (
-                  <div key={i} className="admin-stat-card" onClick={() => setActiveSection(navItems[i + 1]?.id || 'overview')} style={{ cursor: 'pointer' }}>
+                  <div key={i} className="admin-stat-card" onClick={() => setActiveSection(stat.id)} style={{ cursor: 'pointer' }}>
                     <div className="admin-stat-icon" style={{ background: stat.color }}>
                       {stat.icon}
                     </div>
@@ -398,6 +427,9 @@ export default function AdminDashboard() {
                   </button>
                   {!isEditor && (
                     <>
+                      <button className="admin-btn admin-btn-ghost" onClick={() => setActiveSection('governance')}>
+                        Gouvernance &amp; Organes
+                      </button>
                       <button className="admin-btn admin-btn-ghost" onClick={() => setActiveSection('impact')}>
                         Modifier l'impact
                       </button>
@@ -444,6 +476,7 @@ export default function AdminDashboard() {
 
           {activeSection === 'impact' && !isEditor && <ImpactManager />}
           {activeSection === 'pillars' && !isEditor && <PillarsManager />}
+          {activeSection === 'governance' && !isEditor && <GovernanceManager />}
           {activeSection === 'news' && <NewsManager />}
           {activeSection === 'projects' && <ProjectsManager />}
           {activeSection === 'jobs' && <JobsManager />}
