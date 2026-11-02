@@ -363,6 +363,7 @@ const DEFAULT_CONTENT = {
       order: 8,
     },
   ],
+  cvs: [],
 };
 
 // GET /api/v1/content - Fetch site content (accessible to all devices)
@@ -384,6 +385,10 @@ router.get('/', async (req: Request, res: Response) => {
       ? (content as any).governanceMembers
       : DEFAULT_CONTENT.governanceMembers;
 
+    const cvs = Array.isArray((content as any).cvs)
+      ? (content as any).cvs
+      : [];
+
     res.status(200).json({
       success: true,
       data: {
@@ -396,6 +401,7 @@ router.get('/', async (req: Request, res: Response) => {
         users: content.users || [],
         bankAccounts,
         governanceMembers,
+        cvs,
       },
     });
   } catch (error: any) {
@@ -411,7 +417,7 @@ router.get('/', async (req: Request, res: Response) => {
 // PUT /api/v1/content - Update site content in MongoDB Atlas (saves admin changes to cloud)
 router.put('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { impact, pillars, news, projects, jobs, contact, users, bankAccounts, governanceMembers } = req.body;
+    const { impact, pillars, news, projects, jobs, contact, users, bankAccounts, governanceMembers, cvs } = req.body;
 
     const updated = await SiteContent.findOneAndUpdate(
       { key: 'main_site_content' },
@@ -426,6 +432,7 @@ router.put('/', authMiddleware, async (req: Request, res: Response) => {
           users: users || [],
           bankAccounts: bankAccounts || [],
           governanceMembers: governanceMembers || [],
+          cvs: cvs || [],
         },
       },
       { new: true, upsert: true }
@@ -446,6 +453,7 @@ router.put('/', authMiddleware, async (req: Request, res: Response) => {
         users: updated.users || [],
         bankAccounts: (updated as any).bankAccounts || [],
         governanceMembers: (updated as any).governanceMembers || [],
+        cvs: (updated as any).cvs || [],
       },
     });
   } catch (error: any) {

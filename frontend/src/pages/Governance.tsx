@@ -1,44 +1,61 @@
+import { Link } from 'react-router-dom';
 import { useAdminData } from '../context/adminData';
 import { GOVERNANCE_TEXTS, DEFAULT_GOVERNANCE_MEMBERS, type GovernanceMember } from '../data/governanceData';
+import { generateSlug } from '../utils/slugify';
 
 interface MemberCardProps {
   name: string;
   role: string;
   photo?: string;
+  cvSlug?: string;
 }
 
-function MemberCard({ name, role, photo }: MemberCardProps) {
+function MemberCard({ name, role, photo, cvSlug }: MemberCardProps) {
+  const photoContent = photo ? (
+    <img
+      src={photo}
+      alt={`Photo de ${name}`}
+      loading="lazy"
+      decoding="async"
+      width={600}
+      height={600}
+      className={`w-full h-full object-cover object-top ${cvSlug ? 'transition-transform duration-300 group-hover:scale-105' : ''}`}
+    />
+  ) : (
+    <div
+      className={`w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900 ${cvSlug ? 'transition-transform duration-300 group-hover:scale-105' : ''}`}
+      aria-hidden="true"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="w-10 h-10 md:w-12 md:h-12 text-white"
+      >
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    </div>
+  );
+
   return (
     <article className="flex bg-white dark:bg-slate-800 rounded-none min-h-[140px] md:min-h-0 md:aspect-[3.2/1] overflow-hidden items-stretch">
-      {/* Partie 1 : Photo ou Emplacement neutre */}
-      {photo ? (
-        <img
-          src={photo}
-          alt={`Photo de ${name}`}
-          loading="lazy"
-          decoding="async"
-          width={600}
-          height={600}
-          className="w-1/3 shrink-0 self-stretch object-cover object-top"
-        />
-      ) : (
-        <div
-          className="w-1/3 shrink-0 self-stretch flex items-center justify-center bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 dark:from-slate-700 dark:via-slate-800 dark:to-slate-900"
-          aria-hidden="true"
+      {/* Partie 1 : Photo ou Emplacement neutre (Lien vers CV si publié) */}
+      {cvSlug ? (
+        <Link
+          to={`/gouvernance/${cvSlug}`}
+          aria-label={`Voir le CV de ${name}`}
+          className="w-1/3 shrink-0 self-stretch block overflow-hidden group focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 cursor-pointer"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-10 h-10 md:w-12 md:h-12 text-white"
-          >
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
+          {photoContent}
+        </Link>
+      ) : (
+        <div className="w-1/3 shrink-0 self-stretch overflow-hidden">
+          {photoContent}
         </div>
       )}
 
@@ -72,6 +89,14 @@ export default function Governance() {
   const secretariatMembers = allMembers.filter((m) => m.organ === 'secretariat');
 
   const { sections, mainTitle } = GOVERNANCE_TEXTS;
+
+  const getMemberCvSlug = (member: GovernanceMember) => {
+    const slug = generateSlug(member.name);
+    const cv = (data.cvs || []).find(
+      (c) => (c.memberId === member.id || c.slug === slug || generateSlug(c.memberId || '') === slug) && c.published
+    );
+    return cv ? (cv.slug || slug) : undefined;
+  };
 
   return (
     <div className="pt-24 sm:pt-28 md:pt-32 pb-20 bg-slate-50 dark:bg-ba-dark min-h-screen">
@@ -117,7 +142,12 @@ export default function Governance() {
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mt-5 list-none p-0 items-stretch">
               {boardMembers.map((member) => (
                 <li key={member.id} className="h-full">
-                  <MemberCard name={member.name} role={member.role} photo={member.photo} />
+                  <MemberCard
+                    name={member.name}
+                    role={member.role}
+                    photo={member.photo}
+                    cvSlug={getMemberCvSlug(member)}
+                  />
                 </li>
               ))}
             </ul>
@@ -142,7 +172,12 @@ export default function Governance() {
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mt-5 list-none p-0 items-stretch">
               {auditMembers.map((member) => (
                 <li key={member.id} className="h-full">
-                  <MemberCard name={member.name} role={member.role} photo={member.photo} />
+                  <MemberCard
+                    name={member.name}
+                    role={member.role}
+                    photo={member.photo}
+                    cvSlug={getMemberCvSlug(member)}
+                  />
                 </li>
               ))}
             </ul>
@@ -163,7 +198,12 @@ export default function Governance() {
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mt-5 list-none p-0 items-stretch">
               {secretariatMembers.map((member) => (
                 <li key={member.id} className="h-full">
-                  <MemberCard name={member.name} role={member.role} photo={member.photo} />
+                  <MemberCard
+                    name={member.name}
+                    role={member.role}
+                    photo={member.photo}
+                    cvSlug={getMemberCvSlug(member)}
+                  />
                 </li>
               ))}
             </ul>

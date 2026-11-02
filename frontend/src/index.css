@@ -1,12 +1,20 @@
 @import "tailwindcss";
 @import "@fontsource/barlow-condensed/700.css";
+@import "@fontsource/josefin-sans/300.css";
+@import "@fontsource/josefin-sans/400.css";
+@import "@fontsource/josefin-sans/600.css";
+@import "@fontsource/josefin-sans/700.css";
+@import "@fontsource/montserrat/400.css";
+@import "@fontsource/montserrat/600.css";
+@import "@fontsource/montserrat/700.css";
 
 /* Force dark mode class-based uniquement — jamais activé par le système OS */
 @variant dark (&:where(.dark, .dark *));
 
-/* Variable CSS pour la couleur des noms des membres de gouvernance */
+/* Variable CSS pour la couleur des noms des membres de gouvernance et CV */
 :root {
   --member-name-color: #3A12F4;
+  --cv-navy: #1F3757;
 }
 
 .dark {
@@ -15,6 +23,37 @@
 
 .font-barlow-condensed {
   font-family: 'Barlow Condensed', 'Oswald', 'Archivo Narrow', sans-serif;
+}
+
+.font-josefin {
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Styles pour impression A4 PDF */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: #ffffff !important;
+  }
+  nav, footer, .no-print, #scroll-ui-container, .back-to-top, [aria-label="Back to top"], button {
+    display: none !important;
+  }
+  .cv-print-container {
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+  }
 }
 
 /* ===== ACPDPH — Design System (Tailwind CSS v4) ===== */
@@ -54,6 +93,8 @@
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-barlow-condensed: 'Barlow Condensed', 'Oswald', 'Archivo Narrow', sans-serif;
+  --font-josefin: 'Josefin Sans', sans-serif;
+  --font-montserrat: 'Montserrat', sans-serif;
 
   /* Shadows — only for truly floating overlays (Rule 4) */
   --shadow-glass: 0 12px 32px rgba(0, 0, 0, 0.14);

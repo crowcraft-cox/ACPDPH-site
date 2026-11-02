@@ -10,6 +10,7 @@ import { useLenis, smoothScrollTo } from './hooks/useLenis';
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
 const Governance = lazy(() => import('./pages/Governance'));
+const MemberCv = lazy(() => import('./pages/MemberCv'));
 const Pillars = lazy(() => import('./pages/Pillars'));
 const Projects = lazy(() => import('./pages/Projects'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
@@ -98,6 +99,9 @@ function MainLayout() {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/governance" element={<Governance />} />
+                <Route path="/gouvernance" element={<Governance />} />
+                <Route path="/gouvernance/:slug" element={<MemberCv />} />
+                <Route path="/governance/:slug" element={<MemberCv />} />
                 <Route path="/pillars" element={<Pillars />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />

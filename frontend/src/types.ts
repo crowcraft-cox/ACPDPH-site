@@ -235,4 +235,54 @@ export interface AdminData {
   gallery?: GalleryItem[];
   bankAccounts?: BankAccount[];
   governanceMembers?: GovernanceMember[];
+  cvs?: MemberCv[];
+}
+
+export interface MemberCvContact {
+  phone?: string;
+  email?: string;
+  address?: string;
+}
+
+export interface MemberCvLanguage {
+  name: string;
+  level: number;
+}
+
+export interface MemberCvExperience {
+  title: string;
+  organization: string;
+  period: string;
+  bullets: string[];
+}
+
+export interface MemberCvEducation {
+  institution: string;
+  degree: string;
+  period: string;
+}
+
+export interface MemberCvVisibility {
+  phone: boolean;
+  email: boolean;
+  address: boolean;
+}
+
+export interface MemberCv {
+  id?: string;
+  memberId: string;
+  slug: string;
+  givenNames: string;
+  familyNames: string;
+  role: string;
+  about: string;
+  contact: MemberCvContact;
+  skills: string[];
+  languages: MemberCvLanguage[];
+  experiences: MemberCvExperience[];
+  education: MemberCvEducation[];
+  photo?: string;
+  visibility: MemberCvVisibility;
+  published: boolean;
+  updatedAt?: string;
 }

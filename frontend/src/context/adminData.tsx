@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, JobOffer, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem, BankAccount, GovernanceMember } from '../types';
+import type { AdminData, ImpactCounter, Pillar, NewsArticle, Project, JobOffer, ContactInfo, AdminUser, Subscriber, NewsletterLog, GalleryItem, BankAccount, GovernanceMember, MemberCv } from '../types';
 import { apiFetch } from '../services/api';
 import { OFFICE_ADDRESS } from '../constants/contact';
 import { DEFAULT_BANK_ACCOUNTS } from '../config/donationConfig';
@@ -278,6 +278,7 @@ const DEFAULT_DATA: AdminData = {
   ],
   bankAccounts: DEFAULT_BANK_ACCOUNTS,
   governanceMembers: DEFAULT_GOVERNANCE_MEMBERS,
+  cvs: [],
 };
 
 /* ===== Context Type ===== */
@@ -336,6 +337,11 @@ interface AdminDataContextType {
   updateGovernanceMember: (id: string, item: Partial<GovernanceMember>) => void;
   addGovernanceMember: (item: Omit<GovernanceMember, 'id'>) => void;
   deleteGovernanceMember: (id: string) => void;
+  // CV des Membres
+  saveCv: (cv: MemberCv) => Promise<boolean>;
+  deleteCv: (memberId: string) => Promise<boolean>;
+  getCvBySlug: (slug: string) => MemberCv | undefined;
+  getCvByMemberId: (memberId: string) => MemberCv | undefined;
   // Auth
   isAuthenticated: boolean;
   currentUser: AdminUser | null;
@@ -365,6 +371,7 @@ async function saveToCloud(newData: AdminData): Promise<boolean> {
         users: newData.users || [],
         bankAccounts: newData.bankAccounts || [],
         governanceMembers: newData.governanceMembers || [],
+        cvs: newData.cvs || [],
       }),
     });
     return res.success === true;
@@ -419,6 +426,9 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
           const cloudGovMembers = Array.isArray((res.data as any).governanceMembers) && (res.data as any).governanceMembers.length > 0
             ? (res.data as any).governanceMembers
             : (DEFAULT_DATA.governanceMembers || DEFAULT_GOVERNANCE_MEMBERS);
+          const cloudCvs = Array.isArray((res.data as any).cvs)
+            ? (res.data as any).cvs
+            : (DEFAULT_DATA.cvs || []);
           setData({
             ...res.data,
             contact: mergedContact,
@@ -426,6 +436,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
             jobs: cloudJobs,
             bankAccounts: cloudBankAccounts,
             governanceMembers: cloudGovMembers,
+            cvs: cloudCvs,
           });
           setDbConnected(true);
           setDbError(null);
@@ -861,6 +872,58 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     });
   }, [persist]);
 
+  // ── Curriculum Vitae des Membres ──────────────────────────────────────────
+  const saveCv = useCallback(async (cv: MemberCv): Promise<boolean> => {
+    setData((prev) => {
+      const existing = prev.cvs || [];
+      const index = existing.findIndex((c) => c.memberId === cv.memberId || c.slug === cv.slug);
+      const nextCvs = index >= 0 ? [...existing] : [...existing, cv];
+      if (index >= 0) nextCvs[index] = cv;
+      const next = { ...prev, cvs: nextCvs };
+      persist(next);
+      return next;
+    });
+
+    try {
+      const res = await apiFetch('/cvs', {
+        method: 'POST',
+        body: JSON.stringify(cv),
+      });
+      return res.success === true;
+    } catch {
+      return true;
+    }
+  }, [persist]);
+
+  const deleteCv = useCallback(async (memberId: string): Promise<boolean> => {
+    setData((prev) => {
+      const existing = prev.cvs || [];
+      const nextCvs = existing.filter((c) => c.memberId !== memberId && c.slug !== memberId);
+      const next = { ...prev, cvs: nextCvs };
+      persist(next);
+      return next;
+    });
+
+    try {
+      const res = await apiFetch(`/cvs/${encodeURIComponent(memberId)}`, {
+        method: 'DELETE',
+      });
+      return res.success === true;
+    } catch {
+      return true;
+    }
+  }, [persist]);
+
+  const getCvBySlug = useCallback((slug: string): MemberCv | undefined => {
+    const list = data.cvs || [];
+    return list.find((c) => c.slug === slug);
+  }, [data.cvs]);
+
+  const getCvByMemberId = useCallback((memberId: string): MemberCv | undefined => {
+    const list = data.cvs || [];
+    return list.find((c) => c.memberId === memberId);
+  }, [data.cvs]);
+
   // ── Contact ──────────────────────────────────────────────────────────────
   const updateContact = useCallback((info: Partial<ContactInfo>) => {
     persist({ ...data, contact: { ...data.contact, ...info } });
@@ -884,6 +947,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
         updateContact,
         updateBankAccount, addBankAccount, deleteBankAccount,
         updateGovernanceMember, addGovernanceMember, deleteGovernanceMember,
+        saveCv, deleteCv, getCvBySlug, getCvByMemberId,
         addUser, deleteUser, updateUser,
         subscribers, newsletterLogs, addSubscriber, removeSubscriber, broadcastNewsletter, notifySubscribersNewContent,
         gallery, addGalleryItem, updateGalleryItem, deleteGalleryItem, isAuthenticated, currentUser, login, logout,
