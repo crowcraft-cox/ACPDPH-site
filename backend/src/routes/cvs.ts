@@ -28,7 +28,7 @@ const photoStorage = (multer as any).diskStorage({
 
 const uploadPhoto = (multer as any)({
   storage: photoStorage,
-  limits: { fileSize: 3 * 1024 * 1024 }, // 3 Mo max
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 Mo max
   fileFilter: (_req: any, file: any, cb: any) => {
     const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
     const allowedExts = ['.jpg', '.jpeg', '.png', '.webp'];
@@ -36,7 +36,7 @@ const uploadPhoto = (multer as any)({
     if (allowedMimes.includes(file.mimetype) && allowedExts.includes(ext)) {
       cb(null, true);
     } else {
-      cb(new Error('Format d\'image non autorisé. Formats acceptés : JPEG, PNG, WebP (max 3 Mo).'));
+      cb(new Error('Format d\'image non autorisé. Formats acceptés : JPEG, PNG, WebP (max 10 Mo).'));
     }
   },
 });

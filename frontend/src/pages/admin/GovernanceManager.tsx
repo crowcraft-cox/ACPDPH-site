@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAdminData } from '../../context/adminData';
 import { ORGAN_LABELS, type GovernanceOrganKey } from '../../data/governanceData';
 import type { GovernanceMember } from '../../types';
+import { apiFetch } from '../../services/api';
 
 export default function GovernanceManager() {
   const { data, addGovernanceMember, updateGovernanceMember, deleteGovernanceMember, isSyncing } = useAdminData();
@@ -21,6 +22,9 @@ export default function GovernanceManager() {
   const [organ, setOrgan] = useState<GovernanceOrganKey>('board');
   const [photo, setPhoto] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [photoUploadError, setPhotoUploadError] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   const openAddModal = (defaultOrgan: GovernanceOrganKey = 'board') => {
     setEditingMember(null);
@@ -29,6 +33,7 @@ export default function GovernanceManager() {
     setOrgan(defaultOrgan);
     setPhoto('');
     setFormError(null);
+    setPhotoUploadError(null);
     setIsModalOpen(true);
   };
 
@@ -39,7 +44,55 @@ export default function GovernanceManager() {
     setOrgan(member.organ);
     setPhoto(member.photo || '');
     setFormError(null);
+    setPhotoUploadError(null);
     setIsModalOpen(true);
+  };
+
+  const handlePhotoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPhotoUploadError(null);
+
+    // Validation du format
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setPhotoUploadError('Format refusé : Seules les images JPG, PNG et WebP sont acceptées.');
+      if (photoInputRef.current) photoInputRef.current.value = '';
+      return;
+    }
+
+    // Validation de la taille (max 10 Mo)
+    if (file.size > 10 * 1024 * 1024) {
+      setPhotoUploadError('Taille excessive : L\'image ne doit pas dépasser 10 Mo.');
+      if (photoInputRef.current) photoInputRef.current.value = '';
+      return;
+    }
+
+    setIsUploadingPhoto(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('photo', file);
+
+      const res = await apiFetch<any>('/cvs/upload-photo', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const uploadedUrl = (res as any).url || (res.data as any)?.url;
+      if (res.success && uploadedUrl) {
+        setPhoto(uploadedUrl);
+        setPhotoUploadError(null);
+      } else {
+        setPhotoUploadError(res.message || 'Échec de l\'envoi de la photo sur le serveur.');
+      }
+    } catch (err: any) {
+      setPhotoUploadError(err.message || 'Erreur lors du téléversement de l\'image.');
+    } finally {
+      setIsUploadingPhoto(false);
+      if (photoInputRef.current) photoInputRef.current.value = '';
+    }
   };
 
   const handleSave = (e: React.FormEvent) => {
@@ -366,17 +419,79 @@ export default function GovernanceManager() {
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">
-                  Chemin ou URL de la photo (optionnel)
+                <label className="block text-slate-300 font-semibold mb-2">
+                  Photo de l&apos;animateur (depuis votre appareil)
                 </label>
+
                 <input
-                  type="text"
-                  placeholder="Ex: /images/membres/emmanuel-kakule.jpg"
-                  value={photo}
-                  onChange={(e) => setPhoto(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                  ref={photoInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handlePhotoFileChange}
+                  className="hidden"
                 />
-                <span className="text-[11px] text-slate-500 mt-1 block">
+
+                {photo ? (
+                  <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-950 border border-slate-700">
+                    <img
+                      src={photo}
+                      alt="Aperçu animateur"
+                      className="w-14 h-16 rounded-lg object-cover object-top border border-slate-600 shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-semibold text-emerald-400 flex items-center gap-1.5 mb-1">
+                        <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                        Photo sélectionnée
+                      </div>
+                      <div className="text-[11px] text-slate-400 truncate font-mono">
+                        {photo}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => photoInputRef.current?.click()}
+                        disabled={isUploadingPhoto}
+                        className="px-2.5 py-1 rounded bg-blue-900/60 hover:bg-blue-800 text-blue-300 border border-blue-700 text-xs font-medium transition-colors cursor-pointer"
+                      >
+                        Changer
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPhoto('')}
+                        disabled={isUploadingPhoto}
+                        className="px-2.5 py-1 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs font-medium transition-colors cursor-pointer"
+                      >
+                        Retirer
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => photoInputRef.current?.click()}
+                    className="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-xl p-5 text-center cursor-pointer transition-colors bg-slate-950/40"
+                  >
+                    <svg className="w-8 h-8 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    <span className="block text-xs font-semibold text-white">
+                      {isUploadingPhoto ? 'Téléversement de l\'image en cours...' : 'Sélectionner une photo depuis votre appareil'}
+                    </span>
+                    <span className="block text-[11px] text-slate-500 mt-0.5">
+                      Formats acceptés : JPG, PNG, WebP (max 10 Mo) — Format portrait recommandé
+                    </span>
+                  </div>
+                )}
+
+                {photoUploadError && (
+                  <div className="mt-2 p-2 rounded-lg bg-rose-950/80 border border-rose-800 text-rose-300 text-xs">
+                    {photoUploadError}
+                  </div>
+                )}
+
+                <span className="text-[11px] text-slate-500 mt-2 block">
                   Laisser vide pour afficher l&apos;emplacement neutre tant que la photo n&apos;est pas disponible.
                 </span>
               </div>
