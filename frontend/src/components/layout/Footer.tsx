@@ -65,10 +65,10 @@ export default function Footer() {
 
   const socialLinks = [
     { id: 'linkedin',  url: 'https://linkedin.com/company/acpdph',            label: 'LinkedIn' },
-    { id: 'facebook',  url: 'https://www.facebook.com/share/1atRhwrxaY/',     label: 'Facebook' },
+    { id: 'facebook',  url: 'https://www.facebook.com/share/18p7945FQd/',     label: 'Facebook' },
     { id: 'twitter',   url: 'https://x.com/acpdph',                           label: 'X (Twitter)' },
     { id: 'instagram', url: 'https://www.instagram.com/acpdph/',               label: 'Instagram' },
-    { id: 'tiktok',    url: 'https://vm.tiktok.com/ZS9kHDsU4hALR-qa7BL/',    label: 'TikTok' },
+    { id: 'tiktok',    url: 'https://www.tiktok.com/@acpdph.asbl',             label: 'TikTok' },
   ];
 
   /* ── Rendu email inline ── */
