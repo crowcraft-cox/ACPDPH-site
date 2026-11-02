@@ -54,10 +54,6 @@ export default function MemberCvPage() {
     };
   }, [slug, data.cvs, getCvBySlug]);
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen pt-32 pb-20 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900">
@@ -111,7 +107,7 @@ export default function MemberCvPage() {
 
   return (
     <div className="pt-24 sm:pt-28 pb-20 bg-slate-200 dark:bg-slate-950 min-h-screen">
-      {/* Barre d'outils au-dessus du CV (masquée à l'impression) */}
+      {/* Barre d'outils au-dessus du CV */}
       <div className="max-w-[900px] mx-auto px-4 mb-4 flex items-center justify-between no-print">
         <Link
           to="/gouvernance"
@@ -122,17 +118,6 @@ export default function MemberCvPage() {
           </svg>
           Retour à la gouvernance
         </Link>
-
-        <button
-          onClick={handlePrint}
-          type="button"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--cv-navy)] text-white text-sm font-semibold hover:bg-slate-800 transition-colors cursor-pointer shadow-sm"
-        >
-          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-          </svg>
-          Télécharger en PDF
-        </button>
       </div>
 
       {/* ── Document CV Format A4 Portrait ─────────────────────────────────── */}
