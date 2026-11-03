@@ -212,74 +212,70 @@ export default function Support() {
       className="min-h-screen bg-slate-50 dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
     >
       {/* ========================================================================= */}
-      {/* 1. VISUEL D'ACCUEIL (HERO) AVEC IMAGE DU PETIT GARÇON                     */}
+      {/* 1. VISUEL D'ACCUEIL : PHOTO SEULE SANS AUCUN FONDU                        */}
       {/* ========================================================================= */}
       <section
-        className="relative w-full h-[520px] md:h-[640px] lg:h-[720px] overflow-hidden bg-[#0a1432]"
+        className="w-full h-[420px] md:h-[560px] lg:h-[640px] overflow-hidden bg-slate-900"
+        aria-label="Visuel d'accueil"
+      >
+        <img
+          src="/images/soutenir-hero.jpg"
+          alt="Enfant assis sur une chaise dans une salle de classe, soutenu par l'ACPDPH"
+          width={1920}
+          height={1080}
+          loading="eager"
+          fetchPriority="high"
+          className="w-full h-full object-cover object-[50%_8%] hero-support-image"
+        />
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 2. BANDEAU DE TEXTE BLEU UNI SOUS LA PHOTO                                */}
+      {/* ========================================================================= */}
+      <section
+        className="w-full bg-[#2350D9] text-white py-8 md:py-10 hero-support-banner"
         aria-labelledby="hero-title"
       >
-        {/* Conteneur d'image centré sur grand écran pour éviter tout zoom excessif */}
-        <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none">
-          <img
-            src="/images/soutenir-hero.jpg"
-            alt="Enfant assis sur une chaise dans une salle de classe, soutenu par l'ACPDPH"
-            width={750}
-            height={1000}
-            loading="eager"
-            fetchPriority="high"
-            className="w-full h-full max-w-[1100px] object-cover object-top md:object-[50%_8%]"
-          />
-        </div>
-
-        {/* Dégradés superposés pour lisibilité :
-            - Mobile : de bas en haut (gradient-to-t)
-            - Desktop : horizontal de gauche à droite (gradient-to-r) */}
-        <div
-          className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#0a1432]/95 via-[#0a1432]/50 to-transparent md:bg-gradient-to-r md:from-[#0a1432]/90 md:via-[#0a1432]/55 md:via-[40%] md:to-transparent"
-          aria-hidden="true"
-        />
-
-        {/* Logo officiel au coin supérieur gauche */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-10 z-20">
-          <Link
-            to="/"
-            className="block rounded-full p-1 bg-white/95 dark:bg-slate-900/90 shadow-md border-2 border-white hover:scale-105 transition-transform"
-            aria-label="Accueil ACPDPH"
-          >
-            <img
-              src="/logo_ACPDPH.jpg"
-              alt="Logo ACPDPH"
-              width={56}
-              height={56}
-              className="w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover bg-white"
-            />
-          </Link>
-        </div>
-
-        {/* Bloc de texte à GAUCHE, aligné en bas à gauche (~38 % de la largeur max-w-md lg:max-w-lg) */}
-        <div className="relative z-10 w-full h-full flex items-end">
-          <div className="w-full p-6 sm:p-8 md:p-10 lg:p-14 text-left">
-            <div className="max-w-md lg:max-w-lg">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid lg:grid-cols-[1.4fr_1fr] gap-6 items-center">
+            <div>
               <h1
                 id="hero-title"
-                className="text-3xl lg:text-5xl font-bold leading-tight tracking-tight text-white font-heading"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight text-white font-heading"
               >
                 Chaque enfant a le droit d&apos;apprendre, de grandir et d&apos;être inclus
               </h1>
+            </div>
 
-              <p className="text-base lg:text-lg text-white/90 mt-3 leading-relaxed">
+            <div>
+              <p className="text-base leading-relaxed text-white/95 mb-4">
                 Avec l&apos;ACPDPH, vous aidez les personnes handicapées du Nord-Kivu à accéder à l&apos;éducation, aux soins et à l&apos;autonomie.
               </p>
+              <div>
+                <a
+                  href="#don"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const target = document.getElementById('don');
+                    if (target) {
+                      target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="inline-block bg-[#C2530A] hover:bg-[#A84508] text-white uppercase font-bold text-sm tracking-wider rounded-md px-6 py-3 transition-all duration-200 hover:-translate-y-[1px] shadow-sm cursor-pointer text-center"
+                >
+                  FAIRE UN DON
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 2. DISPOSITION 2 COLONNES : FORMULAIRE & INFORMATIONS D'IMPACT           */}
+      {/* 3. DISPOSITION 2 COLONNES : FORMULAIRE & INFORMATIONS D'IMPACT           */}
       {/* (Sur mobile : le formulaire s'affiche en premier, directement sous le hero) */}
       {/* ========================================================================= */}
-      <section className="container-ba py-10 sm:py-14 md:py-16" aria-label="Don et soutien">
+      <section id="don" className="container-ba py-10 sm:py-14 md:py-16 scroll-mt-6" aria-label="Don et soutien">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* ======================================================================= */}
           {/* FORMULAIRE DE DON (Col Droite sur Desktop, Ordre 1 sur Mobile)         */}
