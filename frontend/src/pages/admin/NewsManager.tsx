@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAdminData } from '../../context/adminData';
 import type { NewsArticle, NewsImage } from '../../types';
+import { compressImage } from '../../utils/imageUrl';
 
 const emptyArticle: Omit<NewsArticle, 'id'> = {
   title: '',
@@ -14,45 +15,6 @@ const emptyArticle: Omit<NewsArticle, 'id'> = {
   images: [],
 };
 
-/* Compress image using HTML5 canvas to keep size under 150KB for fast saving */
-function compressImage(file: File, maxWidth = 1200, maxHeight = 1200, quality = 0.82): Promise<string> {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const srcUrl = event.target?.result as string;
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth || height > maxHeight) {
-          if (width > height) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          } else {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
-        } else {
-          resolve(srcUrl);
-        }
-      };
-      img.onerror = () => resolve(srcUrl);
-      img.src = srcUrl;
-    };
-    reader.onerror = () => resolve('');
-    reader.readAsDataURL(file);
-  });
-}
 
 export default function NewsManager() {
   const { data, addNews, updateNews, deleteNews } = useAdminData();

@@ -7,46 +7,7 @@ import {
   detectMediaType,
   aggregateAllGalleryItems,
 } from '../../utils/galleryAggregator';
-
-/* Compression d'image via canvas HTML5 */
-function compressImage(file: File, maxWidth = 1400, maxHeight = 1400, quality = 0.82): Promise<string> {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const srcUrl = event.target?.result as string;
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth || height > maxHeight) {
-          if (width > height) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          } else {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
-        } else {
-          resolve(srcUrl);
-        }
-      };
-      img.onerror = () => resolve(srcUrl);
-      img.src = srcUrl;
-    };
-    reader.onerror = () => resolve('');
-    reader.readAsDataURL(file);
-  });
-}
+import { compressImage } from '../../utils/imageUrl';
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return 'Date non spécifiée';

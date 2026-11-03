@@ -52,32 +52,49 @@ export function resolveImageUrl(url?: string): string {
 }
 
 /**
- * Compresse et convertit une image choisie sur l'appareil en Data URL (JPEG ~640px).
- * Garantit un affichage instantané, persistant dans la base de données sans dépendre
- * du disque éphémère du serveur backend.
+ * Compresse et convertit une image choisie sur l'appareil au format moderne WebP
+ * (avec repli automatique JPEG de haute qualité si l'environnement ne supporte pas l'encodage WebP).
+ *
+ * Avantages :
+ * - Format WebP moderne avec compression visuellement sans perte (lossy perceptually lossless)
+ * - Poids réduit de 35% à 50% par rapport au JPEG standard sans dégradation de la netteté
+ * - Lissage haute précision (imageSmoothingQuality = 'high') pour préserver les détails
+ * - Stockage léger et pérenne dans MongoDB Atlas, idéal pour connexions mobiles 3G
  */
 export function compressImageToDataUrl(
   file: File,
-  maxWidth = 640,
-  maxHeight = 800,
-  quality = 0.85
+  maxWidth = 1400,
+  maxHeight = 1400,
+  quality = 0.82
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    // Si c'est déjà un SVG vectoriel, on le préserve intégralement
+    if (file.type === 'image/svg+xml') {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+      return;
+    }
+
     const reader = new FileReader();
-
-    reader.onload = (e) => {
+    reader.onload = (event) => {
+      const srcUrl = event.target?.result as string;
       const img = new Image();
-      img.onload = () => {
-        let { width, height } = img;
 
-        // Calcul du redimensionnement proportionnel
-        if (width > maxWidth) {
-          height = Math.round((height * maxWidth) / width);
-          width = maxWidth;
-        }
-        if (height > maxHeight) {
-          width = Math.round((width * maxHeight) / height);
-          height = maxHeight;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        // Redimensionnement proportionnel si l'image dépasse les dimensions maximales
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
         }
 
         const canvas = document.createElement('canvas');
@@ -86,26 +103,45 @@ export function compressImageToDataUrl(
 
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          resolve(e.target?.result as string);
+          resolve(srcUrl);
           return;
         }
 
+        // Lissage haute qualité bicubique pour préserver la netteté des visages et détails
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
-        // Exporter en JPEG de haute qualité (~30-60 Ko)
-        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-        resolve(dataUrl);
+
+        // 1. Tenter l'export en WebP moderne
+        try {
+          const webpData = canvas.toDataURL('image/webp', quality);
+          // Si le navigateur supporte WebP, le préfixe sera 'data:image/webp'
+          if (webpData && webpData.startsWith('data:image/webp')) {
+            resolve(webpData);
+            return;
+          }
+        } catch {
+          // Repli vers JPEG
+        }
+
+        // 2. Repli vers JPEG haute qualité si WebP indisponible
+        try {
+          const jpegData = canvas.toDataURL('image/jpeg', Math.min(quality + 0.05, 0.88));
+          resolve(jpegData);
+        } catch {
+          resolve(srcUrl);
+        }
       };
 
-      img.onerror = () => {
-        // En cas d'erreur avec Image(), repli sur le dataUrl brut
-        resolve(e.target?.result as string);
-      };
-
-      img.src = e.target?.result as string;
+      img.onerror = () => resolve(srcUrl);
+      img.src = srcUrl;
     };
 
     reader.onerror = (err) => reject(err);
     reader.readAsDataURL(file);
   });
 }
+
+// Alias pour compatibilité
+export const compressImage = compressImageToDataUrl;
 

@@ -74,7 +74,7 @@ export default function GovernanceManager() {
     try {
       // Compression et encodage immédiat en Data URL (JPEG ~640x800)
       // Garantit un affichage instantané, persistant et indépendant du serveur
-      const compressedDataUrl = await compressImageToDataUrl(file, 640, 800, 0.85);
+      const compressedDataUrl = await compressImageToDataUrl(file, 1200, 1200, 0.82);
       setPhoto(compressedDataUrl);
       setPhotoUploadError(null);
     } catch (err: any) {

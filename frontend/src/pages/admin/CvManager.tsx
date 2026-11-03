@@ -198,7 +198,7 @@ export default function CvManager() {
     }
 
     try {
-      const dataUrl = await compressImageToDataUrl(file, 640, 800, 0.85);
+      const dataUrl = await compressImageToDataUrl(file, 1200, 1200, 0.82);
       setEditingCv({ ...editingCv, photo: dataUrl });
     } catch (err: any) {
       alert(`Erreur traitement photo : ${err.message || 'erreur'}`);
