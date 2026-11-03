@@ -237,7 +237,7 @@ export default function Support() {
   return (
     <main
       id="main-content"
-      className="min-h-screen bg-slate-50 dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
+      className="min-h-screen bg-white dark:bg-ba-dark text-[#0F172A] dark:text-slate-100 font-body selection:bg-[#C2530A] selection:text-white"
     >
       {/* ========================================================================= */}
       {/* 1. VISUEL D'ACCUEIL : PHOTO SEULE SANS AUCUN FONDU                        */}

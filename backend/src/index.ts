@@ -29,7 +29,11 @@ connectDB();
 
 // Middlewares
 app.use(compression());
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
 app.use(cors({
   origin: true, // Accepte toutes les origines (Vercel, mobile, localhost)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

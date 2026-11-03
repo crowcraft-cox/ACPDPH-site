@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAdminData } from '../context/adminData';
 import { GOVERNANCE_TEXTS, DEFAULT_GOVERNANCE_MEMBERS, type GovernanceMember } from '../data/governanceData';
@@ -16,6 +16,10 @@ function MemberCard({ name, role, photo, cvSlug }: MemberCardProps) {
   const [imageError, setImageError] = useState(false);
   const resolvedPhoto = photo ? resolveImageUrl(photo) : '';
   const hasPhoto = Boolean(resolvedPhoto && !imageError);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [photo]);
 
   const photoContent = hasPhoto ? (
     <img
