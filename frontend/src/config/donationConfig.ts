@@ -1,16 +1,26 @@
 import type { BankAccount } from '../types';
 
 /**
- * Configuration centralisée des moyens de paiement et coordonnées pour les dons ACPDPH.
- *
- * NOTE IMPORTANTE POUR L'ACPDPH :
- * Coordonnées bancaires officielles certifiées de l'ACPDPH :
- * - Banque : EQUITY BCDC
- * - Intitulé : ACPDPH
- * - Agence : AGENCE DE BENI
- * - Compte USD : 00011150666200168501311
- * - SWIFT : BCDCCDKI
+ * Coordonnées bancaires officielles certifiées de l'ACPDPH.
+ * Source de vérité unique pour l'ensemble du site web.
  */
+export interface BankDetails {
+  bankName: string;
+  accountName: string;
+  bankAddress: string;
+  accountNumber: string;
+  swift: string;
+  currency: string;
+}
+
+export const BANK_DETAILS: BankDetails = {
+  bankName: 'EQUITY BCDC',
+  accountName: 'ACPDPH',
+  bankAddress: 'AGENCE DE BENI',
+  accountNumber: '00011150666200168501311',
+  swift: 'BCDCCDKI',
+  currency: 'USD',
+};
 
 export interface MobileMoneyOperator {
   id: string;
@@ -131,13 +141,13 @@ export const DONATION_CONFIG: DonationConfig = {
 
   // 2. VIREMENT BANCAIRE OFFICIEL ACPDPH
   bankTransfer: {
-    bankName: 'EQUITY BCDC',
-    agency: 'AGENCE DE BENI',
-    beneficiary: 'ACPDPH',
-    accountUSD: '00011150666200168501311',
+    bankName: BANK_DETAILS.bankName,
+    agency: BANK_DETAILS.bankAddress,
+    beneficiary: BANK_DETAILS.accountName,
+    accountUSD: BANK_DETAILS.accountNumber,
     accountCDF: 'À préciser par l\'ACPDPH',
     iban: '',
-    swift: 'BCDCCDKI',
+    swift: BANK_DETAILS.swift,
     isConfigured: true,
     instructions: [
       'Initiez un virement depuis votre interface bancaire en ligne ou auprès de votre agence bancaire.',
@@ -162,12 +172,12 @@ export const DONATION_CONFIG: DonationConfig = {
 export const DEFAULT_BANK_ACCOUNTS: BankAccount[] = [
   {
     id: 'bank-equity-bcdc-usd',
-    bankName: 'EQUITY BCDC',
-    accountName: 'ACPDPH',
-    agency: 'AGENCE DE BENI',
-    accountNumber: '00011150666200168501311',
-    swift: 'BCDCCDKI',
-    currency: 'USD',
+    bankName: BANK_DETAILS.bankName,
+    accountName: BANK_DETAILS.accountName,
+    agency: BANK_DETAILS.bankAddress,
+    accountNumber: BANK_DETAILS.accountNumber,
+    swift: BANK_DETAILS.swift,
+    currency: BANK_DETAILS.currency,
     iban: '',
     notes: 'Compte principal pour les virements en devises étrangères (USD). Indiquer la référence de don.',
     active: true,

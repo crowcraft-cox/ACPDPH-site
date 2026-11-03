@@ -130,7 +130,20 @@ router.post('/', async (req: Request, res: Response) => {
         `- Montant : ${amountLabel}\n` +
         `- Fréquence : ${frequencyLabel}\n` +
         `- Moyen de paiement choisi : ${paymentMethod} (${paymentProvider || 'Standard'})\n\n` +
-        `Si vous avez choisi un paiement par Mobile Money ou Virement bancaire, veuillez utiliser votre référence « ${reference} » lors de votre transaction.\n\n` +
+        (paymentMethod === 'BANK_TRANSFER'
+          ? `Coordonnées bancaires officielles pour votre virement (USD) :\n` +
+            `- NOM DE LA BANQUE : EQUITY BCDC\n` +
+            `- INTITULÉ DU COMPTE : ACPDPH\n` +
+            `- ADRESSE DE LA BANQUE : AGENCE DE BENI\n` +
+            `- NUMÉRO DE COMPTE : 00011150666200168501311\n` +
+            `- SWIFT : BCDCCDKI\n` +
+            `- DEVISE : USD\n` +
+            `- Motif : Indiquez votre nom et la référence « ${reference} »\n\n`
+          : paymentMethod === 'MOBILE_MONEY'
+          ? `Instructions Mobile Money :\n` +
+            `- Numéro Mobile Money ACPDPH : +243 976 992 466\n` +
+            `- Référence : Indiquez votre nom et la référence « ${reference} »\n\n`
+          : '') +
         `Pour toute question ou pour nous transmettre votre justificatif, vous pouvez nous écrire à info.acpdph.asbl.rdc@gmail.com.\n\n` +
         `Avec nos salutations les plus respectueuses,\n` +
         `L'équipe de l'ACPDPH — Beni, Nord-Kivu, RDC`,
