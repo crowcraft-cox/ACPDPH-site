@@ -67,7 +67,7 @@ export default function Footer() {
     { id: 'linkedin',  url: 'https://linkedin.com/company/acpdph',            label: 'LinkedIn' },
     { id: 'facebook',  url: 'https://www.facebook.com/share/18p7945FQd/',     label: 'Facebook' },
     { id: 'twitter',   url: 'https://x.com/acpdph',                           label: 'X (Twitter)' },
-    { id: 'instagram', url: 'https://www.instagram.com/acpdph/',               label: 'Instagram' },
+    { id: 'instagram', url: 'https://www.instagram.com/acpdph.asbl.rdc/',      label: 'Instagram' },
     { id: 'tiktok',    url: 'https://www.tiktok.com/@acpdph.asbl',             label: 'TikTok' },
   ];
 
