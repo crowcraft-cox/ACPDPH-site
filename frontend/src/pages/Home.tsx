@@ -1149,18 +1149,23 @@ function CTASection() {
   });
 
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-ba-dark" />
+    <section className="relative overflow-hidden bg-[#C2530A]" style={{ backgroundColor: '#C2530A' }}>
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-ba-blue/10 animate-pulse-soft" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-ba-blue/10 animate-pulse-soft" style={{ animationDelay: '1.5s' }} />
+        <div
+          className="absolute -top-20 -right-20 w-80 h-80 rounded-full animate-pulse-soft"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.12)' }}
+        />
+        <div
+          className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full animate-pulse-soft"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.12)', animationDelay: '1.5s' }}
+        />
       </div>
 
       <div ref={containerRef} className="container-ba section-padding relative z-10 text-center text-white">
-        <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6 max-w-3xl mx-auto leading-tight">
+        <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6 max-w-3xl mx-auto leading-tight" style={{ color: '#FFFFFF' }}>
           {t.cta.title}
         </h2>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-10">
+        <p className="text-lg max-w-2xl mx-auto mb-10" style={{ color: '#FFFFFF' }}>
           {t.cta.subtitle}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -1170,7 +1175,11 @@ function CTASection() {
             </svg>
             {t.cta.donate}
           </Link>
-          <Link to={getLocalizedPath("/about")} className="btn btn-outline btn-lg border-white/30 text-white hover:border-ba-blue hover:text-ba-blue">
+          <Link
+            to={getLocalizedPath("/about")}
+            className="btn btn-outline btn-lg hover:border-white hover:text-white"
+            style={{ color: '#FFFFFF', borderColor: 'rgba(255, 255, 255, 0.45)' }}
+          >
             {t.cta.join}
           </Link>
         </div>
