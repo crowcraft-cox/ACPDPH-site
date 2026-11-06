@@ -1,4 +1,5 @@
 import type { Project, NewsArticle, Pillar, GalleryItem } from '../types';
+import { getLocalized, type Lang } from '../i18n';
 
 export function extractYoutubeId(url: string): string | null {
   if (!url) return null;
@@ -37,7 +38,8 @@ export function aggregateAllGalleryItems(
   projects: Project[] = [],
   news: NewsArticle[] = [],
   pillars: Pillar[] = [],
-  customGallery: GalleryItem[] = []
+  customGallery: GalleryItem[] = [],
+  lang: Lang = 'fr'
 ): GalleryItem[] {
   const items: GalleryItem[] = [];
   const seenUrls = new Set<string>();
@@ -54,6 +56,9 @@ export function aggregateAllGalleryItems(
 
     items.push({
       ...item,
+      title: getLocalized(item, 'title', lang) || item.title,
+      alt: getLocalized(item, 'alt', lang) || item.alt,
+      caption: getLocalized(item, 'caption', lang) || item.caption,
       type,
       youtubeId: ytId,
       thumbnailUrl: item.thumbnailUrl || (ytId ? getYoutubeThumbnail(ytId) : undefined),
@@ -63,6 +68,10 @@ export function aggregateAllGalleryItems(
 
   // 2. Projets humanitaires
   for (const project of projects) {
+    const pTitle = getLocalized(project, 'title', lang) || project.title;
+    const pLocation = getLocalized(project, 'location', lang) || project.location;
+    const pType = getLocalized(project, 'type', lang) || project.type || (lang === 'en' ? 'Humanitarian Project' : lang === 'it' ? 'Progetto umanitario' : lang === 'de' ? 'Humanitäres Projekt' : 'Projet humanitaire');
+
     // Photo de couverture
     if (project.image && project.image.trim()) {
       const url = project.image.trim();
@@ -72,11 +81,9 @@ export function aggregateAllGalleryItems(
         const ytId = type === 'youtube' ? extractYoutubeId(url) || undefined : undefined;
         items.push({
           _id: `proj-cover-${project.id}`,
-          title: project.title,
-          alt: project.title,
-          caption: project.location
-            ? `${project.location} • ${project.type || 'Projet humanitaire'}`
-            : (project.type || 'Projet humanitaire'),
+          title: pTitle,
+          alt: pTitle,
+          caption: pLocation ? `${pLocation} • ${pType}` : pType,
           type,
           url,
           thumbnailUrl: ytId ? getYoutubeThumbnail(ytId) : undefined,
@@ -100,11 +107,13 @@ export function aggregateAllGalleryItems(
 
         const type = detectMediaType(url);
         const ytId = type === 'youtube' ? extractYoutubeId(url) || undefined : undefined;
+        const imgCaption = getLocalized(img, 'caption', lang) || img.caption;
+
         items.push({
           _id: `proj-img-${project.id}-${img.id || idx}`,
-          title: img.caption ? `${project.title} — ${img.caption}` : project.title,
-          alt: img.caption || project.title,
-          caption: img.caption || (project.location ? `${project.title} (${project.location})` : project.title),
+          title: imgCaption ? `${pTitle} — ${imgCaption}` : pTitle,
+          alt: imgCaption || pTitle,
+          caption: imgCaption || (pLocation ? `${pTitle} (${pLocation})` : pTitle),
           type,
           url,
           thumbnailUrl: ytId ? getYoutubeThumbnail(ytId) : undefined,
@@ -121,6 +130,10 @@ export function aggregateAllGalleryItems(
 
   // 3. Dernières actualités
   for (const article of news) {
+    const nTitle = getLocalized(article, 'title', lang) || article.title;
+    const nExcerpt = getLocalized(article, 'excerpt', lang) || article.excerpt;
+    const nCategory = getLocalized(article, 'category', lang) || article.category;
+
     // Photo de couverture
     if (article.image && article.image.trim()) {
       const url = article.image.trim();
@@ -130,11 +143,11 @@ export function aggregateAllGalleryItems(
         const ytId = type === 'youtube' ? extractYoutubeId(url) || undefined : undefined;
         items.push({
           _id: `news-cover-${article.id}`,
-          title: article.title,
-          alt: article.title,
-          caption: article.excerpt
-            ? (article.excerpt.length > 120 ? article.excerpt.slice(0, 120) + '...' : article.excerpt)
-            : article.category,
+          title: nTitle,
+          alt: nTitle,
+          caption: nExcerpt
+            ? (nExcerpt.length > 120 ? nExcerpt.slice(0, 120) + '...' : nExcerpt)
+            : nCategory,
           type,
           url,
           thumbnailUrl: ytId ? getYoutubeThumbnail(ytId) : undefined,
@@ -158,11 +171,13 @@ export function aggregateAllGalleryItems(
 
         const type = detectMediaType(url);
         const ytId = type === 'youtube' ? extractYoutubeId(url) || undefined : undefined;
+        const imgCaption = getLocalized(img, 'caption', lang) || img.caption;
+
         items.push({
           _id: `news-img-${article.id}-${img.id || idx}`,
-          title: img.caption ? `${article.title} — ${img.caption}` : article.title,
-          alt: img.caption || article.title,
-          caption: img.caption || article.title,
+          title: imgCaption ? `${nTitle} — ${imgCaption}` : nTitle,
+          alt: imgCaption || nTitle,
+          caption: imgCaption || nTitle,
           type,
           url,
           thumbnailUrl: ytId ? getYoutubeThumbnail(ytId) : undefined,
@@ -179,6 +194,10 @@ export function aggregateAllGalleryItems(
 
   // 4. Domaines d'intervention (piliers)
   for (const pillar of pillars) {
+    const pilTitle = getLocalized(pillar, 'title', lang) || pillar.title;
+    const pilDesc = getLocalized(pillar, 'description', lang) || pillar.description;
+    const pilDefault = lang === 'en' ? 'Area of action' : lang === 'it' ? 'Settore di intervento' : lang === 'de' ? 'Tätigkeitsbereich' : "Domaine d'intervention";
+
     if (pillar.image && pillar.image.trim()) {
       const url = pillar.image.trim();
       if (!seenUrls.has(url)) {
@@ -187,19 +206,19 @@ export function aggregateAllGalleryItems(
         const ytId = type === 'youtube' ? extractYoutubeId(url) || undefined : undefined;
         items.push({
           _id: `pillar-${pillar.id}`,
-          title: pillar.title,
-          alt: pillar.title,
-          caption: pillar.description
-            ? (pillar.description.length > 120 ? pillar.description.slice(0, 120) + '...' : pillar.description)
-            : 'Domaine d\'intervention',
+          title: pilTitle,
+          alt: pilTitle,
+          caption: pilDesc
+            ? (pilDesc.length > 120 ? pilDesc.slice(0, 120) + '...' : pilDesc)
+            : pilDefault,
           type,
           url,
           thumbnailUrl: ytId ? getYoutubeThumbnail(ytId) : undefined,
           youtubeId: ytId,
-          date: 'Pilier d\'action',
+          date: pilDefault,
           order: 30,
           active: true,
-          sourceCategory: 'Domaines d\'intervention',
+          sourceCategory: "Domaines d'intervention",
           sourceLink: `/pillars`,
         });
       }

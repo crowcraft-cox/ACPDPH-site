@@ -79,17 +79,17 @@ export default function Support() {
     }
 
     if (!firstName.trim()) {
-      errs.firstName = lang === 'en' ? 'First name is required.' : 'Le prénom est requis.';
+      errs.firstName = lang === 'en' ? 'First name is required.' : lang === 'it' ? 'Il nome è obbligatorio.' : lang === 'de' ? 'Vorname ist erforderlich.' : 'Le prénom est requis.';
     }
 
     if (!lastName.trim()) {
-      errs.lastName = lang === 'en' ? 'Last name is required.' : 'Le nom de famille est requis.';
+      errs.lastName = lang === 'en' ? 'Last name is required.' : lang === 'it' ? 'Il cognome è obbligatorio.' : lang === 'de' ? 'Nachname ist erforderlich.' : 'Le nom de famille est requis.';
     }
 
     if (!email.trim()) {
-      errs.email = lang === 'en' ? 'Email address is required.' : 'L’adresse e-mail est requise.';
+      errs.email = lang === 'en' ? 'Email address is required.' : lang === 'it' ? 'L\'indirizzo email è obbligatorio.' : lang === 'de' ? 'E-Mail-Adresse ist erforderlich.' : 'L’adresse e-mail est requise.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      errs.email = lang === 'en' ? 'Please enter a valid email address.' : 'Veuillez saisir une adresse e-mail valide.';
+      errs.email = lang === 'en' ? 'Please enter a valid email address.' : lang === 'it' ? 'Inserisci un indirizzo email valido.' : lang === 'de' ? 'Bitte geben Sie eine gültige E-Mail-Adresse ein.' : 'Veuillez saisir une adresse e-mail valide.';
     }
 
     setErrors(errs);
@@ -148,7 +148,8 @@ export default function Support() {
 
       if (res.success && res.data) {
         const now = new Date();
-        const formattedDate = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'fr-FR', {
+        const localeMap: Record<string, string> = { en: 'en-US', it: 'it-IT', de: 'de-DE', fr: 'fr-FR' };
+        const formattedDate = new Intl.DateTimeFormat(localeMap[lang] || 'fr-FR', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric',
@@ -165,8 +166,8 @@ export default function Support() {
           email: email.trim().toLowerCase(),
           paymentMethod:
             paymentMethod === 'MOBILE_MONEY'
-              ? (lang === 'en' ? 'Mobile Money (DRC)' : 'Mobile Money (RDC)')
-              : (lang === 'en' ? 'Bank Transfer' : 'Virement bancaire'),
+              ? (lang === 'en' ? 'Mobile Money (DRC)' : lang === 'it' ? 'Mobile Money (RDC)' : lang === 'de' ? 'Mobile Money (DRK)' : 'Mobile Money (RDC)')
+              : (lang === 'en' ? 'Bank Transfer' : lang === 'it' ? 'Bonifico bancario' : lang === 'de' ? 'Banküberweisung' : 'Virement bancaire'),
           paymentProvider: providerLabel,
           date: formattedDate,
         });
@@ -177,6 +178,10 @@ export default function Support() {
           res.error ||
             (lang === 'en'
               ? 'An error occurred while saving your contribution. Please try again.'
+              : lang === 'it'
+              ? 'Si è verificato un errore durante il salvataggio della donazione. Riprova.'
+              : lang === 'de'
+              ? 'Beim Speichern Ihrer Spende ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.'
               : 'Une erreur est survenue lors de l’enregistrement de votre engagement. Veuillez réessayer.')
         );
       }
@@ -185,6 +190,10 @@ export default function Support() {
       setServerError(
         lang === 'en'
           ? 'Unable to contact the server. Please check your network connection.'
+          : lang === 'it'
+          ? 'Impossibile contattare il server. Verifica la tua connessione internet.'
+          : lang === 'de'
+          ? 'Der Server konnte nicht kontaktiert werden. Bitte überprüfen Sie Ihre Internetverbindung.'
           : 'Impossible de contacter le serveur. Votre connexion internet ou le serveur est temporairement inaccessible.'
       );
     }
@@ -365,7 +374,7 @@ export default function Support() {
                   </div>
 
                   <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
-                    <span className="text-slate-500">{lang === 'en' ? 'Recorded on' : 'Enregistré le'}</span>
+                    <span className="text-slate-500">{lang === 'en' ? 'Recorded on' : lang === 'it' ? 'Registrato il' : lang === 'de' ? 'Registriert am' : 'Enregistré le'}</span>
                     <span className="text-slate-700 dark:text-slate-300">
                       {donationSuccess.date}
                     </span>

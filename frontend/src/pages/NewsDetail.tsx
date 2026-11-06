@@ -58,10 +58,10 @@ export default function NewsDetail() {
     return (
       <div style={{ paddingTop: '150px' }} className="container-ba pb-32 text-center">
         <p className="text-ba-text-secondary text-xl mb-8">
-          {lang === 'en' ? 'Article not found.' : 'Article introuvable.'}
+          {lang === 'en' ? 'Article not found.' : lang === 'it' ? 'Articolo non trovato.' : lang === 'de' ? 'Artikel nicht gefunden.' : 'Article introuvable.'}
         </p>
         <Link to={getLocalizedPath('/news')} className="btn btn-primary">
-          ← {lang === 'en' ? 'Back to news' : 'Retour aux actualités'}
+          ← {lang === 'en' ? 'Back to news' : lang === 'it' ? 'Torna alle notizie' : lang === 'de' ? 'Zurück zu den Neuigkeiten' : 'Retour aux actualités'}
         </Link>
       </div>
     );
@@ -112,7 +112,7 @@ export default function NewsDetail() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
-          {lang === 'en' ? 'Back to news' : 'Retour aux actualités'}
+          {lang === 'en' ? 'Back to news' : lang === 'it' ? 'Torna alle notizie' : lang === 'de' ? 'Zurück zu den Neuigkeiten' : 'Retour aux actualités'}
         </button>
 
         {/* Hero Text */}
@@ -152,13 +152,13 @@ export default function NewsDetail() {
           <section className="mb-16">
             <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
               <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
-              {lang === 'en' ? 'About this article' : 'À propos de cet article'}
+              {lang === 'en' ? 'About this article' : lang === 'it' ? 'Informazioni su questo articolo' : lang === 'de' ? 'Über diesen Artikel' : 'À propos de cet article'}
             </h2>
             {articleContent ? (
               <NewsContent text={articleContent} images={article.images} />
             ) : (
               <p className="text-ba-text-secondary italic">
-                {lang === 'en' ? 'No content available for this article.' : 'Aucun contenu disponible pour cet article.'}
+                {lang === 'en' ? 'No content available for this article.' : lang === 'it' ? 'Nessun contenuto disponibile per questo articolo.' : lang === 'de' ? 'Kein Inhalt für diesen Artikel verfügbar.' : 'Aucun contenu disponible pour cet article.'}
               </p>
             )}
           </section>
@@ -168,7 +168,7 @@ export default function NewsDetail() {
             <section className="mb-16">
               <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
                 <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
-                {lang === 'en' ? 'Photo gallery' : 'Galerie de photos'}
+                {lang === 'en' ? 'Photo gallery' : lang === 'it' ? 'Galleria fotografica' : lang === 'de' ? 'Fotogalerie' : 'Galerie de photos'}
                 <span className="text-sm font-normal text-ba-text-secondary ml-2">
                   ({allPhotos.length} photo{allPhotos.length > 1 ? 's' : ''})
                 </span>
@@ -206,13 +206,13 @@ export default function NewsDetail() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
-              {lang === 'en' ? 'All news' : 'Toutes les actualités'}
+              {lang === 'en' ? 'All news' : lang === 'it' ? 'Tutte le notizie' : lang === 'de' ? 'Alle Neuigkeiten' : 'Toutes les actualités'}
             </Link>
             <Link
               to={getLocalizedPath('/support')}
               className="btn btn-primary text-sm"
             >
-              {lang === 'en' ? 'Support our mission' : 'Soutenir nos actions'} →
+              {lang === 'en' ? 'Support our mission' : lang === 'it' ? 'Sostieni le nostre azioni' : lang === 'de' ? 'Unsere Mission unterstützen' : 'Soutenir nos actions'} →
             </Link>
           </div>
 

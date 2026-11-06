@@ -1,7 +1,9 @@
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { PARTNER_LOGOS } from '../constants/partnerLogos';
+import { useI18n } from '../i18n';
 
 export default function Partners() {
+  const { t, lang } = useI18n();
   const { ref: headerRef } = useScrollReveal();
 
   return (
@@ -9,7 +11,7 @@ export default function Partners() {
       {/* ── TITRE ── */}
       <section ref={headerRef} className="container-ba text-center mb-12 sm:mb-16">
         <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-ba-blue dark:text-blue-400 uppercase tracking-tight">
-          Nos Partenaires
+          {t.partners?.title || (lang === 'en' ? 'Our Partners' : lang === 'it' ? 'I nostri partner' : lang === 'de' ? 'Unsere Partner' : 'Nos Partenaires')}
         </h1>
       </section>
 
@@ -18,13 +20,14 @@ export default function Partners() {
         <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-12 max-w-5xl mx-auto">
           {PARTNER_LOGOS.map((partner) => {
             const isClickable = partner.url && partner.url !== '#';
+            const siteLabel = lang === 'en' ? `Website of ${partner.name}` : lang === 'it' ? `Sito di ${partner.name}` : lang === 'de' ? `Website von ${partner.name}` : `Site de ${partner.name}`;
             return (
               <a
                 key={partner.name}
                 href={partner.url}
                 target={isClickable ? '_blank' : undefined}
                 rel={isClickable ? 'noopener noreferrer' : undefined}
-                aria-label={`Site de ${partner.name}`}
+                aria-label={siteLabel}
                 title={partner.name}
                 className="w-[calc(50%-1rem)] md:w-[calc((100%-4rem)/3)] flex items-center justify-center p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 transition-transform duration-200 hover:scale-105 cursor-pointer"
                 onClick={!isClickable ? (e) => e.preventDefault() : undefined}

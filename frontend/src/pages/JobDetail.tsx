@@ -101,9 +101,7 @@ export default function JobDetail() {
   const jobContractType = getLocalized(job, 'contractType', lang);
   const jobProfile = getLocalized(job, 'profile', lang);
   const jobApplicationDossier = getLocalized(job, 'applicationDossier', lang);
-  const missionsList = (lang === 'en' && job.missions_en && job.missions_en.length > 0)
-    ? job.missions_en
-    : (job.missions || []);
+  const missionsList = (getLocalized(job, 'missions', lang) as string[]) || (job.missions || []);
 
   // Vérifier si l'offre est longue pour répéter le bouton en haut
   const isLongOffer = Boolean(

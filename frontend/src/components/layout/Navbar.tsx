@@ -34,17 +34,17 @@ export default function Navbar() {
 
   const getNavLabel = useCallback((label: string): string => {
     switch (label.toUpperCase()) {
-      case 'ACCUEIL': return t.header?.home || (lang === 'en' ? 'HOME' : 'ACCUEIL');
-      case 'ORGANISATION': return t.header?.organization || (lang === 'en' ? 'ORGANIZATION' : 'ORGANISATION');
-      case 'QUI SOMMES-NOUS': return t.header?.about || (lang === 'en' ? 'ABOUT US' : 'QUI SOMMES-NOUS');
-      case 'GOUVERNANCE': return t.header?.governance || (lang === 'en' ? 'GOVERNANCE' : 'GOUVERNANCE');
-      case "DOMAINES D'INTERVENTION": return t.header?.domains || (lang === 'en' ? 'AREAS OF ACTION' : "DOMAINES D'INTERVENTION");
-      case 'NOS PROJETS': return t.header?.projects || (lang === 'en' ? 'OUR PROJECTS' : 'NOS PROJETS');
-      case 'ACTUALITÉS': return t.header?.news || (lang === 'en' ? 'NEWS' : 'ACTUALITÉS');
-      case 'NOS PARTENAIRES': return t.header?.partners || (lang === 'en' ? 'OUR PARTNERS' : 'NOS PARTENAIRES');
-      case 'OFFRES & EMPLOIS': return t.header?.jobs || (lang === 'en' ? 'JOBS & CAREERS' : 'OFFRES & EMPLOIS');
-      case 'GALERIES': return t.header?.gallery || (lang === 'en' ? 'GALLERIES' : 'GALERIES');
-      case 'CONTACT': return t.header?.contact || 'CONTACT';
+      case 'ACCUEIL': return t.header?.home || (lang === 'en' ? 'HOME' : lang === 'it' ? 'HOME' : lang === 'de' ? 'STARTSEITE' : 'ACCUEIL');
+      case 'ORGANISATION': return t.header?.organization || (lang === 'en' ? 'ORGANIZATION' : lang === 'it' ? 'ORGANIZZAZIONE' : lang === 'de' ? 'ORGANISATION' : 'ORGANISATION');
+      case 'QUI SOMMES-NOUS': return t.header?.about || (lang === 'en' ? 'ABOUT US' : lang === 'it' ? 'CHI SIAMO' : lang === 'de' ? 'ÜBER UNS' : 'QUI SOMMES-NOUS');
+      case 'GOUVERNANCE': return t.header?.governance || (lang === 'en' ? 'GOVERNANCE' : lang === 'it' ? 'GOVERNANCE' : lang === 'de' ? 'GOVERNANCE' : 'GOUVERNANCE');
+      case "DOMAINES D'INTERVENTION": return t.header?.domains || (lang === 'en' ? 'AREAS OF ACTION' : lang === 'it' ? 'AREE DI INTERVENTO' : lang === 'de' ? 'EINSATZBEREICHE' : "DOMAINES D'INTERVENTION");
+      case 'NOS PROJETS': return t.header?.projects || (lang === 'en' ? 'OUR PROJECTS' : lang === 'it' ? 'I NOSTRI PROGETTI' : lang === 'de' ? 'UNSERE PROJEKTE' : 'NOS PROJETS');
+      case 'ACTUALITÉS': return t.header?.news || (lang === 'en' ? 'NEWS' : lang === 'it' ? 'NOTIZIE' : lang === 'de' ? 'AKTUELLES' : 'ACTUALITÉS');
+      case 'NOS PARTENAIRES': return t.header?.partners || (lang === 'en' ? 'OUR PARTNERS' : lang === 'it' ? 'I NOSTRI PARTNER' : lang === 'de' ? 'UNSERE PARTNER' : 'NOS PARTENAIRES');
+      case 'OFFRES & EMPLOIS': return t.header?.jobs || (lang === 'en' ? 'JOBS & CAREERS' : lang === 'it' ? 'OFFERTE DI LAVORO' : lang === 'de' ? 'STELLENANGEBOTE' : 'OFFRES & EMPLOIS');
+      case 'GALERIES': return t.header?.gallery || (lang === 'en' ? 'GALLERIES' : lang === 'it' ? 'GALLERIE' : lang === 'de' ? 'GALERIEN' : 'GALERIES');
+      case 'CONTACT': return t.header?.contact || (lang === 'de' ? 'KONTAKT' : lang === 'it' ? 'CONTATTI' : 'CONTACT');
       default: return label;
     }
   }, [t, lang]);
@@ -287,14 +287,14 @@ export default function Navbar() {
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2.5 focus:bg-[var(--color-primary)] focus:text-white focus:font-bold focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-[var(--color-accent)]"
         >
-          {t.header?.skipToContent || (lang === 'en' ? 'Skip to main content' : 'Aller au contenu principal')}
+          {t.header?.skipToContent || (lang === 'en' ? 'Skip to main content' : lang === 'it' ? 'Salta al contenuto principale' : lang === 'de' ? 'Zum Hauptinhalt springen' : 'Aller au contenu principal')}
         </a>
 
         {/* ========================================================================================= */}
         {/* 1. LOGO AGRANDI QUI DÉBORDE (Desktop xl+ : 185px, débordement 60% blanc / 40% bleu)       */}
         {/* ========================================================================================= */}
         <Link
-          to="/"
+          to={getLocalizedPath("/")}
           className="header-logo-link hidden xl:block absolute z-50 transition-transform duration-200 hover:scale-[1.015] focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-accent)] rounded-full group shadow-none"
           style={{
             left: 'var(--logo-margin-left, 24px)',
@@ -306,7 +306,7 @@ export default function Navbar() {
           }}
           tabIndex={isCompact ? -1 : 0}
           aria-hidden={isCompact ? 'true' : undefined}
-          aria-label="ACPDPH – Retour à l'accueil"
+          aria-label={lang === 'en' ? 'ACPDPH – Back to homepage' : lang === 'it' ? 'ACPDPH – Torna alla home' : lang === 'de' ? 'ACPDPH – Zur Startseite' : "ACPDPH – Retour à l'accueil"}
         >
           <img
             src="/logo_ACPDPH.jpg"
@@ -327,9 +327,9 @@ export default function Navbar() {
         <div className="mobile-header-bar">
           {/* Gauche : Logo compact */}
           <Link
-            to="/"
+            to={getLocalizedPath("/")}
             className="flex items-center gap-2 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
-            aria-label="ACPDPH - Retour a l'accueil"
+            aria-label={lang === 'en' ? 'ACPDPH - Back to homepage' : lang === 'it' ? 'ACPDPH - Torna alla home' : lang === 'de' ? 'ACPDPH - Zur Startseite' : "ACPDPH - Retour à l'accueil"}
             onClick={() => {
               setMobileLangOpen(false);
             }}
@@ -422,9 +422,9 @@ export default function Navbar() {
 
             {/* Recherche (loupe) */}
             <Link
-              to="/news"
+              to={getLocalizedPath("/news")}
               className="flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
-              aria-label="Rechercher"
+              aria-label={lang === 'en' ? 'Search' : lang === 'it' ? 'Cerca' : lang === 'de' ? 'Suchen' : 'Rechercher'}
               onClick={() => setMobileLangOpen(false)}
             >
               <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -441,7 +441,7 @@ export default function Navbar() {
                 setMobileLangOpen(false);
               }}
               className="flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-900 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
-              aria-label="Ouvrir le menu"
+              aria-label={isMobileOpen ? (lang === 'en' ? 'Close menu' : lang === 'it' ? 'Chiudi menu' : lang === 'de' ? 'Menü schließen' : 'Fermer le menu') : (lang === 'en' ? 'Open menu' : lang === 'it' ? 'Apri menu' : lang === 'de' ? 'Menü öffnen' : 'Ouvrir le menu')}
               aria-expanded={isMobileOpen}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -466,9 +466,9 @@ export default function Navbar() {
             {/* Logo tablette / écran moyen (< 1280px) */}
             <div className="h-full flex items-center xl:hidden">
               <Link
-                to="/"
+                to={getLocalizedPath("/")}
                 className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
-                aria-label="ACPDPH – Retour à l'accueil"
+                aria-label={lang === 'en' ? 'ACPDPH – Back to homepage' : lang === 'it' ? 'ACPDPH – Torna alla home' : lang === 'de' ? 'ACPDPH – Zur Startseite' : "ACPDPH – Retour à l'accueil"}
               >
                 <img
                   src="/logo_ACPDPH.jpg"
@@ -488,7 +488,7 @@ export default function Navbar() {
               <div
                 className="hidden md:flex items-center gap-2.5 xl:gap-3.5 pr-2.5 xl:pr-3.5 border-r border-gray-200 dark:border-zinc-700"
                 role="group"
-                aria-label="Options d'accessibilité et symboles des handicaps"
+                aria-label={lang === 'en' ? 'Accessibility options and disability symbols' : lang === 'it' ? 'Opzioni di accessibilità e simboli di disabilità' : lang === 'de' ? 'Barrierefreiheitsoptionen und Behindertensymbole' : "Options d'accessibilité et symboles des handicaps"}
               >
                 <DisabilitySymbols className="mr-1 xl:mr-2" />
 
@@ -501,8 +501,8 @@ export default function Navbar() {
                       ? 'bg-teal-100/70 dark:bg-zinc-700 font-bold'
                       : 'bg-transparent hover:bg-teal-50/70 dark:hover:bg-zinc-800'
                   }`}
-                  title="Basculer le contraste élevé / mode sombre"
-                  aria-label="Basculer le contraste élevé"
+                  title={lang === 'en' ? 'Toggle high contrast / dark mode' : lang === 'it' ? 'Attiva/disattiva contrasto elevato' : lang === 'de' ? 'Hohen Kontrast umschalten' : 'Basculer le contraste élevé / mode sombre'}
+                  aria-label={lang === 'en' ? 'Toggle high contrast' : lang === 'it' ? 'Attiva contrasto elevato' : lang === 'de' ? 'Hohen Kontrast umschalten' : 'Basculer le contraste élevé'}
                   aria-pressed={highContrast}
                 >
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -521,8 +521,8 @@ export default function Navbar() {
                     onClick={resetContrast}
                     tabIndex={isCompact ? -1 : 0}
                     className="min-h-[44px] px-2 flex items-center justify-center text-xs uppercase font-bold tracking-wider text-gray-500 hover:text-red-600 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
-                    title="Réinitialiser le contraste par défaut"
-                    aria-label="Réinitialiser le contraste"
+                    title={lang === 'en' ? 'Reset contrast to default' : lang === 'it' ? 'Ripristina contrasto' : lang === 'de' ? 'Kontrast zurücksetzen' : 'Réinitialiser le contraste par défaut'}
+                    aria-label={lang === 'en' ? 'Reset contrast' : lang === 'it' ? 'Ripristina contrasto' : lang === 'de' ? 'Kontrast zurücksetzen' : 'Réinitialiser le contraste'}
                   >
                     RESET
                   </button>
@@ -663,7 +663,7 @@ export default function Navbar() {
                 <svg className="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <span>{t.nav.support || 'Nous soutenir'}</span>
+                <span>{t.header?.support || t.nav.support || (lang === 'en' ? 'Support Us' : lang === 'it' ? 'Sostienici' : lang === 'de' ? 'Unterstützen Sie uns' : 'Nous soutenir')}</span>
               </Link>
 
               {/* Bouton burger pour tablette / écran moyen (< 1280px) */}
@@ -671,7 +671,7 @@ export default function Navbar() {
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
                 type="button"
                 className="xl:hidden p-2.5 text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-none transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
-                aria-label={isMobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+                aria-label={isMobileOpen ? (lang === 'en' ? 'Close menu' : lang === 'it' ? 'Chiudi menu' : lang === 'de' ? 'Menü schließen' : 'Fermer le menu') : (lang === 'en' ? 'Open menu' : lang === 'it' ? 'Apri menu' : lang === 'de' ? 'Menü öffnen' : 'Ouvrir le menu')}
                 aria-expanded={isMobileOpen}
               >
                 {isMobileOpen ? (
@@ -783,7 +783,7 @@ export default function Navbar() {
                               return (
                                 <div key={sub.to}>
                                   <Link
-                                    to={sub.to}
+                                    to={getLocalizedPath(sub.to)}
                                     role="menuitem"
                                     aria-current={isSubActive ? 'page' : undefined}
                                     onClick={() => setOpenDropdown(null)}
@@ -836,7 +836,7 @@ export default function Navbar() {
                 return (
                   <li key={item.to} className="h-full flex items-center shrink-0">
                     <Link
-                      to={item.to || '/'}
+                      to={getLocalizedPath(item.to || '/')}
                       aria-current={active ? 'page' : undefined}
                       className={`h-full flex items-center px-2 xl:px-2.5 whitespace-nowrap shrink-0 text-[13px] xl:text-[13.5px] 2xl:text-[14px] font-heading font-bold uppercase tracking-wider transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${
                         active
@@ -844,7 +844,7 @@ export default function Navbar() {
                           : 'text-white hover:text-white/85 hover:underline underline-offset-8'
                       }`}
                     >
-                      {item.label}
+                      {getNavLabel(item.label)}
                     </Link>
                   </li>
                 );
@@ -980,13 +980,13 @@ export default function Navbar() {
 
           {/* BLOC CONTACT : Collé à l'extrémité droite de l'écran (mr-0, pr-0 sur nav) */}
           <Link
-            to={CONTACT_ITEM.to}
+            to={getLocalizedPath(CONTACT_ITEM.to)}
             aria-current={isContactActive ? 'page' : undefined}
             className={`shrink-0 flex items-center justify-center bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] px-10 font-heading font-bold uppercase text-white text-[13.5px] xl:text-[14px] tracking-wider rounded-none transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset whitespace-nowrap h-full mr-0 ${
               !isCompact ? 'ml-auto' : ''
             }`}
           >
-            {CONTACT_ITEM.label}
+            {getNavLabel(CONTACT_ITEM.label)}
           </Link>
         </nav>
 
@@ -1034,7 +1034,7 @@ export default function Navbar() {
                             return (
                               <Link
                                 key={sub.to}
-                                to={sub.to}
+                                to={getLocalizedPath(sub.to)}
                                 onClick={closeMobileMenu}
                                 className={`block py-2.5 px-3 text-xs font-heading font-semibold min-h-[44px] flex items-center ${
                                   isSubActive
@@ -1056,7 +1056,7 @@ export default function Navbar() {
                 return (
                   <Link
                     key={item.to}
-                    to={item.to || '/'}
+                    to={getLocalizedPath(item.to || '/')}
                     onClick={closeMobileMenu}
                     className={`flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] ${
                       active ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
@@ -1070,19 +1070,21 @@ export default function Navbar() {
 
               {/* Bouton Contact */}
               <Link
-                to={CONTACT_ITEM.to}
+                to={getLocalizedPath(CONTACT_ITEM.to)}
                 onClick={closeMobileMenu}
                 className={`flex items-center justify-between py-3 px-4 text-sm font-heading font-bold uppercase tracking-wider rounded-none min-h-[44px] ${
                   isContactActive ? 'bg-white/15 text-[var(--color-accent-text)]' : 'text-white hover:bg-white/10'
                 }`}
               >
-                <span>{CONTACT_ITEM.label}</span>
+                <span>{getNavLabel(CONTACT_ITEM.label)}</span>
                 {isContactActive && <span className="w-2 h-2 bg-[var(--color-accent-text)]" />}
               </Link>
 
               {/* Section d'accessibilité mobile */}
               <div className="pt-3 pb-2 border-t border-white/15 px-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-white/80 mb-2">Accessibilité</div>
+                <div className="text-xs font-bold uppercase tracking-wider text-white/80 mb-2">
+                  {lang === 'en' ? 'Accessibility' : lang === 'it' ? 'Accessibilità' : lang === 'de' ? 'Barrierefreiheit' : 'Accessibilité'}
+                </div>
                 <div className="flex items-center justify-center py-2 px-3 mb-2.5 bg-white/10 border border-white/15 overflow-x-auto">
                   <DisabilitySymbols iconClassName="w-8 h-8 shrink-0" showTooltip={false} />
                 </div>
@@ -1104,7 +1106,11 @@ export default function Navbar() {
                       d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
                     />
                   </svg>
-                  <span>{highContrast ? 'Mode Contraste Élevé Activé' : 'Activer le Contraste Élevé'}</span>
+                  <span>
+                    {highContrast
+                      ? (lang === 'en' ? 'High Contrast Mode Enabled' : lang === 'it' ? 'Modalità Contrasto Elevato Attiva' : lang === 'de' ? 'Hoher Kontrast Aktiviert' : 'Mode Contraste Élevé Activé')
+                      : (lang === 'en' ? 'Enable High Contrast' : lang === 'it' ? 'Attiva Contrasto Elevato' : lang === 'de' ? 'Hohen Kontrast aktivieren' : 'Activer le Contraste Élevé')}
+                  </span>
                 </button>
               </div>
 
@@ -1118,7 +1124,7 @@ export default function Navbar() {
                   <svg className="w-4 h-4 text-[var(--color-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
-                  <span>{t.nav.support || 'Nous soutenir'}</span>
+                  <span>{t.header?.support || t.nav.support || (lang === 'en' ? 'Support Us' : lang === 'it' ? 'Sostienici' : lang === 'de' ? 'Unterstützen Sie uns' : 'Nous soutenir')}</span>
                 </Link>
               </div>
             </div>
@@ -1171,7 +1177,7 @@ export default function Navbar() {
               ref={drawerCloseBtnRef}
               type="button"
               onClick={closeMobileMenu}
-              aria-label="Fermer le menu"
+              aria-label={lang === 'en' ? 'Close menu' : lang === 'it' ? 'Chiudi menu' : lang === 'de' ? 'Menü schließen' : 'Fermer le menu'}
               style={{
                 width: 56,
                 height: 56,
@@ -1187,7 +1193,7 @@ export default function Navbar() {
               <span style={{ color: '#ffffff', fontSize: 26, fontWeight: 700, lineHeight: 1 }}>&times;</span>
             </button>
             <span style={{ color: '#ffffff', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: 14, marginLeft: 16 }}>
-              MENU
+              {lang === 'de' ? 'MENÜ' : 'MENU'}
             </span>
           </div>
 
@@ -1242,7 +1248,7 @@ export default function Navbar() {
                           return (
                             <Link
                               key={sub.to}
-                              to={sub.to}
+                              to={getLocalizedPath(sub.to)}
                               onClick={closeMobileMenu}
                               style={{
                                 display: 'flex',
@@ -1267,7 +1273,7 @@ export default function Navbar() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to || '/'}
+                  to={getLocalizedPath(item.to || '/')}
                   onClick={closeMobileMenu}
                   style={{
                     display: 'flex',
@@ -1282,14 +1288,14 @@ export default function Navbar() {
                     borderBottom: '1px solid #F3F4F6',
                   }}
                 >
-                  {item.label}
+                  {getNavLabel(item.label)}
                 </Link>
               );
             })}
 
             {/* Lien Contact */}
             <Link
-              to={CONTACT_ITEM.to}
+              to={getLocalizedPath(CONTACT_ITEM.to)}
               onClick={closeMobileMenu}
               style={{
                 display: 'flex',
@@ -1304,7 +1310,7 @@ export default function Navbar() {
                 borderBottom: '1px solid #F3F4F6',
               }}
             >
-              {CONTACT_ITEM.label}
+              {getNavLabel(CONTACT_ITEM.label)}
             </Link>
           </div>
 
@@ -1328,7 +1334,7 @@ export default function Navbar() {
                 textDecoration: 'none',
               }}
             >
-              Nous soutenir
+              {t.header?.support || t.nav.support || (lang === 'en' ? 'Support Us' : lang === 'it' ? 'Sostienici' : lang === 'de' ? 'Unterstützen Sie uns' : 'Nous soutenir')}
             </Link>
           </div>
         </div>

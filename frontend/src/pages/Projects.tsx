@@ -34,7 +34,7 @@ export default function Projects() {
         className="container-ba mb-16 text-center"
       >
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
-          {lang === 'en' ? 'Field actions' : 'Actions de terrain'}
+          {lang === 'en' ? 'Field actions' : lang === 'it' ? 'Azioni sul campo' : lang === 'de' ? 'Aktionen vor Ort' : 'Actions de terrain'}
         </span>
         <h1 className="font-heading text-4xl md:text-5xl font-bold mb-6">{t.projects.title}</h1>
         <p className="text-ba-text-secondary text-lg max-w-3xl mx-auto leading-relaxed">

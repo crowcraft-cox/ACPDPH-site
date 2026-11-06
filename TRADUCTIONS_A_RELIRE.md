@@ -89,3 +89,4 @@ Chaque entité créée ou mise à jour porte un indicateur `needsReview_en`, `ne
    - Si besoin, cliquer sur **"Traduire l'onglet"** pour régénérer la traduction via l'API, ou ajuster le texte manuellement.
    - Cliquer sur le bouton **"Marquer comme relu"** pour passer l'indicateur en vert **"Statut : Relu"**.
 5. Enregistrer les modifications.
+

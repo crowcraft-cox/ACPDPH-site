@@ -31,7 +31,7 @@ export default function Footer() {
     if (!isEmailValid(email)) {
       setNewsletterMsg({
         type: 'error',
-        text: t.footer.newsletterErrorEmail || t.footer.newsletter_error_email || (lang === 'en' ? 'Please enter a valid email address.' : 'Entrez une adresse e-mail valide.'),
+        text: t.footer.newsletterErrorEmail || t.footer.newsletter_error_email || (lang === 'en' ? 'Please enter a valid email address.' : lang === 'it' ? 'Inserisci un indirizzo email valido.' : lang === 'de' ? 'Bitte geben Sie eine gültige E-Mail-Adresse ein.' : 'Entrez une adresse e-mail valide.'),
       });
       return;
     }
@@ -47,13 +47,13 @@ export default function Footer() {
         setSubscribed(true);
         setNewsletterMsg({
           type: 'success',
-          text: t.footer.newsletterSuccess || (lang === 'en' ? 'Thank you, your subscription is confirmed!' : 'Merci, vous êtes inscrit(e) !'),
+          text: t.footer.newsletterSuccess || (lang === 'en' ? 'Thank you, your subscription is confirmed!' : lang === 'it' ? 'Grazie, la tua iscrizione è confermata!' : lang === 'de' ? 'Vielen Dank, Ihre Anmeldung ist bestätigt!' : 'Merci, vous êtes inscrit(e) !'),
         });
         setEmail('');
       } else {
         setNewsletterMsg({
           type: 'error',
-          text: res.message || t.footer.newsletterErrorGeneric || (lang === 'en' ? 'An error occurred during subscription.' : "Erreur lors de l'inscription."),
+          text: res.message || t.footer.newsletterErrorGeneric || (lang === 'en' ? 'An error occurred during subscription.' : lang === 'it' ? 'Si è verificato un errore durante l\'iscrizione.' : lang === 'de' ? 'Bei der Anmeldung ist ein Fehler aufgetreten.' : "Erreur lors de l'inscription."),
         });
       }
     }, 400);
@@ -61,11 +61,11 @@ export default function Footer() {
 
   /* ── Données ── */
   const navLinks = [
-    { path: '/',             label: t.nav?.home || (lang === 'en' ? 'Home' : 'Accueil') },
-    { path: '/about',        label: t.nav?.about || (lang === 'en' ? 'About us' : 'Qui sommes-nous') },
-    { path: '/governance',   label: t.nav?.governance || (lang === 'en' ? 'Governance' : 'Gouvernance & Équipe') },
-    { path: '/projects',     label: t.nav?.projects || (lang === 'en' ? 'Our projects' : 'Nos projets') },
-    { path: '/news',         label: t.nav?.news || (lang === 'en' ? 'News' : 'Actualités') },
+    { path: '/',             label: t.nav?.home || (lang === 'en' ? 'Home' : lang === 'it' ? 'Home' : lang === 'de' ? 'Startseite' : 'Accueil') },
+    { path: '/about',        label: t.nav?.about || (lang === 'en' ? 'About us' : lang === 'it' ? 'Chi siamo' : lang === 'de' ? 'Über uns' : 'Qui sommes-nous') },
+    { path: '/governance',   label: t.nav?.governance || (lang === 'en' ? 'Governance' : lang === 'it' ? 'Governance' : lang === 'de' ? 'Führung' : 'Gouvernance & Équipe') },
+    { path: '/projects',     label: t.nav?.projects || (lang === 'en' ? 'Our projects' : lang === 'it' ? 'I nostri progetti' : lang === 'de' ? 'Unsere Projekte' : 'Nos projets') },
+    { path: '/news',         label: t.nav?.news || (lang === 'en' ? 'News' : lang === 'it' ? 'Notizie' : lang === 'de' ? 'Aktuelles' : 'Actualités') },
     { path: '/contact',      label: t.nav?.contact || 'Contact' },
   ];
 
@@ -83,7 +83,7 @@ export default function Footer() {
     emailTouched && !isEmailValid(email) && !subscribed && !newsletterMsg;
 
   return (
-    <footer className="footer-root" aria-label={lang === 'en' ? 'Footer' : 'Pied de page'}>
+    <footer className="footer-root" aria-label={lang === 'en' ? 'Footer' : lang === 'it' ? 'Piè di pagina' : lang === 'de' ? 'Fußzeile' : 'Pied de page'}>
 
       {/* ── Niveau 1 : trois colonnes ──────────────────── */}
       <div className="footer-main">
@@ -93,7 +93,7 @@ export default function Footer() {
             {/* Colonne 1 – Notre bureau */}
             <div>
               <h3 className="footer-col-title">
-                {t.footer.headquarters || (lang === 'en' ? 'Our office' : 'Notre bureau')}
+                {t.footer.headquarters || (lang === 'en' ? 'Our office' : lang === 'it' ? 'La nostra sede' : lang === 'de' ? 'Unser Büro' : 'Notre bureau')}
               </h3>
               <ul className="footer-contact-list">
                 <li>
@@ -132,9 +132,9 @@ export default function Footer() {
             {/* Colonne 2 – Liens rapides */}
             <div>
               <h3 className="footer-col-title">
-                {t.footer.quickLinks || (lang === 'en' ? 'Quick links' : 'Liens rapides')}
+                {t.footer.quickLinks || (lang === 'en' ? 'Quick links' : lang === 'it' ? 'Link rapidi' : lang === 'de' ? 'Schnellzugriff' : 'Liens rapides')}
               </h3>
-              <nav aria-label={lang === 'en' ? 'Footer navigation links' : 'Liens du pied de page'}>
+              <nav aria-label={lang === 'en' ? 'Footer navigation links' : lang === 'it' ? 'Link di navigazione del piè di pagina' : lang === 'de' ? 'Fußzeilen-Navigationslinks' : 'Liens du pied de page'}>
                 <ul className="footer-nav-list">
                   {navLinks.map(link => (
                     <li key={link.path}>
@@ -150,7 +150,7 @@ export default function Footer() {
             {/* Colonne 3 – Suivez-nous + newsletter */}
             <div className="footer-col-social">
               <h3 className="footer-col-title">
-                {t.footer.followUs || (lang === 'en' ? 'Follow us' : 'Suivez-nous')}
+                {t.footer.followUs || (lang === 'en' ? 'Follow us' : lang === 'it' ? 'Seguici' : lang === 'de' ? 'Folgen Sie uns' : 'Suivez-nous')}
               </h3>
 
               <div className="footer-social-row">
@@ -224,7 +224,7 @@ export default function Footer() {
                       </p>
                     ) : showEmailError ? (
                       <p role="alert" className="footer-newsletter-hint footer-newsletter-error">
-                        {t.footer.newsletterErrorEmail || (lang === 'en' ? 'Please enter a valid email address.' : 'Entrez une adresse e-mail valide.')}
+                        {t.footer.newsletterErrorEmail || (lang === 'en' ? 'Please enter a valid email address.' : lang === 'it' ? 'Inserisci un indirizzo email valido.' : lang === 'de' ? 'Bitte geben Sie eine gültige E-Mail-Adresse ein.' : 'Entrez une adresse e-mail valide.')}
                       </p>
                     ) : null}
                   </div>

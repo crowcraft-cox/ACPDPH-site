@@ -15,7 +15,13 @@ function formatDate(dateStr?: string, lang: string = 'fr') {
   try {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
-    return d.toLocaleDateString(lang === 'en' ? 'en-US' : 'fr-FR', {
+    const localeMap: Record<string, string> = {
+      en: 'en-US',
+      it: 'it-IT',
+      de: 'de-DE',
+      fr: 'fr-FR',
+    };
+    return d.toLocaleDateString(localeMap[lang] || 'fr-FR', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -76,7 +82,7 @@ function Lightbox({ items, index, onClose, onPrev, onNext }: LightboxProps) {
       {/* Bouton Fermer */}
       <button
         onClick={onClose}
-        aria-label={t.gallery.closeLightbox || (lang === 'en' ? 'Close enlarged view' : 'Fermer la galerie')}
+        aria-label={t.gallery.closeLightbox || (lang === 'en' ? 'Close enlarged view' : lang === 'it' ? 'Chiudi visualizzazione ingrandita' : lang === 'de' ? 'Vergrößerte Ansicht schließen' : 'Fermer la galerie')}
         className="absolute top-4 right-4 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-white"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5">
@@ -88,7 +94,7 @@ function Lightbox({ items, index, onClose, onPrev, onNext }: LightboxProps) {
       {index > 0 && (
         <button
           onClick={onPrev}
-          aria-label={t.gallery.prevItem || (lang === 'en' ? 'Previous item' : 'Élément précédent')}
+          aria-label={t.gallery.prevItem || (lang === 'en' ? 'Previous item' : lang === 'it' ? 'Elemento precedente' : lang === 'de' ? 'Vorheriges Element' : 'Élément précédent')}
           className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-white"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5">
@@ -144,7 +150,7 @@ function Lightbox({ items, index, onClose, onPrev, onNext }: LightboxProps) {
       {index < items.length - 1 && (
         <button
           onClick={onNext}
-          aria-label={t.gallery.nextItem || (lang === 'en' ? 'Next item' : 'Élément suivant')}
+          aria-label={t.gallery.nextItem || (lang === 'en' ? 'Next item' : lang === 'it' ? 'Elemento successivo' : lang === 'de' ? 'Nächstes Element' : 'Élément suivant')}
           className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-white"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5">
@@ -174,10 +180,16 @@ function MediaCard({ item, onClick }: MediaCardProps) {
   const itemCaption = getLocalized(item, 'caption');
 
   const categoryLabel = (() => {
-    if (item.sourceCategory === 'Projets') return lang === 'en' ? 'Project' : 'Projet';
-    if (item.sourceCategory === 'Actualités') return lang === 'en' ? 'News' : 'Actualité';
-    if (item.sourceCategory === "Domaines d'intervention") return lang === 'en' ? 'Domain' : 'Domaine';
-    return item.sourceCategory || (item.date ? formatDate(item.date, lang) : (lang === 'en' ? 'Gallery' : 'Galerie'));
+    if (item.sourceCategory === 'Projets') {
+      return lang === 'en' ? 'Project' : lang === 'it' ? 'Progetto' : lang === 'de' ? 'Projekt' : 'Projet';
+    }
+    if (item.sourceCategory === 'Actualités') {
+      return lang === 'en' ? 'News' : lang === 'it' ? 'Notizie' : lang === 'de' ? 'Aktuelles' : 'Actualité';
+    }
+    if (item.sourceCategory === "Domaines d'intervention") {
+      return lang === 'en' ? 'Domain' : lang === 'it' ? 'Settore' : lang === 'de' ? 'Bereich' : 'Domaine';
+    }
+    return item.sourceCategory || (item.date ? formatDate(item.date, lang) : (lang === 'en' ? 'Gallery' : lang === 'it' ? 'Galleria' : lang === 'de' ? 'Galerie' : 'Galerie'));
   })();
 
   return (
@@ -189,7 +201,7 @@ function MediaCard({ item, onClick }: MediaCardProps) {
       }}
       tabIndex={0}
       role="button"
-      aria-label={`${lang === 'en' ? 'Open' : 'Ouvrir'}: ${itemTitle}`}
+      aria-label={`${lang === 'en' ? 'Open' : lang === 'it' ? 'Apri' : lang === 'de' ? 'Öffnen' : 'Ouvrir'}: ${itemTitle}`}
     >
       {/* Miniature pleine largeur */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
@@ -227,7 +239,7 @@ function MediaCard({ item, onClick }: MediaCardProps) {
             {categoryLabel}
           </span>
           <span className="text-[var(--color-primary)] font-semibold text-[11px] group-hover:underline">
-            {lang === 'en' ? 'View' : 'Voir'}
+            {lang === 'en' ? 'View' : lang === 'it' ? 'Visualizza' : lang === 'de' ? 'Ansehen' : 'Voir'}
           </span>
         </div>
       </div>
@@ -270,8 +282,8 @@ export default function Gallery() {
       }
     });
 
-    return aggregateAllGalleryItems(data.projects, data.news, data.pillars, combinedCustom);
-  }, [data.projects, data.news, data.pillars, gallery, backendItems]);
+    return aggregateAllGalleryItems(data.projects, data.news, data.pillars, combinedCustom, lang);
+  }, [data.projects, data.news, data.pillars, gallery, backendItems, lang]);
 
   // Filtrage par Type de média (Tout / Photos / Vidéos)
   const filteredItems = useMemo(() => {
@@ -336,7 +348,7 @@ export default function Gallery() {
       {/* ── Contenu ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
         {/* Barre de filtres : Type de média */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 border-b border-gray-200 pb-4" role="tablist" aria-label={lang === 'en' ? 'Filter by media type' : 'Filtrer par type de média'}>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 border-b border-gray-200 pb-4" role="tablist" aria-label={lang === 'en' ? 'Filter by media type' : lang === 'it' ? 'Filtra per tipo di media' : lang === 'de' ? 'Nach Medientyp filtern' : 'Filtrer par type de média'}>
           <div className="flex flex-wrap items-center gap-2">
             <button
               role="tab"
@@ -348,7 +360,7 @@ export default function Gallery() {
                   : 'bg-white text-gray-700 border border-gray-200 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
               }`}
             >
-              {t.gallery.filterAll || (lang === 'en' ? 'All media' : 'Tous les médias')} ({allItems.length})
+              {t.gallery.filterAll || (lang === 'en' ? 'All media' : lang === 'it' ? 'Tutti i media' : lang === 'de' ? 'Alle Medien' : 'Tous les médias')} ({allItems.length})
             </button>
             <button
               role="tab"
@@ -372,12 +384,19 @@ export default function Gallery() {
                   : 'bg-white text-gray-700 border border-gray-200 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
               }`}
             >
-              {t.gallery.filterVideos || (lang === 'en' ? 'Videos' : 'Vidéos')} ({videosCount})
+              {t.gallery.filterVideos || (lang === 'en' ? 'Videos' : lang === 'it' ? 'Video' : lang === 'de' ? 'Videos' : 'Vidéos')} ({videosCount})
             </button>
           </div>
 
           <span className="text-xs font-semibold text-gray-400">
-            {filteredItems.length} {lang === 'en' ? (filteredItems.length > 1 ? 'items displayed' : 'item displayed') : (filteredItems.length > 1 ? 'éléments affichés' : 'élément affiché')}
+            {filteredItems.length}{' '}
+            {lang === 'en'
+              ? (filteredItems.length > 1 ? 'items displayed' : 'item displayed')
+              : lang === 'it'
+              ? (filteredItems.length > 1 ? 'elementi visualizzati' : 'elemento visualizzato')
+              : lang === 'de'
+              ? (filteredItems.length > 1 ? 'Elemente angezeigt' : 'Element angezeigt')
+              : (filteredItems.length > 1 ? 'éléments affichés' : 'élément affiché')}
           </span>
         </div>
 
@@ -397,7 +416,7 @@ export default function Gallery() {
               <polyline points="21 15 16 10 5 21" />
             </svg>
             <p className="font-heading font-semibold text-lg text-gray-700">
-              {t.gallery.noItems || (lang === 'en' ? 'No media available in this section.' : 'Aucun média dans cette sélection')}
+              {t.gallery.noItems || (lang === 'en' ? 'No media available in this section.' : lang === 'it' ? 'Nessun file multimediale in questa sezione.' : lang === 'de' ? 'Keine Medien in diesem Bereich vorhanden.' : 'Aucun média dans cette sélection')}
             </p>
           </div>
         )}
@@ -418,7 +437,7 @@ export default function Gallery() {
               onClick={handleLoadMore}
               className="px-8 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark,#1a3fad)] text-white font-heading font-bold uppercase tracking-wider text-xs rounded-md transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] min-h-[46px] shadow-sm cursor-pointer"
             >
-              {t.gallery.loadMore || (lang === 'en' ? 'Load more' : 'Voir plus')} ({filteredItems.length - paginated.length} {lang === 'en' ? 'remaining' : 'restants'})
+              {t.gallery.loadMore || (lang === 'en' ? 'Load more' : lang === 'it' ? 'Carica altri' : lang === 'de' ? 'Mehr laden' : 'Voir plus')} ({filteredItems.length - paginated.length} {lang === 'en' ? 'remaining' : lang === 'it' ? 'rimanenti' : lang === 'de' ? 'verbleibend' : 'restants'})
             </button>
           </div>
         )}

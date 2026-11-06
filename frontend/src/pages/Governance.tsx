@@ -26,7 +26,7 @@ function MemberCard({ name, role, photo, cvSlug, lang }: MemberCardProps) {
   const photoContent = hasPhoto ? (
     <img
       src={resolvedPhoto}
-      alt={lang === 'en' ? `Photo of ${name}` : `Photo de ${name}`}
+      alt={lang === 'en' ? `Photo of ${name}` : lang === 'it' ? `Foto di ${name}` : lang === 'de' ? `Foto von ${name}` : `Photo de ${name}`}
       loading="lazy"
       decoding="async"
       width={600}
@@ -63,7 +63,7 @@ function MemberCard({ name, role, photo, cvSlug, lang }: MemberCardProps) {
       {cvSlug ? (
         <Link
           to={cvPath}
-          aria-label={lang === 'en' ? `View CV of ${name}` : `Voir le CV de ${name}`}
+          aria-label={lang === 'en' ? `View CV of ${name}` : lang === 'it' ? `Visualizza il CV di ${name}` : lang === 'de' ? `Lebenslauf von ${name} ansehen` : `Voir le CV de ${name}`}
           className="w-1/3 shrink-0 self-stretch block overflow-hidden group focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 cursor-pointer"
         >
           {photoContent}

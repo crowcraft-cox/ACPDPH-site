@@ -4,6 +4,7 @@ import { useAdminData } from '../context/adminData';
 import { apiFetch } from '../services/api';
 import { smoothScrollTo } from '../hooks/useLenis';
 import { useI18n, getLocalized } from '../i18n';
+import type { Lang } from '../i18n';
 
 interface SubmissionSummary {
   prenom: string;
@@ -25,53 +26,55 @@ interface ExperienceEntry {
 }
 
 const GET_EDUCATION_LEVELS = (lang: string) => [
-  { value: 'Aucun diplôme', label: lang === 'en' ? 'No diploma' : 'Aucun diplôme' },
-  { value: "Diplôme d'État", label: lang === 'en' ? 'State Diploma (Secondary school)' : "Diplôme d'État" },
-  { value: 'Certificat / attestation professionnelle', label: lang === 'en' ? 'Professional certificate / training' : 'Certificat / attestation professionnelle' },
-  { value: 'Graduat / Licence (Bac+3)', label: lang === 'en' ? "Bachelor's degree (Bac+3)" : 'Graduat / Licence (Bac+3)' },
-  { value: 'Licence / Master (Bac+5)', label: lang === 'en' ? "Master's degree (Bac+5)" : 'Licence / Master (Bac+5)' },
-  { value: 'Doctorat', label: lang === 'en' ? 'Doctorate / PhD' : 'Doctorat' },
-  { value: 'Autre', label: lang === 'en' ? 'Other' : 'Autre' },
+  { value: 'Aucun diplôme', label: lang === 'en' ? 'No diploma' : lang === 'it' ? 'Nessun diploma' : lang === 'de' ? 'Kein Abschluss' : 'Aucun diplôme' },
+  { value: "Diplôme d'État", label: lang === 'en' ? 'State Diploma (Secondary school)' : lang === 'it' ? 'Diploma statale (Scuola secondaria)' : lang === 'de' ? 'Staatliches Abitur / Sekundarabschluss' : "Diplôme d'État" },
+  { value: 'Certificat / attestation professionnelle', label: lang === 'en' ? 'Professional certificate / training' : lang === 'it' ? 'Certificato professionale' : lang === 'de' ? 'Berufszertifikat / Ausbildung' : 'Certificat / attestation professionnelle' },
+  { value: 'Graduat / Licence (Bac+3)', label: lang === 'en' ? "Bachelor's degree (Bac+3)" : lang === 'it' ? 'Laurea triennale (Bac+3)' : lang === 'de' ? 'Bachelor (Bac+3)' : 'Graduat / Licence (Bac+3)' },
+  { value: 'Licence / Master (Bac+5)', label: lang === 'en' ? "Master's degree (Bac+5)" : lang === 'it' ? 'Laurea magistrale / Master (Bac+5)' : lang === 'de' ? 'Master (Bac+5)' : 'Licence / Master (Bac+5)' },
+  { value: 'Doctorat', label: lang === 'en' ? 'Doctorate / PhD' : lang === 'it' ? 'Dottorato di ricerca' : lang === 'de' ? 'Promotion / Doktorat' : 'Doctorat' },
+  { value: 'Autre', label: lang === 'en' ? 'Other' : lang === 'it' ? 'Altro' : lang === 'de' ? 'Sonstiges' : 'Autre' },
 ];
 
 const GET_LANGUAGE_OPTIONS = (lang: string) => [
-  { value: 'Français', label: lang === 'en' ? 'French' : 'Français' },
+  { value: 'Français', label: lang === 'en' ? 'French' : lang === 'it' ? 'Francese' : lang === 'de' ? 'Französisch' : 'Français' },
   { value: 'Swahili', label: 'Swahili' },
   { value: 'Lingala', label: 'Lingala' },
   { value: 'Kinande', label: 'Kinande' },
-  { value: 'Anglais', label: lang === 'en' ? 'English' : 'Anglais' },
-  { value: 'Autre', label: lang === 'en' ? 'Other' : 'Autre' },
+  { value: 'Anglais', label: lang === 'en' ? 'English' : lang === 'it' ? 'Inglese' : lang === 'de' ? 'Englisch' : 'Anglais' },
+  { value: 'Italien', label: lang === 'en' ? 'Italian' : lang === 'it' ? 'Italiano' : lang === 'de' ? 'Italienisch' : 'Italien' },
+  { value: 'Allemand', label: lang === 'en' ? 'German' : lang === 'it' ? 'Tedesco' : lang === 'de' ? 'Deutsch' : 'Allemand' },
+  { value: 'Autre', label: lang === 'en' ? 'Other' : lang === 'it' ? 'Altro' : lang === 'de' ? 'Sonstiges' : 'Autre' },
 ];
 
 const GET_LANGUAGE_LEVELS = (lang: string) => [
-  { value: 'Notions', label: lang === 'en' ? 'Basic' : 'Notions' },
-  { value: 'Courant', label: lang === 'en' ? 'Fluent' : 'Courant' },
-  { value: 'Langue maternelle', label: lang === 'en' ? 'Native' : 'Langue maternelle' },
+  { value: 'Notions', label: lang === 'en' ? 'Basic' : lang === 'it' ? 'Elementare' : lang === 'de' ? 'Grundkenntnisse' : 'Notions' },
+  { value: 'Courant', label: lang === 'en' ? 'Fluent' : lang === 'it' ? 'Fluente' : lang === 'de' ? 'Fließend' : 'Courant' },
+  { value: 'Langue maternelle', label: lang === 'en' ? 'Native' : lang === 'it' ? 'Madrelingua' : lang === 'de' ? 'Muttersprache' : 'Langue maternelle' },
 ];
 
 const GET_EXPERIENCE_YEARS = (lang: string) => [
-  { value: 'Moins de 1 an', label: lang === 'en' ? 'Less than 1 year' : 'Moins de 1 an' },
-  { value: '1 an', label: lang === 'en' ? '1 year' : '1 an' },
-  { value: '2 ans', label: lang === 'en' ? '2 years' : '2 ans' },
-  { value: '3 ans', label: lang === 'en' ? '3 years' : '3 ans' },
-  { value: '4 ans', label: lang === 'en' ? '4 years' : '4 ans' },
-  { value: '5 ans', label: lang === 'en' ? '5 years' : '5 ans' },
-  { value: '6 à 9 ans', label: lang === 'en' ? '6 to 9 years' : '6 à 9 ans' },
-  { value: '10 ans et plus', label: lang === 'en' ? '10+ years' : '10 ans et plus' },
+  { value: 'Moins de 1 an', label: lang === 'en' ? 'Less than 1 year' : lang === 'it' ? 'Meno di 1 anno' : lang === 'de' ? 'Weniger als 1 Jahr' : 'Moins de 1 an' },
+  { value: '1 an', label: lang === 'en' ? '1 year' : lang === 'it' ? '1 anno' : lang === 'de' ? '1 Jahr' : '1 an' },
+  { value: '2 ans', label: lang === 'en' ? '2 years' : lang === 'it' ? '2 anni' : lang === 'de' ? '2 Jahre' : '2 ans' },
+  { value: '3 ans', label: lang === 'en' ? '3 years' : lang === 'it' ? '3 anni' : lang === 'de' ? '3 Jahre' : '3 ans' },
+  { value: '4 ans', label: lang === 'en' ? '4 years' : lang === 'it' ? '4 anni' : lang === 'de' ? '4 Jahre' : '4 ans' },
+  { value: '5 ans', label: lang === 'en' ? '5 years' : lang === 'it' ? '5 anni' : lang === 'de' ? '5 Jahre' : '5 ans' },
+  { value: '6 à 9 ans', label: lang === 'en' ? '6 to 9 years' : lang === 'it' ? 'Da 6 a 9 anni' : lang === 'de' ? '6 bis 9 Jahre' : '6 à 9 ans' },
+  { value: '10 ans et plus', label: lang === 'en' ? '10+ years' : lang === 'it' ? '10 anni e oltre' : lang === 'de' ? '10 Jahre und mehr' : '10 ans et plus' },
 ];
 
 const GET_COUNTRIES = (lang: string) => [
-  { value: 'République démocratique du Congo', label: lang === 'en' ? 'Democratic Republic of the Congo' : 'République démocratique du Congo' },
+  { value: 'République démocratique du Congo', label: lang === 'en' ? 'Democratic Republic of the Congo' : lang === 'it' ? 'Repubblica Democratica del Congo' : lang === 'de' ? 'Demokratische Republik Kongo' : 'République démocratique du Congo' },
   { value: 'Rwanda', label: 'Rwanda' },
   { value: 'Burundi', label: 'Burundi' },
-  { value: 'Ouganda', label: lang === 'en' ? 'Uganda' : 'Ouganda' },
-  { value: 'Tanzanie', label: lang === 'en' ? 'Tanzania' : 'Tanzanie' },
+  { value: 'Ouganda', label: lang === 'en' ? 'Uganda' : lang === 'it' ? 'Uganda' : lang === 'de' ? 'Uganda' : 'Ouganda' },
+  { value: 'Tanzanie', label: lang === 'en' ? 'Tanzania' : lang === 'it' ? 'Tanzania' : lang === 'de' ? 'Tansania' : 'Tanzanie' },
   { value: 'Kenya', label: 'Kenya' },
-  { value: 'République du Congo', label: lang === 'en' ? 'Republic of the Congo' : 'République du Congo' },
-  { value: 'Centrafrique', label: lang === 'en' ? 'Central African Republic' : 'Centrafrique' },
-  { value: 'Belgique', label: lang === 'en' ? 'Belgium' : 'Belgique' },
-  { value: 'France', label: 'France' },
-  { value: 'Autre', label: lang === 'en' ? 'Other' : 'Autre' },
+  { value: 'République du Congo', label: lang === 'en' ? 'Republic of the Congo' : lang === 'it' ? 'Repubblica del Congo' : lang === 'de' ? 'Republik Kongo' : 'République du Congo' },
+  { value: 'Centrafrique', label: lang === 'en' ? 'Central African Republic' : lang === 'it' ? 'Repubblica Centrafricana' : lang === 'de' ? 'Zentralafrikanische Republik' : 'Centrafrique' },
+  { value: 'Belgique', label: lang === 'en' ? 'Belgium' : lang === 'it' ? 'Belgio' : lang === 'de' ? 'Belgien' : 'Belgique' },
+  { value: 'France', label: lang === 'en' ? 'France' : lang === 'it' ? 'Francia' : lang === 'de' ? 'Frankreich' : 'France' },
+  { value: 'Autre', label: lang === 'en' ? 'Other' : lang === 'it' ? 'Altro' : lang === 'de' ? 'Sonstiges' : 'Autre' },
 ];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
@@ -411,7 +414,7 @@ export default function JobApplication() {
     try {
       const formData = new FormData();
       formData.append('jobId', job.id);
-      formData.append('jobTitle', job.title);
+      formData.append('jobTitle', getLocalized(job, 'title', lang) || job.title);
       formData.append('nom', nom.trim());
       formData.append('postnom', postnom.trim());
       formData.append('prenom', prenom.trim());
@@ -455,7 +458,8 @@ export default function JobApplication() {
           `CAND-2026-${String(Math.floor(1000 + Math.random() * 9000))}`;
 
         const now = new Date();
-        const formattedDate = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'fr-FR', {
+        const localeMap: Record<Lang, string> = { en: 'en-US', it: 'it-IT', de: 'de-DE', fr: 'fr-FR' };
+        const formattedDate = new Intl.DateTimeFormat(localeMap[lang] || 'fr-FR', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric',
@@ -480,6 +484,10 @@ export default function JobApplication() {
           res.error || t.jobs.serverError ||
             (lang === 'en'
               ? 'An error occurred while submitting your application. Please try again.'
+              : lang === 'it'
+              ? 'Si è verificato un errore durante l\'invio della candidatura. Riprova.'
+              : lang === 'de'
+              ? 'Beim Absenden Ihrer Bewerbung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.'
               : "Une erreur est survenue lors de l'envoi de votre candidature. Veuillez réessayer.")
         );
         smoothScrollTo(0);
@@ -490,6 +498,10 @@ export default function JobApplication() {
         t.jobs.serverErrorNetwork ||
           (lang === 'en'
             ? 'Unable to contact the server. Please check your internet connection and try again.'
+            : lang === 'it'
+            ? 'Impossibile contattare il server. Controlla la tua connessione Internet e riprova.'
+            : lang === 'de'
+            ? 'Der Server konnte nicht erreicht werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.'
             : 'Impossible de joindre le serveur. Veuillez vérifier votre connexion internet et réessayer.')
       );
       smoothScrollTo(0);
@@ -600,6 +612,10 @@ export default function JobApplication() {
                     href={`mailto:info.acpdph.asbl.rdc@gmail.com?subject=${encodeURIComponent(
                       lang === 'en'
                         ? `Question regarding application ${submissionSummary.reference}`
+                        : lang === 'it'
+                        ? `Domanda sulla candidatura ${submissionSummary.reference}`
+                        : lang === 'de'
+                        ? `Frage zur Bewerbung ${submissionSummary.reference}`
                         : `Question candidature ${submissionSummary.reference}`
                     )}`}
                     className="font-semibold text-[#2350D9] dark:text-blue-400 hover:underline"
@@ -1315,6 +1331,10 @@ export default function JobApplication() {
                   placeholder={
                     lang === 'en'
                       ? 'e.g., Need for sign language interpreter, wheelchair accessibility, documents in large print...'
+                      : lang === 'it'
+                      ? 'Es: necessità di interprete LIS, accessibilità in sedia a rotelle, documenti a caratteri grandi...'
+                      : lang === 'de'
+                      ? 'Z. B.: Bedarf an Gebärdensprachdolmetscher, Rollstuhlgerechtigkeit, Großdruckdokumente...'
                       : "Ex : Besoin d'interprète en langue des signes, accessibilité fauteuil roulant, documents en gros caractères..."
                   }
                 />

@@ -49,13 +49,33 @@ const statusColors: Record<string, string> = {
   'Ongoing':           'bg-blue-500/20 text-blue-300 border border-blue-500/40',
   'Completed':         'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
   'Planning':          'bg-amber-500/20 text-amber-300 border border-amber-500/40',
+  'In corso':          'bg-blue-500/20 text-blue-300 border border-blue-500/40',
+  'Completato':        'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
+  'In pianificazione': 'bg-amber-500/20 text-amber-300 border border-amber-500/40',
+  'Laufend':           'bg-blue-500/20 text-blue-300 border border-blue-500/40',
+  'Abgeschlossen':     'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
+  'In Planung':        'bg-amber-500/20 text-amber-300 border border-amber-500/40',
 };
 
 const getStatusLabel = (status: string, lang: string) => {
-  if (lang === 'en') {
-    if (status === 'En cours') return 'Ongoing';
-    if (status === 'Achevé') return 'Completed';
-    if (status === 'En planification') return 'Planning';
+  const norm = (status || '').trim().toLowerCase();
+  if (norm === 'en cours' || norm === 'ongoing' || norm === 'in corso' || norm === 'laufend') {
+    if (lang === 'en') return 'Ongoing';
+    if (lang === 'it') return 'In corso';
+    if (lang === 'de') return 'Laufend';
+    return 'En cours';
+  }
+  if (norm === 'achevé' || norm === 'acheve' || norm === 'completed' || norm === 'completato' || norm === 'abgeschlossen') {
+    if (lang === 'en') return 'Completed';
+    if (lang === 'it') return 'Completato';
+    if (lang === 'de') return 'Abgeschlossen';
+    return 'Achevé';
+  }
+  if (norm === 'en planification' || norm === 'planning' || norm === 'in pianificazione' || norm === 'in planung') {
+    if (lang === 'en') return 'Planning';
+    if (lang === 'it') return 'In pianificazione';
+    if (lang === 'de') return 'In Planung';
+    return 'En planification';
   }
   return status;
 };
@@ -76,7 +96,7 @@ export default function ProjectDetail() {
     return (
       <div className="pt-24 sm:pt-32 container-ba pb-32 text-center">
         <p className="text-ba-text-secondary text-xl mb-8">
-          {lang === 'en' ? 'Project not found.' : 'Projet introuvable.'}
+          {lang === 'en' ? 'Project not found.' : lang === 'it' ? 'Progetto non trovato.' : lang === 'de' ? 'Projekt nicht gefunden.' : 'Projet introuvable.'}
         </p>
         <Link to={getLocalizedPath('/projects')} className="btn btn-primary">
           ← {t.projects.back_to_projects}
@@ -174,7 +194,7 @@ export default function ProjectDetail() {
               <ProjectDescription text={projectDescription} images={project.images} />
             ) : (
               <p className="text-ba-text-secondary italic">
-                {lang === 'en' ? 'No description available for this project.' : 'Aucune description disponible pour ce projet.'}
+                {lang === 'en' ? 'No description available for this project.' : lang === 'it' ? 'Nessuna descrizione disponibile per questo progetto.' : lang === 'de' ? 'Keine Beschreibung für dieses Projekt verfügbar.' : 'Aucune description disponible pour ce projet.'}
               </p>
             )}
           </section>

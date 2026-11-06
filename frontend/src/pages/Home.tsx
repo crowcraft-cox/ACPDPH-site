@@ -33,7 +33,7 @@ interface HeroItem {
 
 /* ===== HERO SECTION ===== */
 function HeroSection() {
-  const { t, lang, getLocalizedPath } = useI18n();
+  const { t, lang, getLocalized, getLocalizedValue, getLocalizedPath } = useI18n();
   const { data } = useAdminData();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -47,87 +47,128 @@ function HeroSection() {
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const projectLabel = (lang === 'en' ? 'Project' : lang === 'it' ? 'Progetto' : lang === 'de' ? 'Projekt' : 'Projet') as any;
+  const newsLabel = (lang === 'en' ? 'Publication' : lang === 'it' ? 'Pubblicazione' : lang === 'de' ? 'Veröffentlichung' : 'Publication') as any;
+
+  const p0 = projects[0];
+  const p0Title = p0 ? getLocalized(p0, 'title') : getLocalizedValue('Écoles Inclusives & Équité Éducative', 'Inclusive Schools & Educational Equity', 'Scuole Inclusive & Equità Educativa', 'Inklusive Schulen & Bildungsgerechtigkeit');
+  const p0Type = p0 ? getLocalized(p0, 'type') : getLocalizedValue('Éducation Inclusive', 'Inclusive Education', 'Educazione Inclusiva', 'Inklusive Bildung');
+  const p0Loc = p0 ? getLocalized(p0, 'location') : getLocalizedValue('Beni, Nord-Kivu, RDC', 'Beni, North Kivu, DRC', 'Beni, Nord-Kivu, RDC', 'Beni, Nord-Kivu, DRK');
+  const p0Desc = p0 ? getLocalized(p0, 'description') : getLocalizedValue('Aménagement de salles adaptées, formation des enseignants à l\'inclusion et dotation d\'outils pédagogiques pour les enfants vivant avec handicap.', 'Arrangement of adapted classrooms, teacher training on inclusion and provision of pedagogical tools for children with disabilities.', 'Allestimento di aule adatte, formazione degli insegnanti all\'inclusione e fornitura di strumenti didattici per bambini con disabilità.', 'Einrichtung barrierefreier Klassenräume, Lehrerausbildung zu Inklusion und Bereitstellung pädagogischer Hilfsmittel für Kinder mit Behinderung.');
+
+  const n0 = news[0];
+  const n0Title = n0 ? getLocalized(n0, 'title') : getLocalizedValue('Campagne de plaidoyer pour l\'accessibilité des édifices publics à Beni', 'Advocacy campaign for accessibility of public buildings in Beni', 'Campagna di advocacy per l\'accessibilità degli edifici pubblici a Beni', 'Interessenvertretungskampagne für Barrierefreiheit öffentlicher Gebäude in Beni');
+  const n0Cat = n0 ? getLocalized(n0, 'category') : getLocalizedValue('Plaidoyer', 'Advocacy', 'Advocacy', 'Interessenvertretung');
+  const n0Excerpt = n0 ? getLocalized(n0, 'excerpt') : getLocalizedValue('L\'ACPDPH a rencontré les autorités urbaines de Beni pour la mise en conformité des accès aux bâtiments administratifs.', 'ACPDPH met with urban authorities of Beni for accessibility compliance in administrative buildings.', 'L\'ACPDPH ha incontrato le autorità urbane di Beni per la conformità degli accessi agli edifici amministrativi.', 'Die ACPDPH traf sich mit den städtischen Behörden von Beni zur barrierefreien Anpassung von Verwaltungsgebäuden.');
+
+  const p1 = projects[1];
+  const p1Title = p1 ? getLocalized(p1, 'title') : getLocalizedValue('Autonomisation & Métiers pour Personnes Handicapées', 'Empowerment & Trades for Persons with Disabilities', 'Autonomia & Mestieri per Persone con Disabilità', 'Selbstständigkeit & Berufe für Menschen mit Behinderungen');
+  const p1Type = p1 ? getLocalized(p1, 'type') : getLocalizedValue('Autonomisation', 'Empowerment', 'Autonomia', 'Selbstständigkeit');
+  const p1Loc = p1 ? getLocalized(p1, 'location') : getLocalizedValue('Beni et environs', 'Beni and surrounding areas', 'Beni e dintorni', 'Beni und Umgebung');
+  const p1Desc = p1 ? getLocalized(p1, 'description') : getLocalizedValue('Formations professionnelles aux métiers d\'artisanat, numérique et gestion de micro-entreprises avec octroi de kits de démarrage.', 'Vocational training in crafts, digital skills, and micro-business management with starter kits.', 'Formazione professionale in artigianato, competenze digitali e microimprese con kit di avvio.', 'Berufliche Ausbildung in Handwerk, digitalen Fähigkeiten und Kleinunternehmen mit Startpaketen.');
+
+  const n1 = news[1];
+  const n1Title = n1 ? getLocalized(n1, 'title') : getLocalizedValue('Remise d\'aides techniques et bourses scolaires inclusives', 'Distribution of technical aids and inclusive school scholarships', 'Distribuzione di ausili tecnici e borse di studio inclusive', 'Übergabe von Hilfsmitteln und inklusiven Schulstipendien');
+  const n1Cat = n1 ? getLocalized(n1, 'category') : getLocalizedValue('Inclusion', 'Inclusion', 'Inclusione', 'Inklusion');
+  const n1Excerpt = n1 ? getLocalized(n1, 'excerpt') : getLocalizedValue('L\'ACPDPH a distribué des tricycles et kits scolaires complets à 120 élèves en situation de handicap à Beni.', 'ACPDPH distributed tricycles and complete school kits to 120 students with disabilities in Beni.', 'L\'ACPDPH ha distribuito tricicli e kit scolastici completi a 120 studenti con disabilità a Beni.', 'Die ACPDPH verteilte Dreiräder und Schulsets an 120 Schüler mit Behinderung in Beni.');
+
+  const p2 = projects[2];
+  const p2Title = p2 ? getLocalized(p2, 'title') : getLocalizedValue('Clinique Mobile de Réadaptation & Aides Mobilité', 'Mobile Rehabilitation Clinic & Mobility Aids', 'Clinica Mobile di Riabilitazione & Ausili per la Mobilità', 'Mobile Rehabilitationsklinik & Mobilitätshilfen');
+  const p2Type = p2 ? getLocalized(p2, 'type') : getLocalizedValue('Santé & Réadaptation', 'Health & Rehabilitation', 'Salute & Riabilitazione', 'Gesundheit & Rehabilitation');
+  const p2Loc = p2 ? getLocalized(p2, 'location') : getLocalizedValue('Nord-Kivu, RDC', 'North Kivu, DRC', 'Nord-Kivu, RDC', 'Nord-Kivu, DRK');
+  const p2Desc = p2 ? getLocalized(p2, 'description') : getLocalizedValue('Consultations médicales itinérantes, consultations de kinésithérapie et don d\'aides techniques à la mobilité pour les personnes vulnérables.', 'Mobile medical consultations, physiotherapy sessions, and technical mobility aids for vulnerable individuals.', 'Consulenze mediche itineranti, sedute di fisioterapia e ausili tecnici di mobilità per persone vulnerabili.', 'Mobile medizinische Sprechstunden, Physiotherapie und Mobilitätshilfen für schutzbedürftige Menschen.');
+
+  const n2 = news[2];
+  const n2Title = n2 ? getLocalized(n2, 'title') : getLocalizedValue('Publication du rapport d\'évaluation sur l\'inclusion scolaire', 'Publication of the evaluation report on inclusive education', 'Pubblicazione del rapporto di valutazione sull\'educazione inclusiva', 'Veröffentlichung des Evaluierungsberichts zu inklusiver Bildung');
+  const n2Cat = n2 ? getLocalized(n2, 'category') : getLocalizedValue('Publication', 'Publication', 'Pubblicazione', 'Veröffentlichung');
+  const n2Excerpt = n2 ? getLocalized(n2, 'excerpt') : getLocalizedValue('Rapport diagnostique et recommandations stratégiques pour l\'accès universel à l\'éducation inclusive dans le Grand Nord-Kivu.', 'Diagnostic report and strategic recommendations for universal access to inclusive education in Greater North Kivu.', 'Rapporto diagnostico e raccomandazioni strategiche per l\'accesso universale all\'educazione inclusiva nel Grand Nord-Kivu.', 'Diagnostischer Bericht und strategische Empfehlungen für den universellen Zugang zu inklusiver Bildung in Groß-Nord-Kivu.');
+
   /* Dynamic 6-item rotation: alternating Projects and Publications */
   const slides: HeroItem[] = [
     {
       type: 'project',
-      typeLabel: 'Projet',
-      title: buildHeroHookTitle(projects[0] || {
-        title: 'Écoles Inclusives & Équité Éducative',
-        type: 'Éducation Inclusive',
-        location: 'Beni, Nord-Kivu, RDC',
-        description: 'Aménagement de salles adaptées, formation des enseignants à l\'inclusion et dotation d\'outils pédagogiques pour les enfants vivant avec handicap.',
+      typeLabel: projectLabel,
+      title: buildHeroHookTitle({
+        title: p0Title,
+        type: p0Type,
+        location: p0Loc,
+        description: p0Desc,
+        hookTitle: p0 ? getLocalized(p0, 'hookTitle') : undefined,
       }, 'project'),
-      rawTitle: projects[0]?.title || 'Écoles Inclusives & Équité Éducative',
-      description: projects[0]?.description?.replace(/\[photo:\d+\]/g, '').trim() || 'Aménagement de salles adaptées, formation des enseignants à l\'inclusion et dotation d\'outils pédagogiques pour les enfants vivant avec handicap.',
+      rawTitle: p0Title,
+      description: p0Desc?.replace(/\[photo:\d+\]/g, '').trim(),
       link: `/projects/${projects[0]?.id || '1'}`,
       image: projects[0]?.image || '/pillars/formation.jpg',
     },
     {
       type: 'news',
-      typeLabel: 'Publication',
-      title: buildHeroHookTitle(news[0] || {
-        title: 'Campagne de plaidoyer pour l\'accessibilité des édifices publics à Beni',
-        category: 'Plaidoyer',
-        excerpt: 'L\'ACPDPH a rencontré les autorités urbaines de Beni pour la mise en conformité des accès aux bâtiments administratifs.',
+      typeLabel: newsLabel,
+      title: buildHeroHookTitle({
+        title: n0Title,
+        category: n0Cat,
+        excerpt: n0Excerpt,
+        hookTitle: n0 ? getLocalized(n0, 'hookTitle') : undefined,
       }, 'news'),
-      rawTitle: news[0]?.title || 'Campagne de plaidoyer pour l\'accessibilité des édifices publics à Beni',
-      description: news[0]?.excerpt || 'L\'ACPDPH a rencontré les autorités urbaines de Beni pour la mise en conformité des accès aux bâtiments administratifs.',
+      rawTitle: n0Title,
+      description: n0Excerpt,
       link: `/news/${news[0]?.id || '1'}`,
       image: news[0]?.image || '/images/hero/photo_accueil.jpg',
     },
     {
       type: 'project',
-      typeLabel: 'Projet',
-      title: buildHeroHookTitle(projects[1] || {
-        title: 'Autonomisation & Métiers pour Personnes Handicapées',
-        type: 'Autonomisation',
-        location: 'Beni et environs',
-        description: 'Formations professionnelles aux métiers d\'artisanat, numérique et gestion de micro-entreprises avec octroi de kits de démarrage.',
+      typeLabel: projectLabel,
+      title: buildHeroHookTitle({
+        title: p1Title,
+        type: p1Type,
+        location: p1Loc,
+        description: p1Desc,
+        hookTitle: p1 ? getLocalized(p1, 'hookTitle') : undefined,
       }, 'project'),
-      rawTitle: projects[1]?.title || 'Autonomisation & Métiers pour Personnes Handicapées',
-      description: projects[1]?.description?.replace(/\[photo:\d+\]/g, '').trim() || 'Formations professionnelles aux métiers d\'artisanat, numérique et gestion de micro-entreprises avec octroi de kits de démarrage.',
+      rawTitle: p1Title,
+      description: p1Desc?.replace(/\[photo:\d+\]/g, '').trim(),
       link: `/projects/${projects[1]?.id || '2'}`,
       image: projects[1]?.image || '/pillars/protection.jpg',
     },
     {
       type: 'news',
-      typeLabel: 'Publication',
-      title: buildHeroHookTitle(news[1] || {
-        title: 'Remise d\'aides techniques et bourses scolaires inclusives',
-        category: 'Inclusion',
-        location: 'Beni',
-        excerpt: 'L\'ACPDPH a distribué des tricycles et kits scolaires complets à 120 élèves en situation de handicap à Beni.',
+      typeLabel: newsLabel,
+      title: buildHeroHookTitle({
+        title: n1Title,
+        category: n1Cat,
+        excerpt: n1Excerpt,
+        hookTitle: n1 ? getLocalized(n1, 'hookTitle') : undefined,
       }, 'news'),
-      rawTitle: news[1]?.title || 'Remise d\'aides techniques et bourses scolaires inclusives',
-      description: news[1]?.excerpt || 'L\'ACPDPH a distribué des tricycles et kits scolaires complets à 120 élèves en situation de handicap à Beni.',
+      rawTitle: n1Title,
+      description: n1Excerpt,
       link: `/news/${news[1]?.id || '2'}`,
       image: news[1]?.image || '/images/hero/photo_accueil.jpg',
     },
     {
       type: 'project',
-      typeLabel: 'Projet',
-      title: buildHeroHookTitle(projects[2] || {
-        title: 'Clinique Mobile de Réadaptation & Aides Mobilité',
-        type: 'Santé & Réadaptation',
-        location: 'Nord-Kivu, RDC',
-        description: 'Consultations médicales itinérantes, consultations de kinésithérapie et don d\'aides techniques à la mobilité pour les personnes vulnérables.',
+      typeLabel: projectLabel,
+      title: buildHeroHookTitle({
+        title: p2Title,
+        type: p2Type,
+        location: p2Loc,
+        description: p2Desc,
+        hookTitle: p2 ? getLocalized(p2, 'hookTitle') : undefined,
       }, 'project'),
-      rawTitle: projects[2]?.title || 'Clinique Mobile de Réadaptation & Aides Mobilité',
-      description: projects[2]?.description?.replace(/\[photo:\d+\]/g, '').trim() || 'Consultations médicales itinérantes, consultations de kinésithérapie et don d\'aides techniques à la mobilité pour les personnes vulnérables.',
+      rawTitle: p2Title,
+      description: p2Desc?.replace(/\[photo:\d+\]/g, '').trim(),
       link: `/projects/${projects[2]?.id || '3'}`,
       image: projects[2]?.image || '/pillars/sante.jpg',
     },
     {
       type: 'news',
-      typeLabel: 'Publication',
-      title: buildHeroHookTitle(news[2] || {
-        title: 'Publication du rapport d\'évaluation sur l\'inclusion scolaire',
-        category: 'Publication',
-        excerpt: 'Rapport diagnostique et recommandations stratégiques pour l\'accès universel à l\'éducation inclusive dans le Grand Nord-Kivu.',
+      typeLabel: newsLabel,
+      title: buildHeroHookTitle({
+        title: n2Title,
+        category: n2Cat,
+        excerpt: n2Excerpt,
+        hookTitle: n2 ? getLocalized(n2, 'hookTitle') : undefined,
       }, 'news'),
-      rawTitle: news[2]?.title || 'Publication du rapport d\'évaluation sur l\'inclusion scolaire',
-      description: news[2]?.excerpt || 'Rapport diagnostique et recommandations stratégiques pour l\'accès universel à l\'éducation inclusive dans le Grand Nord-Kivu.',
+      rawTitle: n2Title,
+      description: n2Excerpt,
       link: news[2]?.id ? `/news/${news[2].id}` : '/news',
       image: news[2]?.image || '/images/hero/photo_accueil.jpg',
     },
@@ -199,7 +240,7 @@ function HeroSection() {
       onKeyDown={handleKeyDown}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      aria-label={t.home.carouselAriaLabel || (lang === 'en' ? 'Projects and news carousel' : 'Carousel de projets et actualités')}
+      aria-label={t.home.carouselAriaLabel || (lang === 'en' ? 'Projects and news carousel' : lang === 'it' ? 'Carosello di progetti e notizie' : lang === 'de' ? 'Karussell für Projekte und Neuigkeiten' : 'Carousel de projets et actualités')}
       aria-roledescription="carousel"
     >
       {/* Background Image avec fondu */}
@@ -218,11 +259,11 @@ function HeroSection() {
       </div>
 
       {/* ── Commandes accessibles (masquées visuellement, visibles au focus clavier) ── */}
-      <div className="hero-a11y-controls" aria-label="Commandes du carousel">
+      <div className="hero-a11y-controls" aria-label={lang === 'en' ? 'Carousel controls' : lang === 'it' ? 'Controlli carosello' : lang === 'de' ? 'Karussell-Steuerung' : 'Commandes du carousel'}>
         <button
           className="hero-a11y-btn"
           onClick={() => goManual(-1)}
-          aria-label={t.home.previousSlide || (lang === 'en' ? 'Previous slide' : 'Diapositive précédente')}
+          aria-label={t.home.previousSlide || (lang === 'en' ? 'Previous slide' : lang === 'it' ? 'Diapositiva precedente' : lang === 'de' ? 'Vorherige Folie' : 'Diapositive précédente')}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -231,7 +272,7 @@ function HeroSection() {
         <button
           className="hero-a11y-btn"
           onClick={togglePause}
-          aria-label={isPaused ? 'Lecture' : 'Pause'}
+          aria-label={isPaused ? (lang === 'en' ? 'Play' : lang === 'it' ? 'Avvia' : lang === 'de' ? 'Abspielen' : 'Lecture') : 'Pause'}
           aria-pressed={isPaused}
         >
           {isPaused ? (
@@ -247,7 +288,7 @@ function HeroSection() {
         <button
           className="hero-a11y-btn"
           onClick={() => goManual(1)}
-          aria-label={t.home.nextSlide || (lang === 'en' ? 'Next slide' : 'Diapositive suivante')}
+          aria-label={t.home.nextSlide || (lang === 'en' ? 'Next slide' : lang === 'it' ? 'Diapositiva successiva' : lang === 'de' ? 'Nächste Folie' : 'Diapositive suivante')}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -261,7 +302,7 @@ function HeroSection() {
           key={`slide-${currentIndex}`}
           role="group"
           aria-roledescription="slide"
-          aria-label={lang === 'en' ? `${currentIndex + 1} of ${totalSlides}` : `${currentIndex + 1} sur ${totalSlides}`}
+          aria-label={lang === 'en' ? `${currentIndex + 1} of ${totalSlides}` : lang === 'it' ? `${currentIndex + 1} di ${totalSlides}` : lang === 'de' ? `${currentIndex + 1} von ${totalSlides}` : `${currentIndex + 1} sur ${totalSlides}`}
           className="hero-slide-container hero-text-anim"
         >
           {/* Bloc de texte */}
@@ -280,10 +321,10 @@ function HeroSection() {
           <div className="hero-btn-wrapper hero-btn-anim">
             <Link
               to={getLocalizedPath(currentSlide.link)}
-              aria-label={lang === 'en' ? `Read more: ${currentSlide.rawTitle}` : `Lire plus : ${currentSlide.rawTitle}`}
+              aria-label={lang === 'en' ? `Read more: ${currentSlide.rawTitle}` : lang === 'it' ? `Leggi di più: ${currentSlide.rawTitle}` : lang === 'de' ? `Mehr erfahren: ${currentSlide.rawTitle}` : `Lire plus : ${currentSlide.rawTitle}`}
               className="hero-read-more-btn group"
             >
-              <span>{lang === 'en' ? 'Read more' : 'Lire plus'}</span>
+              <span>{lang === 'en' ? 'Read more' : lang === 'it' ? 'Leggi di più' : lang === 'de' ? 'Mehr erfahren' : 'Lire plus'}</span>
               <svg
                 className="w-4 h-4 ml-2.5 transition-transform duration-200 group-hover:translate-x-1 shrink-0"
                 fill="none"
@@ -321,19 +362,42 @@ function AboutSection() {
   const { lang, getLocalizedPath } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollReveal();
 
-  const paragraphs = lang === 'en' ? [
-    "The Congolese Agency for the Promotion of the Rights of Persons with Disabilities (ACPDPH) is a national, non-political, non-profit NGO founded on December 3, 2018 in Beni, North Kivu province, Democratic Republic of the Congo.",
-    "Our mission is to promote the rights, inclusion, and empowerment of persons with disabilities by fostering equal opportunities, access to essential services, and full participation in social, economic, and community life.",
-    "Through a community-based human rights approach, our interventions focus on inclusive education, healthcare, protection, humanitarian assistance, combating gender-based violence, and economic empowerment.",
-    "We strive for an inclusive, equitable, and supportive society where every person with a disability can fully exercise their rights, develop their potential, and actively contribute to community development.",
-    "Our vision: building a society free from disability-based discrimination, where every person with a disability thrives in socio-economic well-being."
-  ] : [
-    "L'Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une ONG nationale, apolitique et sans but lucratif, créée le 3 décembre 2018 à Beni, dans la province du Nord-Kivu, en République démocratique du Congo.",
-    "Notre mission est de promouvoir les droits, l'inclusion et l'autonomisation des personnes handicapées, en favorisant l'égalité des chances, l'accès aux services essentiels et la pleine participation à la vie sociale, économique et communautaire.",
-    "À travers une approche communautaire fondée sur les droits humains, nous intervenons notamment dans l'éducation inclusive, la santé, la protection, l'assistance humanitaire, la lutte contre les violences basées sur le genre et l'autonomisation économique.",
-    "Nous œuvrons pour une société inclusive, juste et solidaire, dans laquelle chaque personne handicapée peut exercer pleinement ses droits, développer son potentiel et contribuer activement au développement de sa communauté.",
-    "Notre vision : bâtir une société sans discrimination fondée sur le handicap, où chaque personne handicapée vit dans un état de bien-être socio-économique."
-  ];
+  const paragraphs = (() => {
+    if (lang === 'en') {
+      return [
+        "The Congolese Agency for the Promotion of the Rights of Persons with Disabilities (ACPDPH) is a national, non-political, non-profit NGO founded on December 3, 2018 in Beni, North Kivu province, Democratic Republic of the Congo.",
+        "Our mission is to promote the rights, inclusion, and empowerment of persons with disabilities by fostering equal opportunities, access to essential services, and full participation in social, economic, and community life.",
+        "Through a community-based human rights approach, our interventions focus on inclusive education, healthcare, protection, humanitarian assistance, combating gender-based violence, and economic empowerment.",
+        "We strive for an inclusive, equitable, and supportive society where every person with a disability can fully exercise their rights, develop their potential, and actively contribute to community development.",
+        "Our vision: building a society free from disability-based discrimination, where every person with a disability thrives in socio-economic well-being."
+      ];
+    }
+    if (lang === 'it') {
+      return [
+        "L'Agenzia Congolese per la Promozione dei Diritti delle Persone con Disabilità (ACPDPH) è una ONG nazionale, apolitica e senza scopo di lucro, fondata il 3 dicembre 2018 a Beni, nella provincia del Nord-Kivu, nella Repubblica Democratica del Congo.",
+        "La nostra missione è promuovere i diritti, l'inclusione e l'autonomia delle persone con disabilità, favorendo le pari opportunità, l'accesso ai servizi essenziali e la piena partecipazione alla vita sociale, economica e comunitaria.",
+        "Attraverso un approccio comunitario basato sui diritti umani, interveniamo nell'educazione inclusiva, nella salute, nella protezione, nell'assistenza umanitaria, nella lotta alle violenze di genere e nell'autonomizzazione economica.",
+        "Ci impegniamo per una società inclusiva, giusta e solidale, in cui ogni persona con disabilità possa esercitare pienamente i propri diritti, sviluppare il proprio potenziale e contribuire attivamente alla propria comunità.",
+        "La nostra visione: costruire una società priva di discriminazioni fondate sulla disabilità, dove ogni persona con disabilità viva in uno stato di benessere socio-economico."
+      ];
+    }
+    if (lang === 'de') {
+      return [
+        "Die Kongolesische Agentur für die Förderung der Rechte von Menschen mit Behinderungen (ACPDPH) ist eine nationale, unpolitische und gemeinnützige NRO, gegründet am 3. Dezember 2018 in Beni, Provinz Nord-Kivu, Demokratische Republik Kongo.",
+        "Unsere Mission ist es, die Rechte, Inklusion und Selbstständigkeit von Menschen mit Behinderungen zu fördern, indem wir Chancengleichheit, Zugang zu grundlegenden Diensten und uneingeschränkte Teilhabe am sozialen, wirtschaftlichen und gemeinschaftlichen Leben stärken.",
+        "Durch einen gemeindebasierten Menschenrechtsansatz engagieren wir uns in inklusiver Bildung, Gesundheit, Schutz, humanitärer Hilfe, Bekämpfung geschlechtsspezifischer Gewalt und wirtschaftlicher Befähigung.",
+        "Wir setzen uns für eine inklusive, gerechte und solidarische Gesellschaft ein, in der jeder Mensch mit Behinderung seine Rechte voll ausüben, seine Potenziale entfalten und aktiv zur Entwicklung beitragen kann.",
+        "Unsere Vision: eine Gesellschaft frei von Diskriminierung aufgrund von Behinderung aufzubauen, in der jeder Mensch mit Behinderung in sozioökonomischem Wohlstand lebt."
+      ];
+    }
+    return [
+      "L'Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une ONG nationale, apolitique et sans but lucratif, créée le 3 décembre 2018 à Beni, dans la province du Nord-Kivu, en République démocratique du Congo.",
+      "Notre mission est de promouvoir les droits, l'inclusion et l'autonomisation des personnes handicapées, en favorisant l'égalité des chances, l'accès aux services essentiels et la pleine participation à la vie sociale, économique et communautaire.",
+      "À travers une approche communautaire fondée sur les droits humains, nous intervenons notamment dans l'éducation inclusive, la santé, la protection, l'assistance humanitaire, la lutte contre les violences basées sur le genre et l'autonomisation économique.",
+      "Nous œuvrons pour une société inclusive, juste et solidaire, dans laquelle chaque personne handicapée peut exercer pleinement ses droits, développer son potentiel et contribuer activement au développement de sa communauté.",
+      "Notre vision : bâtir une société sans discrimination fondée sur le handicap, où chaque personne handicapée vit dans un état de bien-être socio-économique."
+    ];
+  })();
 
   return (
     <section
@@ -353,12 +417,12 @@ function AboutSection() {
               id="about-heading"
               className="about-heading-block"
             >
-              <span className="about-line-light" aria-hidden="true">{lang === 'en' ? 'About Us' : 'À propos'}</span>
-              <span className="sr-only">{lang === 'en' ? 'About ACPDPH' : "À propos de l'ACPDPH"}</span>
+              <span className="about-line-light" aria-hidden="true">{lang === 'en' ? 'About Us' : lang === 'it' ? 'Chi siamo' : lang === 'de' ? 'Über uns' : 'À propos'}</span>
+              <span className="sr-only">{lang === 'en' ? 'About ACPDPH' : lang === 'it' ? 'Informazioni su ACPDPH' : lang === 'de' ? 'Über ACPDPH' : "À propos de l'ACPDPH"}</span>
             </h2>
             <img
               src="/images/a-propos-equipe.jpg"
-              alt={lang === 'en' ? "ACPDPH team after an entrepreneurship workshop for displaced women and girls with disabilities" : "Équipe de l'ACPDPH à l'issue d'un atelier de formation à l'entrepreneuriat pour femmes et filles handicapées déplacées internes"}
+              alt={lang === 'en' ? "ACPDPH team after an entrepreneurship workshop for displaced women and girls with disabilities" : lang === 'it' ? "Team ACPDPH dopo un laboratorio di imprenditoria per donne e ragazze con disabilità sfollate interne" : lang === 'de' ? "ACPDPH-Team nach einem Unternehmerinnen-Workshop für intern vertriebene Frauen und Mädchen mit Behinderungen" : "Équipe de l'ACPDPH à l'issue d'un atelier de formation à l'entrepreneuriat pour femmes et filles handicapées déplacées internes"}
               loading="lazy"
               decoding="async"
               width={1200}
@@ -377,9 +441,9 @@ function AboutSection() {
             <Link
               to={getLocalizedPath("/about")}
               className="about-cta-btn"
-              aria-label={lang === 'en' ? "Read more about ACPDPH" : "Lire plus sur l'ACPDPH"}
+              aria-label={lang === 'en' ? "Read more about ACPDPH" : lang === 'it' ? "Leggi di più su ACPDPH" : lang === 'de' ? "Mehr über ACPDPH erfahren" : "Lire plus sur l'ACPDPH"}
             >
-              {lang === 'en' ? 'Read more' : 'Lire plus'}
+              {lang === 'en' ? 'Read more' : lang === 'it' ? 'Leggi di più' : lang === 'de' ? 'Mehr erfahren' : 'Lire plus'}
             </Link>
           </div>
 
@@ -391,7 +455,7 @@ function AboutSection() {
 
 /* ===== IMPACT COUNTERS (DE-AI RULES APPLIED: 1 PRIMARY, 3 SECONDARY, THE NUMBER IS THE HERO) ===== */
 function ImpactSection() {
-  const { t, lang } = useI18n();
+  const { t, lang, getLocalized, getLocalizedValue } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollReveal();
   const { data } = useAdminData();
 
@@ -412,6 +476,10 @@ function ImpactSection() {
           <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
             {lang === 'en'
               ? "Concrete, measurable, and lasting progress for the inclusion of persons with disabilities in the Democratic Republic of the Congo. Through our integrated programs of legal assistance, functional rehabilitation, inclusive education, and socio-economic integration, we work tirelessly to improve the lives of vulnerable individuals and their families. Each action on the ground strengthens autonomy, restores human dignity, and promotes equitable citizen participation respectful of fundamental rights."
+              : lang === 'it'
+              ? "Progressi concreti, misurabili e duraturi per l'inclusione delle persone con disabilità nella Repubblica Democratica del Congo. Attraverso i nostri programmi integrati di accompagnamento legale, riabilitazione funzionale, educazione inclusiva e inserimento socio-economico, lavoriamo senza sosta per migliorare la vita quotidiana delle persone vulnerabili e delle loro famiglie. Ogni azione sul campo rafforza l'autonomia, ripristina la dignità umana e promuove una partecipazione cittadina equa e rispettosa dei diritti fondamentali."
+              : lang === 'de'
+              ? "Konkrete, messbare und nachhaltige Fortschritte für die Inklusion von Menschen mit Behinderungen in der Demokratischen Republik Kongo. Durch unsere integrierten Programme für Rechtsberatung, funktionelle Rehabilitation, inklusive Bildung und sozioökonomische Eingliederung setzen wir uns unermüdlich dafür ein, den Alltag schutzbedürftiger Menschen und ihrer Familien zu verbessern. Jedes Engagement vor Ort stärkt die Selbstständigkeit, stellt die Menschenwürde wieder her und fördert eine gerechte gesellschaftliche Teilhabe im Einklang mit den Grundrechten."
               : "Des avancées concrètes, mesurables et durables pour l'inclusion des personnes handicapées en République Démocratique du Congo. À travers nos programmes intégrés d'accompagnement juridique, de réadaptation fonctionnelle, d'éducation inclusive et d'insertion socio-économique, nous œuvrons sans relâche pour transformer le quotidien des personnes vulnérables et de leurs familles. Chaque action menée sur le terrain renforce l'autonomie, restaure la dignité humaine et favorise une participation citoyenne équitable et respectueuse des droits fondamentaux."}
           </p>
         </div>
@@ -423,8 +491,13 @@ function ImpactSection() {
           <div className="lg:col-span-5 flex">
             <PrimaryCounterCard 
               value={primaryItem.value} 
-              label={lang === 'en' && primaryItem.label_en ? primaryItem.label_en : primaryItem.label} 
-              description={lang === 'en' ? 'Direct beneficiaries and families supported towards access to healthcare, inclusive education, autonomy and fundamental rights.' : "Bénéficiaires directs et familles accompagnés vers l'accès aux soins, à l'éducation inclusive, à l'autonomie et aux droits fondamentaux."}
+              label={getLocalized(primaryItem, 'label')} 
+              description={getLocalizedValue(
+                "Bénéficiaires directs et familles accompagnés vers l'accès aux soins, à l'éducation inclusive, à l'autonomie et aux droits fondamentaux.",
+                "Direct beneficiaries and families supported towards access to healthcare, inclusive education, autonomy and fundamental rights.",
+                "Beneficiari diretti e famiglie sostenute per l'accesso alle cure, all'educazione inclusiva, all'autonomia e ai diritti fondamentali.",
+                "Direkte Begünstigte und Familien, die beim Zugang zu medizinischer Versorgung, inklusiver Bildung, Selbstständigkeit und Grundrechten unterstützt wurden."
+              )}
             />
           </div>
 
@@ -434,7 +507,7 @@ function ImpactSection() {
               <SecondaryCounterCard 
                 key={item.id || idx} 
                 value={item.value} 
-                label={item.label} 
+                label={getLocalized(item, 'label')} 
                 index={idx + 1}
               />
             ))}
@@ -455,7 +528,7 @@ function PrimaryCounterCard({ value, label, description }: { value: number; labe
     <div ref={ref} className="card w-full flex flex-col justify-between">
       <div>
         <div className="flex justify-end mb-6">
-          <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? 'North Kivu Region' : 'Région Nord-Kivu'}</span>
+          <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? 'North Kivu Region' : lang === 'it' ? 'Regione del Nord-Kivu' : lang === 'de' ? 'Region Nord-Kivu' : 'Région Nord-Kivu'}</span>
         </div>
 
         <div className="mb-4">
@@ -473,8 +546,8 @@ function PrimaryCounterCard({ value, label, description }: { value: number; labe
       </div>
 
       <div className="card-footer">
-        <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>Rapport de terrain 2026</span>
-        <span className="font-semibold" style={{ color: '#1D4ED8', fontSize: '0.75rem' }}>Audit annuel conforme</span>
+        <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? '2026 Field Report' : lang === 'it' ? 'Rapporto sul campo 2026' : lang === 'de' ? 'Feldbericht 2026' : 'Rapport de terrain 2026'}</span>
+        <span className="font-semibold" style={{ color: '#1D4ED8', fontSize: '0.75rem' }}>{lang === 'en' ? 'Annual audit compliant' : lang === 'it' ? 'Audit annuale conforme' : lang === 'de' ? 'Jahresaudit konform' : 'Audit annuel conforme'}</span>
       </div>
     </div>
   );
@@ -518,6 +591,10 @@ function PillarsSection() {
           <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
             {lang === 'en'
               ? "ACPDPH deploys a comprehensive and multisectoral approach structured around priority intervention axes to ensure holistic fulfillment, equal opportunities, and full citizen participation for persons with disabilities. From rights advocacy and universal physical accessibility to inclusive education, adapted healthcare, and economic autonomy, we build lasting solutions to overcome discriminatory barriers and foster a just Congolese society."
+              : lang === 'it'
+              ? "L'ACPDPH implementa un approccio globale e multisettoriale strutturato attorno ad assi d'intervento prioritari per garantire la crescita integrale, le pari opportunità e la piena partecipazione civica delle persone con disabilità. Dalla promozione dei diritti e dell'accessibilità universale fino all'accesso all'educazione inclusiva, alle cure adeguate e all'autonomia finanziaria, costruiamo soluzioni sostenibili per superare le barriere discriminatorie e promuovere una società congolese equa e inclusiva."
+              : lang === 'de'
+              ? "Die ACPDPH verfolgt einen umfassenden, branchenübergreifenden Ansatz entlang prioritärer Handlungsfelder, um eine ganzheitliche Entfaltung, Chancengleichheit und volle gesellschaftliche Teilhabe für Menschen mit Behinderungen zu gewährleisten. Von der Rechtsdurchsetzung und barrierefreien Zugänglichkeit bis hin zu inklusiver Bildung, bedarfsgerechter Gesundheitsversorgung und wirtschaftlicher Selbstständigkeit schaffen wir nachhaltige Lösungen zur Beseitigung von Barrieren in der kongolesischen Gesellschaft."
               : "L'ACPDPH déploie une approche globale et multisectorielle structurée autour d'axes d'intervention prioritaires pour garantir l'épanouissement intégral, l'égalité des chances et la pleine participation citoyenne des personnes en situation de handicap. De la promotion des droits et de l'accessibilité universelle du cadre bâti jusqu'à l'accès prioritaire à l'éducation inclusive, aux soins adaptés et à l'autonomie financière, nous construisons des solutions pérennes pour surmonter les barrières discriminatoires et promouvoir une société congolaise juste et solidaire."}
           </p>
         </div>
@@ -534,7 +611,7 @@ function PillarsSection() {
               <div className="h-56 w-full overflow-hidden relative">
                 <img
                   src={pillar.image}
-                  alt={pillar.title}
+                  alt={getLocalized(pillar, 'title')}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.55)' }} />
@@ -547,7 +624,7 @@ function PillarsSection() {
               <div style={{ padding: '20px 24px 24px', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <p style={{ color: '#000000', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>{getLocalized(pillar, 'description')}</p>
                 <div className="card-footer">
-                  <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? 'Learn more' : 'En savoir plus'}</span>
+                  <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? 'Learn more' : lang === 'it' ? 'Scopri di più' : lang === 'de' ? 'Mehr erfahren' : 'En savoir plus'}</span>
                   <div className="flex items-center gap-2 font-bold group-hover:translate-x-1.5 transition-transform duration-200" style={{ color: '#1D4ED8', fontSize: '0.875rem' }}>
                     <span>{t.pillars.learn_more}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -569,9 +646,13 @@ interface ValueItem {
   id: string;
   name: string;
   name_en?: string;
+  name_it?: string;
+  name_de?: string;
   icon: () => React.ReactNode;
   explanation: string;
   explanation_en?: string;
+  explanation_it?: string;
+  explanation_de?: string;
   link: string;
 }
 
@@ -644,61 +725,91 @@ const VALUES_DATA: ValueItem[] = [
     id: "professionnalisme",
     name: "Professionnalisme",
     name_en: "Professionalism",
+    name_it: "Professionalità",
+    name_de: "Professionalität",
     icon: IconProfessionnalisme,
     explanation:
       "L'ACPDPH applique une rigueur exemplaire, de la transparence et des standards éthiques élevés dans la conduite de tous ses projets sur le terrain. Nos interventions reposent sur une gestion responsable des ressources, une expertise technique éprouvée et une obligation constante de redevabilité envers nos bénéficiaires et nos partenaires institutionnels. Cette exigence garantit un impact durable et mesurable pour l'inclusion des personnes en situation de handicap.",
     explanation_en:
       "ACPDPH applies exemplary rigor, transparency, and high ethical standards across all field initiatives. Our interventions rely on responsible resource management, verified technical expertise, and continuous accountability towards our beneficiaries and institutional partners.",
+    explanation_it:
+      "L'ACPDPH applica un rigore esemplare, trasparenza e standard etici elevati nella conduzione di tutti i suoi progetti sul campo. I nostri interventi si basano su una gestione responsabile delle risorse, su una comprovata competenza tecnica e su una costante responsabilità verso i nostri beneficiari e i partner istituzionali.",
+    explanation_de:
+      "Die ACPDPH wendet bei allen Projekten vor Ort vorbildliche Sorgfalt, Transparenz und höchste ethische Standards an. Unsere Maßnahmen beruhen auf verantwortungsvollem Ressourcenmanagement, bewährter Fachkompetenz und kontinuierlicher Rechenschaftspflicht gegenüber Begünstigten und institutionellen Partnern.",
     link: "/about",
   },
   {
     id: "solidarite",
     name: "Solidarité",
     name_en: "Solidarity",
+    name_it: "Solidarietà",
+    name_de: "Solidarität",
     icon: IconSolidarite,
     explanation:
       "Nous croyons fermement à la force de l'entraide communautaire et à l'action collective pour surmonter les barrières de l'exclusion. L'ACPDPH mobilise les personnes vivant avec handicap, leurs familles et les acteurs locaux dans un esprit de fraternité et de soutien mutuel. En unissant nos forces au quotidien, nous construisons un filet de protection sociale et favorisons une véritable résilience communautaire.",
     explanation_en:
       "We firmly believe in community mutual aid and collective action to overcome barriers of exclusion. ACPDPH unites persons with disabilities, their families, and local actors in a spirit of mutual support and resilience.",
+    explanation_it:
+      "Crediamo fermamente nella forza del mutuo aiuto comunitario e nell'azione collettiva per superare le barriere dell'esclusione. L'ACPDPH unisce le persone con disabilità, le loro famiglie e le comunità locali in uno spirito di sostegno reciproco e resilienza comunitaria.",
+    explanation_de:
+      "Wir glauben fest an die Kraft gegenseitiger gemeinschaftlicher Hilfe und gemeinsamen Handelns zur Überwindung von Ausgrenzung. Die ACPDPH mobilisiert Menschen mit Behinderungen, ihre Familien und lokale Akteure im Geiste der Solidarität und gegenseitigen Unterstützung.",
     link: "/about",
   },
   {
     id: "non-discrimination",
     name: "Non-discrimination",
     name_en: "Non-discrimination",
+    name_it: "Non discriminazione",
+    name_de: "Nichtdiskriminierung",
     icon: IconNonDiscrimination,
     explanation:
       "L'égalité absolue de traitement et l'égalité des chances pour chaque individu constituent le fondement inaliénable de notre engagement. Nous luttons vigoureusement contre tous les préjugés, les stigmatisations et les disparités d'accès qui marginalisent les personnes handicapées dans la société congolaise. Chaque citoyen, sans distinction aucune, a le droit légitime de participer pleinement à la vie publique, économique et citoyenne.",
     explanation_en:
       "Equal treatment and equal opportunities for every individual constitute the cornerstone of our commitment. We actively combat prejudice, stigma, and accessibility disparities that marginalize persons with disabilities.",
+    explanation_it:
+      "L'assoluta parità di trattamento e le pari opportunità per ogni individuo costituiscono il fondamento del nostro impegno. Combattiamo attivamente pregiudizi, stigmi e disuguaglianze di accesso che marginalizzano le persone con disabilità nella società congolese.",
+    explanation_de:
+      "Gleichbehandlung und Chancengleichheit für jeden Menschen bilden die unverrückbare Grundlage unseres Engagements. Wir bekämpfen entschieden Vorurteile, Stigmatisierung und Zugangsbarrieren, die Menschen mit Behinderungen in der kongolesischen Gesellschaft benachteiligen.",
     link: "/about",
   },
   {
     id: "dignite-humaine",
     name: "Respect de la dignité humaine",
     name_en: "Respect for human dignity",
+    name_it: "Rispetto della dignità umana",
+    name_de: "Achtung der Menschenwürde",
     icon: IconDigniteHumaine,
     explanation:
       "Chaque personne possède une valeur intrinsèque inestimable et des droits universels qui doivent être reconnus, protégés et promus sans réserve. Notre approche place l'individu au cœur de nos actions en valorisant son autonomie, sa voix et sa capacité d'autodétermination. Préserver et restaurer la dignité de chacun est au centre de notre combat pour la justice sociale.",
     explanation_en:
       "Every individual possesses intrinsic value and universal human rights that must be acknowledged, protected, and championed. Our rights-based approach places each person at the center by empowering their self-determination.",
+    explanation_it:
+      "Ogni persona possiede un valore intrinseco e diritti umani universali che devono essere riconosciuti, protetti e promossi senza riserve. Il nostro approccio pone l'individuo al centro valorizzandone l'autonomia e l'autodeterminazione.",
+    explanation_de:
+      "Jeder Mensch besitzt einen unschätzbaren inneren Wert und universelle Rechte, die uneingeschränkt anerkannt, geschützt und gefördert werden müssen. Unser menschenrechtsbasierter Ansatz stellt den Einzelnen in den Mittelpunkt und stärkt seine Selbstbestimmung.",
     link: "/about",
   },
   {
     id: "bien-etre",
     name: "Bien-être",
     name_en: "Well-being",
+    name_it: "Benessere",
+    name_de: "Wohlbefinden",
     icon: IconBienEtre,
     explanation:
       "L'épanouissement global de la personne, tant sur le plan physique et psychologique que social et économique, guide nos programmes intégrés. Nous facilitons l'accès aux soins de santé adaptés, à la réadaptation fonctionnelle, à l'éducation inclusive et aux opportunités de subsistance autonome. Favoriser le bien-être, c'est offrir à chacun la possibilité de mener une vie équilibrée, autonome et digne.",
     explanation_en:
       "Holistic fulfillment across physical, psychosocial, and socio-economic dimensions guides our integrated programs. We facilitate access to adapted healthcare, functional rehabilitation, inclusive education, and sustainable livelihoods.",
+    explanation_it:
+      "La piena realizzazione della persona, sul piano fisico, psicosociale ed economico, guida i nostri programmi integrati. Facilitiamo l'accesso a cure sanitarie adeguate, alla riabilitazione, all'educazione inclusiva e a opportunità economiche sostenibili.",
+    explanation_de:
+      "Die ganzheitliche Entfaltung des Menschen auf physischer, psychosozialer und wirtschaftlicher Ebene leitet unsere integrierten Programme. Wir erleichtern den Zugang zu bedarfsgerechter Gesundheitsversorgung, Rehabilitation, inklusiver Bildung und nachhaltigen Lebenschancen.",
     link: "/about",
   },
 ];
 
 function ValuesSection() {
-  const { lang } = useI18n();
+  const { lang, getLocalized } = useI18n();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [displayIndex, setDisplayIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -772,7 +883,7 @@ function ValuesSection() {
           className="font-heading font-bold text-[#1F4FDB] text-center mb-[26px] leading-tight"
           style={{ fontSize: "clamp(2.4rem, 4vw, 3.4rem)" }}
         >
-          {lang === 'en' ? 'Our Values' : 'Nos valeurs'}
+          {lang === 'en' ? 'Our Values' : lang === 'it' ? 'I nostri valori' : lang === 'de' ? 'Unsere Werte' : 'Nos valeurs'}
         </h2>
 
         {/* 2. Disposition à deux colonnes (grid-template-columns: 1fr 1.02fr; gap: 40px) */}
@@ -782,7 +893,7 @@ function ValuesSection() {
           <div className="w-full">
             <div
               role="tablist"
-              aria-label={lang === 'en' ? 'Our Values' : 'Nos valeurs'}
+              aria-label={lang === 'en' ? 'Our Values' : lang === 'it' ? 'I nostri valori' : lang === 'de' ? 'Unsere Werte' : 'Nos valeurs'}
               className="grid grid-cols-2 gap-4 values-grid-staggered justify-items-start"
             >
               {VALUES_DATA.map((val, idx) => {
@@ -812,7 +923,7 @@ function ValuesSection() {
                       } text-[14px] sm:text-[15px] lg:text-[16px]`}
                       style={{ fontFamily: "'Montserrat', sans-serif" }}
                     >
-                      {lang === 'en' ? (val.name_en || val.name) : val.name}
+                      {getLocalized(val, 'name')}
                     </span>
                   </button>
                 );
@@ -843,12 +954,12 @@ function ValuesSection() {
                   className="font-bold text-[#C4540A] text-[22px] md:text-[24px] mb-4 leading-snug"
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                 >
-                  {lang === 'en' ? (currentVal.name_en || currentVal.name) : currentVal.name}
+                  {getLocalized(currentVal, 'name')}
                 </h3>
 
                 {/* Explication : 16px, gris foncé, interligne ~1.9, largeur <= 65ch */}
                 <p className="text-[#000000] text-[16px] leading-[1.9] max-w-[65ch] text-justify">
-                  {lang === 'en' ? (currentVal.explanation_en || currentVal.explanation) : currentVal.explanation}
+                  {getLocalized(currentVal, 'explanation')}
                 </p>
               </div>
             </div>
@@ -891,9 +1002,11 @@ function ProjectsPreviewSection() {
       <div className="container-ba">
         <div className="mb-10 w-full">
           <div className="relative flex items-center justify-center mb-4">
-            <h2 id="projects-heading" className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>{t.projects.title || (lang === 'en' ? 'Our Projects' : 'Nos Projets')}</h2>
+            <h2 id="projects-heading" className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>
+              {t.projects.title || (lang === 'en' ? 'Our Projects' : lang === 'it' ? 'I nostri progetti' : lang === 'de' ? 'Unsere Projekte' : 'Nos Projets')}
+            </h2>
             <Link to={getLocalizedPath("/projects")} className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
-              {t.projects.filterAll || (lang === 'en' ? 'All projects' : 'Tous les projets')}
+              {t.projects.filterAll || (lang === 'en' ? 'All projects' : lang === 'it' ? 'Tutti i progetti' : lang === 'de' ? 'Alle Projekte' : 'Tous les projets')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -901,7 +1014,7 @@ function ProjectsPreviewSection() {
           </div>
           <div className="flex justify-center sm:hidden mb-4">
             <Link to={getLocalizedPath("/projects")} className="btn btn-outline btn-sm">
-              {t.projects.filterAll || (lang === 'en' ? 'All projects' : 'Tous les projets')}
+              {t.projects.filterAll || (lang === 'en' ? 'All projects' : lang === 'it' ? 'Tutti i progetti' : lang === 'de' ? 'Alle Projekte' : 'Tous les projets')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -917,7 +1030,7 @@ function ProjectsPreviewSection() {
                 <Link
                   to={getLocalizedPath(`/projects/${proj.id}`)}
                   className="project-card-link"
-                  aria-label={`${proj.title}, ${dateInfo.accessible}`}
+                  aria-label={`${getLocalized(proj, 'title')}, ${dateInfo.accessible}`}
                 >
                   {/* Photo : hauteur fixe 170px, ratio 16:9 sur <600px */}
                   <div className="project-card-image-wrap">
@@ -992,6 +1105,10 @@ function NewsPreviewSection() {
           <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
             {lang === 'en'
               ? "Follow our field actions, public statements, awareness workshops, and inspiring resilience stories led by our members. Through regular publications, articles, and institutional advocacy, ACPDPH informs civil society, engages public authorities, and shares progress achieved in promoting and protecting the rights of persons with disabilities in the DRC."
+              : lang === 'it'
+              ? "Segui quotidianamente le nostre azioni sul campo, le nostre prese di posizione pubbliche, i nostri laboratori di sensibilizzazione e le storie stimolanti di resilienza guidate dai nostri membri. Attraverso pubblicazioni regolari, articoli e patrocinio istituzionale, l'ACPDPH informa la società civile, interpella le autorità pubbliche e condivide i progressi compiuti nella promozione e nella tutela dei diritti delle persone con disabilità nella RDC."
+              : lang === 'de'
+              ? "Verfolgen Sie täglich unsere Aktionen vor Ort, unsere öffentlichen Stellungnahmen, Sensibilisierungs-Workshops und inspirierenden Resilienzgeschichten unserer Mitglieder. Durch regelmäßige Veröffentlichungen, Artikel und institutionelle Interessenvertretung informiert die ACPDPH die Zivilgesellschaft, fordert Behörden heraus und teilt die Fortschritte beim Schutz und der Förderung der Rechte von Menschen mit Behinderungen in der DRK."
               : "Suivez au quotidien nos actions de terrain, nos prises de position publiques, nos ateliers de sensibilisation et les témoignages inspirants de résilience portés par nos membres. À travers nos publications, articles et plaidoyers institutionnels réguliers, l'ACPDPH informe la société civile, interpelle les pouvoirs publics et partage les progrès accomplis dans la promotion et la protection des droits des personnes en situation de handicap en République Démocratique du Congo."}
           </p>
         </div>
@@ -1007,7 +1124,7 @@ function NewsPreviewSection() {
               {/* Image */}
               <div className="relative h-48 w-full overflow-hidden">
                 {article.image ? (
-                  <img src={article.image} alt={article.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src={article.image} alt={getLocalized(article, 'title')} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center" style={{ background: 'rgba(29,78,216,0.07)' }}>
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(29,78,216,0.15)', color: '#1D4ED8' }}>

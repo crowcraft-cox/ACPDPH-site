@@ -52,13 +52,17 @@ export default function Contact() {
         type: 'success',
         text: lang === 'en'
           ? 'Message sent successfully! We will get back to you as soon as possible.'
+          : lang === 'it'
+          ? 'Messaggio inviato con successo! Vi risponderemo al più presto.'
+          : lang === 'de'
+          ? 'Nachricht erfolgreich gesendet! Wir werden uns so schnell wie möglich bei Ihnen melden.'
           : 'Message envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.',
       });
       setFormData({ name: '', email: '', subject: '', message: '' });
     } else {
       setStatusMsg({
         type: 'error',
-        text: res.error || (lang === 'en' ? 'Error sending message. Please try again.' : 'Erreur lors de l\'envoi du message. Veuillez réessayer.'),
+        text: res.error || (lang === 'en' ? 'Error sending message. Please try again.' : lang === 'it' ? 'Errore durante l\'invio del messaggio. Riprova.' : lang === 'de' ? 'Fehler beim Senden der Nachricht. Bitte versuchen Sie es erneut.' : 'Erreur lors de l\'envoi du message. Veuillez réessayer.'),
       });
     }
   };
@@ -84,7 +88,7 @@ export default function Contact() {
                   {t.contact.address_title}
                 </h3>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-ba-blue border border-blue-100">
-                  {lang === 'en' ? 'Headquarters' : 'Siège Social'}
+                  {lang === 'en' ? 'Headquarters' : lang === 'it' ? 'Sede Centrale' : lang === 'de' ? 'Hauptsitz' : 'Siège Social'}
                 </span>
               </div>
 
@@ -99,7 +103,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <span className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                      {lang === 'en' ? 'Physical Address' : 'Adresse Physique'}
+                      {lang === 'en' ? 'Physical Address' : lang === 'it' ? 'Indirizzo Fisico' : lang === 'de' ? 'Postanschrift' : 'Adresse Physique'}
                     </span>
                     <p className="text-gray-800 font-medium text-sm sm:text-base leading-relaxed">
                       {contactAddress}
@@ -116,7 +120,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <span className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                      {lang === 'en' ? 'Phone Call' : 'Téléphone Appel'}
+                      {lang === 'en' ? 'Phone Call' : lang === 'it' ? 'Telefono' : lang === 'de' ? 'Telefon' : 'Téléphone Appel'}
                     </span>
                     <a 
                       href={`tel:${contactPhone.replace(/\s+/g, '')}`} 
@@ -136,7 +140,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <span className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                      {lang === 'en' ? 'Official WhatsApp' : 'WhatsApp Officiel'}
+                      {lang === 'en' ? 'Official WhatsApp' : lang === 'it' ? 'WhatsApp Ufficiale' : lang === 'de' ? 'Offizielles WhatsApp' : 'WhatsApp Officiel'}
                     </span>
                     <a 
                       href={`https://wa.me/${contactWhatsapp.replace(/\D/g, '')}`} 
@@ -146,7 +150,7 @@ export default function Contact() {
                     >
                       <span>{contactWhatsapp}</span>
                       <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        {lang === 'en' ? 'Chat live' : 'Discuter en direct'}
+                        {lang === 'en' ? 'Chat live' : lang === 'it' ? 'Chat diretta' : lang === 'de' ? 'Live-Chat' : 'Discuter en direct'}
                       </span>
                     </a>
                   </div>
@@ -161,7 +165,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <span className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                      {lang === 'en' ? 'Official Email' : 'Courriel Officiel'}
+                      {lang === 'en' ? 'Official Email' : lang === 'it' ? 'Email Ufficiale' : lang === 'de' ? 'Offizielle E-Mail' : 'Courriel Officiel'}
                     </span>
                     <a 
                       href={`mailto:${contactEmail}`} 
@@ -177,7 +181,7 @@ export default function Contact() {
             {/* Carte interactive de localisation */}
             <div className="card overflow-hidden h-72 relative border border-gray-200 rounded-2xl shadow-sm bg-gray-100">
               <iframe
-                title={lang === 'en' ? 'ACPDPH Headquarters Location — Beni, North Kivu, DRC' : 'Localisation Siège ACPDPH — Beni, Nord-Kivu, RDC'}
+                title={lang === 'en' ? 'ACPDPH Headquarters Location — Beni, North Kivu, DRC' : lang === 'it' ? 'Localizzazione Sede ACPDPH — Beni, Nord-Kivu, RDC' : lang === 'de' ? 'Standort ACPDPH-Hauptsitz — Beni, Nord-Kivu, DRK' : 'Localisation Siège ACPDPH — Beni, Nord-Kivu, RDC'}
                 src={OFFICE_MAPS_EMBED_URL}
                 className="w-full h-full border-0"
                 loading="lazy"
@@ -190,7 +194,7 @@ export default function Contact() {
                   rel="noopener noreferrer"
                   className="text-ba-blue font-semibold hover:underline shrink-0 ml-2"
                 >
-                  {lang === 'en' ? 'Enlarge' : 'Agrandir'}
+                  {lang === 'en' ? 'Enlarge' : lang === 'it' ? 'Ingrandisci' : lang === 'de' ? 'Vergrößern' : 'Agrandir'}
                 </a>
               </div>
             </div>
@@ -269,7 +273,7 @@ export default function Contact() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    {lang === 'en' ? 'Sending...' : 'Envoi en cours...'}
+                    {lang === 'en' ? 'Sending...' : lang === 'it' ? 'Invio in corso...' : lang === 'de' ? 'Wird gesendet...' : 'Envoi en cours...'}
                   </>
                 ) : (
                   t.contact.form_send
