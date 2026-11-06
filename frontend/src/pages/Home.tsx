@@ -521,33 +521,20 @@ function ImpactSection() {
 
 /* Primary Hero Card */
 function PrimaryCounterCard({ value, label, description }: { value: number; label: string; description: string }) {
-  const { lang } = useI18n();
   const { count, ref } = useCountUp(value, 2200);
 
   return (
-    <div ref={ref} className="card w-full flex flex-col justify-between">
-      <div>
-        <div className="flex justify-end mb-6">
-          <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? 'North Kivu Region' : lang === 'it' ? 'Regione del Nord-Kivu' : lang === 'de' ? 'Region Nord-Kivu' : 'Région Nord-Kivu'}</span>
+    <div ref={ref} className="card w-full flex flex-col justify-center text-left">
+      <div className="flex flex-col gap-2.5 sm:gap-3">
+        <div className="font-heading font-black hero-impact-number" style={{ color: '#1D4ED8' }}>
+          {count.toLocaleString('fr-FR')}+
         </div>
-
-        <div className="mb-4">
-          <div className="font-heading text-5xl sm:text-6xl font-black tracking-tight mb-1" style={{ color: '#1D4ED8' }}>
-            {count.toLocaleString('fr-FR')}+
-          </div>
-          <h3 className="font-heading text-xl sm:text-2xl font-bold" style={{ color: '#111827' }}>
-            {label}
-          </h3>
-        </div>
-
-        <p className="text-sm mb-6" style={{ color: '#000000', lineHeight: 1.5 }}>
+        <h3 className="font-heading text-xl sm:text-2xl font-bold" style={{ color: '#111827' }}>
+          {label}
+        </h3>
+        <p className="text-sm" style={{ color: '#000000', lineHeight: 1.5 }}>
           {description}
         </p>
-      </div>
-
-      <div className="card-footer">
-        <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? '2026 Field Report' : lang === 'it' ? 'Rapporto sul campo 2026' : lang === 'de' ? 'Feldbericht 2026' : 'Rapport de terrain 2026'}</span>
-        <span className="font-semibold" style={{ color: '#1D4ED8', fontSize: '0.75rem' }}>{lang === 'en' ? 'Annual audit compliant' : lang === 'it' ? 'Audit annuale conforme' : lang === 'de' ? 'Jahresaudit konform' : 'Audit annuel conforme'}</span>
       </div>
     </div>
   );

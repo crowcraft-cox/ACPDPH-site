@@ -1015,6 +1015,30 @@ a.glass-card:hover,
   }
 }
 
+/* ===== Primary Impact Hero Counter (Grand Chiffre ×2) ===== */
+.hero-impact-number {
+  font-size: clamp(3.25rem, 13vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .hero-impact-number {
+    font-size: 6rem; /* 96px = 1.6 × 60px */
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-impact-number {
+    font-size: 7.5rem; /* 120px = 2 × 60px */
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+}
+
 /* ===== Form Inputs — Fond Blanc & Texte Noir + Marge Interne ===== */
 /* Règle globale : tous les champs de formulaire ont fond blanc + texte noir + marge interne aérée */
 input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
