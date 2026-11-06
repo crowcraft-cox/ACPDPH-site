@@ -8,6 +8,10 @@ import {
   aggregateAllGalleryItems,
 } from '../../utils/galleryAggregator';
 import { compressImage } from '../../utils/imageUrl';
+import { translateFrTo, translateFrToAll } from '../../services/translationService';
+import { AdminLanguageTabs } from '../../components/admin/AdminLanguageTabs';
+import type { TranslationTabStatus } from '../../components/admin/AdminLanguageTabs';
+import type { Lang } from '../../i18n';
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return 'Date non spécifiée';
@@ -53,6 +57,95 @@ export default function GalleryManager() {
   const [editAlt, setEditAlt] = useState('');
   const [editOrder, setEditOrder] = useState(0);
   const [editActive, setEditActive] = useState(true);
+
+  // Multilingual state for edit modal (en, it, de)
+  const [formLang, setFormLang] = useState<Lang>('fr');
+  const [editTitleEn, setEditTitleEn] = useState('');
+  const [editCaptionEn, setEditCaptionEn] = useState('');
+  const [editAltEn, setEditAltEn] = useState('');
+  const [needsReviewEn, setNeedsReviewEn] = useState(false);
+  const [editTitleIt, setEditTitleIt] = useState('');
+  const [editCaptionIt, setEditCaptionIt] = useState('');
+  const [editAltIt, setEditAltIt] = useState('');
+  const [needsReviewIt, setNeedsReviewIt] = useState(false);
+  const [editTitleDe, setEditTitleDe] = useState('');
+  const [editCaptionDe, setEditCaptionDe] = useState('');
+  const [editAltDe, setEditAltDe] = useState('');
+  const [needsReviewDe, setNeedsReviewDe] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translateError, setTranslateError] = useState<string | null>(null);
+
+  const editStatusByLang: Partial<Record<Lang, TranslationTabStatus>> = {
+    en: !editTitleEn ? 'Manquant' : (needsReviewEn ? 'À relire' : 'Relu'),
+    it: !editTitleIt ? 'Manquant' : (needsReviewIt ? 'À relire' : 'Relu'),
+    de: !editTitleDe ? 'Manquant' : (needsReviewDe ? 'À relire' : 'Relu'),
+  };
+
+  const handleTranslateEditTab = async () => {
+    if (formLang === 'fr' || (!editTitle.trim() && !editCaption.trim())) return;
+    setIsTranslating(true);
+    setTranslateError(null);
+    try {
+      const texts = [editTitle.trim() || '', editCaption.trim() || '', editAlt.trim() || ''];
+      const res = await translateFrTo(texts, formLang as 'en' | 'it' | 'de');
+      if (res.success && res.translations) {
+        const [tTitle, tCaption, tAlt] = res.translations;
+        if (formLang === 'en') {
+          setEditTitleEn(tTitle || editTitleEn);
+          setEditCaptionEn(tCaption || editCaptionEn);
+          setEditAltEn(tAlt || editAltEn);
+          setNeedsReviewEn(true);
+        } else if (formLang === 'it') {
+          setEditTitleIt(tTitle || editTitleIt);
+          setEditCaptionIt(tCaption || editCaptionIt);
+          setEditAltIt(tAlt || editAltIt);
+          setNeedsReviewIt(true);
+        } else if (formLang === 'de') {
+          setEditTitleDe(tTitle || editTitleDe);
+          setEditCaptionDe(tCaption || editCaptionDe);
+          setEditAltDe(tAlt || editAltDe);
+          setNeedsReviewDe(true);
+        }
+      } else {
+        setTranslateError(res.error || `Erreur de traduction vers ${formLang}.`);
+      }
+    } catch (err: any) {
+      setTranslateError(err.message || 'Erreur de traduction.');
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const handleTranslateEditAll = async () => {
+    if (!editTitle.trim() && !editCaption.trim()) return;
+    setIsTranslating(true);
+    setTranslateError(null);
+    try {
+      const texts = [editTitle.trim() || '', editCaption.trim() || '', editAlt.trim() || ''];
+      const res = await translateFrToAll(texts);
+      if (res.success && res.translations) {
+        const { en, it, de } = res.translations;
+        setEditTitleEn(en[0] || editTitleEn);
+        setEditCaptionEn(en[1] || editCaptionEn);
+        setEditAltEn(en[2] || editAltEn);
+        setNeedsReviewEn(true);
+        setEditTitleIt(it[0] || editTitleIt);
+        setEditCaptionIt(it[1] || editCaptionIt);
+        setEditAltIt(it[2] || editAltIt);
+        setNeedsReviewIt(true);
+        setEditTitleDe(de[0] || editTitleDe);
+        setEditCaptionDe(de[1] || editCaptionDe);
+        setEditAltDe(de[2] || editAltDe);
+        setNeedsReviewDe(true);
+      } else {
+        setTranslateError(res.error || 'Erreur de traduction globale.');
+      }
+    } catch (err: any) {
+      setTranslateError(err.message || 'Erreur de traduction.');
+    } finally {
+      setIsTranslating(false);
+    }
+  };
 
   // Notification
   const [notification, setNotification] = useState('');
@@ -195,12 +288,27 @@ export default function GalleryManager() {
 
   // ── Ouvrir édition ──
   const openEdit = (item: GalleryItem) => {
+    const it = item as any;
     setEditingItem(item);
     setEditTitle(item.title);
     setEditCaption(item.caption || '');
     setEditAlt(item.alt || '');
     setEditOrder(item.order || 0);
     setEditActive(item.active !== false);
+    setFormLang('fr');
+    setTranslateError(null);
+    setEditTitleEn(it.title_en || '');
+    setEditCaptionEn(it.caption_en || '');
+    setEditAltEn(it.alt_en || '');
+    setNeedsReviewEn(it.needsReview_en || false);
+    setEditTitleIt(it.title_it || '');
+    setEditCaptionIt(it.caption_it || '');
+    setEditAltIt(it.alt_it || '');
+    setNeedsReviewIt(it.needsReview_it || false);
+    setEditTitleDe(it.title_de || '');
+    setEditCaptionDe(it.caption_de || '');
+    setEditAltDe(it.alt_de || '');
+    setNeedsReviewDe(it.needsReview_de || false);
   };
 
   const handleSaveEdit = () => {
@@ -211,7 +319,19 @@ export default function GalleryManager() {
       alt: editAlt.trim() || editingItem.alt,
       order: editOrder,
       active: editActive,
-    });
+      title_en: editTitleEn.trim() || undefined,
+      caption_en: editCaptionEn.trim() || undefined,
+      alt_en: editAltEn.trim() || undefined,
+      needsReview_en: needsReviewEn,
+      title_it: editTitleIt.trim() || undefined,
+      caption_it: editCaptionIt.trim() || undefined,
+      alt_it: editAltIt.trim() || undefined,
+      needsReview_it: needsReviewIt,
+      title_de: editTitleDe.trim() || undefined,
+      caption_de: editCaptionDe.trim() || undefined,
+      alt_de: editAltDe.trim() || undefined,
+      needsReview_de: needsReviewDe,
+    } as any);
     setEditingItem(null);
     notify('Élément mis à jour avec succès.');
   };
@@ -779,35 +899,127 @@ export default function GalleryManager() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="admin-label">Titre *</label>
-                  <input
-                    type="text"
-                    className="admin-input"
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                  />
-                </div>
+                {/* Onglets de langue */}
+                <AdminLanguageTabs
+                  currentLang={formLang}
+                  onLangChange={setFormLang}
+                  onTranslateTab={formLang !== 'fr' ? handleTranslateEditTab : undefined}
+                  onTranslateAll={handleTranslateEditAll}
+                  isTranslating={isTranslating}
+                  translateError={translateError}
+                  statusByLang={editStatusByLang}
+                />
 
-                <div>
-                  <label className="admin-label">Légende</label>
-                  <textarea
-                    className="admin-textarea"
-                    rows={3}
-                    value={editCaption}
-                    onChange={(e) => setEditCaption(e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="admin-label">Texte alternatif (accessibilité)</label>
-                  <input
-                    type="text"
-                    className="admin-input"
-                    value={editAlt}
-                    onChange={(e) => setEditAlt(e.target.value)}
-                  />
-                </div>
+                {formLang === 'fr' ? (
+                  <>
+                    <div>
+                      <label className="admin-label">Titre *</label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="admin-label">Légende</label>
+                      <textarea
+                        className="admin-textarea"
+                        rows={3}
+                        value={editCaption}
+                        onChange={(e) => setEditCaption(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="admin-label">Texte alternatif (accessibilité)</label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        value={editAlt}
+                        onChange={(e) => setEditAlt(e.target.value)}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (formLang === 'en') setNeedsReviewEn(!needsReviewEn);
+                          if (formLang === 'it') setNeedsReviewIt(!needsReviewIt);
+                          if (formLang === 'de') setNeedsReviewDe(!needsReviewDe);
+                        }}
+                        style={{
+                          padding: '2px 10px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          border: '1px solid',
+                          background: (formLang === 'en' ? needsReviewEn : formLang === 'it' ? needsReviewIt : needsReviewDe)
+                            ? 'rgba(120,53,15,0.4)'
+                            : 'rgba(6,78,59,0.4)',
+                          borderColor: (formLang === 'en' ? needsReviewEn : formLang === 'it' ? needsReviewIt : needsReviewDe)
+                            ? '#92400E'
+                            : '#065F46',
+                          color: (formLang === 'en' ? needsReviewEn : formLang === 'it' ? needsReviewIt : needsReviewDe)
+                            ? '#FCD34D'
+                            : '#6EE7B7',
+                        }}
+                      >
+                        {(formLang === 'en' ? needsReviewEn : formLang === 'it' ? needsReviewIt : needsReviewDe)
+                          ? 'Marquer comme relu'
+                          : 'Statut : Relu'}
+                      </button>
+                    </div>
+                    <div>
+                      <label className="admin-label">Titre ({formLang.toUpperCase()}) *</label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        value={formLang === 'en' ? editTitleEn : formLang === 'it' ? editTitleIt : editTitleDe}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (formLang === 'en') { setEditTitleEn(v); setNeedsReviewEn(false); }
+                          if (formLang === 'it') { setEditTitleIt(v); setNeedsReviewIt(false); }
+                          if (formLang === 'de') { setEditTitleDe(v); setNeedsReviewDe(false); }
+                        }}
+                        placeholder={`Titre en ${formLang.toUpperCase()}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="admin-label">Légende ({formLang.toUpperCase()})</label>
+                      <textarea
+                        className="admin-textarea"
+                        rows={3}
+                        value={formLang === 'en' ? editCaptionEn : formLang === 'it' ? editCaptionIt : editCaptionDe}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (formLang === 'en') { setEditCaptionEn(v); setNeedsReviewEn(false); }
+                          if (formLang === 'it') { setEditCaptionIt(v); setNeedsReviewIt(false); }
+                          if (formLang === 'de') { setEditCaptionDe(v); setNeedsReviewDe(false); }
+                        }}
+                        placeholder={`Légende en ${formLang.toUpperCase()}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="admin-label">Texte alternatif ({formLang.toUpperCase()})</label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        value={formLang === 'en' ? editAltEn : formLang === 'it' ? editAltIt : editAltDe}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (formLang === 'en') { setEditAltEn(v); setNeedsReviewEn(false); }
+                          if (formLang === 'it') { setEditAltIt(v); setNeedsReviewIt(false); }
+                          if (formLang === 'de') { setEditAltDe(v); setNeedsReviewDe(false); }
+                        }}
+                        placeholder={`Alt en ${formLang.toUpperCase()}`}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                   <div>

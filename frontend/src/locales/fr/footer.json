@@ -1,0 +1,22 @@
+{
+  "description": "L'Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) œuvre pour la défense des droits, l'accessibilité universelle, l'éducation inclusive, la santé adaptée et l'autonomisation socio-économique en République Démocratique du Congo.",
+  "navigation": "Navigation",
+  "legal": "Documents & Légal",
+  "privacyPolicy": "Politique de confidentialité",
+  "termsOfService": "Mentions légales",
+  "statutes": "Statuts de l'ACPDPH",
+  "internalRegulations": "Règlement d'Ordre Intérieur",
+  "newsletterTitle": "Abonnez-vous à notre lettre d'information",
+  "newsletterSubtitle": "Recevez directement nos actualités, rapports de terrain et appels à solidarité.",
+  "newsletterPlaceholder": "Votre adresse courriel",
+  "newsletterSubmit": "S'abonner",
+  "newsletterSubscribed": "Inscrit",
+  "newsletterSuccess": "Merci, votre inscription est confirmée !",
+  "newsletterErrorEmail": "Veuillez saisir une adresse courriel valide.",
+  "newsletterErrorGeneric": "Une erreur est survenue lors de l'inscription.",
+  "headquarters": "Notre siège social",
+  "address": "Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.",
+  "followUs": "Suivez-nous",
+  "quickLinks": "Liens rapides",
+  "rightsReserved": "Tous droits réservés."
+}

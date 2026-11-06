@@ -1,0 +1,28 @@
+{
+  "readMore": "Mehr lesen",
+  "learnMore": "Mehr erfahren",
+  "viewDetails": "Details ansehen",
+  "back": "Zurück",
+  "backToHome": "Zurück zur Startseite",
+  "loading": "Wird geladen...",
+  "close": "Schließen",
+  "copy": "Kopieren",
+  "copied": "Kopiert",
+  "all": "Alle",
+  "seeAll": "Alle anzeigen",
+  "share": "Teilen",
+  "download": "Herunterladen",
+  "downloadPdf": "Als PDF herunterladen",
+  "status": {
+    "ongoing": "Laufend",
+    "completed": "Abgeschlossen",
+    "planned": "In Planung"
+  },
+  "organizationName": "Kongolesische Agentur für die Förderung der Rechte von Menschen mit Behinderungen",
+  "acronym": "ACPDPH",
+  "officialStatus": "Nichtregierungsorganisation (ASBL)",
+  "currency": "USD",
+  "currencySymbol": "$",
+  "needReview": "Automatische Übersetzung vorgeschlagen, bitte vor Veröffentlichung prüfen"
+}
+

@@ -1,0 +1,44 @@
+{
+  "title": "Gouvernance",
+  "subtitle": "Découvrez les organes statutaires et les membres qui dirigent, supervisent et animent les actions de l'ACPDPH avec rigueur, transparence et dévouement.",
+  "generalAssembly": {
+    "title": "Assemblée Générale",
+    "p1": "L'Assemblée Générale est l'organe suprême et souverain de l'ACPDPH. Elle réunit les membres fondateurs et adhérents pour définir les grandes orientations stratégiques et institutionnelles de l'organisation.",
+    "p2": "Elle est chargée d'adopter les politiques globales, d'approuver les rapports d'activités et financiers annuels, d'élire les membres du Conseil d'administration et de délibérer sur toutes les questions fondamentales de l'organisation.",
+    "p3": "Elle se réunit en session ordinaire une fois par an et garantit une gouvernance démocratique, participative, transparente et inclusive."
+  },
+  "board": {
+    "title": "Conseil d'administration",
+    "intro": "Le Conseil d'administration assure la mise en œuvre des décisions de l'Assemblée Générale et veille à l'orientation stratégique de l'organisation. Il est composé de cinq animateurs engagés pour faire avancer la mission et les objectifs de l'ACPDPH :",
+    "conclusion": "Par son leadership et son engagement soutenu, le Conseil d'administration accompagne l'ACPDPH dans la concrétisation de sa vision d'une société juste et accessible à tous."
+  },
+  "audit": {
+    "title": "Commission de Contrôle",
+    "intro": "La Commission de Contrôle est un organe interne élu par l'Assemblée Générale. Elle veille à la régularité, à la conformité statutaire et à la saine gestion financière et matérielle de l'ACPDPH. Ses membres sont :"
+  },
+  "secretariat": {
+    "title": "Secrétariat Exécutif",
+    "intro": "Le Secrétariat Exécutif constitue l'organe opérationnel chargé de la gestion quotidienne, de la coordination technique des projets et de la mise en œuvre des programmes sur le terrain. Les animateurs du Secrétariat Exécutif sont :"
+  },
+  "viewCv": "Consulter la notice biographique",
+  "noMembers": "Aucun membre répertorié dans cette section.",
+  "executiveLeadership": "Direction Exécutive",
+  "roles": {
+    "boardPresident": "Initiateur et Président du Conseil d'administration",
+    "boardVicePresident": "Vice-Président du Conseil d'administration",
+    "boardSecretary": "Secrétaire du Conseil d'administration",
+    "boardTreasurer": "Trésorier du Conseil d'administration",
+    "boardAdvisor": "Conseiller du Conseil d'administration",
+    "auditPresident": "Présidente de la Commission de Contrôle",
+    "auditSecretary": "Secrétaire rapporteur",
+    "auditMember": "Membre contrôleur",
+    "nationalExecutiveSecretary": "Secrétaire exécutif national",
+    "programsDirector": "Directeur des programmes",
+    "accountant": "Comptable",
+    "cashier": "Caissière",
+    "logistician": "Logisticienne",
+    "communicationsOfficer": "Chargé de communication",
+    "signLanguageInterpreter": "Interprète en langue des signes",
+    "communityWorker": "Agent Communautaire"
+  }
+}

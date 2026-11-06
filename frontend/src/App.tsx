@@ -5,6 +5,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import { ScrollProgressBar, BackToTop } from './components/layout/ScrollUI';
 import { useLenis, smoothScrollTo } from './hooks/useLenis';
+import { useI18n } from './i18n';
 
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home'));
@@ -27,12 +28,16 @@ const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const Gallery = lazy(() => import('./pages/Gallery'));
 const GalleryManager = lazy(() => import('./pages/admin/GalleryManager'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 function PageLoader() {
+  const { lang } = useI18n();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-ba-dark">
       <div className="w-10 h-10 border-3 border-ba-blue border-t-transparent rounded-full animate-spin"></div>
-      <span className="mt-4 font-heading font-semibold text-xs tracking-wider uppercase text-ba-text-secondary">Chargement...</span>
+      <span className="mt-4 font-heading font-semibold text-xs tracking-wider uppercase text-ba-text-secondary">
+        {lang === 'en' ? 'Loading...' : lang === 'it' ? 'Caricamento...' : lang === 'de' ? 'Laden...' : 'Chargement...'}
+      </span>
     </div>
   );
 }
@@ -67,7 +72,23 @@ function AnimatedPage({ children }: { children: React.ReactNode }) {
 
 function MainLayout() {
   const location = useLocation();
+  const { lang, setLang } = useI18n();
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  // Synchronisation de la langue avec l'URL
+  useEffect(() => {
+    const p = location.pathname;
+    if (p === '/en' || p.startsWith('/en/')) {
+      if (lang !== 'en') setLang('en');
+    } else if (p === '/it' || p.startsWith('/it/')) {
+      if (lang !== 'it') setLang('it');
+    } else if (p === '/de' || p.startsWith('/de/')) {
+      if (lang !== 'de') setLang('de');
+    } else if (!p.startsWith('/admin')) {
+      const savedLang = localStorage.getItem('ba-lang');
+      if (!savedLang && lang !== 'fr') setLang('fr');
+    }
+  }, [location.pathname, lang, setLang]);
 
   // Lenis smooth scroll — active on public pages only
   useLenis();
@@ -96,6 +117,7 @@ function MainLayout() {
           <Suspense fallback={<PageLoader />}>
             <AnimatedPage>
               <Routes>
+                {/* Routes Françaises / Par défaut */}
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/governance" element={<Governance />} />
@@ -119,6 +141,80 @@ function MainLayout() {
                 <Route path="/news/:id" element={<NewsDetail />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/galerie" element={<Gallery />} />
+
+                {/* Routes Anglaises (préfixe /en) */}
+                <Route path="/en" element={<Home />} />
+                <Route path="/en/about" element={<About />} />
+                <Route path="/en/governance" element={<Governance />} />
+                <Route path="/en/governance/:slug" element={<MemberCv />} />
+                <Route path="/en/gouvernance" element={<Governance />} />
+                <Route path="/en/gouvernance/:slug" element={<MemberCv />} />
+                <Route path="/en/pillars" element={<Pillars />} />
+                <Route path="/en/projects" element={<Projects />} />
+                <Route path="/en/projects/:id" element={<ProjectDetail />} />
+                <Route path="/en/partners" element={<Partners />} />
+                <Route path="/en/publications" element={<Navigate to="/en" replace />} />
+                <Route path="/en/support" element={<Support />} />
+                <Route path="/en/act" element={<Support />} />
+                <Route path="/en/careers" element={<Careers />} />
+                <Route path="/en/careers/:id" element={<JobDetail />} />
+                <Route path="/en/careers/:id/apply" element={<JobApplication />} />
+                <Route path="/en/careers/:id/postuler" element={<JobApplication />} />
+                <Route path="/en/offres-emplois" element={<Careers />} />
+                <Route path="/en/offres-emplois/:id" element={<JobDetail />} />
+                <Route path="/en/offres-emplois/:id/postuler" element={<JobApplication />} />
+                <Route path="/en/news" element={<News />} />
+                <Route path="/en/news/:id" element={<NewsDetail />} />
+                <Route path="/en/contact" element={<Contact />} />
+                <Route path="/en/gallery" element={<Gallery />} />
+                <Route path="/en/galerie" element={<Gallery />} />
+
+                {/* Routes Italiennes (préfixe /it) */}
+                <Route path="/it" element={<Home />} />
+                <Route path="/it/about" element={<About />} />
+                <Route path="/it/governance" element={<Governance />} />
+                <Route path="/it/governance/:slug" element={<MemberCv />} />
+                <Route path="/it/gouvernance" element={<Governance />} />
+                <Route path="/it/gouvernance/:slug" element={<MemberCv />} />
+                <Route path="/it/pillars" element={<Pillars />} />
+                <Route path="/it/projects" element={<Projects />} />
+                <Route path="/it/projects/:id" element={<ProjectDetail />} />
+                <Route path="/it/partners" element={<Partners />} />
+                <Route path="/it/publications" element={<Navigate to="/it" replace />} />
+                <Route path="/it/support" element={<Support />} />
+                <Route path="/it/act" element={<Support />} />
+                <Route path="/it/careers" element={<Careers />} />
+                <Route path="/it/careers/:id" element={<JobDetail />} />
+                <Route path="/it/careers/:id/apply" element={<JobApplication />} />
+                <Route path="/it/news" element={<News />} />
+                <Route path="/it/news/:id" element={<NewsDetail />} />
+                <Route path="/it/contact" element={<Contact />} />
+                <Route path="/it/gallery" element={<Gallery />} />
+
+                {/* Routes Allemandes (préfixe /de) */}
+                <Route path="/de" element={<Home />} />
+                <Route path="/de/about" element={<About />} />
+                <Route path="/de/governance" element={<Governance />} />
+                <Route path="/de/governance/:slug" element={<MemberCv />} />
+                <Route path="/de/gouvernance" element={<Governance />} />
+                <Route path="/de/gouvernance/:slug" element={<MemberCv />} />
+                <Route path="/de/pillars" element={<Pillars />} />
+                <Route path="/de/projects" element={<Projects />} />
+                <Route path="/de/projects/:id" element={<ProjectDetail />} />
+                <Route path="/de/partners" element={<Partners />} />
+                <Route path="/de/publications" element={<Navigate to="/de" replace />} />
+                <Route path="/de/support" element={<Support />} />
+                <Route path="/de/act" element={<Support />} />
+                <Route path="/de/careers" element={<Careers />} />
+                <Route path="/de/careers/:id" element={<JobDetail />} />
+                <Route path="/de/careers/:id/apply" element={<JobApplication />} />
+                <Route path="/de/news" element={<News />} />
+                <Route path="/de/news/:id" element={<NewsDetail />} />
+                <Route path="/de/contact" element={<Contact />} />
+                <Route path="/de/gallery" element={<Gallery />} />
+
+                {/* Page 404 */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </AnimatedPage>
           </Suspense>

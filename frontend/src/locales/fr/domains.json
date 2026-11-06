@@ -1,0 +1,49 @@
+{
+  "title": "Nos domaines d'intervention",
+  "subtitle": "Cinq axes stratégiques d'intervention pour bâtir une inclusion pérenne, garantir l'égalité des chances et soutenir l'autonomie des personnes handicapées en RDC.",
+  "protection": {
+    "title": "Droits & Plaidoyer juridique",
+    "desc": "Promotion et défense active des droits fondamentaux des personnes handicapées, vulgarisation des lois nationales et traités internationaux, et lutte résolue contre toutes formes de discrimination et d'exclusion sociale.",
+    "points": [
+      "Assistance et accompagnement juridique gratuit pour les personnes handicapées victimes d'abus.",
+      "Plaidoyer institutionnel auprès des cours, tribunaux et autorités administratives pour l'application de la législation protectrice.",
+      "Campagnes régulières de sensibilisation communautaire pour l'élimination des préjugés."
+    ]
+  },
+  "accessibility": {
+    "title": "Accessibilité universelle",
+    "desc": "Plaidoyer et réalisations concrètes pour l'accessibilité des infrastructures publiques, de la voirie urbaine, des moyens de transport et des outils de communication pour toutes les formes de handicap.",
+    "points": [
+      "Audits d'accessibilité architecturale des écoles, centres hospitaliers et édifices administratifs.",
+      "Installation et aménagement de rampes d'accès, portes élargies et sanitaires adaptés.",
+      "Promotion de l'accessibilité numérique et des supports d'information adaptés."
+    ]
+  },
+  "education": {
+    "title": "Éducation inclusive & Formation",
+    "desc": "Intégration scolaire des enfants et jeunes en situation de handicap, formation continue des enseignants aux pédagogies adaptées et mise à disposition d'outils didactiques appropriés.",
+    "points": [
+      "Scolarisation inclusive et octroi de bourses scolaires complètes pour enfants vulnérables.",
+      "Formation des corps enseignants à la pédagogie différenciée et à l'accueil inclusif.",
+      "Dotation de kits didactiques spécialisés (braille, supports visuels et manuels adaptés)."
+    ]
+  },
+  "health": {
+    "title": "Santé, Réadaptation & Aides à la mobilité",
+    "desc": "Accompagnement sanitaire, réadaptation physique et fonctionnelle, soutien psychosocial et fourniture d'aides techniques à la mobilité (béquilles, tricycles, fauteuils roulants, prothèses).",
+    "points": [
+      "Distribution d'appareillages orthopédiques, tricycles manuels et fauteuils roulants adaptés.",
+      "Séances régulières de rééducation motrice et accompagnement psychosocial individualisé.",
+      "Orientation et prise en charge médicale spécialisée pour les cas complexes."
+    ]
+  },
+  "empowerment": {
+    "title": "Autonomisation socio-économique",
+    "desc": "Formations professionnelles aux métiers d'avenir, renforcement des capacités entrepreneuriales, appui aux activités génératrices de revenus et insertion socioprofessionnelle durable.",
+    "points": [
+      "Ateliers de formation pratique aux métiers porteurs (couture, artisanat, cordonnerie, numérique).",
+      "Octroi de kits de démarrage et micro-subventions pour activités génératrices de revenus.",
+      "Accompagnement vers l'emploi et plaidoyer auprès des entreprises pour le recrutement inclusif."
+    ]
+  }
+}

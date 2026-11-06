@@ -1,0 +1,22 @@
+{
+  "title": "Contattaci",
+  "subtitle": "La nostra squadra è a vostra disposizione presso la sede di Beni per qualsiasi richiesta, collaborazione o necessità di supporto.",
+  "addressTitle": "Indirizzo & Sede Legale",
+  "addressValue": "Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.",
+  "emailTitle": "Email ufficiale",
+  "phoneTitle": "Telefono & Mobile Money",
+  "whatsappTitle": "Assistenza WhatsApp",
+  "formTitle": "Inviaci un messaggio",
+  "formName": "Nome e cognome",
+  "formEmail": "Indirizzo email",
+  "formPhone": "Numero di telefono",
+  "formSubject": "Oggetto del messaggio",
+  "formMessage": "Il tuo messaggio",
+  "formSend": "Invia messaggio",
+  "sending": "Invio in corso...",
+  "successMessage": "Grazie! Il tuo messaggio è stato inviato con successo. Il nostro team ti risponderà al più presto.",
+  "errorMessage": "Si è verificato un errore durante l'invio del messaggio. Riprova o contattaci direttamente per telefono.",
+  "officeHours": "Orari di apertura degli uffici",
+  "officeHoursValue": "Dal lunedì al venerdì, dalle 08:00 alle 16:30 (Ora locale di Beni, UTC+2)"
+}
+

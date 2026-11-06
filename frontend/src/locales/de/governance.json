@@ -1,0 +1,45 @@
+{
+  "title": "Governance",
+  "subtitle": "Erfahren Sie mehr über die statutarischen Organe und die Persönlichkeiten, die das Handeln der ACPDPH mit Sorgfalt, Transparenz und Hingabe leiten und begleiten.",
+  "generalAssembly": {
+    "title": "Generalversammlung",
+    "p1": "Die Generalversammlung ist das oberste und souveräne Organ der ACPDPH. Sie versammelt Gründungs- und ordentliche Mitglieder, um die strategischen und institutionellen Leitlinien der Organisation festzulegen.",
+    "p2": "Sie beschließt über grundlegende Richtlinien, billigt die jährlichen Tätigkeits- und Finanzberichte, wählt die Mitglieder des Vorstands und entscheidet über alle grundlegenden Fragen.",
+    "p3": "Sie tritt einmal jährlich zu einer ordentlichen Tagung zusammen und gewährleistet eine demokratische, transparente und inklusive Governance."
+  },
+  "board": {
+    "title": "Vorstand",
+    "intro": "Der Vorstand setzt die Beschlüsse der Generalversammlung um und sorgt für die strategische Ausrichtung der Organisation. Er setzt sich aus fünf engagierten Mitgliedern zusammen, die die Mission der ACPDPH vorantreiben:",
+    "conclusion": "Durch Führungskraft und engagierten Einsatz begleitet der Vorstand die ACPDPH auf dem Weg zu einer gerechten und barrierefreien Gesellschaft für alle."
+  },
+  "audit": {
+    "title": "Kontrollkommission",
+    "intro": "Die Kontrollkommission ist ein von der Generalversammlung gewähltes internes Kontrollorgan. Sie überwacht die Ordnungsmäßigkeit, Satzungskonformität und solide Finanzführung der ACPDPH. Ihre Mitglieder sind:"
+  },
+  "secretariat": {
+    "title": "Exekutivsekretariat",
+    "intro": "Das Exekutivsekretariat ist das operative Führungsorgan, das für die laufende Geschäftsführung, die technische Projektkoordination und die Umsetzung der Vorhaben vor Ort zuständig ist. Ihm gehören an:"
+  },
+  "viewCv": "Biografisches Profil einsehen",
+  "noMembers": "In diesem Bereich sind noch keine Mitglieder aufgeführt.",
+  "executiveLeadership": "Geschäftsführung",
+  "roles": {
+    "boardPresident": "Initiator und Vorstandsvorsitzender",
+    "boardVicePresident": "Stellvertretender Vorstandsvorsitzender",
+    "boardSecretary": "Schriftführer des Vorstands",
+    "boardTreasurer": "Schatzmeister des Vorstands",
+    "boardAdvisor": "Berater des Vorstands",
+    "auditPresident": "Vorsitzende der Kontrollkommission",
+    "auditSecretary": "Schriftführendes Kommissionsmitglied",
+    "auditMember": "Prüfendes Kommissionsmitglied",
+    "nationalExecutiveSecretary": "Nationaler Exekutivsekretär",
+    "programsDirector": "Programmleiter",
+    "accountant": "Buchhalter",
+    "cashier": "Kassiererin",
+    "logistician": "Logistikerin",
+    "communicationsOfficer": "Kommunikationsbeauftragter",
+    "signLanguageInterpreter": "Gebärdensprachdolmetscher",
+    "communityWorker": "Gemeindebeauftragter"
+  }
+}
+

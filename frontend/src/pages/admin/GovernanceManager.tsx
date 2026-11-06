@@ -3,6 +3,10 @@ import { useAdminData } from '../../context/adminData';
 import { ORGAN_LABELS, type GovernanceOrganKey } from '../../data/governanceData';
 import type { GovernanceMember } from '../../types';
 import { resolveImageUrl, compressImageToDataUrl } from '../../utils/imageUrl';
+import { translateFrTo, translateFrToAll } from '../../services/translationService';
+import { AdminLanguageTabs } from '../../components/admin/AdminLanguageTabs';
+import type { TranslationTabStatus } from '../../components/admin/AdminLanguageTabs';
+import type { Lang } from '../../i18n';
 
 export default function GovernanceManager() {
   const { data, addGovernanceMember, updateGovernanceMember, deleteGovernanceMember, isSyncing } = useAdminData();
@@ -26,10 +30,35 @@ export default function GovernanceManager() {
   const [photoUploadError, setPhotoUploadError] = useState<string | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
+  // Multilingual state (en, it, de)
+  const [roleEn, setRoleEn] = useState('');
+  const [roleIt, setRoleIt] = useState('');
+  const [roleDe, setRoleDe] = useState('');
+  const [needsReviewEn, setNeedsReviewEn] = useState(false);
+  const [needsReviewIt, setNeedsReviewIt] = useState(false);
+  const [needsReviewDe, setNeedsReviewDe] = useState(false);
+  const [formLang, setFormLang] = useState<Lang>('fr');
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translateError, setTranslateError] = useState<string | null>(null);
+
+  const statusByLang: Partial<Record<Lang, TranslationTabStatus>> = {
+    en: !roleEn ? 'Manquant' : (needsReviewEn ? 'À relire' : 'Relu'),
+    it: !roleIt ? 'Manquant' : (needsReviewIt ? 'À relire' : 'Relu'),
+    de: !roleDe ? 'Manquant' : (needsReviewDe ? 'À relire' : 'Relu'),
+  };
+
   const openAddModal = (defaultOrgan: GovernanceOrganKey = 'board') => {
     setEditingMember(null);
     setName('');
     setRole('');
+    setRoleEn('');
+    setRoleIt('');
+    setRoleDe('');
+    setNeedsReviewEn(false);
+    setNeedsReviewIt(false);
+    setNeedsReviewDe(false);
+    setFormLang('fr');
+    setTranslateError(null);
     setOrgan(defaultOrgan);
     setPhoto('');
     setFormError(null);
@@ -38,14 +67,66 @@ export default function GovernanceManager() {
   };
 
   const openEditModal = (member: GovernanceMember) => {
+    const m = member as any;
     setEditingMember(member);
     setName(member.name);
     setRole(member.role);
+    setRoleEn(m.role_en || '');
+    setRoleIt(m.role_it || '');
+    setRoleDe(m.role_de || '');
+    setNeedsReviewEn(Boolean(m.needsReview_en));
+    setNeedsReviewIt(Boolean(m.needsReview_it));
+    setNeedsReviewDe(Boolean(m.needsReview_de));
+    setFormLang('fr');
+    setTranslateError(null);
     setOrgan(member.organ);
     setPhoto(member.photo || '');
     setFormError(null);
     setPhotoUploadError(null);
     setIsModalOpen(true);
+  };
+
+  const handleTranslateCurrentTab = async () => {
+    if (formLang === 'fr' || !role.trim()) return;
+    setIsTranslating(true);
+    setTranslateError(null);
+    try {
+      const res = await translateFrTo([role.trim()], formLang as 'en' | 'it' | 'de');
+      if (res.success && res.translations) {
+        if (formLang === 'en') { setRoleEn(res.translations[0] || ''); setNeedsReviewEn(true); }
+        if (formLang === 'it') { setRoleIt(res.translations[0] || ''); setNeedsReviewIt(true); }
+        if (formLang === 'de') { setRoleDe(res.translations[0] || ''); setNeedsReviewDe(true); }
+      } else {
+        setTranslateError(res.error || `Erreur de traduction vers ${formLang}.`);
+      }
+    } catch (err: any) {
+      setTranslateError(err.message || 'Erreur de traduction.');
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const handleTranslateAll = async () => {
+    if (!role.trim()) return;
+    setIsTranslating(true);
+    setTranslateError(null);
+    try {
+      const res = await translateFrToAll([role.trim()]);
+      if (res.success && res.translations) {
+        setRoleEn(res.translations.en[0] || '');
+        setNeedsReviewEn(true);
+        setRoleIt(res.translations.it[0] || '');
+        setNeedsReviewIt(true);
+        setRoleDe(res.translations.de[0] || '');
+        setNeedsReviewDe(true);
+      } else {
+        setTranslateError(res.error || 'Erreur de traduction globale.');
+      }
+    } catch (err: any) {
+      setTranslateError(err.message || 'Erreur de traduction.');
+    } finally {
+      setIsTranslating(false);
+    }
   };
 
   const handlePhotoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,14 +183,26 @@ export default function GovernanceManager() {
         role: role.trim(),
         organ,
         photo: photo.trim() || undefined,
-      });
+        role_en: roleEn.trim() || undefined,
+        role_it: roleIt.trim() || undefined,
+        role_de: roleDe.trim() || undefined,
+        needsReview_en: needsReviewEn,
+        needsReview_it: needsReviewIt,
+        needsReview_de: needsReviewDe,
+      } as any);
     } else {
       addGovernanceMember({
         name: name.trim(),
         role: role.trim(),
         organ,
         photo: photo.trim() || undefined,
-      });
+        role_en: roleEn.trim() || undefined,
+        role_it: roleIt.trim() || undefined,
+        role_de: roleDe.trim() || undefined,
+        needsReview_en: needsReviewEn,
+        needsReview_it: needsReviewIt,
+        needsReview_de: needsReviewDe,
+      } as any);
     }
 
     setIsModalOpen(false);
@@ -407,13 +500,61 @@ export default function GovernanceManager() {
                 <label className="block text-slate-300 font-semibold mb-1">
                   Fonction / Rôle <span className="text-rose-400">*</span>
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ex: Président du Conseil d’administration"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                <AdminLanguageTabs
+                  currentLang={formLang}
+                  onLangChange={setFormLang}
+                  onTranslateTab={formLang !== 'fr' ? handleTranslateCurrentTab : undefined}
+                  onTranslateAll={handleTranslateAll}
+                  isTranslating={isTranslating}
+                  translateError={translateError}
+                  statusByLang={statusByLang}
                 />
+                {formLang === 'fr' ? (
+                  <input
+                    type="text"
+                    placeholder="Ex: Président du Conseil d’administration"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                  />
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-slate-400">
+                        Rôle ({formLang.toUpperCase()})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (formLang === 'en') setNeedsReviewEn(!needsReviewEn);
+                          if (formLang === 'it') setNeedsReviewIt(!needsReviewIt);
+                          if (formLang === 'de') setNeedsReviewDe(!needsReviewDe);
+                        }}
+                        className={`px-2 py-0.5 rounded text-[11px] font-semibold border cursor-pointer ${
+                          (formLang === 'en' ? needsReviewEn : formLang === 'it' ? needsReviewIt : needsReviewDe)
+                            ? 'bg-amber-950/60 border-amber-700 text-amber-300'
+                            : 'bg-emerald-950/60 border-emerald-700 text-emerald-300'
+                        }`}
+                      >
+                        {(formLang === 'en' ? needsReviewEn : formLang === 'it' ? needsReviewIt : needsReviewDe)
+                          ? 'Marquer comme relu'
+                          : 'Statut : Relu'}
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder={`Fonction / Rôle en ${formLang.toUpperCase()}`}
+                      value={formLang === 'en' ? roleEn : formLang === 'it' ? roleIt : roleDe}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (formLang === 'en') { setRoleEn(val); setNeedsReviewEn(false); }
+                        if (formLang === 'it') { setRoleIt(val); setNeedsReviewIt(false); }
+                        if (formLang === 'de') { setRoleDe(val); setNeedsReviewDe(false); }
+                      }}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>

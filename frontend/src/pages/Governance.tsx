@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAdminData } from '../context/adminData';
-import { GOVERNANCE_TEXTS, DEFAULT_GOVERNANCE_MEMBERS, type GovernanceMember } from '../data/governanceData';
+import { useI18n, getLocalizedPath, type Lang } from '../i18n';
+import { getGovernanceTexts, DEFAULT_GOVERNANCE_MEMBERS, type GovernanceMember } from '../data/governanceData';
 import { generateSlug } from '../utils/slugify';
 import { resolveImageUrl } from '../utils/imageUrl';
 
@@ -10,9 +11,10 @@ interface MemberCardProps {
   role: string;
   photo?: string;
   cvSlug?: string;
+  lang: Lang;
 }
 
-function MemberCard({ name, role, photo, cvSlug }: MemberCardProps) {
+function MemberCard({ name, role, photo, cvSlug, lang }: MemberCardProps) {
   const [imageError, setImageError] = useState(false);
   const resolvedPhoto = photo ? resolveImageUrl(photo) : '';
   const hasPhoto = Boolean(resolvedPhoto && !imageError);
@@ -24,7 +26,7 @@ function MemberCard({ name, role, photo, cvSlug }: MemberCardProps) {
   const photoContent = hasPhoto ? (
     <img
       src={resolvedPhoto}
-      alt={`Photo de ${name}`}
+      alt={lang === 'en' ? `Photo of ${name}` : `Photo de ${name}`}
       loading="lazy"
       decoding="async"
       width={600}
@@ -53,13 +55,15 @@ function MemberCard({ name, role, photo, cvSlug }: MemberCardProps) {
     </div>
   );
 
+  const cvPath = getLocalizedPath(`/governance/${cvSlug}`, lang);
+
   return (
     <article className="flex bg-white dark:bg-slate-800 rounded-none min-h-[140px] md:min-h-0 md:aspect-[3.2/1] overflow-hidden items-stretch">
       {/* Partie 1 : Photo ou Emplacement neutre (Lien vers CV si publié) */}
       {cvSlug ? (
         <Link
-          to={`/gouvernance/${cvSlug}`}
-          aria-label={`Voir le CV de ${name}`}
+          to={cvPath}
+          aria-label={lang === 'en' ? `View CV of ${name}` : `Voir le CV de ${name}`}
           className="w-1/3 shrink-0 self-stretch block overflow-hidden group focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 cursor-pointer"
         >
           {photoContent}
@@ -89,6 +93,7 @@ function MemberCard({ name, role, photo, cvSlug }: MemberCardProps) {
 
 export default function Governance() {
   const { data } = useAdminData();
+  const { lang, getLocalized } = useI18n();
 
   const allMembers: GovernanceMember[] =
     data.governanceMembers && data.governanceMembers.length > 0
@@ -99,7 +104,7 @@ export default function Governance() {
   const auditMembers = allMembers.filter((m) => m.organ === 'audit');
   const secretariatMembers = allMembers.filter((m) => m.organ === 'secretariat');
 
-  const { sections, mainTitle } = GOVERNANCE_TEXTS;
+  const { sections, mainTitle } = getGovernanceTexts(lang);
 
   const getMemberCvSlug = (member: GovernanceMember) => {
     const slug = generateSlug(member.name);
@@ -155,9 +160,10 @@ export default function Governance() {
                 <li key={member.id} className="h-full">
                   <MemberCard
                     name={member.name}
-                    role={member.role}
+                    role={getLocalized(member, 'role')}
                     photo={member.photo}
                     cvSlug={getMemberCvSlug(member)}
+                    lang={lang}
                   />
                 </li>
               ))}
@@ -185,9 +191,10 @@ export default function Governance() {
                 <li key={member.id} className="h-full">
                   <MemberCard
                     name={member.name}
-                    role={member.role}
+                    role={getLocalized(member, 'role')}
                     photo={member.photo}
                     cvSlug={getMemberCvSlug(member)}
+                    lang={lang}
                   />
                 </li>
               ))}
@@ -211,9 +218,10 @@ export default function Governance() {
                 <li key={member.id} className="h-full">
                   <MemberCard
                     name={member.name}
-                    role={member.role}
+                    role={getLocalized(member, 'role')}
                     photo={member.photo}
                     cvSlug={getMemberCvSlug(member)}
+                    lang={lang}
                   />
                 </li>
               ))}

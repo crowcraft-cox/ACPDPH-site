@@ -1,0 +1,23 @@
+{
+  "title": "Nos projets",
+  "subtitle": "Découvrez nos réalisations et nos projets en cours pour la promotion, l'inclusion et la protection des personnes vivant avec handicap en République Démocratique du Congo.",
+  "filterAll": "Tous les projets",
+  "filterOngoing": "En cours",
+  "filterCompleted": "Achevés",
+  "filterPlanned": "En planification",
+  "noProjects": "Aucun projet ne correspond aux critères sélectionnés.",
+  "aboutProject": "À propos du projet",
+  "projectDetails": "Fiche descriptive du projet",
+  "location": "Zone d'intervention :",
+  "type": "Axe stratégique :",
+  "status": "État d'avancement :",
+  "date": "Date de lancement :",
+  "gallery": "Galerie photos du projet",
+  "backToProjects": "Retour à la liste des projets",
+  "contactAboutProject": "Nous contacter à propos de ce projet",
+  "annualReports": "Rapports & Publications",
+  "reportsSubtitle": "La transparence et la redevabilité guident l'ensemble de nos actions. Consultez nos rapports institutionnels et d'activités.",
+  "downloadReport": "Consulter le rapport",
+  "shareProject": "Partager ce projet",
+  "loadMore": "Charger plus de projets"
+}

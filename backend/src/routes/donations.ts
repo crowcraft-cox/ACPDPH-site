@@ -57,6 +57,7 @@ router.post('/', async (req: Request, res: Response) => {
       paymentMethod = 'MOBILE_MONEY',
       paymentProvider = '',
       notes = '',
+      lang = 'fr',
     } = req.body;
 
     if (!amount || Number(amount) <= 0) {
@@ -98,10 +99,11 @@ router.post('/', async (req: Request, res: Response) => {
       notes,
     });
 
-    const frequencyLabel = frequency === 'single' ? 'Ponctuel (une seule fois)' : 'Mensuel (tous les mois)';
+    const frequencyLabelFr = frequency === 'single' ? 'Ponctuel (une seule fois)' : 'Mensuel (tous les mois)';
+    const frequencyLabelEn = frequency === 'single' ? 'One-time' : 'Monthly';
     const amountLabel = `${amount} ${currency}`;
 
-    // 1. Notification par email à l'ACPDPH
+    // 1. Notification par email à l'ACPDPH (TOUJOURS EN FRANÇAIS)
     const adminNotificationEmail = process.env.CONTACT_EMAIL || 'info.acpdph.asbl.rdc@gmail.com';
     sendEmail({
       to: adminNotificationEmail,
@@ -112,42 +114,74 @@ router.post('/', async (req: Request, res: Response) => {
         `E-mail : ${email}\n` +
         `Téléphone : ${phone || 'Non renseigné'}\n` +
         `Montant : ${amountLabel}\n` +
-        `Fréquence : ${frequencyLabel}\n` +
+        `Fréquence : ${frequencyLabelFr}\n` +
         `Mode de paiement choisi : ${paymentMethod} (${paymentProvider || 'Standard'})\n` +
+        `Langue du donateur : ${lang}\n` +
         `Newsletter : ${newsletter ? 'Oui' : 'Non'}\n` +
         `Statut : En attente de règlement\n\n` +
         `Retrouvez cette promesse de don sur l'espace d'administration de l'ACPDPH.`,
     }).catch((err) => console.error('[Donation Admin Email Error]:', err));
 
-    // 2. Email de confirmation / remerciement au donateur
-    sendEmail({
-      to: email.trim().toLowerCase(),
-      subject: `Merci pour votre engagement auprès de l'ACPDPH (Réf. ${reference})`,
-      text: `Bonjour ${firstName || fullName},\n\n` +
-        `Nous vous remercions chaleureusement pour votre décision de soutenir l'ACPDPH (Agence Congolaise de Promotion des Droits des Personnes Handicapées).\n\n` +
-        `Récapitulatif de votre engagement :\n` +
-        `- Référence de soutien : ${reference}\n` +
-        `- Montant : ${amountLabel}\n` +
-        `- Fréquence : ${frequencyLabel}\n` +
-        `- Moyen de paiement choisi : ${paymentMethod} (${paymentProvider || 'Standard'})\n\n` +
-        (paymentMethod === 'BANK_TRANSFER'
-          ? `Coordonnées bancaires officielles pour votre virement (USD) :\n` +
-            `- NOM DE LA BANQUE : EQUITY BCDC\n` +
-            `- INTITULÉ DU COMPTE : ACPDPH\n` +
-            `- ADRESSE DE LA BANQUE : AGENCE DE BENI\n` +
-            `- NUMÉRO DE COMPTE : 00011150666200168501311\n` +
-            `- SWIFT : BCDCCDKI\n` +
-            `- DEVISE : USD\n` +
-            `- Motif : Indiquez votre nom et la référence « ${reference} »\n\n`
-          : paymentMethod === 'MOBILE_MONEY'
-          ? `Instructions Mobile Money :\n` +
-            `- Numéro Mobile Money ACPDPH : +243 976 992 466\n` +
-            `- Référence : Indiquez votre nom et la référence « ${reference} »\n\n`
-          : '') +
-        `Pour toute question ou pour nous transmettre votre justificatif, vous pouvez nous écrire à info.acpdph.asbl.rdc@gmail.com.\n\n` +
-        `Avec nos salutations les plus respectueuses,\n` +
-        `L'équipe de l'ACPDPH — Beni, Nord-Kivu, RDC`,
-    }).catch((err) => console.error('[Donation Donor Email Error]:', err));
+    // 2. Email de confirmation / remerciement au donateur (DANS LA LANGUE DU VISITEUR)
+    if (lang === 'en') {
+      sendEmail({
+        to: email.trim().toLowerCase(),
+        subject: `Thank you for your generous solidarity with ACPDPH (Ref. ${reference})`,
+        text: `Dear ${firstName || fullName},\n\n` +
+          `We warmly thank you for choosing to support ACPDPH (Congolese Agency for the Promotion of the Rights of Persons with Disabilities).\n\n` +
+          `Summary of your pledge:\n` +
+          `- Support reference: ${reference}\n` +
+          `- Amount: ${amountLabel}\n` +
+          `- Frequency: ${frequencyLabelEn}\n` +
+          `- Selected payment method: ${paymentMethod} (${paymentProvider || 'Standard'})\n\n` +
+          (paymentMethod === 'BANK_TRANSFER'
+            ? `Official banking details for your USD wire transfer:\n` +
+              `- BANK NAME: EQUITY BCDC\n` +
+              `- ACCOUNT NAME: ACPDPH\n` +
+              `- BANK ADDRESS: BENI BRANCH\n` +
+              `- ACCOUNT NUMBER: 00011150666200168501311\n` +
+              `- SWIFT: BCDCCDKI\n` +
+              `- CURRENCY: USD\n` +
+              `- Wire memo / reference: Specify your name and reference « ${reference} »\n\n`
+            : paymentMethod === 'MOBILE_MONEY'
+            ? `Mobile Money instructions:\n` +
+              `- ACPDPH Mobile Money number: +243 976 992 466\n` +
+              `- Transfer memo / reference: Specify your name and reference « ${reference} »\n\n`
+            : '') +
+          `If you have any questions or to share your transfer receipt, please contact us at info.acpdph.asbl.rdc@gmail.com.\n\n` +
+          `With our most respectful regards,\n` +
+          `The ACPDPH Team — Beni, North Kivu, DRC`,
+      }).catch((err) => console.error('[Donation Donor Email Error]:', err));
+    } else {
+      sendEmail({
+        to: email.trim().toLowerCase(),
+        subject: `Merci pour votre engagement auprès de l'ACPDPH (Réf. ${reference})`,
+        text: `Bonjour ${firstName || fullName},\n\n` +
+          `Nous vous remercions chaleureusement pour votre décision de soutenir l'ACPDPH (Agence Congolaise de Promotion des Droits des Personnes Handicapées).\n\n` +
+          `Récapitulatif de votre engagement :\n` +
+          `- Référence de soutien : ${reference}\n` +
+          `- Montant : ${amountLabel}\n` +
+          `- Fréquence : ${frequencyLabelFr}\n` +
+          `- Moyen de paiement choisi : ${paymentMethod} (${paymentProvider || 'Standard'})\n\n` +
+          (paymentMethod === 'BANK_TRANSFER'
+            ? `Coordonnées bancaires officielles pour votre virement (USD) :\n` +
+              `- NOM DE LA BANQUE : EQUITY BCDC\n` +
+              `- INTITULÉ DU COMPTE : ACPDPH\n` +
+              `- ADRESSE DE LA BANQUE : AGENCE DE BENI\n` +
+              `- NUMÉRO DE COMPTE : 00011150666200168501311\n` +
+              `- SWIFT : BCDCCDKI\n` +
+              `- DEVISE : USD\n` +
+              `- Motif : Indiquez votre nom et la référence « ${reference} »\n\n`
+            : paymentMethod === 'MOBILE_MONEY'
+            ? `Instructions Mobile Money :\n` +
+              `- Numéro Mobile Money ACPDPH : +243 976 992 466\n` +
+              `- Référence : Indiquez votre nom et la référence « ${reference} »\n\n`
+            : '') +
+          `Pour toute question ou pour nous transmettre votre justificatif, vous pouvez nous écrire à info.acpdph.asbl.rdc@gmail.com.\n\n` +
+          `Avec nos salutations les plus respectueuses,\n` +
+          `L'équipe de l'ACPDPH — Beni, Nord-Kivu, RDC`,
+      }).catch((err) => console.error('[Donation Donor Email Error]:', err));
+    }
 
     res.status(201).json({
       success: true,

@@ -4,8 +4,10 @@ import { DONATION_CONFIG, DEFAULT_BANK_ACCOUNTS, BANK_DETAILS } from '../config/
 import { OFFICE_ADDRESS, OFFICE_EMAIL, OFFICE_PHONE } from '../constants/contact';
 import { apiFetch } from '../services/api';
 import { useAdminData } from '../context/adminData';
+import { useI18n } from '../i18n';
 
 export default function Support() {
+  const { t, lang, getLocalizedPath } = useI18n();
   const { data } = useAdminData();
   const bankAccounts = (data?.bankAccounts && data.bankAccounts.length > 0
     ? data.bankAccounts
@@ -15,7 +17,7 @@ export default function Support() {
     ? data.contact.phone
     : OFFICE_PHONE;
 
-  // ── États du formulaire de don en 2 étapes ──
+  // États du formulaire de don en 2 étapes
   const [step, setStep] = useState<1 | 2>(1);
   const [frequency, setFrequency] = useState<'monthly' | 'single'>('monthly');
   const [selectedAmount, setSelectedAmount] = useState<number>(25);
@@ -73,21 +75,21 @@ export default function Support() {
     const errs: Record<string, string> = {};
 
     if (!currentAmount || currentAmount < DONATION_CONFIG.minAmount) {
-      errs.amount = `Le montant minimum est de ${DONATION_CONFIG.minAmount} $.`;
+      errs.amount = `${t.support.minAmountError}`;
     }
 
     if (!firstName.trim()) {
-      errs.firstName = 'Le prénom est requis.';
+      errs.firstName = lang === 'en' ? 'First name is required.' : 'Le prénom est requis.';
     }
 
     if (!lastName.trim()) {
-      errs.lastName = 'Le nom de famille est requis.';
+      errs.lastName = lang === 'en' ? 'Last name is required.' : 'Le nom de famille est requis.';
     }
 
     if (!email.trim()) {
-      errs.email = 'L’adresse e-mail est requise.';
+      errs.email = lang === 'en' ? 'Email address is required.' : 'L’adresse e-mail est requise.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      errs.email = 'Veuillez saisir une adresse e-mail valide.';
+      errs.email = lang === 'en' ? 'Please enter a valid email address.' : 'Veuillez saisir une adresse e-mail valide.';
     }
 
     setErrors(errs);
@@ -108,7 +110,7 @@ export default function Support() {
     e.preventDefault();
 
     if (paymentMethod === 'CARD') {
-      setServerError(DONATION_CONFIG.cardPayment.unavailableNotice);
+      setServerError(t.support.cardUnavailableNotice || DONATION_CONFIG.cardPayment.unavailableNotice);
       return;
     }
 
@@ -134,6 +136,7 @@ export default function Support() {
         newsletter,
         paymentMethod,
         paymentProvider: providerLabel,
+        lang,
       };
 
       const res = await apiFetch('/donations', {
@@ -145,13 +148,13 @@ export default function Support() {
 
       if (res.success && res.data) {
         const now = new Date();
-        const formattedDate = now.toLocaleDateString('fr-FR', {
+        const formattedDate = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'fr-FR', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
-        });
+        }).format(now);
 
         setDonationSuccess({
           reference: res.data.reference || `DON-2026-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -161,7 +164,9 @@ export default function Support() {
           name: `${firstName.trim()} ${lastName.trim()}`,
           email: email.trim().toLowerCase(),
           paymentMethod:
-            paymentMethod === 'MOBILE_MONEY' ? 'Mobile Money (RDC)' : 'Virement bancaire',
+            paymentMethod === 'MOBILE_MONEY'
+              ? (lang === 'en' ? 'Mobile Money (DRC)' : 'Mobile Money (RDC)')
+              : (lang === 'en' ? 'Bank Transfer' : 'Virement bancaire'),
           paymentProvider: providerLabel,
           date: formattedDate,
         });
@@ -170,13 +175,17 @@ export default function Support() {
       } else {
         setServerError(
           res.error ||
-            'Une erreur est survenue lors de l’enregistrement de votre engagement. Veuillez réessayer.'
+            (lang === 'en'
+              ? 'An error occurred while saving your contribution. Please try again.'
+              : 'Une erreur est survenue lors de l’enregistrement de votre engagement. Veuillez réessayer.')
         );
       }
     } catch (err: any) {
       setSubmitting(false);
       setServerError(
-        'Impossible de contacter le serveur. Votre connexion internet ou le serveur est temporairement inaccessible.'
+        lang === 'en'
+          ? 'Unable to contact the server. Please check your network connection.'
+          : 'Impossible de contacter le serveur. Votre connexion internet ou le serveur est temporairement inaccessible.'
       );
     }
   };
@@ -218,8 +227,8 @@ export default function Support() {
     if (navigator.share) {
       navigator
         .share({
-          title: 'Soutenir l’ACPDPH',
-          text: 'Chaque enfant a le droit d’apprendre, de grandir et d’être inclus. Soutenez les actions de l’ACPDPH au Nord-Kivu.',
+          title: t.support.title,
+          text: t.support.heroDescription,
           url: window.location.href,
         })
         .catch(() => {});
@@ -244,11 +253,11 @@ export default function Support() {
       {/* ========================================================================= */}
       <section
         className="w-full h-[420px] md:h-[560px] lg:h-[640px] overflow-hidden bg-slate-900"
-        aria-label="Visuel d'accueil"
+        aria-label={t.support.heroImageAlt}
       >
         <img
           src="/images/soutenir-hero.jpg"
-          alt="Enfant assis sur une chaise dans une salle de classe, soutenu par l'ACPDPH"
+          alt={t.support.heroImageAlt}
           width={1920}
           height={1080}
           loading="eager"
@@ -271,13 +280,13 @@ export default function Support() {
                 id="hero-title"
                 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight text-white font-heading"
               >
-                Chaque enfant a le droit d&apos;apprendre, de grandir et d&apos;être inclus
+                {t.support.title}
               </h1>
             </div>
 
             <div>
               <p className="text-base leading-relaxed text-white/95 mb-4">
-                Avec l&apos;ACPDPH, vous aidez les personnes handicapées du Nord-Kivu à accéder à l&apos;éducation, aux soins et à l&apos;autonomie.
+                {t.support.heroDescription}
               </p>
               <div>
                 <a
@@ -291,7 +300,7 @@ export default function Support() {
                   }}
                   className="inline-block bg-[#C2530A] hover:bg-[#A84508] text-white uppercase font-bold text-sm tracking-wider rounded-md px-6 py-3 transition-all duration-200 hover:-translate-y-[1px] shadow-sm cursor-pointer text-center"
                 >
-                  FAIRE UN DON
+                  {t.support.heroCta}
                 </a>
               </div>
             </div>
@@ -301,9 +310,8 @@ export default function Support() {
 
       {/* ========================================================================= */}
       {/* 3. DISPOSITION 2 COLONNES : FORMULAIRE & INFORMATIONS D'IMPACT           */}
-      {/* (Sur mobile : le formulaire s'affiche en premier, directement sous le hero) */}
       {/* ========================================================================= */}
-      <section id="don" className="container-ba py-10 sm:py-14 md:py-16 scroll-mt-6" aria-label="Don et soutien">
+      <section id="don" className="container-ba py-10 sm:py-14 md:py-16 scroll-mt-6" aria-label={t.support.title}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* ======================================================================= */}
           {/* FORMULAIRE DE DON (Col Droite sur Desktop, Ordre 1 sur Mobile)         */}
@@ -319,45 +327,45 @@ export default function Support() {
                     </svg>
                   </div>
                   <h2 className="font-heading text-xl sm:text-2xl font-bold uppercase tracking-tight text-[#2350D9] dark:text-blue-400">
-                    Merci pour votre générosité
+                    {t.support.successTitle}
                   </h2>
                   <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
-                    Votre engagement fait une différence concrète pour l&apos;inclusion des personnes handicapées au Nord-Kivu.
+                    {t.support.successSubtitle}
                   </p>
                 </div>
 
                 {/* Récapitulatif en lignes simples sans cartes lourdes */}
                 <div className="border-t border-slate-200 dark:border-zinc-800 pt-4 space-y-3 text-xs sm:text-sm">
                   <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
-                    <span className="text-slate-500">Référence de soutien</span>
+                    <span className="text-slate-500">{t.support.summaryReference}</span>
                     <span className="font-mono font-bold text-[#2350D9] dark:text-blue-400">
                       {donationSuccess.reference}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
-                    <span className="text-slate-500">Montant engagé</span>
+                    <span className="text-slate-500">{t.support.summaryAmount}</span>
                     <span className="font-bold text-slate-900 dark:text-white">
-                      {donationSuccess.amount} {donationSuccess.currency} ({donationSuccess.frequency === 'monthly' ? 'Mensuel' : 'Ponctuel'})
+                      {donationSuccess.amount} {donationSuccess.currency} ({donationSuccess.frequency === 'monthly' ? t.support.monthly : t.support.single})
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
-                    <span className="text-slate-500">Moyen choisi</span>
+                    <span className="text-slate-500">{t.support.summaryPaymentMethod}</span>
                     <span className="font-medium text-slate-900 dark:text-white">
                       {donationSuccess.paymentMethod}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
-                    <span className="text-slate-500">Donateur</span>
+                    <span className="text-slate-500">{t.support.firstName} &amp; {t.support.lastName}</span>
                     <span className="font-medium text-slate-900 dark:text-white truncate max-w-[200px]">
                       {donationSuccess.name}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center py-1.5 border-b border-slate-100 dark:border-zinc-800">
-                    <span className="text-slate-500">Enregistré le</span>
+                    <span className="text-slate-500">{lang === 'en' ? 'Recorded on' : 'Enregistré le'}</span>
                     <span className="text-slate-700 dark:text-slate-300">
                       {donationSuccess.date}
                     </span>
@@ -367,51 +375,51 @@ export default function Support() {
                 {/* Instructions étape par étape selon le mode */}
                 <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-3">
                   <div className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
-                    Finalisation de votre versement
+                    {t.support.paymentFinalization}
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Veuillez indiquer impérativement la référence <strong className="font-mono text-[#2350D9] dark:text-blue-400">{donationSuccess.reference}</strong> en motif ou libellé de votre versement.
+                    {t.support.paymentReferenceNotice.replace('{{reference}}', donationSuccess.reference)}
                   </p>
 
-                  {donationSuccess.paymentMethod === 'Virement bancaire' && (
+                  {paymentMethod === 'BANK_TRANSFER' && (
                     <div className="space-y-2 pt-1 border-l-4 border-blue-600 pl-3">
                       <div className="font-mono text-[11px] sm:text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
-                        <p>Banque : <strong className="font-sans font-bold text-slate-900 dark:text-white">{BANK_DETAILS.bankName}</strong> ({BANK_DETAILS.bankAddress})</p>
-                        <p>Intitulé : <strong className="font-sans font-bold text-slate-900 dark:text-white">{BANK_DETAILS.accountName}</strong></p>
+                        <p>{t.support.bankNameLabel} : <strong className="font-sans font-bold text-slate-900 dark:text-white">{BANK_DETAILS.bankName}</strong> ({BANK_DETAILS.bankAddress})</p>
+                        <p>{t.support.accountNameLabel} : <strong className="font-sans font-bold text-slate-900 dark:text-white">{BANK_DETAILS.accountName}</strong></p>
                         <div className="flex items-center justify-between gap-2">
-                          <span>Compte ({BANK_DETAILS.currency}) : <strong className="font-bold text-slate-900 dark:text-white break-all">{BANK_DETAILS.accountNumber}</strong></span>
+                          <span>{t.support.accountNumberLabel} ({BANK_DETAILS.currency}) : <strong className="font-bold text-slate-900 dark:text-white break-all">{BANK_DETAILS.accountNumber}</strong></span>
                           <button
                             type="button"
                             onClick={() => handleCopyText(BANK_DETAILS.accountNumber, 'success-bank-acc')}
                             className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 cursor-pointer shrink-0"
                             aria-live="polite"
                           >
-                            {copiedKey === 'success-bank-acc' ? 'COPIÉ' : 'COPIER'}
+                            {copiedKey === 'success-bank-acc' ? t.support.copied : t.support.copy}
                           </button>
                         </div>
                         <div className="flex items-center justify-between gap-2">
-                          <span>SWIFT : <strong className="font-bold text-slate-900 dark:text-white">{BANK_DETAILS.swift}</strong></span>
+                          <span>{t.support.swiftLabel} : <strong className="font-bold text-slate-900 dark:text-white">{BANK_DETAILS.swift}</strong></span>
                           <button
                             type="button"
                             onClick={() => handleCopyText(BANK_DETAILS.swift, 'success-bank-swift')}
                             className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 cursor-pointer shrink-0"
                             aria-live="polite"
                           >
-                            {copiedKey === 'success-bank-swift' ? 'COPIÉ' : 'COPIER'}
+                            {copiedKey === 'success-bank-swift' ? t.support.copied : t.support.copy}
                           </button>
                         </div>
                       </div>
                       <p className="text-[11px] text-slate-600 dark:text-slate-400 italic pt-1">
-                        Indiquez votre nom en motif du virement.
+                        {t.support.paymentBankReasonNotice}
                       </p>
                     </div>
                   )}
 
-                  {donationSuccess.paymentMethod === 'Mobile Money' && (
+                  {paymentMethod === 'MOBILE_MONEY' && (
                     <div className="space-y-2 pt-1 border-l-4 border-blue-600 pl-3">
                       <div className="text-xs text-slate-700 dark:text-slate-300 flex flex-wrap items-center justify-between gap-2">
                         <span>
-                          Numéro Mobile Money ACPDPH :{' '}
+                          {t.support.mobileMoneyLineLabel} ACPDPH :{' '}
                           <a href={`tel:${contactPhone.replace(/\s+/g, '')}`} className="font-mono font-bold text-slate-900 dark:text-white hover:underline">
                             {contactPhone}
                           </a>
@@ -422,28 +430,26 @@ export default function Support() {
                           className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 cursor-pointer shrink-0"
                           aria-live="polite"
                         >
-                          {copiedKey === 'success-mm' ? 'COPIÉ' : 'COPIER'}
+                          {copiedKey === 'success-mm' ? t.support.copied : t.support.copy}
                         </button>
                       </div>
                       <p className="text-[11px] text-slate-600 dark:text-slate-400 italic pt-0.5">
-                        Indiquez votre nom en référence du transfert.
+                        {t.support.paymentMmReasonNotice}
                       </p>
                     </div>
                   )}
 
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Un e-mail récapitulatif a été expédié à <strong className="text-slate-700 dark:text-slate-300">{donationSuccess.email}</strong>.
+                    {t.support.emailSentNotice}
                   </p>
                   <button
                     type="button"
                     onClick={() =>
                       handleCopyText(
                         `ACPDPH Don Réf: ${donationSuccess.reference} - Montant: ${donationSuccess.amount} ${donationSuccess.currency} - Donateur: ${donationSuccess.name}${
-                          donationSuccess.paymentMethod === 'Virement bancaire'
+                          donationSuccess.paymentMethod.includes('Virement') || donationSuccess.paymentMethod.includes('Bank')
                             ? ` - Banque: ${BANK_DETAILS.bankName} - Compte: ${BANK_DETAILS.accountNumber} - SWIFT: ${BANK_DETAILS.swift}`
-                            : donationSuccess.paymentMethod === 'Mobile Money'
-                            ? ` - Mobile Money: ${contactPhone}`
-                            : ''
+                            : ` - Mobile Money: ${contactPhone}`
                         }`,
                         'recap'
                       )
@@ -453,24 +459,24 @@ export default function Support() {
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.615v.75m-7.332 0c-.055.194-.084.4-.084.615v.75m7.332 0c0 .414-.336.75-.75.75H8.25a.75.75 0 01-.75-.75v-.75m7.332 0h1.668A2.25 2.25 0 0118.75 6v13.5A2.25 2.25 0 0116.5 21.75H7.5A2.25 2.25 0 015.25 19.5V6a2.25 2.25 0 012.25-2.25h1.668" />
                     </svg>
-                    <span>{copiedKey === 'recap' ? 'Coordonnées copiées !' : 'Copier les coordonnées du don'}</span>
+                    <span>{copiedKey === 'recap' ? t.support.copyDetailsSuccess : t.support.copyDetails}</span>
                   </button>
                 </div>
 
                 {/* Boutons de redirection */}
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <Link
-                    to="/"
+                    to={getLocalizedPath('/')}
                     className="flex-1 py-3 px-4 rounded-xl text-center bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-slate-200 text-xs font-heading font-bold uppercase tracking-wider transition-colors"
                   >
-                    Retour à l&apos;accueil
+                    {t.support.backToHomeBtn}
                   </Link>
                   <button
                     type="button"
                     onClick={handleShare}
                     className="flex-1 py-3 px-4 rounded-xl text-center bg-[#C2530A] hover:bg-[#9F4100] text-white text-xs font-heading font-bold uppercase tracking-wider transition-colors shadow-xs"
                   >
-                    {shareSuccess ? 'Lien copié !' : 'Partager notre action'}
+                    {shareSuccess ? t.support.shareActionSuccess : t.support.shareAction}
                   </button>
                 </div>
               </div>
@@ -481,10 +487,10 @@ export default function Support() {
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
                   <div>
                     <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
-                      {step === 1 ? 'Étape 1 sur 2' : 'Étape 2 sur 2'}
+                      {t.support.stepIndicator.replace('{{step}}', step.toString())}
                     </span>
                     <h2 className="font-heading text-lg font-bold text-slate-900 dark:text-white">
-                      {step === 1 ? 'Votre soutien financier' : 'Mode de versement'}
+                      {step === 1 ? t.support.step1Title : t.support.step2Title}
                     </h2>
                   </div>
 
@@ -497,7 +503,7 @@ export default function Support() {
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                       </svg>
-                      Modifier
+                      {t.support.change}
                     </button>
                   )}
                 </div>
@@ -518,9 +524,9 @@ export default function Support() {
                     {/* Fréquence : Tous les mois / Une seule fois */}
                     <div>
                       <label className="block text-xs font-heading font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                        Fréquence de soutien
+                        {t.support.chooseAmount}
                       </label>
-                      <div className="grid grid-cols-2 gap-2" role="tablist" aria-label="Fréquence de don">
+                      <div className="grid grid-cols-2 gap-2" role="tablist" aria-label={t.support.chooseAmount}>
                         <button
                           type="button"
                           role="tab"
@@ -532,7 +538,7 @@ export default function Support() {
                               : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-700'
                           }`}
                         >
-                          Tous les mois
+                          {t.support.everyMonth}
                         </button>
                         <button
                           type="button"
@@ -545,7 +551,7 @@ export default function Support() {
                               : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-zinc-700'
                           }`}
                         >
-                          Une seule fois
+                          {t.support.oneTime}
                         </button>
                       </div>
                     </div>
@@ -554,9 +560,9 @@ export default function Support() {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <label className="text-xs font-heading font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                          Montant du don ({DONATION_CONFIG.defaultCurrency})
+                          {t.support.chooseAmount} ({DONATION_CONFIG.defaultCurrency})
                         </label>
-                        <span className="text-[11px] text-slate-500">Devise : Dollar américain ($)</span>
+                        <span className="text-[11px] text-slate-500">{t.support.currencyNotice}</span>
                       </div>
 
                       <div className="grid grid-cols-4 gap-2 mb-3">
@@ -585,14 +591,14 @@ export default function Support() {
                       {/* Champ Autre Montant */}
                       <div className="relative">
                         <label htmlFor={customAmountInputId} className="sr-only">
-                          Autre montant
+                          {t.support.customAmountPlaceholder}
                         </label>
                         <input
                           id={customAmountInputId}
                           type="number"
                           min="1"
                           step="any"
-                          placeholder="Autre montant libre (en $)"
+                          placeholder={t.support.customAmountInput}
                           value={customAmount}
                           onChange={(e) => setCustomAmount(e.target.value)}
                           className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#2350D9] focus:ring-2 focus:ring-[#2350D9]/20"
@@ -611,13 +617,13 @@ export default function Support() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                           <label htmlFor={firstNameInputId} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                            Prénom *
+                            {t.support.firstName} *
                           </label>
                           <input
                             id={firstNameInputId}
                             type="text"
                             required
-                            placeholder="Votre prénom"
+                            placeholder={t.support.firstName}
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#2350D9]"
@@ -629,13 +635,13 @@ export default function Support() {
 
                         <div>
                           <label htmlFor={lastNameInputId} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                            Nom *
+                            {t.support.lastName} *
                           </label>
                           <input
                             id={lastNameInputId}
                             type="text"
                             required
-                            placeholder="Votre nom de famille"
+                            placeholder={t.support.lastName}
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#2350D9]"
@@ -648,7 +654,7 @@ export default function Support() {
 
                       <div>
                         <label htmlFor={emailInputId} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                          Adresse e-mail *
+                          {t.support.email} *
                         </label>
                         <input
                           id={emailInputId}
@@ -666,7 +672,7 @@ export default function Support() {
 
                       <div>
                         <label htmlFor={phoneInputId} className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                          Numéro de téléphone (optionnel)
+                          {t.support.phoneOptional}
                         </label>
                         <input
                           id={phoneInputId}
@@ -687,7 +693,7 @@ export default function Support() {
                             onChange={(e) => setNewsletter(e.target.checked)}
                             className="mt-0.5 rounded border-slate-300 text-[#2350D9] focus:ring-[#2350D9]"
                           />
-                          <span>J&apos;accepte de recevoir des nouvelles des actions de l&apos;ACPDPH sur le terrain</span>
+                          <span>{t.support.newsletterLabel}</span>
                         </label>
                       </div>
                     </div>
@@ -697,7 +703,7 @@ export default function Support() {
                       type="submit"
                       className="w-full py-3.5 px-6 rounded-xl bg-[#C2530A] hover:bg-[#9F4100] text-white font-heading font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300 cursor-pointer text-center"
                     >
-                      Passer au paiement &bull; {currentAmount} $
+                      {t.support.proceedToPayment.replace('{{amount}}', currentAmount.toString())}
                     </button>
                   </form>
                 )}
@@ -709,10 +715,12 @@ export default function Support() {
                     <div className="p-3.5 bg-blue-50/70 dark:bg-blue-950/40 rounded-xl border border-blue-200 dark:border-blue-900 flex items-center justify-between">
                       <div>
                         <span className="text-[10px] font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 block">
-                          Engagement sélectionné
+                          {t.support.selectedCommitment}
                         </span>
                         <div className="font-heading font-bold text-base text-slate-900 dark:text-white">
-                          Don {frequency === 'monthly' ? 'mensuel' : 'ponctuel'} de {currentAmount} $
+                          {t.support.selectedCommitmentValue
+                            .replace('{{frequency}}', frequency === 'monthly' ? t.support.monthly : t.support.single)
+                            .replace('{{amount}}', currentAmount.toString())}
                         </div>
                       </div>
                       <button
@@ -720,14 +728,14 @@ export default function Support() {
                         onClick={() => setStep(1)}
                         className="text-xs font-semibold text-[#2350D9] dark:text-blue-400 hover:underline cursor-pointer"
                       >
-                        Changer
+                        {t.support.changeCommitment}
                       </button>
                     </div>
 
                     {/* Options de paiement */}
                     <div className="space-y-3">
                       <label className="block text-xs font-heading font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                        Sélectionnez votre moyen de règlement
+                        {t.support.selectPaymentMethod}
                       </label>
 
                       {/* 1. Mobile Money */}
@@ -749,10 +757,10 @@ export default function Support() {
                           />
                           <div className="flex-1">
                             <span className="font-heading font-bold text-sm text-slate-900 dark:text-white block">
-                              Mobile Money (RDC)
+                              {t.support.paymentMethods.mobileMoney}
                             </span>
                             <p className="text-xs text-slate-500 mt-1">
-                              Vodacom M-Pesa, Airtel Money et Orange Money.
+                              {t.support.paymentMethods.mobileMoneyDesc}
                             </p>
                           </div>
                         </div>
@@ -777,10 +785,10 @@ export default function Support() {
                           />
                           <div className="flex-1">
                             <span className="font-heading font-bold text-sm text-slate-900 dark:text-white block">
-                              Virement bancaire
+                              {t.support.paymentMethods.bankTransfer}
                             </span>
                             <p className="text-xs text-slate-500 mt-1">
-                              Comptes en USD et CDF pour dons nationaux et internationaux.
+                              {t.support.paymentMethods.bankTransferDesc}
                             </p>
                           </div>
                         </div>
@@ -799,32 +807,27 @@ export default function Support() {
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
                               <span className="font-heading font-bold text-sm text-slate-700 dark:text-slate-300">
-                                Carte bancaire (Visa / Mastercard)
+                                {t.support.paymentMethods.card}
                               </span>
                               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 dark:bg-zinc-800 text-slate-600 dark:text-slate-400">
-                                Bientôt disponible
+                                {t.support.paymentMethods.cardComingSoon}
                               </span>
                             </div>
                             <p className="text-xs text-slate-500 mt-1">
-                              Passerelle financière en ligne en cours d&apos;homologation.
+                              {t.support.cardUnavailableNotice}
                             </p>
                           </div>
                         </div>
                       </div>
 
-                      {/* Instructions sous les options avec trait bleu à gauche */}
+                      {/* Instructions sous les options */}
                       {paymentMethod === 'MOBILE_MONEY' && (
                         <div className="mt-4 border-l-4 border-blue-600 pl-3 py-1 space-y-2 text-xs text-slate-700 dark:text-slate-300">
                           <div className="flex flex-wrap items-center gap-2">
                             <span>
-                              Envoyez <strong>{currentAmount} $</strong> au numéro Mobile Money de l&apos;ACPDPH :{' '}
-                              <a
-                                href={`tel:${contactPhone.replace(/\s+/g, '')}`}
-                                className="font-mono font-bold text-slate-900 dark:text-white hover:underline"
-                              >
-                                {contactPhone}
-                              </a>
-                              . Indiquez votre nom en référence.
+                              {t.support.mobileMoneyInstructions
+                                .replace('{{amount}}', `${currentAmount} $`)
+                                .replace('{{phone}}', contactPhone)}
                             </span>
                             <button
                               type="button"
@@ -832,7 +835,7 @@ export default function Support() {
                               className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer shrink-0"
                               aria-live="polite"
                             >
-                              {copiedKey === 'step2-mm-num' ? 'COPIÉ' : 'COPIER'}
+                              {copiedKey === 'step2-mm-num' ? t.support.copied : t.support.copy}
                             </button>
                           </div>
                         </div>
@@ -842,39 +845,39 @@ export default function Support() {
                         <div className="mt-4 border-l-4 border-blue-600 pl-3 py-1 space-y-2 text-xs text-slate-700 dark:text-slate-300">
                           <div className="space-y-1.5 font-mono text-[11px] sm:text-xs">
                             <div className="flex items-center justify-between gap-2">
-                              <span>Banque : <strong className="font-sans font-bold text-slate-900 dark:text-white">{BANK_DETAILS.bankName}</strong> ({BANK_DETAILS.bankAddress})</span>
+                              <span>{t.support.bankNameLabel} : <strong className="font-sans font-bold text-slate-900 dark:text-white">{BANK_DETAILS.bankName}</strong> ({BANK_DETAILS.bankAddress})</span>
                             </div>
                             <div className="flex items-center justify-between gap-2">
-                              <span>Intitulé : <strong className="font-sans font-bold text-slate-900 dark:text-white">{BANK_DETAILS.accountName}</strong></span>
+                              <span>{t.support.accountNameLabel} : <strong className="font-sans font-bold text-slate-900 dark:text-white">{BANK_DETAILS.accountName}</strong></span>
                             </div>
                             <div className="flex items-center justify-between gap-2">
-                              <span>Numéro de compte : <strong className="font-bold text-slate-900 dark:text-white break-all">{BANK_DETAILS.accountNumber}</strong></span>
+                              <span>{t.support.accountNumberLabel} : <strong className="font-bold text-slate-900 dark:text-white break-all">{BANK_DETAILS.accountNumber}</strong></span>
                               <button
                                 type="button"
                                 onClick={() => handleCopyText(BANK_DETAILS.accountNumber, 'step2-acc-num')}
                                 className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer shrink-0"
                                 aria-live="polite"
                               >
-                                {copiedKey === 'step2-acc-num' ? 'COPIÉ' : 'COPIER'}
+                                {copiedKey === 'step2-acc-num' ? t.support.copied : t.support.copy}
                               </button>
                             </div>
                             <div className="flex items-center justify-between gap-2">
-                              <span>SWIFT : <strong className="font-bold text-slate-900 dark:text-white">{BANK_DETAILS.swift}</strong></span>
+                              <span>{t.support.swiftLabel} : <strong className="font-bold text-slate-900 dark:text-white">{BANK_DETAILS.swift}</strong></span>
                               <button
                                 type="button"
                                 onClick={() => handleCopyText(BANK_DETAILS.swift, 'step2-swift-val')}
                                 className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer shrink-0"
                                 aria-live="polite"
                               >
-                                {copiedKey === 'step2-swift-val' ? 'COPIÉ' : 'COPIER'}
+                                {copiedKey === 'step2-swift-val' ? t.support.copied : t.support.copy}
                               </button>
                             </div>
                             <div className="flex items-center justify-between gap-2">
-                              <span>Devise : <strong className="font-bold text-slate-900 dark:text-white">{BANK_DETAILS.currency}</strong></span>
+                              <span>{t.support.currencyLabel} : <strong className="font-bold text-slate-900 dark:text-white">{BANK_DETAILS.currency}</strong></span>
                             </div>
                           </div>
                           <p className="text-[11px] text-slate-600 dark:text-slate-400 italic pt-0.5">
-                            Indiquez votre nom en motif du virement.
+                            {t.support.paymentBankReasonNotice}
                           </p>
                         </div>
                       )}
@@ -887,14 +890,14 @@ export default function Support() {
                         onClick={() => setStep(1)}
                         className="py-3.5 px-4 rounded-xl border border-slate-300 dark:border-zinc-700 hover:bg-slate-100 dark:hover:bg-zinc-800 text-xs font-heading font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
                       >
-                        Retour
+                        {t.support.back}
                       </button>
                       <button
                         type="submit"
                         disabled={submitting}
                         className="flex-1 py-3.5 px-6 rounded-xl bg-[#C2530A] hover:bg-[#9F4100] text-white font-heading font-bold text-sm uppercase tracking-wider transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300 cursor-pointer disabled:opacity-60 text-center"
                       >
-                        {submitting ? 'Enregistrement en cours...' : 'Confirmer mon soutien'}
+                        {submitting ? t.support.submitting : t.support.confirmDonation}
                       </button>
                     </div>
                   </form>
@@ -911,7 +914,7 @@ export default function Support() {
             <div className="space-y-4">
               <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
                 <h1 className="font-heading text-base sm:text-lg font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
-                  Votre soutien permet
+                  {t.support.whatSupportEnablesTitle}
                 </h1>
               </div>
 
@@ -919,29 +922,26 @@ export default function Support() {
               <div className="space-y-4 pt-1">
                 <div>
                   <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                    Une éducation inclusive et du matériel scolaire adapté pour les enfants
+                    {t.support.supportPoint1}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                    Financement des frais de scolarité, fourniture de cannes blanches, papier et machines braille, aménagements physiques des classes à Beni et dans le Nord-Kivu.
-                  </p>
                 </div>
 
                 <div>
                   <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                    Appareillage et réadaptation pour retrouver mobilité et autonomie
+                    {t.support.supportPoint2}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                    Distribution de fauteuils roulants tout-terrain, béquilles, prothèses et accès aux séances de kinésithérapie pour les personnes vulnérables.
-                  </p>
                 </div>
 
                 <div>
                   <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                    Des activités génératrices de revenus et des formations adaptées
+                    {t.support.supportPoint3}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                    Ateliers de formation professionnelle, appui technique et micro-crédits pour l&apos;autonomisation économique des familles et des femmes vivant avec un handicap.
-                  </p>
+                </div>
+
+                <div>
+                  <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                    {t.support.supportPoint4}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -950,7 +950,7 @@ export default function Support() {
             <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-zinc-800">
               <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
                 <h2 className="font-heading text-xs font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
-                  NOS INFORMATIONS BANCAIRES
+                  {t.support.bankInfoSectionTitle}
                 </h2>
               </div>
 
@@ -958,7 +958,7 @@ export default function Support() {
                 {/* 1. NOM DE LA BANQUE */}
                 <div className="grid grid-cols-1 sm:grid-cols-[38%_1fr] gap-x-3 py-2.5 items-center">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    NOM DE LA BANQUE
+                    {t.support.bankNameLabel}
                   </span>
                   <span className="text-sm font-semibold text-slate-900 dark:text-white">
                     {BANK_DETAILS.bankName}
@@ -968,7 +968,7 @@ export default function Support() {
                 {/* 2. INTITULÉ DU COMPTE */}
                 <div className="grid grid-cols-1 sm:grid-cols-[38%_1fr] gap-x-3 py-2.5 items-center">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    INTITULÉ DU COMPTE
+                    {t.support.accountNameLabel}
                   </span>
                   <span className="text-sm font-semibold text-slate-900 dark:text-white">
                     {BANK_DETAILS.accountName}
@@ -978,7 +978,7 @@ export default function Support() {
                 {/* 3. ADRESSE DE LA BANQUE */}
                 <div className="grid grid-cols-1 sm:grid-cols-[38%_1fr] gap-x-3 py-2.5 items-center">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    ADRESSE DE LA BANQUE
+                    {t.support.bankAddressLabel}
                   </span>
                   <span className="text-sm font-semibold text-slate-900 dark:text-white">
                     {BANK_DETAILS.bankAddress}
@@ -988,7 +988,7 @@ export default function Support() {
                 {/* 4. NUMÉRO DE COMPTE */}
                 <div className="grid grid-cols-1 sm:grid-cols-[38%_1fr] gap-x-3 py-2.5 items-center">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    NUMÉRO DE COMPTE
+                    {t.support.accountNumberLabel}
                   </span>
                   <div className="text-sm font-semibold text-slate-900 dark:text-white flex items-center justify-between gap-2">
                     <span className="font-mono break-all">{BANK_DETAILS.accountNumber}</span>
@@ -998,7 +998,7 @@ export default function Support() {
                       className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer shrink-0"
                       aria-live="polite"
                     >
-                      {copiedKey === 'info-bank-acc' ? 'COPIÉ' : 'COPIER'}
+                      {copiedKey === 'info-bank-acc' ? t.support.copied : t.support.copy}
                     </button>
                   </div>
                 </div>
@@ -1006,7 +1006,7 @@ export default function Support() {
                 {/* 5. SWIFT */}
                 <div className="grid grid-cols-1 sm:grid-cols-[38%_1fr] gap-x-3 py-2.5 items-center">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    SWIFT
+                    {t.support.swiftLabel}
                   </span>
                   <div className="text-sm font-semibold text-slate-900 dark:text-white flex items-center justify-between gap-2">
                     <span className="font-mono break-all">{BANK_DETAILS.swift}</span>
@@ -1016,7 +1016,7 @@ export default function Support() {
                       className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer shrink-0"
                       aria-live="polite"
                     >
-                      {copiedKey === 'info-bank-swift' ? 'COPIÉ' : 'COPIER'}
+                      {copiedKey === 'info-bank-swift' ? t.support.copied : t.support.copy}
                     </button>
                   </div>
                 </div>
@@ -1024,7 +1024,7 @@ export default function Support() {
                 {/* 6. DEVISE DU COMPTE */}
                 <div className="grid grid-cols-1 sm:grid-cols-[38%_1fr] gap-x-3 py-2.5 items-center">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    DEVISE DU COMPTE
+                    {t.support.currencyLabel}
                   </span>
                   <span className="text-sm font-semibold text-slate-900 dark:text-white">
                     {BANK_DETAILS.currency}
@@ -1034,7 +1034,7 @@ export default function Support() {
                 {/* 7. MOBILE MONEY */}
                 <div className="grid grid-cols-1 sm:grid-cols-[38%_1fr] gap-x-3 py-2.5 items-center">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    MOBILE MONEY
+                    {t.support.mobileMoneyLineLabel}
                   </span>
                   <div className="text-sm font-semibold text-slate-900 dark:text-white flex items-center justify-between gap-2">
                     <a
@@ -1049,7 +1049,7 @@ export default function Support() {
                       className="px-2.5 py-1 text-[11px] font-bold uppercase text-[#2350D9] dark:text-blue-400 border border-[#2350D9] dark:border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer shrink-0"
                       aria-live="polite"
                     >
-                      {copiedKey === 'info-mobile-money' ? 'COPIÉ' : 'COPIER'}
+                      {copiedKey === 'info-mobile-money' ? t.support.copied : t.support.copy}
                     </button>
                   </div>
                 </div>
@@ -1060,19 +1060,19 @@ export default function Support() {
             <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-zinc-800">
               <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
                 <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
-                  Que devient votre don ?
+                  {t.support.financialTransparencyTitle}
                 </h2>
               </div>
 
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                L&apos;ACPDPH applique une rigueur stricte dans la gestion de ses ressources financières et matérielles.
+                {t.support.financialTransparencyDesc}
               </p>
 
-              {/* Barres de progression discrètes sans cartes lourdes */}
+              {/* Barres de progression discrètes */}
               <div className="space-y-4 pt-1">
                 <div>
                   <div className="flex justify-between items-center text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
-                    <span>Projets &amp; actions directes sur le terrain (santé, scolarité, réadaptation)</span>
+                    <span>{t.support.allocation1}</span>
                     <span className="font-bold text-[#2350D9] dark:text-blue-400">80 %</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-zinc-800 overflow-hidden">
@@ -1082,7 +1082,7 @@ export default function Support() {
 
                 <div>
                   <div className="flex justify-between items-center text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
-                    <span>Plaidoyer juridique, sensibilisation communautaire &amp; inclusion</span>
+                    <span>{t.support.allocation2}</span>
                     <span className="font-bold text-[#2350D9] dark:text-blue-400">12 %</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-zinc-800 overflow-hidden">
@@ -1092,7 +1092,7 @@ export default function Support() {
 
                 <div>
                   <div className="flex justify-between items-center text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
-                    <span>Frais administratifs, contrôle financier &amp; gouvernance transparente</span>
+                    <span>{t.support.allocation3}</span>
                     <span className="font-bold text-[#2350D9] dark:text-blue-400">8 %</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-zinc-800 overflow-hidden">
@@ -1106,18 +1106,18 @@ export default function Support() {
             <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-zinc-800">
               <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
                 <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
-                  À propos de l&apos;ACPDPH
+                  {t.support.aboutTitle}
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed text-justify">
-                L’Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une Organisation Non Gouvernementale (ONG) nationale de droit congolais, constituée conformément à la <strong>Loi n° 004/2001 du 20 juillet 2001</strong> régissant les associations sans but lucratif. Établie à Beni, dans la province du Nord-Kivu, elle intervient au quotidien pour l&apos;autonomie, l&apos;accès à l&apos;éducation et la défense des droits fondamentaux des personnes en situation de handicap.
+                {t.support.aboutText}
               </p>
               <div className="pt-1">
                 <Link
-                  to="/a-propos"
+                  to={getLocalizedPath('/a-propos')}
                   className="inline-flex items-center gap-1.5 text-xs font-heading font-bold text-[#2350D9] dark:text-blue-400 hover:underline uppercase tracking-wide"
                 >
-                  <span>En savoir plus sur notre gouvernance et nos statuts</span>
+                  <span>{t.support.aboutLink}</span>
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                   </svg>
@@ -1131,34 +1131,30 @@ export default function Support() {
       {/* ========================================================================= */}
       {/* 3. SECTIONS D'INFORMATIONS COMPLÉMENTAIRES (PLEINE LARGEUR)               */}
       {/* ========================================================================= */}
-      <section className="container-ba pb-20 space-y-16" aria-label="Informations complémentaires">
+      <section className="container-ba pb-20 space-y-16" aria-label={t.support.faqSectionTitle}>
         {/* Accordéon FAQ */}
         <div className="max-w-3xl mx-auto space-y-4">
           <div className="text-center mb-8">
             <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 block mb-1">
-              Transparence &bull; Sécurité
+              {t.support.faqBadge}
             </span>
             <h2 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 dark:text-white uppercase tracking-tight">
-              Questions fréquentes sur votre don
+              {t.support.faqSectionTitle}
             </h2>
           </div>
 
           {[
             {
-              q: 'Mon don est-il sécurisé ?',
-              a: 'Oui. Le site de l’ACPDPH ne collecte et ne stocke aucune coordonnée bancaire confidentielle ni code secret. Les transferts s’effectuent directement via votre opérateur Mobile Money ou auprès de votre établissement bancaire, à partir des identifiants et références officiels générés.',
+              q: t.support.faq1Question,
+              a: t.support.faq1Answer,
             },
             {
-              q: 'Comment obtenir mon reçu officiel ?',
-              a: 'Dès votre versement réalisé, transmettez votre référence ou justificatif par e-mail à info.acpdph.asbl.rdc@gmail.com ou par message au bureau de l’association. La trésorerie de l’ACPDPH émettra votre attestation officielle sous 24 à 48 heures.',
+              q: t.support.faq2Question,
+              a: t.support.faq2Answer,
             },
             {
-              q: 'Puis-je faire un don en nature (matériel médical, scolarité) ?',
-              a: 'Absolument. Fauteuils roulants, cannes blanches, machines braille, prothèses et matériel informatique adapté sont directement acheminés aux bénéficiaires. Vous pouvez nous contacter directement via notre page de contact pour convenir de l’acheminement.',
-            },
-            {
-              q: 'Comment sont suivies les contributions sur le terrain ?',
-              a: 'L’ACPDPH publie des bilans périodiques d’activités. Les personnes ayant accepté de recevoir des informations sont tenues informées de la remise des matériels et de l’avancement des projets éducatifs et sanitaires à Beni.',
+              q: t.support.faq3Question,
+              a: t.support.faq3Answer,
             },
           ].map((item, idx) => {
             const isOpen = openFaq === idx;
@@ -1197,15 +1193,15 @@ export default function Support() {
         {/* Section Contact Direct & Partenaires */}
         <div className="max-w-4xl mx-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-zinc-800 p-8 sm:p-10 text-center space-y-6">
           <span className="text-xs font-heading font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400">
-            Une question sur votre soutien ou un partenariat ?
+            {t.support.questionsPartnerTitle}
           </span>
 
           <h3 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 dark:text-white">
-            Notre équipe se tient à votre disposition
+            {t.support.questionsPartnerSubtitle}
           </h3>
 
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Pour échanger sur un projet philanthropique, un soutien institutionnel, ou organiser la remise d&apos;équipements médicaux ou scolaires :
+            {t.support.questionsPartnerDesc}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-6 pt-2 text-xs sm:text-sm font-medium">
@@ -1230,10 +1226,10 @@ export default function Support() {
             </a>
 
             <Link
-              to="/contact"
+              to={getLocalizedPath('/contact')}
               className="flex items-center gap-1.5 text-[#C2530A] hover:underline font-heading font-bold uppercase tracking-wider"
             >
-              <span>Formulaire de contact</span>
+              <span>{t.support.contactFormLink}</span>
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
@@ -1241,7 +1237,7 @@ export default function Support() {
           </div>
 
           <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 text-[11px] text-slate-400">
-            Siège : {OFFICE_ADDRESS}
+            {t.support.headquarters.replace('{{address}}', OFFICE_ADDRESS)}
           </div>
         </div>
       </section>

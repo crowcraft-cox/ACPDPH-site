@@ -1,0 +1,23 @@
+{
+  "home": "Home",
+  "about": "About us",
+  "governance": "Governance",
+  "domains": "Domains",
+  "projects": "Projects",
+  "news": "News",
+  "partners": "Partners",
+  "jobs": "Jobs & Opportunities",
+  "jobsShort": "Jobs",
+  "gallery": "Galleries",
+  "contact": "Contact",
+  "support": "Support us",
+  "donate": "Donate",
+  "organization": "Organization",
+  "menu": "Menu",
+  "openMenu": "Open navigation menu",
+  "closeMenu": "Close navigation menu",
+  "switchLanguage": "Change language",
+  "currentLanguage": "Current language: English",
+  "highContrast": "High contrast",
+  "skipToContent": "Skip to main content"
+}

@@ -1,0 +1,50 @@
+{
+  "title": "Unsere Einsatzbereiche",
+  "subtitle": "Fünf strategische Schwerpunkte für nachhaltige Inklusion, Chancengleichheit und selbstbestimmtes Leben von Menschen mit Behinderungen in der DRK.",
+  "protection": {
+    "title": "Rechte & Juristische Interessenvertretung",
+    "desc": "Aktive Förderung und Verteidigung der Grundrechte von Menschen mit Behinderungen, Bekanntmachung nationaler Gesetze und internationaler Verträge sowie entschlossener Kampf gegen jede Form von Diskriminierung und sozialer Ausgrenzung.",
+    "points": [
+      "Kostenlose Rechtsberatung und Beistand für Menschen mit Behinderungen bei Rechtsverletzungen.",
+      "Institutionelle Interessenvertretung bei Gerichten und Behörden zur Durchsetzung von Schutzgesetzen.",
+      "Regelmäßige Aufklärungskampagnen in der Bevölkerung zum Abbau von Vorurteilen."
+    ]
+  },
+  "accessibility": {
+    "title": "Universelle Barrierefreiheit",
+    "desc": "Interessenvertretung und bauliche Maßnahmen für barrierefreie öffentliche Gebäude, Straßenräume, Verkehrsmittel und Kommunikationswege für alle Formen von Beeinträchtigungen.",
+    "points": [
+      "Barrierefreiheitsaudits für Schulen, Gesundheitseinrichtungen und Verwaltungsgebäude.",
+      "Bau und Nachrüstung von Zugangsrampen, verbreiterten Türen und barrierefreien Sanitäranlagen.",
+      "Förderung digitaler Barrierefreiheit und zugänglicher Informationsformate."
+    ]
+  },
+  "education": {
+    "title": "Inklusive Bildung & Ausbildung",
+    "desc": "Schulische Integration von Kindern und Jugendlichen mit Behinderungen, Weiterbildung von Lehrkräften in inklusiver Pädagogik und Bereitstellung geeigneter Lehrmaterialien.",
+    "points": [
+      "Inklusiver Schulbesuch und Vollstipendien für besonders schutzbedürftige Kinder.",
+      "Fortbildung für Lehrkräfte in differenzierter Unterrichtsgestaltung und individueller Förderung.",
+      "Bereitstellung von Speziallehrmitteln (Braille, visuelle Hilfsmittel und angepasste Schulbücher)."
+    ]
+  },
+  "health": {
+    "title": "Gesundheit, Hilfsmittel & Rehabilitation",
+    "desc": "Medizinische Begleitung, physische und funktionelle Rehabilitation, psychosoziale Unterstützung und Versorgung mit Mobilitätshilfen (Gehstützen, Dreiräder, Rollstühle, Prothesen).",
+    "points": [
+      "Verteilung orthopädischer Hilfsmittel, manueller Dreiräder und angepasster Rollstühle.",
+      "Regelmäßige Bewegungstherapie und individuelle psychosoziale Beratung.",
+      "Vermittlung und Kostenübernahme bei fachärztlicher Versorgung komplexer Fälle."
+    ]
+  },
+  "empowerment": {
+    "title": "Wirtschaftliche Selbstständigkeit",
+    "desc": "Berufliche Ausbildung in zukunftsträchtigen Berufen, Stärkung unternehmerischer Kompetenzen, Förderung einkommensschaffender Aktivitäten und nachhaltige Arbeitsmarktintegration.",
+    "points": [
+      "Praxisnahe Berufsworkshops (Schneiderei, Handwerk, Schusterei, Digitales).",
+      "Bereitstellung von Starterpaketen und Mikrozuschüssen für einkommensschaffende Aktivitäten.",
+      "Begleitung beim Berufseinstieg und Unternehmensdialog für inklusives Einstellen."
+    ]
+  }
+}
+

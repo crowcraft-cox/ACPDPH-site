@@ -18,6 +18,7 @@ import contentRoutes from './routes/content';
 import galleryRoutes from './routes/gallery';
 import applicationRoutes from './routes/applications';
 import cvRoutes from './routes/cvs';
+import translateRoutes from './routes/translate';
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use('/api/v1/content', contentRoutes);
 app.use('/api/v1/gallery', galleryRoutes);
 app.use('/api/v1/applications', applicationRoutes);
 app.use('/api/v1/cvs', cvRoutes);
+app.use('/api/v1/translate', translateRoutes);
 
 // Serve uploaded public files statically (gallery, etc.)
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));

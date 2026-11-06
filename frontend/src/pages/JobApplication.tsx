@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAdminData } from '../context/adminData';
 import { apiFetch } from '../services/api';
 import { smoothScrollTo } from '../hooks/useLenis';
+import { useI18n, getLocalized } from '../i18n';
 
 interface SubmissionSummary {
   prenom: string;
@@ -23,54 +24,54 @@ interface ExperienceEntry {
   anneesExperience: string;
 }
 
-const EDUCATION_LEVELS = [
-  'Aucun diplôme',
-  "Diplôme d'État",
-  'Certificat / attestation professionnelle',
-  'Graduat / Licence (Bac+3)',
-  'Licence / Master (Bac+5)',
-  'Doctorat',
-  'Autre',
+const GET_EDUCATION_LEVELS = (lang: string) => [
+  { value: 'Aucun diplôme', label: lang === 'en' ? 'No diploma' : 'Aucun diplôme' },
+  { value: "Diplôme d'État", label: lang === 'en' ? 'State Diploma (Secondary school)' : "Diplôme d'État" },
+  { value: 'Certificat / attestation professionnelle', label: lang === 'en' ? 'Professional certificate / training' : 'Certificat / attestation professionnelle' },
+  { value: 'Graduat / Licence (Bac+3)', label: lang === 'en' ? "Bachelor's degree (Bac+3)" : 'Graduat / Licence (Bac+3)' },
+  { value: 'Licence / Master (Bac+5)', label: lang === 'en' ? "Master's degree (Bac+5)" : 'Licence / Master (Bac+5)' },
+  { value: 'Doctorat', label: lang === 'en' ? 'Doctorate / PhD' : 'Doctorat' },
+  { value: 'Autre', label: lang === 'en' ? 'Other' : 'Autre' },
 ];
 
-const LANGUAGE_OPTIONS = [
-  'Français',
-  'Swahili',
-  'Lingala',
-  'Kinande',
-  'Anglais',
-  'Autre',
+const GET_LANGUAGE_OPTIONS = (lang: string) => [
+  { value: 'Français', label: lang === 'en' ? 'French' : 'Français' },
+  { value: 'Swahili', label: 'Swahili' },
+  { value: 'Lingala', label: 'Lingala' },
+  { value: 'Kinande', label: 'Kinande' },
+  { value: 'Anglais', label: lang === 'en' ? 'English' : 'Anglais' },
+  { value: 'Autre', label: lang === 'en' ? 'Other' : 'Autre' },
 ];
 
-const LANGUAGE_LEVELS = [
-  'Notions',
-  'Courant',
-  'Langue maternelle',
+const GET_LANGUAGE_LEVELS = (lang: string) => [
+  { value: 'Notions', label: lang === 'en' ? 'Basic' : 'Notions' },
+  { value: 'Courant', label: lang === 'en' ? 'Fluent' : 'Courant' },
+  { value: 'Langue maternelle', label: lang === 'en' ? 'Native' : 'Langue maternelle' },
 ];
 
-const EXPERIENCE_YEARS = [
-  'Moins de 1 an',
-  '1 an',
-  '2 ans',
-  '3 ans',
-  '4 ans',
-  '5 ans',
-  '6 à 9 ans',
-  '10 ans et plus',
+const GET_EXPERIENCE_YEARS = (lang: string) => [
+  { value: 'Moins de 1 an', label: lang === 'en' ? 'Less than 1 year' : 'Moins de 1 an' },
+  { value: '1 an', label: lang === 'en' ? '1 year' : '1 an' },
+  { value: '2 ans', label: lang === 'en' ? '2 years' : '2 ans' },
+  { value: '3 ans', label: lang === 'en' ? '3 years' : '3 ans' },
+  { value: '4 ans', label: lang === 'en' ? '4 years' : '4 ans' },
+  { value: '5 ans', label: lang === 'en' ? '5 years' : '5 ans' },
+  { value: '6 à 9 ans', label: lang === 'en' ? '6 to 9 years' : '6 à 9 ans' },
+  { value: '10 ans et plus', label: lang === 'en' ? '10+ years' : '10 ans et plus' },
 ];
 
-const COUNTRIES = [
-  'République démocratique du Congo',
-  'Rwanda',
-  'Burundi',
-  'Ouganda',
-  'Tanzanie',
-  'Kenya',
-  'République du Congo',
-  'Centrafrique',
-  'Belgique',
-  'France',
-  'Autre',
+const GET_COUNTRIES = (lang: string) => [
+  { value: 'République démocratique du Congo', label: lang === 'en' ? 'Democratic Republic of the Congo' : 'République démocratique du Congo' },
+  { value: 'Rwanda', label: 'Rwanda' },
+  { value: 'Burundi', label: 'Burundi' },
+  { value: 'Ouganda', label: lang === 'en' ? 'Uganda' : 'Ouganda' },
+  { value: 'Tanzanie', label: lang === 'en' ? 'Tanzania' : 'Tanzanie' },
+  { value: 'Kenya', label: 'Kenya' },
+  { value: 'République du Congo', label: lang === 'en' ? 'Republic of the Congo' : 'République du Congo' },
+  { value: 'Centrafrique', label: lang === 'en' ? 'Central African Republic' : 'Centrafrique' },
+  { value: 'Belgique', label: lang === 'en' ? 'Belgium' : 'Belgique' },
+  { value: 'France', label: 'France' },
+  { value: 'Autre', label: lang === 'en' ? 'Other' : 'Autre' },
 ];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo
@@ -79,6 +80,7 @@ export default function JobApplication() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data } = useAdminData();
+  const { t, lang, getLocalizedPath } = useI18n();
   const formRef = useRef<HTMLFormElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -87,9 +89,9 @@ export default function JobApplication() {
     const completedKey = `candidature_completed_${id}`;
     if (sessionStorage.getItem(completedKey)) {
       sessionStorage.removeItem(completedKey);
-      navigate('/offres-emplois', { replace: true });
+      navigate(getLocalizedPath('/offres-emplois'), { replace: true });
     }
-  }, [id, navigate]);
+  }, [id, navigate, getLocalizedPath]);
 
   useEffect(() => {
     smoothScrollTo(0, { immediate: true });
@@ -97,6 +99,13 @@ export default function JobApplication() {
 
   const jobs = data.jobs || [];
   const job = jobs.find((j) => String(j.id) === String(id));
+
+  // Options bilingues
+  const educationLevels = useMemo(() => GET_EDUCATION_LEVELS(lang), [lang]);
+  const languageOptions = useMemo(() => GET_LANGUAGE_OPTIONS(lang), [lang]);
+  const languageLevels = useMemo(() => GET_LANGUAGE_LEVELS(lang), [lang]);
+  const experienceYears = useMemo(() => GET_EXPERIENCE_YEARS(lang), [lang]);
+  const countries = useMemo(() => GET_COUNTRIES(lang), [lang]);
 
   // Vérifier si l'offre est expirée
   let isExpired = false;
@@ -180,19 +189,19 @@ export default function JobApplication() {
               </svg>
             </div>
             <h1 className="font-heading text-2xl font-bold text-gray-900 dark:text-white mb-3">
-              Cette offre n'est plus ouverte aux candidatures.
+              {t.jobs.noLongerOpen}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 max-w-md mx-auto">
-              Le poste recherché n'est plus disponible ou la date limite de dépôt a été atteinte.
+              {t.jobs.noLongerOpenDesc}
             </p>
             <Link
-              to="/offres-emplois"
+              to={getLocalizedPath('/offres-emplois')}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#2350D9] text-white text-xs font-bold uppercase tracking-wider hover:bg-blue-700 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
-              <span>Consulter toutes les offres</span>
+              <span>{t.jobs.consultAllOffers}</span>
             </Link>
           </div>
         </div>
@@ -228,10 +237,10 @@ export default function JobApplication() {
   const validateDocFile = (file: File): string | null => {
     const ext = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!['.pdf', '.doc', '.docx'].includes(ext)) {
-      return 'Format non accepté. Formats autorisés : PDF, DOC, DOCX.';
+      return t.jobs.fileFormatError || 'Format non accepté. Formats autorisés : PDF, DOC, DOCX.';
     }
     if (file.size > MAX_FILE_SIZE) {
-      return 'Fichier trop volumineux. Taille maximale : 5 Mo.';
+      return t.jobs.fileSizeError || 'Fichier trop volumineux. Taille maximale : 5 Mo.';
     }
     return null;
   };
@@ -239,10 +248,10 @@ export default function JobApplication() {
   const validateCertFile = (file: File): string | null => {
     const ext = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'].includes(ext)) {
-      return 'Format non accepté. Formats autorisés : PDF, DOC, DOCX, JPG, PNG.';
+      return t.jobs.certFormatError || 'Format non accepté. Formats autorisés : PDF, DOC, DOCX, JPG, PNG.';
     }
     if (file.size > MAX_FILE_SIZE) {
-      return 'Fichier trop volumineux. Taille maximale : 5 Mo.';
+      return t.jobs.fileSizeError || 'Fichier trop volumineux. Taille maximale : 5 Mo.';
     }
     return null;
   };
@@ -314,58 +323,58 @@ export default function JobApplication() {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!nom.trim()) newErrors.nom = 'Le nom est obligatoire.';
-    if (!prenom.trim()) newErrors.prenom = 'Le prénom est obligatoire.';
+    if (!nom.trim()) newErrors.nom = t.jobs.errorNom || 'Le nom est obligatoire.';
+    if (!prenom.trim()) newErrors.prenom = t.jobs.errorPrenom || 'Le prénom est obligatoire.';
 
     if (!dateNaissance) {
-      newErrors.dateNaissance = 'La date de naissance est obligatoire.';
+      newErrors.dateNaissance = t.jobs.errorDateRequired || 'La date de naissance est obligatoire.';
     } else {
       const birth = new Date(dateNaissance);
       const today = new Date();
       if (isNaN(birth.getTime()) || birth > today) {
-        newErrors.dateNaissance = 'Date de naissance invalide.';
+        newErrors.dateNaissance = t.jobs.errorDateInvalid || 'Date de naissance invalide.';
       } else {
         let age = today.getFullYear() - birth.getFullYear();
         const m = today.getMonth() - birth.getMonth();
         if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
         if (age < 18) {
-          newErrors.dateNaissance = 'Vous devez être âgé(e) d’au moins 18 ans pour postuler.';
+          newErrors.dateNaissance = t.jobs.errorDateAge || 'Vous devez être âgé(e) d’au moins 18 ans pour postuler.';
         }
       }
     }
 
-    if (!sexe) newErrors.sexe = 'Veuillez préciser le sexe.';
+    if (!sexe) newErrors.sexe = t.jobs.errorSexe || 'Veuillez préciser le sexe.';
 
     if (!email.trim()) {
-      newErrors.email = "L'adresse e-mail est obligatoire.";
+      newErrors.email = t.jobs.errorEmailRequired || "L'adresse e-mail est obligatoire.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      newErrors.email = 'Format d’adresse e-mail invalide.';
+      newErrors.email = t.jobs.errorEmailFormat || 'Format d’adresse e-mail invalide.';
     }
 
     if (!confirmEmail.trim()) {
-      newErrors.confirmEmail = 'Veuillez confirmer votre adresse e-mail.';
+      newErrors.confirmEmail = t.jobs.errorConfirmEmailRequired || 'Veuillez confirmer votre adresse e-mail.';
     } else if (email.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) {
-      newErrors.confirmEmail = 'Les deux adresses e-mail ne correspondent pas.';
+      newErrors.confirmEmail = t.jobs.errorConfirmEmailMismatch || 'Les deux adresses e-mail ne correspondent pas.';
     }
 
     if (!telephone.trim() || telephone.trim().length < 8) {
-      newErrors.telephone = 'Le numéro de téléphone international est obligatoire.';
+      newErrors.telephone = t.jobs.errorPhone || 'Le numéro de téléphone international est obligatoire.';
     }
 
     if (!niveauEducation) {
-      newErrors.niveauEducation = "Veuillez sélectionner votre niveau d'éducation.";
+      newErrors.niveauEducation = t.jobs.errorEducation || "Veuillez sélectionner votre niveau d'éducation.";
     }
 
     if (!cvFile) {
-      newErrors.cv = 'Le Curriculum Vitae (CV) est obligatoire.';
+      newErrors.cv = t.jobs.errorCv || 'Le Curriculum Vitae (CV) est obligatoire.';
     }
 
     if (!coverLetterFile) {
-      newErrors.coverLetter = 'La lettre de motivation est obligatoire.';
+      newErrors.coverLetter = t.jobs.errorCoverLetter || 'La lettre de motivation est obligatoire.';
     }
 
     if (!consentement) {
-      newErrors.consentement = 'Vous devez attester de l’exactitude de vos informations pour postuler.';
+      newErrors.consentement = t.jobs.errorConsent || 'Vous devez attester de l’exactitude de vos informations pour postuler.';
     }
 
     setErrors(newErrors);
@@ -425,6 +434,7 @@ export default function JobApplication() {
       formData.append('enSituationHandicap', enSituationHandicap);
       formData.append('amenagementsSouhaites', amenagementsSouhaites.trim());
       formData.append('consentement', 'true');
+      formData.append('lang', lang);
 
       if (cvFile) formData.append('cv', cvFile);
       if (coverLetterFile) formData.append('coverLetter', coverLetterFile);
@@ -445,16 +455,19 @@ export default function JobApplication() {
           `CAND-2026-${String(Math.floor(1000 + Math.random() * 9000))}`;
 
         const now = new Date();
-        const day = String(now.getDate()).padStart(2, '0');
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const year = now.getFullYear();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const formattedDate = `${day}.${month}.${year} à ${hours}:${minutes}`;
+        const formattedDate = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }).format(now);
+
+        const jobDisplayTitle = getLocalized(job, 'title', lang);
 
         setSubmissionSummary({
           prenom: prenom.trim(),
-          jobTitle: job.title,
+          jobTitle: jobDisplayTitle,
           reference: refCode,
           date: formattedDate,
           email: email.trim().toLowerCase(),
@@ -463,12 +476,22 @@ export default function JobApplication() {
         sessionStorage.setItem(`candidature_completed_${job.id}`, 'true');
         smoothScrollTo(0, { immediate: true });
       } else {
-        setServerError(res.error || "Une erreur est survenue lors de l'envoi de votre candidature. Veuillez réessayer.");
+        setServerError(
+          res.error || t.jobs.serverError ||
+            (lang === 'en'
+              ? 'An error occurred while submitting your application. Please try again.'
+              : "Une erreur est survenue lors de l'envoi de votre candidature. Veuillez réessayer.")
+        );
         smoothScrollTo(0);
       }
     } catch (err: any) {
       setSubmitting(false);
-      setServerError("Impossible de joindre le serveur. Veuillez vérifier votre connexion internet et réessayer.");
+      setServerError(
+        t.jobs.serverErrorNetwork ||
+          (lang === 'en'
+            ? 'Unable to contact the server. Please check your internet connection and try again.'
+            : 'Impossible de joindre le serveur. Veuillez vérifier votre connexion internet et réessayer.')
+      );
       smoothScrollTo(0);
     }
   };
@@ -478,7 +501,7 @@ export default function JobApplication() {
     return (
       <div className="pt-28 pb-20 bg-slate-50 dark:bg-ba-dark min-h-screen">
         <main className="max-w-xl mx-auto px-4 py-12 md:py-16 text-center">
-          {/* Icône de validation seule centrée en haut (sans carré ni fond) */}
+          {/* Icône de validation */}
           <div className="flex justify-center mb-5">
             <svg
               className="w-14 h-14 text-blue-600 dark:text-blue-500"
@@ -504,23 +527,23 @@ export default function JobApplication() {
             aria-live="polite"
             className="font-heading text-2xl font-semibold uppercase tracking-tight text-[#2350D9] dark:text-blue-400 outline-none mb-3"
           >
-            CANDIDATURE ENVOYÉE
+            {t.jobs.applicationSuccessTitle}
           </h1>
 
           {/* Phrase d'introduction personnalisée */}
           <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
-            Merci, {submissionSummary.prenom}. Votre candidature au poste de{' '}
+            {t.jobs.successThankPrefix} {submissionSummary.prenom}. {t.jobs.successAppliedFor}{' '}
             <span className="font-semibold text-slate-900 dark:text-white">
               « {submissionSummary.jobTitle} »
             </span>{' '}
-            a bien été enregistrée.
+            {t.jobs.successAppliedForEnd}
           </p>
 
           {/* Récapitulatif en lignes, sans cartes */}
           <div className="border-t border-slate-200 dark:border-zinc-800 text-left">
             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] gap-x-4 gap-y-1 py-3.5 border-b border-slate-200 dark:border-zinc-800 items-baseline">
               <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
-                Poste visé
+                {t.jobs.jobTitleApplied}
               </span>
               <span className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">
                 {submissionSummary.jobTitle}
@@ -529,7 +552,7 @@ export default function JobApplication() {
 
             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] gap-x-4 gap-y-1 py-3.5 border-b border-slate-200 dark:border-zinc-800 items-baseline">
               <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
-                Référence
+                {t.jobs.applicationReference}
               </span>
               <span className="font-mono text-sm font-semibold text-slate-900 dark:text-white tracking-wide">
                 {submissionSummary.reference}
@@ -538,7 +561,7 @@ export default function JobApplication() {
 
             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] gap-x-4 gap-y-1 py-3.5 border-b border-slate-200 dark:border-zinc-800 items-baseline">
               <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
-                Envoyée le
+                {t.jobs.submittedOn}
               </span>
               <span className="text-xs sm:text-sm text-slate-900 dark:text-white">
                 {submissionSummary.date}
@@ -547,7 +570,7 @@ export default function JobApplication() {
 
             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] gap-x-4 gap-y-1 py-3.5 border-b border-slate-200 dark:border-zinc-800 items-baseline">
               <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
-                Confirmation envoyée à
+                {t.jobs.confirmationSentTo}
               </span>
               <span className="text-xs sm:text-sm text-slate-900 dark:text-white break-all">
                 {submissionSummary.email}
@@ -558,30 +581,32 @@ export default function JobApplication() {
           {/* Section "Et maintenant ?" */}
           <div className="mt-8 text-left">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400 mb-4">
-              ET MAINTENANT ?
+              {t.jobs.whatNext}
             </h2>
             <ol className="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               <li className="flex items-start gap-3">
                 <span className="font-bold text-[#2350D9] dark:text-blue-400 shrink-0">1.</span>
-                <span>Notre équipe examine votre dossier avec attention.</span>
+                <span>{t.jobs.nextStep1}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="font-bold text-[#2350D9] dark:text-blue-400 shrink-0">2.</span>
-                <span>Seules les personnes présélectionnées sont contactées, par e-mail ou par téléphone.</span>
+                <span>{t.jobs.nextStep2}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="font-bold text-[#2350D9] dark:text-blue-400 shrink-0">3.</span>
                 <span>
-                  Une question ? Écrivez-nous à{' '}
+                  {t.jobs.nextStep3Prefix}{' '}
                   <a
-                    href={`mailto:info.acpdph.asbl.rdc@gmail.com?subject=Question%20candidature%20${encodeURIComponent(
-                      submissionSummary.reference
+                    href={`mailto:info.acpdph.asbl.rdc@gmail.com?subject=${encodeURIComponent(
+                      lang === 'en'
+                        ? `Question regarding application ${submissionSummary.reference}`
+                        : `Question candidature ${submissionSummary.reference}`
                     )}`}
                     className="font-semibold text-[#2350D9] dark:text-blue-400 hover:underline"
                   >
                     info.acpdph.asbl.rdc@gmail.com
                   </a>{' '}
-                  en indiquant votre référence.
+                  {t.jobs.nextStep3Suffix}
                 </span>
               </li>
             </ol>
@@ -590,20 +615,20 @@ export default function JobApplication() {
           {/* Boutons d'action */}
           <div className="flex flex-wrap gap-3 justify-center mt-8">
             <Link
-              to="/offres-emplois"
+              to={getLocalizedPath('/offres-emplois')}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[#C2530A] hover:bg-[#a84408] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2530A] focus-visible:ring-offset-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
-              <span>RETOUR AUX OFFRES</span>
+              <span>{t.jobs.backToCareers}</span>
             </Link>
 
             <Link
-              to="/"
+              to={getLocalizedPath('/')}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-md border-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 bg-transparent hover:bg-blue-50 dark:hover:bg-blue-950/30 text-xs font-bold uppercase tracking-wider transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
             >
-              <span>ACCUEIL DU SITE</span>
+              <span>{t.jobs.homePage}</span>
             </Link>
           </div>
         </main>
@@ -618,26 +643,26 @@ export default function JobApplication() {
         {/* Lien retour à l'offre */}
         <div className="mb-6">
           <Link
-            to={`/offres-emplois/${job.id}`}
+            to={getLocalizedPath(`/offres-emplois/${job.id}`)}
             className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#2350D9] dark:text-blue-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
-            <span>Retour à l'offre</span>
+            <span>{t.jobs.backToJobs}</span>
           </Link>
         </div>
 
         {/* ── EN-TÊTE DE LA PAGE ── */}
         <header className="text-center mb-8">
           <h1 className="font-heading text-3xl sm:text-4xl font-extrabold uppercase text-[#2350D9] dark:text-blue-400 tracking-tight mb-4">
-            FORMULAIRE DE CANDIDATURE
+            {t.jobs.applicationFormTitle}
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed text-left md:text-justify w-full mb-3">
-            Merci de votre intérêt pour l'ACPDPH. Ce formulaire nous permet d'évaluer votre candidature. Merci de le remplir avec précision. Seules les personnes présélectionnées seront contactées. Les candidatures de personnes en situation de handicap et de femmes sont particulièrement encouragées.
+            {t.jobs.headerSubtitle}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 text-left">
-            « * » indique les champs obligatoires
+            {t.jobs.requiredIndicator}
           </p>
         </header>
 
@@ -655,7 +680,7 @@ export default function JobApplication() {
               onClick={() => setServerError(null)}
               className="text-xs font-bold uppercase underline hover:no-underline cursor-pointer"
             >
-              Réessayer
+              {t.jobs.retry}
             </button>
           </div>
         )}
@@ -677,18 +702,18 @@ export default function JobApplication() {
           <section className="space-y-3">
             <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
-                POSTE VISÉ
+                {t.jobs.sectionPosition}
               </h2>
             </div>
             <div>
               <label htmlFor="field-jobTitle" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                Position pour laquelle je postule *
+                {t.jobs.positionApplied} *
               </label>
               <input
                 id="field-jobTitle"
                 type="text"
                 readOnly
-                value={job.title}
+                value={getLocalized(job, 'title', lang)}
                 className="w-full bg-slate-100 dark:bg-zinc-800/80 border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-slate-700 dark:text-zinc-300 font-medium cursor-not-allowed select-none"
               />
             </div>
@@ -698,14 +723,14 @@ export default function JobApplication() {
           <section className="space-y-3">
             <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
-                IDENTITÉ
+                {t.jobs.sectionIdentity}
               </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {/* Nom */}
               <div>
                 <label htmlFor="field-nom" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Nom *
+                  {t.jobs.lastName} *
                 </label>
                 <input
                   id="field-nom"
@@ -726,7 +751,7 @@ export default function JobApplication() {
               {/* Postnom */}
               <div>
                 <label htmlFor="field-postnom" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Postnom
+                  {t.jobs.middleName}
                 </label>
                 <input
                   id="field-postnom"
@@ -741,7 +766,7 @@ export default function JobApplication() {
               {/* Prénom */}
               <div>
                 <label htmlFor="field-prenom" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Prénom *
+                  {t.jobs.firstName} *
                 </label>
                 <input
                   id="field-prenom"
@@ -762,7 +787,7 @@ export default function JobApplication() {
               {/* Date de naissance */}
               <div>
                 <label htmlFor="field-dateNaissance" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Date de naissance * (JJ / MM / AAAA)
+                  {t.jobs.birthDateLabel} *
                 </label>
                 <input
                   id="field-dateNaissance"
@@ -782,7 +807,7 @@ export default function JobApplication() {
               {/* Sexe */}
               <div className="md:col-span-2">
                 <span className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-2">
-                  Sexe *
+                  {t.jobs.gender} *
                 </span>
                 <div id="field-sexe" className="flex items-center gap-6">
                   <label className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-zinc-300 cursor-pointer">
@@ -794,7 +819,7 @@ export default function JobApplication() {
                       onChange={() => setSexe('Homme')}
                       className="text-[#2350D9] focus:ring-[#2350D9]"
                     />
-                    <span>Homme</span>
+                    <span>{t.jobs.genderMale}</span>
                   </label>
                   <label className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-zinc-300 cursor-pointer">
                     <input
@@ -805,7 +830,7 @@ export default function JobApplication() {
                       onChange={() => setSexe('Femme')}
                       className="text-[#2350D9] focus:ring-[#2350D9]"
                     />
-                    <span>Femme</span>
+                    <span>{t.jobs.genderFemale}</span>
                   </label>
                 </div>
                 {errors.sexe && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.sexe}</p>}
@@ -817,14 +842,14 @@ export default function JobApplication() {
           <section className="space-y-3">
             <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
-                CONTACT
+                {t.jobs.sectionContact}
               </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {/* E-mail */}
               <div>
                 <label htmlFor="field-email" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  E-mail *
+                  {t.jobs.emailLabel} *
                 </label>
                 <input
                   id="field-email"
@@ -845,7 +870,7 @@ export default function JobApplication() {
               {/* Confirmer l'e-mail */}
               <div>
                 <label htmlFor="field-confirmEmail" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Confirmer l'e-mail *
+                  {t.jobs.confirmEmailLabel} *
                 </label>
                 <input
                   id="field-confirmEmail"
@@ -866,7 +891,7 @@ export default function JobApplication() {
               {/* Numéro de téléphone */}
               <div className="md:col-span-2">
                 <label htmlFor="field-telephone" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Numéro de téléphone * (format international, indicatif RDC +243 par défaut)
+                  {t.jobs.phoneLabel} *
                 </label>
                 <input
                   id="field-telephone"
@@ -890,13 +915,13 @@ export default function JobApplication() {
           <section className="space-y-3">
             <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
-                ADRESSE
+                {t.jobs.sectionAddress}
               </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="field-adresse" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Adresse (avenue, quartier)
+                  {t.jobs.addressLabel}
                 </label>
                 <input
                   id="field-adresse"
@@ -910,7 +935,7 @@ export default function JobApplication() {
 
               <div>
                 <label htmlFor="field-ville" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Ville / Territoire
+                  {t.jobs.cityTerritory}
                 </label>
                 <input
                   id="field-ville"
@@ -924,7 +949,7 @@ export default function JobApplication() {
 
               <div>
                 <label htmlFor="field-province" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Province
+                  {t.jobs.province}
                 </label>
                 <input
                   id="field-province"
@@ -938,7 +963,7 @@ export default function JobApplication() {
 
               <div>
                 <label htmlFor="field-pays" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Pays
+                  {t.jobs.country}
                 </label>
                 <select
                   id="field-pays"
@@ -946,8 +971,8 @@ export default function JobApplication() {
                   onChange={(e) => setPays(e.target.value)}
                   className="w-full bg-white dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2350D9]"
                 >
-                  {COUNTRIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                  {countries.map((c) => (
+                    <option key={c.value} value={c.value}>{c.label}</option>
                   ))}
                 </select>
               </div>
@@ -958,14 +983,14 @@ export default function JobApplication() {
           <section className="space-y-4">
             <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
-                PARCOURS
+                {t.jobs.sectionPath}
               </h2>
             </div>
 
             {/* Niveau d'éducation */}
             <div>
               <label htmlFor="field-niveauEducation" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                Niveau d'éducation *
+                {t.jobs.educationLevelLabel} *
               </label>
               <select
                 id="field-niveauEducation"
@@ -978,9 +1003,9 @@ export default function JobApplication() {
                   errors.niveauEducation ? 'border-red-500' : 'border-slate-300 dark:border-zinc-700'
                 }`}
               >
-                <option value="">Sélectionnez votre niveau d'éducation...</option>
-                {EDUCATION_LEVELS.map((lvl) => (
-                  <option key={lvl} value={lvl}>{lvl}</option>
+                <option value="">{t.jobs.selectEducationLevel}...</option>
+                {educationLevels.map((lvl) => (
+                  <option key={lvl.value} value={lvl.value}>{lvl.label}</option>
                 ))}
               </select>
               {errors.niveauEducation && <p id="field-niveauEducation-error" className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.niveauEducation}</p>}
@@ -990,7 +1015,7 @@ export default function JobApplication() {
             <div className="space-y-2 pt-2">
               <div className="flex items-center justify-between">
                 <span className="block text-xs font-semibold text-slate-700 dark:text-zinc-200">
-                  Connaissances linguistiques (3 maximum)
+                  {t.jobs.languageKnowledge}
                 </span>
                 {langues.length < 3 && (
                   <button
@@ -1001,7 +1026,7 @@ export default function JobApplication() {
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span>Ajouter une langue</span>
+                    <span>{t.jobs.addLanguage}</span>
                   </button>
                 )}
               </div>
@@ -1014,8 +1039,8 @@ export default function JobApplication() {
                       onChange={(e) => handleUpdateLanguage(idx, 'langue', e.target.value)}
                       className="bg-white dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2350D9]"
                     >
-                      {LANGUAGE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt}>{opt}</option>
+                      {languageOptions.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
                     </select>
 
@@ -1024,8 +1049,8 @@ export default function JobApplication() {
                       onChange={(e) => handleUpdateLanguage(idx, 'niveau', e.target.value)}
                       className="bg-white dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2350D9]"
                     >
-                      {LANGUAGE_LEVELS.map((lvl) => (
-                        <option key={lvl} value={lvl}>{lvl}</option>
+                      {languageLevels.map((lvl) => (
+                        <option key={lvl.value} value={lvl.value}>{lvl.label}</option>
                       ))}
                     </select>
                   </div>
@@ -1035,8 +1060,8 @@ export default function JobApplication() {
                       type="button"
                       onClick={() => handleRemoveLanguage(idx)}
                       className="p-2 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                      title="Retirer cette langue"
-                      aria-label="Retirer cette langue"
+                      title={t.jobs.removeLanguage}
+                      aria-label={t.jobs.removeLanguage}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -1052,19 +1077,19 @@ export default function JobApplication() {
           <section className="space-y-4">
             <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
-                EXPÉRIENCES PERTINENTES
+                {t.jobs.sectionExperiences}
               </h2>
             </div>
 
             {experiences.map((exp, idx) => (
               <div key={idx} className="p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-800/40 space-y-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
-                  Expérience {idx + 1} {idx === 0 ? '(conseillée)' : '(facultatif)'}
+                  {t.jobs.experience} {idx + 1} {idx === 0 ? t.jobs.experienceRecommended : t.jobs.experienceOptional}
                 </span>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1">
-                      Titre du poste
+                      {t.jobs.positionTitle2}
                     </label>
                     <input
                       type="text"
@@ -1077,7 +1102,7 @@ export default function JobApplication() {
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1">
-                      Organisation
+                      {t.jobs.organization2}
                     </label>
                     <input
                       type="text"
@@ -1090,15 +1115,15 @@ export default function JobApplication() {
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1">
-                      Années d'expérience
+                      {t.jobs.yearsExperience}
                     </label>
                     <select
                       value={exp.anneesExperience}
                       onChange={(e) => handleUpdateExperience(idx, 'anneesExperience', e.target.value)}
                       className="w-full bg-white dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2350D9]"
                     >
-                      {EXPERIENCE_YEARS.map((y) => (
-                        <option key={y} value={y}>{y}</option>
+                      {experienceYears.map((y) => (
+                        <option key={y.value} value={y.value}>{y.label}</option>
                       ))}
                     </select>
                   </div>
@@ -1111,14 +1136,14 @@ export default function JobApplication() {
           <section className="space-y-4">
             <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
-                DOCUMENTS À JOINDRE
+                {t.jobs.sectionDocuments}
               </h2>
             </div>
 
             {/* Curriculum Vitae (CV) */}
             <div id="field-cv">
               <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                Curriculum Vitae (CV) * (PDF, DOC, DOCX – 5 Mo max)
+                {t.jobs.cvLabel}
               </label>
               {cvFile ? (
                 <div className="flex items-center justify-between p-3 rounded-lg border border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-950/20">
@@ -1134,7 +1159,7 @@ export default function JobApplication() {
                     onClick={() => setCvFile(null)}
                     className="text-xs font-semibold text-red-600 hover:underline shrink-0 ml-3 cursor-pointer"
                   >
-                    Retirer
+                    {t.jobs.removeFile}
                   </button>
                 </div>
               ) : (
@@ -1142,8 +1167,8 @@ export default function JobApplication() {
                   <svg className="w-7 h-7 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                   </svg>
-                  <span className="text-xs font-semibold text-[#2350D9] dark:text-blue-400">Choisir un fichier</span>
-                  <span className="text-[11px] text-slate-500 mt-1">PDF, DOC ou DOCX jusqu'à 5 Mo</span>
+                  <span className="text-xs font-semibold text-[#2350D9] dark:text-blue-400">{t.jobs.chooseFile}</span>
+                  <span className="text-[11px] text-slate-500 mt-1">{t.jobs.fileFormats}</span>
                   <input
                     type="file"
                     accept=".pdf,.doc,.docx"
@@ -1158,7 +1183,7 @@ export default function JobApplication() {
             {/* Lettre de motivation */}
             <div id="field-coverLetter">
               <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                Lettre de motivation * (PDF, DOC, DOCX – 5 Mo max)
+                {t.jobs.coverLetterLabel}
               </label>
               {coverLetterFile ? (
                 <div className="flex items-center justify-between p-3 rounded-lg border border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-950/20">
@@ -1174,7 +1199,7 @@ export default function JobApplication() {
                     onClick={() => setCoverLetterFile(null)}
                     className="text-xs font-semibold text-red-600 hover:underline shrink-0 ml-3 cursor-pointer"
                   >
-                    Retirer
+                    {t.jobs.removeFile}
                   </button>
                 </div>
               ) : (
@@ -1182,8 +1207,8 @@ export default function JobApplication() {
                   <svg className="w-7 h-7 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                   </svg>
-                  <span className="text-xs font-semibold text-[#2350D9] dark:text-blue-400">Choisir un fichier</span>
-                  <span className="text-[11px] text-slate-500 mt-1">PDF, DOC ou DOCX jusqu'à 5 Mo</span>
+                  <span className="text-xs font-semibold text-[#2350D9] dark:text-blue-400">{t.jobs.chooseFile}</span>
+                  <span className="text-[11px] text-slate-500 mt-1">{t.jobs.fileFormats}</span>
                   <input
                     type="file"
                     accept=".pdf,.doc,.docx"
@@ -1198,7 +1223,7 @@ export default function JobApplication() {
             {/* Attestations et diplômes */}
             <div id="field-certificates">
               <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                Attestations, diplômes (plusieurs fichiers possibles – PDF, DOC, DOCX, JPG, PNG)
+                {t.jobs.certificatesLabel}
               </label>
 
               {certificates.length > 0 && (
@@ -1217,7 +1242,7 @@ export default function JobApplication() {
                         onClick={() => handleRemoveCertificate(idx)}
                         className="text-xs font-semibold text-red-600 hover:underline shrink-0 ml-2 cursor-pointer"
                       >
-                        Retirer
+                        {t.jobs.removeFile}
                       </button>
                     </div>
                   ))}
@@ -1229,8 +1254,8 @@ export default function JobApplication() {
                   <svg className="w-5 h-5 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-                  <span className="text-xs font-semibold text-[#2350D9] dark:text-blue-400">+ Ajouter un document</span>
-                  <span className="text-[11px] text-slate-500 mt-0.5">PDF, DOC, DOCX, JPG ou PNG (5 Mo max par fichier)</span>
+                  <span className="text-xs font-semibold text-[#2350D9] dark:text-blue-400">{t.jobs.addDocument}</span>
+                  <span className="text-[11px] text-slate-500 mt-0.5">{t.jobs.certFormats}</span>
                   <input
                     type="file"
                     multiple
@@ -1248,26 +1273,30 @@ export default function JobApplication() {
           <section className="space-y-3">
             <div className="border-b border-slate-200 dark:border-zinc-800 pb-2">
               <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-[#2350D9] dark:text-blue-400">
-                ACCESSIBILITÉ (FACULTATIF)
+                {t.jobs.sectionAccessibility}
               </h2>
             </div>
             <div className="space-y-3">
               <div>
                 <span className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-2">
-                  Êtes-vous une personne en situation de handicap ?
+                  {t.jobs.disabilityQuestion}
                 </span>
                 <div className="flex flex-wrap items-center gap-6">
-                  {(['Oui', 'Non', 'Préfère ne pas répondre'] as const).map((opt) => (
-                    <label key={opt} className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-zinc-300 cursor-pointer">
+                  {[
+                    { value: 'Oui', label: t.jobs.disabilityYes },
+                    { value: 'Non', label: t.jobs.disabilityNo },
+                    { value: 'Préfère ne pas répondre', label: t.jobs.disabilityPreferNotToSay },
+                  ].map((opt) => (
+                    <label key={opt.value} className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-zinc-300 cursor-pointer">
                       <input
                         type="radio"
                         name="handicap"
-                        value={opt}
-                        checked={enSituationHandicap === opt}
-                        onChange={() => setEnSituationHandicap(opt)}
+                        value={opt.value}
+                        checked={enSituationHandicap === opt.value}
+                        onChange={() => setEnSituationHandicap(opt.value as any)}
                         className="text-[#2350D9] focus:ring-[#2350D9]"
                       />
-                      <span>{opt}</span>
+                      <span>{opt.label}</span>
                     </label>
                   ))}
                 </div>
@@ -1275,7 +1304,7 @@ export default function JobApplication() {
 
               <div>
                 <label htmlFor="field-amenagements" className="block text-xs font-semibold text-slate-700 dark:text-zinc-200 mb-1.5">
-                  Aménagements souhaités pour l'entretien ou le test
+                  {t.jobs.accommodationsLabel}
                 </label>
                 <textarea
                   id="field-amenagements"
@@ -1283,12 +1312,16 @@ export default function JobApplication() {
                   value={amenagementsSouhaites}
                   onChange={(e) => setAmenagementsSouhaites(e.target.value)}
                   className="w-full bg-white dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2350D9]"
-                  placeholder="Ex : Besoin d'interprète en langue des signes, accessibilité fauteuil roulant, documents en gros caractères..."
+                  placeholder={
+                    lang === 'en'
+                      ? 'e.g., Need for sign language interpreter, wheelchair accessibility, documents in large print...'
+                      : "Ex : Besoin d'interprète en langue des signes, accessibilité fauteuil roulant, documents en gros caractères..."
+                  }
                 />
               </div>
 
               <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                Ces informations sont confidentielles et servent uniquement à préparer des aménagements raisonnables.
+                {t.jobs.accessibilityNote}
               </p>
             </div>
           </section>
@@ -1304,7 +1337,7 @@ export default function JobApplication() {
                 className="mt-1 w-4 h-4 rounded text-[#2350D9] focus:ring-[#2350D9] border-slate-300"
               />
               <span className="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed">
-                J'atteste que les informations fournies sont exactes et j'accepte que l'ACPDPH les utilise pour traiter ma candidature. *
+                {t.jobs.consentText} *
               </span>
             </label>
             {errors.consentement && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.consentement}</p>}
@@ -1319,7 +1352,7 @@ export default function JobApplication() {
                 submitting ? 'opacity-70 cursor-not-allowed' : ''
               }`}
             >
-              <span>{submitting ? 'Envoi en cours…' : 'SOUMETTRE MA CANDIDATURE'}</span>
+              <span>{submitting ? t.jobs.submitting : (t.jobs.submitApplication || 'SOUMETTRE MA CANDIDATURE')}</span>
               {!submitting && (
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -1332,4 +1365,3 @@ export default function JobApplication() {
     </div>
   );
 }
-

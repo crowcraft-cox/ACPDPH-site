@@ -1,0 +1,52 @@
+{
+  "title": "Über uns",
+  "subtitle": "Erfahren Sie mehr über die Geschichte, den rechtlichen Status, die Vision, die Mission und die Grundsätze der Kongolesischen Agentur für die Förderung der Rechte von Menschen mit Behinderungen (ACPDPH).",
+  "historyTitle": "Geschichte",
+  "historyP1": "Die Kongolesische Agentur für die Förderung der Rechte von Menschen mit Behinderungen (ACPDPH-ASBL) ist eine nationale, unpolitische und gemeinnützige Nichtregierungsorganisation, die am 3. Dezember 2018 in Beni in der Provinz Nord-Kivu in der Demokratischen Republik Kongo (DRK) gegründet wurde. Sie entstand aus dem Willen, Menschenrechte, Würde, gesellschaftliche Inklusion und Selbstständigkeit von Menschen mit Behinderungen angesichts vielfältiger Diskriminierungen, Stigmatisierungen und Ausgrenzungen in der Gesellschaft wirksam voranzubringen.",
+  "historyP2": "Die Gründung der ACPDPH reagiert auf eine Situation, in der viele Menschen mit Behinderungen gravierende Barrieren beim Zugang zu Bildung, Gesundheitsversorgung, Beschäftigung, wirtschaftlichen Aktivitäten und grundlegenden sozialen Diensten erleben – verschärft durch Vorurteile, Armut und humanitäre Krisen im Osten der DRK.",
+  "historyP3": "Die Initiative ging von Herrn Emmanuel KAKULE SYAYUKUMBITA aus, einem engagierten Akteur der Gemeindeentwicklung, dessen Lebensweg 2014 durch einen Verkehrsunfall mit anschließender Beinamputation geprägt wurde. Diese Erfahrung bestärkte seine Entschlossenheit, sich für andere Betroffene einzusetzen und persönliche Betroffenheit in gemeinsame Tatkraft und Interessenvertretung zu verwandeln.",
+  "historyP4": "Gemeinsam getragen von Menschen mit und ohne Behinderungen, Frauen und Männern verschiedenster Herkunft, verwirklicht die ACPDPH einen partizipativen Gemeinschaftsansatz auf der Grundlage von Menschenrechten, universeller Barrierefreiheit und inklusiver Entwicklung.",
+  "visionTitle": "Unsere Vision",
+  "visionText": "Eine inklusive, gerechte und solidarische Gesellschaft ohne jede Diskriminierung aufgrund einer Behinderung, in der alle Menschen mit Behinderungen ihre Grundrechte voll wahrnehmen, aktiv an der Entwicklung ihrer Gemeinschaften mitwirken und in Würde, Selbstständigkeit und sozioökonomischem Wohlstand leben.",
+  "missionTitle": "Unsere Mission",
+  "missionText": "Die Rechte von Menschen mit Behinderungen zu fördern und zu schützen, unermüdlich gegen alle Formen der Diskriminierung vorzugehen und umfassende Inklusion, wirtschaftliche Selbstständigkeit sowie volle Bürgerbeteiligung zu sichern.",
+  "objectiveTitle": "Gesellschaftlicher Zweck",
+  "objectiveText": "Durch Sensibilisierung, Weiterbildung und Interessenvertretung negative Vorstellungen über Behinderung abzubauen und die tatsächliche Ausübung der Menschenrechte durch humanitäres Handeln und gemeindenahe inklusive Entwicklung zu fördern.",
+  "valuesTitle": "Unsere Grundwerte",
+  "valuesList": [
+    "Professionalität",
+    "Solidarität",
+    "Nichtdiskriminierung",
+    "Achtung der Menschenwürde",
+    "Wohlergehen und Entfaltung"
+  ],
+  "legalStatusTitle": "Rechtlicher Status",
+  "legalStatusDesc": "Die Kongolesische Agentur für die Förderung der Rechte von Menschen mit Behinderungen (ACPDPH) ist eine nationale Nichtregierungsorganisation (NGO) kongolesischen Rechts, gegründet nach dem Recht der Demokratischen Republik Kongo für gemeinnützige Vereinigungen, insbesondere Gesetz Nr. 004/2001 vom 20. Juli 2001.",
+  "orgLabel": "Organisation",
+  "legalFormLabel": "Rechtsform",
+  "legalFormValue": "Nationale NGO & ASBL (DRK)",
+  "legalFrameworkLabel": "Gesetzlicher Rahmen",
+  "legalFrameworkValue": "Gesetz Nr. 004/2001 vom 20. Juli 2001",
+  "headquartersLabel": "Hauptsitz",
+  "recognitionTitle": "Behördliche und rechtliche Anerkennung",
+  "recognitionIntro": "Die Kongolesische Agentur für die Förderung der Rechte von Menschen mit Behinderungen (ACPDPH) hat folgende Meilensteine institutioneller Anerkennung erreicht:",
+  "teamPhotoAlt": "Team der ACPDPH nach einem Schulungsworkshop für Unternehmertum von Frauen und Mädchen mit Behinderungen",
+  "recognitionSteps": [
+    {
+      "date": "3. Dezember 2018",
+      "badge": "Gründung",
+      "title": "Offizielle Gründung der Vereinigung und Verabschiedung der Gründungssatzung in Beni."
+    },
+    {
+      "date": "10. Februar 2024",
+      "badge": "Rechtspersönlichkeit",
+      "title": "Erteilung der offiziellen Rechtspersönlichkeit",
+      "ref": "Ministerieller Erlass Nr. 367/CAB/ME/MIN/J&GS/2024"
+    }
+  ],
+  "documentsTitle": "Offizielle Dokumente & Veröffentlichungen",
+  "downloadStatutes": "Offizielle Satzung der ACPDPH herunterladen (PDF)",
+  "downloadRoi": "Geschäftsordnung herunterladen (PDF)",
+  "downloadReport": "Neuesten zertifizierten Tätigkeitsbericht herunterladen (PDF)"
+}
+

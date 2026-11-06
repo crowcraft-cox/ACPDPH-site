@@ -315,39 +315,74 @@ router.post('/', (req: Request, res: Response, next: any) => {
         console.warn("[Application Recruitment Email Warning]: Envoi e-mail RH échoué :", recEmailErr.message);
       }
 
-      // 8. E-mail d'accusé de réception automatique au candidat
+      // 8. E-mail d'accusé de réception automatique au candidat (DANS LA LANGUE DU VISITEUR)
+      const visitorLang = req.body.lang === 'en' ? 'en' : 'fr';
       try {
-        await sendEmail({
-          to: email.trim().toLowerCase(),
-          subject: `Accusé de réception de votre candidature – ACPDPH ONG`,
-          text: `Bonjour ${prenom} ${nom},\n\nNous avons bien reçu votre candidature pour le poste "${jobTitle}".\nNotre équipe de recrutement l'examinera avec attention. Seules les personnes présélectionnées seront contactées.\n\nCordialement,\nACPDPH ONG`,
-          html: `
-            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1E293B; max-width: 600px;">
-              <div style="background-color: #2350D9; padding: 20px; border-radius: 8px 8px 0 0; color: #FFFFFF;">
-                <h2 style="margin: 0; font-size: 20px;">Candidature reçue avec succès</h2>
-              </div>
-              <div style="border: 1px solid #E2E8F0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px; background: #FFFFFF;">
-                <p>Bonjour <strong>${prenom} ${nom}</strong>,</p>
-                <p>Nous vous remercions pour l'intérêt que vous portez à l'<strong>ACPDPH ONG</strong>. Nous accusons bonne réception de votre dossier de candidature pour le poste :</p>
-                <div style="background: #F1F5F9; padding: 12px; border-radius: 6px; margin: 15px 0;">
-                  <strong style="color: #2350D9; font-size: 15px;">${jobTitle}</strong><br/>
-                  <span style="font-size: 12px; color: #64748B;">Numéro de référence : <strong style="font-family: monospace; color: #0F172A;">${reference}</strong></span>
+        if (visitorLang === 'en') {
+          await sendEmail({
+            to: email.trim().toLowerCase(),
+            subject: `Application Receipt Confirmation – ACPDPH NGO`,
+            text: `Dear ${prenom} ${nom},\n\nWe have successfully received your application for the position of "${jobTitle}".\nOur recruitment team will review your application carefully. Only shortlisted candidates will be contacted.\n\nBest regards,\nACPDPH NGO`,
+            html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1E293B; max-width: 600px;">
+                <div style="background-color: #2350D9; padding: 20px; border-radius: 8px 8px 0 0; color: #FFFFFF;">
+                  <h2 style="margin: 0; font-size: 20px;">Application Received Successfully</h2>
                 </div>
-                <p style="font-size: 14px; color: #475569;">
-                  Notre équipe de recrutement examinera votre candidature avec la plus grande attention. Seules les personnes présélectionnées seront contactées pour les étapes suivantes.
-                </p>
-                <p style="font-size: 14px; color: #475569;">
-                  L'ACPDPH garantit l'égalité des chances et un traitement équitable de toutes les candidatures.
-                </p>
-                <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 20px 0;" />
-                <p style="font-size: 12px; color: #94A3B8; margin: 0;">
-                  ACPDPH ONG – Action Communautaire pour la Promotion et la Défense des Droits des Personnes Handicapées<br/>
-                  Beni, Nord-Kivu, République démocratique du Congo
-                </p>
+                <div style="border: 1px solid #E2E8F0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px; background: #FFFFFF;">
+                  <p>Dear <strong>${prenom} ${nom}</strong>,</p>
+                  <p>Thank you for your interest in joining <strong>ACPDPH NGO</strong>. We confirm receipt of your application for the position of:</p>
+                  <div style="background: #F1F5F9; padding: 12px; border-radius: 6px; margin: 15px 0;">
+                    <strong style="color: #2350D9; font-size: 15px;">${jobTitle}</strong><br/>
+                    <span style="font-size: 12px; color: #64748B;">Tracking reference number: <strong style="font-family: monospace; color: #0F172A;">${reference}</strong></span>
+                  </div>
+                  <p style="font-size: 14px; color: #475569;">
+                    Our recruitment team will review your qualifications with the utmost attention. Only shortlisted applicants will be contacted for the next assessment stages.
+                  </p>
+                  <p style="font-size: 14px; color: #475569;">
+                    ACPDPH guarantees equal opportunities and fair consideration for all applicants.
+                  </p>
+                  <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 20px 0;" />
+                  <p style="font-size: 12px; color: #94A3B8; margin: 0;">
+                    ACPDPH NGO – Congolese Agency for the Promotion of the Rights of Persons with Disabilities<br/>
+                    Beni, North Kivu, Democratic Republic of the Congo
+                  </p>
+                </div>
               </div>
-            </div>
-          `,
-        });
+            `,
+          });
+        } else {
+          await sendEmail({
+            to: email.trim().toLowerCase(),
+            subject: `Accusé de réception de votre candidature – ACPDPH ONG`,
+            text: `Bonjour ${prenom} ${nom},\n\nNous avons bien reçu votre candidature pour le poste "${jobTitle}".\nNotre équipe de recrutement l'examinera avec attention. Seules les personnes présélectionnées seront contactées.\n\nCordialement,\nACPDPH ONG`,
+            html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1E293B; max-width: 600px;">
+                <div style="background-color: #2350D9; padding: 20px; border-radius: 8px 8px 0 0; color: #FFFFFF;">
+                  <h2 style="margin: 0; font-size: 20px;">Candidature reçue avec succès</h2>
+                </div>
+                <div style="border: 1px solid #E2E8F0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px; background: #FFFFFF;">
+                  <p>Bonjour <strong>${prenom} ${nom}</strong>,</p>
+                  <p>Nous vous remercions pour l'intérêt que vous portez à l'<strong>ACPDPH ONG</strong>. Nous accusons bonne réception de votre dossier de candidature pour le poste :</p>
+                  <div style="background: #F1F5F9; padding: 12px; border-radius: 6px; margin: 15px 0;">
+                    <strong style="color: #2350D9; font-size: 15px;">${jobTitle}</strong><br/>
+                    <span style="font-size: 12px; color: #64748B;">Numéro de référence : <strong style="font-family: monospace; color: #0F172A;">${reference}</strong></span>
+                  </div>
+                  <p style="font-size: 14px; color: #475569;">
+                    Notre équipe de recrutement examinera votre candidature avec la plus grande attention. Seules les personnes présélectionnées seront contactées pour les étapes suivantes.
+                  </p>
+                  <p style="font-size: 14px; color: #475569;">
+                    L'ACPDPH garantit l'égalité des chances et un traitement équitable de toutes les candidatures.
+                  </p>
+                  <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 20px 0;" />
+                  <p style="font-size: 12px; color: #94A3B8; margin: 0;">
+                    ACPDPH ONG – Action Communautaire pour la Promotion et la Défense des Droits des Personnes Handicapées<br/>
+                    Beni, Nord-Kivu, République démocratique du Congo
+                  </p>
+                </div>
+              </div>
+            `,
+          });
+        }
       } catch (candErr: any) {
         console.warn("[Application Confirmation Email Warning]: Échec d'envoi de l'accusé de réception au candidat :", candErr.message);
       }

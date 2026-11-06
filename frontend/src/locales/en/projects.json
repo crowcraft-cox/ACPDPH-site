@@ -1,0 +1,23 @@
+{
+  "title": "Our projects",
+  "subtitle": "Discover our achievements and ongoing initiatives dedicated to rights promotion, inclusion, and protection of persons with disabilities in the DRC.",
+  "filterAll": "All projects",
+  "filterOngoing": "Ongoing",
+  "filterCompleted": "Completed",
+  "filterPlanned": "Planned",
+  "noProjects": "No projects match the selected criteria.",
+  "aboutProject": "About the project",
+  "projectDetails": "Project specifications",
+  "location": "Intervention area:",
+  "type": "Strategic pillar:",
+  "status": "Status:",
+  "date": "Launch date:",
+  "gallery": "Project photo gallery",
+  "backToProjects": "Back to projects list",
+  "contactAboutProject": "Contact us about this project",
+  "annualReports": "Reports & Publications",
+  "reportsSubtitle": "Transparency and accountability guide all our endeavors. Access our institutional and activity reports.",
+  "downloadReport": "View report",
+  "shareProject": "Share this project",
+  "loadMore": "Load more projects"
+}

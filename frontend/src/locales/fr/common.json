@@ -1,0 +1,27 @@
+{
+  "readMore": "Lire plus",
+  "learnMore": "En savoir plus",
+  "viewDetails": "Voir les détails",
+  "back": "Retour",
+  "backToHome": "Retour à l'accueil",
+  "loading": "Chargement en cours...",
+  "close": "Fermer",
+  "copy": "Copier",
+  "copied": "Copié",
+  "all": "Tout",
+  "seeAll": "Tout afficher",
+  "share": "Partager",
+  "download": "Télécharger",
+  "downloadPdf": "Télécharger en PDF",
+  "status": {
+    "ongoing": "En cours",
+    "completed": "Achevé",
+    "planned": "En planification"
+  },
+  "organizationName": "Agence Congolaise de Promotion des Droits des Personnes Handicapées",
+  "acronym": "ACPDPH",
+  "officialStatus": "Organisation Non Gouvernementale (ASBL)",
+  "currency": "USD",
+  "currencySymbol": "$",
+  "needReview": "Traduction automatique proposée, à relire avant de publier"
+}

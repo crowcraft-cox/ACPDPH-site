@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useAdminData } from '../context/adminData';
+import { useI18n, getLocalizedPath } from '../i18n';
 import type { JobOffer } from '../types';
 
 const GRADIENT_PALETTES = [
@@ -29,6 +30,7 @@ const emptyJobForm: Omit<JobOffer, 'id' | 'createdAt'> = {
 export default function Careers() {
   const { ref: headerRef } = useScrollReveal();
   const { data, isAuthenticated, addJob, deleteJob } = useAdminData();
+  const { lang, t, getLocalized } = useI18n();
   const jobs = data.jobs || [];
 
   // États pour l'administration directe (bullet 12)
@@ -106,7 +108,7 @@ export default function Careers() {
       {/* ── HEADER HERO ── */}
       <section ref={headerRef} className="container-ba text-center mb-8 sm:mb-10">
         <h1 className="font-heading text-4xl sm:text-5xl font-extrabold uppercase text-[#2350D9] dark:text-blue-400 tracking-tight">
-          Offres & Emplois
+          {t.jobs.title}
         </h1>
       </section>
 
@@ -153,13 +155,18 @@ export default function Careers() {
               </svg>
             </div>
             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Aucune offre disponible pour le moment. Revenez bientôt.
+              {t.jobs.noJobs}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job, index) => {
               const gradient = GRADIENT_PALETTES[index % GRADIENT_PALETTES.length];
+              const localizedTitle = getLocalized(job, 'title');
+              const localizedLocation = getLocalized(job, 'location');
+              const localizedContract = getLocalized(job, 'contractType') || job.contractType;
+              const localizedPrecision = getLocalized(job, 'contractPrecision');
+              const jobDetailLink = getLocalizedPath(`/offres-emplois/${job.id}`, lang);
 
               return (
                 <div
@@ -187,7 +194,7 @@ export default function Careers() {
 
                   {/* Toute la carte est cliquable (un seul <Link>) vers la page de détail */}
                   <Link
-                    to={`/offres-emplois/${job.id}`}
+                    to={jobDetailLink}
                     className="flex flex-col h-full text-white cursor-pointer focus:outline-none focus-visible:ring-3 focus-visible:ring-white"
                   >
                     {/* Zone haut (h-40) : fond dégradé bleu foncé + titre en grand, centré, blanc, majuscule, font-bold, line-clamp-3 */}
@@ -195,7 +202,7 @@ export default function Careers() {
                       className={`h-40 px-6 py-4 flex items-center justify-center text-center bg-gradient-to-br ${gradient} border-b border-white/10`}
                     >
                       <h2 className="font-heading font-bold text-white text-base sm:text-lg uppercase line-clamp-3 leading-snug tracking-wide group-hover:scale-[1.02] transition-transform duration-200">
-                        {job.title}
+                        {localizedTitle}
                       </h2>
                     </div>
 
@@ -203,7 +210,7 @@ export default function Careers() {
                     <div className="p-4 flex flex-col items-center justify-between gap-3 text-center flex-1 bg-[#1F4FDB]">
                       {/* Titre repris en plus petit (blanc, font-bold, text-center, line-clamp-2) */}
                       <h3 className="font-heading font-bold text-white text-xs sm:text-sm line-clamp-2 leading-snug text-center">
-                        {job.title}
+                        {localizedTitle}
                       </h3>
 
                       {/* 2 petites informations centrées avec icônes (MapPin & Briefcase) */}
@@ -214,7 +221,7 @@ export default function Careers() {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                           </svg>
-                          <span className="truncate max-w-[200px]">{job.location}</span>
+                          <span className="truncate max-w-[200px]">{localizedLocation}</span>
                         </div>
 
                         {/* Type de contrat (icône Briefcase) */}
@@ -223,8 +230,8 @@ export default function Careers() {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
                           </svg>
                           <span>
-                            {job.contractType}
-                            {job.contractPrecision ? ` – ${job.contractPrecision}` : ''}
+                            {localizedContract}
+                            {localizedPrecision ? ` – ${localizedPrecision}` : ''}
                           </span>
                         </div>
                       </div>

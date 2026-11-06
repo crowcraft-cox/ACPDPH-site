@@ -1,0 +1,21 @@
+{
+  "loading": "Chargement du curriculum vitae...",
+  "notFoundTitle": "Ce CV n'est pas disponible.",
+  "notFoundDesc": "Le profil demandé n'a pas encore été publié ou a été temporairement retiré par l'administration.",
+  "backToGovernance": "Retour à la gouvernance",
+  "photoAlt": "Photo de {{name}}",
+  "about": "À propos",
+  "contact": "Contact",
+  "skills": "Compétences",
+  "languages": "Langues",
+  "experience": "Expérience",
+  "formation": "Formation",
+  "phone": "Téléphone",
+  "email": "E-mail",
+  "address": "Adresse",
+  "none": "Aucune mention",
+  "print": "Imprimer la fiche",
+  "download": "Télécharger le modèle (.docx)",
+  "verifiedProfile": "Profil officiel certifié ACPDPH"
+}
+

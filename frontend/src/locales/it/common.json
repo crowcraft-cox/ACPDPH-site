@@ -1,0 +1,28 @@
+{
+  "readMore": "Leggi di più",
+  "learnMore": "Scopri di più",
+  "viewDetails": "Visualizza dettagli",
+  "back": "Indietro",
+  "backToHome": "Torna alla home",
+  "loading": "Caricamento in corso...",
+  "close": "Chiudi",
+  "copy": "Copia",
+  "copied": "Copiato",
+  "all": "Tutti",
+  "seeAll": "Mostra tutti",
+  "share": "Condividi",
+  "download": "Scarica",
+  "downloadPdf": "Scarica in PDF",
+  "status": {
+    "ongoing": "In corso",
+    "completed": "Completato",
+    "planned": "In pianificazione"
+  },
+  "organizationName": "Agenzia Congolese per la Promozione dei Diritti delle Persone con Disabilità",
+  "acronym": "ACPDPH",
+  "officialStatus": "Organizzazione Non Governativa (ASBL)",
+  "currency": "USD",
+  "currencySymbol": "$",
+  "needReview": "Traduzione automatica proposta, da verificare prima della pubblicazione"
+}
+

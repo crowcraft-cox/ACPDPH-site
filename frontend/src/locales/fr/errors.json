@@ -1,0 +1,8 @@
+{
+  "pageNotFoundTitle": "Page introuvable (Erreur 404)",
+  "pageNotFoundDesc": "La page que vous recherchez n'existe pas, a été déplacée ou son adresse a changé.",
+  "serverErrorTitle": "Une erreur est survenue",
+  "serverErrorDesc": "Notre serveur a rencontré une difficulté momentanée. Veuillez rafraîchir la page ou réessayer dans quelques instants.",
+  "backHome": "Retourner à la page d'accueil",
+  "contactSupport": "Contacter l'équipe technique"
+}

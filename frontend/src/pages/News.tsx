@@ -5,7 +5,7 @@ import { useAdminData } from '../context/adminData';
 import { formatNewsDate } from '../utils/dateFormatter';
 
 export default function News() {
-  const { t } = useI18n();
+  const { t, lang, getLocalized, getLocalizedPath } = useI18n();
   const { ref: headerRef } = useScrollReveal();
   const { ref: cardsContainerRef } = useAnimeReveal<HTMLDivElement>({
     variant: 'stagger-cards',
@@ -14,7 +14,7 @@ export default function News() {
   });
   const { data } = useAdminData();
 
-  const articles = data.news;
+  const articles = data.news || [];
 
   return (
     <div className="pt-24 sm:pt-28 md:pt-32 pb-20">
@@ -34,6 +34,8 @@ export default function News() {
         <div ref={cardsContainerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => {
             const photoCount = article.images ? article.images.length : article.image ? 1 : 0;
+            const articleTitle = getLocalized(article, 'title');
+            const articleExcerpt = getLocalized(article, 'excerpt');
 
             return (
               <article
@@ -45,7 +47,7 @@ export default function News() {
                   {article.image ? (
                     <img
                       src={article.image}
-                      alt={article.title}
+                      alt={articleTitle}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
@@ -61,12 +63,12 @@ export default function News() {
                       <svg className="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                       </svg>
-                      <span>{photoCount} photos</span>
+                      <span>{photoCount} {photoCount > 1 ? (lang === 'en' ? 'photos' : 'photos') : (lang === 'en' ? 'photo' : 'photo')}</span>
                     </div>
                   )}
                 </div>
 
-                {/* Corps de la carte : padding garanti par classe CSS + style inline */}
+                {/* Corps de la carte */}
                 <div
                   className="news-card-body flex flex-col flex-1"
                   style={{ padding: '20px' }}
@@ -80,33 +82,26 @@ export default function News() {
                   </div>
 
                   {/* Titre */}
-                  <Link to={`/news/${article.id}`} className="block group/title">
+                  <Link to={getLocalizedPath(`/news/${article.id}`)} className="block group/title">
                     <h3 className="font-heading font-bold text-lg sm:text-xl text-slate-900 group-hover/title:text-ba-blue transition-colors line-clamp-2 leading-snug mb-2.5">
-                      {article.title}
+                      {articleTitle}
                     </h3>
                   </Link>
 
-                  {/* Description - flex-1 pour pousser le bouton en bas */}
+                  {/* Description */}
                   <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed break-words flex-1 mb-5">
-                    {article.excerpt}
+                    {articleExcerpt}
                   </p>
 
-                  {/* Bouton LIRE PLUS aligne a droite avec ligne de separation */}
+                  {/* Bouton LIRE PLUS aligne a droite */}
                   <div className="mt-auto flex items-center justify-end border-t border-slate-100 pt-4">
                     <Link
-                      to={`/news/${article.id}`}
+                      to={getLocalizedPath(`/news/${article.id}`)}
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-white bg-[#C2530A] hover:bg-[#A84508] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2530A] focus-visible:ring-offset-2 group/btn"
                     >
-                      <span>LIRE PLUS</span>
-                      <svg
-                        className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover/btn:translate-x-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        strokeWidth={2}
-                        aria-hidden="true"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
+                      <span>{t.common.readMore}</span>
+                      <svg className="w-3.5 h-3.5 transition-transform duration-150 group-hover/btn:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
                     </Link>
                   </div>

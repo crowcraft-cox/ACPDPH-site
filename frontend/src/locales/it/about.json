@@ -1,0 +1,52 @@
+{
+  "title": "Chi siamo?",
+  "subtitle": "Scopri la storia, lo status giuridico, la visione, la missione e i principi fondanti dell'Agenzia Congolese per la Promozione dei Diritti delle Persone con Disabilità (ACPDPH).",
+  "historyTitle": "Storia",
+  "historyP1": "L'Agenzia Congolese per la Promozione dei Diritti delle Persone con Disabilità (ACPDPH-ASBL) è un'organizzazione non governativa nazionale, apolitica e senza scopo di lucro, fondata il 3 dicembre 2018 a Beni, nella provincia del Nord-Kivu, nella Repubblica Democratica del Congo (RDC). È nata dalla volontà di promuovere i diritti umani, la dignità, l'inclusione sociale e l'autonomia delle persone con disabilità, di fronte alle molteplici forme di discriminazione, stigmatizzazione, marginalizzazione ed esclusione che incontrano nella società.",
+  "historyP2": "La nascita dell'ACPDPH si inserisce in un contesto in cui molte persone con disabilità affrontano ostacoli significativi nell'accesso all'istruzione, alle cure mediche, all'occupazione, alle attività economiche e ai servizi sociali di base, accentuati da pregiudizi, precarietà e crisi umanitarie che colpiscono l'est della RDC.",
+  "historyP3": "L'iniziativa è stata guidata dal Sig. Emmanuel KAKULE SYAYUKUMBITA, operatore dello sviluppo comunitario il cui percorso è stato segnato da un incidente stradale nel 2014 che ha comportato l'amputazione della gamba. Questa prova ha rafforzato la sua incrollabile determinazione a impegnarsi per i suoi pari e a trasformare l'esperienza personale della disabilità in una forza collettiva di azione e advocacy.",
+  "historyP4": "Costituita congiuntamente da persone con disabilità e persone normodotate, uomini e donne di varie provenienze, l'ACPDPH attua un approccio comunitario partecipativo fondato sui diritti umani, sull'accessibilità universale e sullo sviluppo inclusivo.",
+  "visionTitle": "La nostra visione",
+  "visionText": "Costruire una società inclusiva, equa e solidale, priva di ogni discriminazione basata sulla disabilità, in cui tutte le persone con disabilità godano pienamente dei loro diritti fondamentali, partecipino attivamente allo sviluppo della comunità e vivano nella dignità, nell'autonomia e nel benessere socio-economico.",
+  "missionTitle": "La nostra missione",
+  "missionText": "Promuovere e proteggere i diritti delle persone con disabilità, lottare instancabilmente contro ogni forma di discriminazione e favorire la loro inclusione integrale, l'empowerment e la piena partecipazione civica per garantire la loro dignità e realizzazione personale.",
+  "objectiveTitle": "Scopo sociale",
+  "objectiveText": "Combattere, mediante la sensibilizzazione, la formazione e l'advocacy, le percezioni negative della disabilità e promuovere l'esercizio effettivo dei diritti umani attraverso l'azione umanitaria e lo sviluppo inclusivo a base comunitaria.",
+  "valuesTitle": "I nostri valori cardine",
+  "valuesList": [
+    "Professionalità",
+    "Solidarietà",
+    "Non discriminazione",
+    "Rispetto della dignità umana",
+    "Benessere e crescita personale"
+  ],
+  "legalStatusTitle": "Status giuridico",
+  "legalStatusDesc": "L'Agenzia Congolese per la Promozione dei Diritti delle Persone con Disabilità (ACPDPH) è un'Organizzazione Nazionale (ONG) di diritto congolese, costituita in conformità con la legislazione della Repubblica Democratica del Congo applicabile alle associazioni senza scopo di lucro, in particolare la Legge n° 004/2001 del 20 luglio 2001.",
+  "orgLabel": "Organizzazione",
+  "legalFormLabel": "Forma giuridica",
+  "legalFormValue": "ONG Nazionale & ASBL (RDC)",
+  "legalFrameworkLabel": "Quadro normativo",
+  "legalFrameworkValue": "Legge n° 004/2001 del 20 luglio 2001",
+  "headquartersLabel": "Sede legale",
+  "recognitionTitle": "Riconoscimento Amministrativo e Giuridico",
+  "recognitionIntro": "L'Agenzia Congolese per la Promozione dei Diritti delle Persone con Disabilità (ACPDPH) ha completato con successo le seguenti fasi di riconoscimento istituzionale:",
+  "teamPhotoAlt": "Team dell'ACPDPH al termine di un laboratorio di formazione imprenditoriale per donne e ragazze con disabilità",
+  "recognitionSteps": [
+    {
+      "date": "3 dicembre 2018",
+      "badge": "Fondazione",
+      "title": "Costituzione ufficiale dell'associazione e approvazione dello statuto costitutivo a Beni."
+    },
+    {
+      "date": "10 febbraio 2024",
+      "badge": "Personalità Giuridica",
+      "title": "Conseguimento della personalità giuridica ufficiale",
+      "ref": "Arrêté ministériel N° 367/CAB/ME/MIN/J&GS/2024"
+    }
+  ],
+  "documentsTitle": "Documenti ufficiali & Pubblicazioni",
+  "downloadStatutes": "Scarica lo Statuto ufficiale dell'ACPDPH (PDF)",
+  "downloadRoi": "Scarica il Regolamento interno (PDF)",
+  "downloadReport": "Scarica l'ultimo rapporto di attività certificato (PDF)"
+}
+

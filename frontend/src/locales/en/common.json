@@ -1,0 +1,27 @@
+{
+  "readMore": "Read more",
+  "learnMore": "Learn more",
+  "viewDetails": "View details",
+  "back": "Back",
+  "backToHome": "Back to home",
+  "loading": "Loading...",
+  "close": "Close",
+  "copy": "Copy",
+  "copied": "Copied",
+  "all": "All",
+  "seeAll": "View all",
+  "share": "Share",
+  "download": "Download",
+  "downloadPdf": "Download PDF",
+  "status": {
+    "ongoing": "Ongoing",
+    "completed": "Completed",
+    "planned": "Planned"
+  },
+  "organizationName": "Congolese Agency for the Promotion of the Rights of Persons with Disabilities",
+  "acronym": "ACPDPH",
+  "officialStatus": "Non-Governmental Organization (NGO)",
+  "currency": "USD",
+  "currencySymbol": "$",
+  "needReview": "Suggested automatic translation, review before publishing"
+}

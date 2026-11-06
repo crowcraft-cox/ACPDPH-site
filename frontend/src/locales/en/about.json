@@ -1,0 +1,51 @@
+{
+  "title": "About us",
+  "subtitle": "Discover the history, legal status, vision, mission, and foundational principles of the Congolese Agency for the Promotion of the Rights of Persons with Disabilities (ACPDPH).",
+  "historyTitle": "History",
+  "historyP1": "The Congolese Agency for the Promotion of the Rights of Persons with Disabilities (ACPDPH) is a national, non-political, and non-profit organization established on December 3, 2018, in Beni, North Kivu province, Democratic Republic of Congo (DRC). It emerged from the dedicated resolve to uphold human rights, dignity, social inclusion, and the empowerment of persons with disabilities in the face of widespread discrimination and systemic marginalization.",
+  "historyP2": "The foundation of ACPDPH responds to severe challenges where persons with disabilities face continuous hurdles in accessing inclusive schooling, healthcare, rehabilitation, decent employment, and fundamental civic rights, compounded by socio-cultural prejudices and humanitarian instability in eastern DRC.",
+  "historyP3": "The initiative was spearheaded by Mr. Emmanuel KAKULE SYAYUKUMBITA, a community development advocate whose life path was transformed following a traffic accident in 2014 resulting in the amputation of his leg. This lived experience deepened his commitment to turning hardship into a collective movement for inclusive rights.",
+  "historyP4": "Co-founded by persons with disabilities and non-disabled allies across diverse communities, ACPDPH implements a human-rights-based, community-driven approach fostering universal accessibility and self-reliance.",
+  "visionTitle": "Our vision",
+  "visionText": "To build an inclusive, equitable, and cohesive Congolese society free from disability-based discrimination, where all persons with disabilities fully exercise their fundamental human rights, participate actively in community development, and thrive with dignity and self-reliance.",
+  "missionTitle": "Our mission",
+  "missionText": "To promote and defend the rights of persons with disabilities, counter all forms of discrimination, and foster their holistic inclusion, empowerment, and civic participation to ensure long-term dignity and well-being.",
+  "objectiveTitle": "Social objective",
+  "objectiveText": "To dismantle stigma through persistent awareness, capacity-building, and advocacy, while advancing the human rights of persons with disabilities through humanitarian response and community-based inclusive development.",
+  "valuesTitle": "Our core values",
+  "valuesList": [
+    "Professionalism",
+    "Solidarity",
+    "Non-discrimination",
+    "Respect for human dignity",
+    "Well-being and fulfillment"
+  ],
+  "legalStatusTitle": "Legal status",
+  "legalStatusDesc": "The Congolese Agency for the Promotion of the Rights of Persons with Disabilities (ACPDPH) is a national non-governmental organization incorporated under the legislation of the Democratic Republic of Congo applicable to non-profit organizations, notably Law No. 004/2001 of July 20, 2001.",
+  "orgLabel": "Organization",
+  "legalFormLabel": "Legal Form",
+  "legalFormValue": "National NGO & Non-Profit (DRC)",
+  "legalFrameworkLabel": "Legal Framework",
+  "legalFrameworkValue": "Law No. 004/2001 of July 20, 2001",
+  "headquartersLabel": "Headquarters",
+  "recognitionTitle": "Administrative and Legal Recognition",
+  "recognitionIntro": "The Congolese Agency for the Promotion of the Rights of Persons with Disabilities (ACPDPH) progressed through the following milestones of institutional recognition:",
+  "teamPhotoAlt": "ACPDPH team following an entrepreneurship training workshop for women and girls with disabilities",
+  "recognitionSteps": [
+    {
+      "date": "December 3, 2018",
+      "badge": "Establishment",
+      "title": "Official establishment of the organization and adoption of its founding statutes in Beni."
+    },
+    {
+      "date": "February 10, 2024",
+      "badge": "Legal Personality",
+      "title": "Official granting of legal personality",
+      "ref": "Ministerial Order N° 367/CAB/ME/MIN/J&GS/2024"
+    }
+  ],
+  "documentsTitle": "Official documents & Publications",
+  "downloadStatutes": "Download official ACPDPH Statutes (PDF)",
+  "downloadRoi": "Download Internal Regulations (PDF)",
+  "downloadReport": "Download latest certified activity report (PDF)"
+}

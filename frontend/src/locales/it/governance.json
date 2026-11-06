@@ -1,0 +1,45 @@
+{
+  "title": "Governance",
+  "subtitle": "Scopri gli organi statutari e i membri che guidano, supervisionano e animano le attività dell'ACPDPH con rigore, trasparenza e dedizione.",
+  "generalAssembly": {
+    "title": "Assemblea Generale",
+    "p1": "L'Assemblea Generale è l'organo supremo e sovrano dell'ACPDPH. Riunisce i soci fondatori e aderenti per definire i grandi orientamenti strategici e istituzionali dell'organizzazione.",
+    "p2": "È incaricata di adottare le politiche globali, approvare le relazioni annuali di attività e finanziarie, eleggere i componenti del Consiglio di Amministrazione e deliberare su tutte le questioni fondamentali.",
+    "p3": "Si riunisce in sessione ordinaria una volta all'anno e garantisce una governance democratica, partecipativa, trasparente e inclusiva."
+  },
+  "board": {
+    "title": "Consiglio di Amministrazione",
+    "intro": "Il Consiglio di Amministrazione assicura l'attuazione delle decisioni dell'Assemblea Generale e vigila sull'orientamento strategico dell'organizzazione. È composto da cinque membri impegnati nel perseguire la missione dell'ACPDPH:",
+    "conclusion": "Attraverso la propria leadership e un impegno costante, il Consiglio di Amministrazione accompagna l'ACPDPH nella realizzazione della sua visione di una società equa e accessibile a tutti."
+  },
+  "audit": {
+    "title": "Commissione di Controllo",
+    "intro": "La Commissione di Controllo è un organo interno eletto dall'Assemblea Generale. Vigila sulla regolarità, conformità statutaria e corretta gestione finanziaria e patrimoniale dell'ACPDPH. I suoi componenti sono:"
+  },
+  "secretariat": {
+    "title": "Segreteria Esecutiva",
+    "intro": "La Segreteria Esecutiva costituisce l'organo operativo preposto alla gestione quotidiana, al coordinamento tecnico dei progetti e all'attuazione dei programmi sul campo. I membri della Segreteria Esecutiva sono:"
+  },
+  "viewCv": "Consulta il profilo biografico",
+  "noMembers": "Nessun membro inserito in questa sezione.",
+  "executiveLeadership": "Direzione Esecutiva",
+  "roles": {
+    "boardPresident": "Iniziatore e Presidente del Consiglio di Amministrazione",
+    "boardVicePresident": "Vicepresidente del Consiglio di Amministrazione",
+    "boardSecretary": "Segretario del Consiglio di Amministrazione",
+    "boardTreasurer": "Tesoriere del Consiglio di Amministrazione",
+    "boardAdvisor": "Consigliere del Consiglio di Amministrazione",
+    "auditPresident": "Presidente della Commissione di Controllo",
+    "auditSecretary": "Segretario verbalizzante",
+    "auditMember": "Membro revisore",
+    "nationalExecutiveSecretary": "Segretario esecutivo nazionale",
+    "programsDirector": "Direttore dei programmi",
+    "accountant": "Contabile",
+    "cashier": "Cassiera",
+    "logistician": "Logista",
+    "communicationsOfficer": "Responsabile comunicazione",
+    "signLanguageInterpreter": "Interprete di lingua dei segni",
+    "communityWorker": "Operatore comunitario"
+  }
+}
+

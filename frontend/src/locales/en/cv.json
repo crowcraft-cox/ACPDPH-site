@@ -1,0 +1,21 @@
+{
+  "loading": "Loading biographical profile...",
+  "notFoundTitle": "This profile is not available.",
+  "notFoundDesc": "The requested profile has not been published yet or is temporarily unavailable.",
+  "backToGovernance": "Back to governance",
+  "photoAlt": "Photo of {{name}}",
+  "about": "About",
+  "contact": "Contact",
+  "skills": "Skills",
+  "languages": "Languages",
+  "experience": "Experience",
+  "formation": "Education",
+  "phone": "Phone",
+  "email": "Email",
+  "address": "Address",
+  "none": "None",
+  "print": "Print profile",
+  "download": "Download template (.docx)",
+  "verifiedProfile": "Official certified ACPDPH profile"
+}
+

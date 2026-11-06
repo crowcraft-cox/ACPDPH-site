@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { formatProjectDate } from '../utils/dateFormatter';
 
 export default function Projects() {
-  const { t } = useI18n();
+  const { t, lang, getLocalized, getLocalizedPath } = useI18n();
   const { ref: headerRef } = useScrollReveal();
   const { ref: cardsContainerRef } = useAnimeReveal<HTMLUListElement>({
     variant: 'stagger-cards',
@@ -34,7 +34,7 @@ export default function Projects() {
         className="container-ba mb-16 text-center"
       >
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-ba-blue/10 text-ba-blue mb-3">
-          Actions de terrain
+          {lang === 'en' ? 'Field actions' : 'Actions de terrain'}
         </span>
         <h1 className="font-heading text-4xl md:text-5xl font-bold mb-6">{t.projects.title}</h1>
         <p className="text-ba-text-secondary text-lg max-w-3xl mx-auto leading-relaxed">
@@ -47,12 +47,13 @@ export default function Projects() {
         <ul ref={cardsContainerRef} role="list" className="projects-grid">
           {displayedProjects.map((proj) => {
             const dateInfo = formatProjectDate(proj.date);
+            const projectTitle = getLocalized(proj, 'title');
             return (
               <li key={proj.id} className="project-card-item">
                 <Link
-                  to={`/projects/${proj.id}`}
+                  to={getLocalizedPath(`/projects/${proj.id}`)}
                   className="project-card-link"
-                  aria-label={`${proj.title}, ${dateInfo.accessible}`}
+                  aria-label={`${projectTitle}, ${dateInfo.accessible}`}
                 >
                   {/* Photo : hauteur fixe 170px, ratio 16:9 sur <600px */}
                   <div className="project-card-image-wrap">
@@ -75,7 +76,7 @@ export default function Projects() {
                   {/* Panneau coloré bleu (#1F4FDB) */}
                   <div className="project-card-body">
                     <h3 className="project-card-title">
-                      {proj.title}
+                      {projectTitle}
                     </h3>
                     <time dateTime={dateInfo.iso} className="project-card-date">
                       {dateInfo.display}
@@ -94,14 +95,14 @@ export default function Projects() {
               onClick={() => setVisibleCount((prev) => prev + 12)}
               className="btn btn-outline btn-lg"
             >
-              Charger plus de projets
+              {t.projects.loadMore}
             </button>
           </div>
         )}
 
         {sortedProjects.length === 0 && (
           <div className="text-center py-24 text-ba-text-muted">
-            <p className="text-lg">{t.projects.no_projects}</p>
+            <p className="text-lg">{t.projects.noProjects}</p>
           </div>
         )}
 

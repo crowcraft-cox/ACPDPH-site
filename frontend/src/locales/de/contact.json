@@ -1,0 +1,22 @@
+{
+  "title": "Kontakt",
+  "subtitle": "Unser Team am Hauptsitz in Beni steht Ihnen für Fragen, Kooperationen oder Unterstützungsbedarfe gerne zur Verfügung.",
+  "addressTitle": "Anschrift & Hauptsitz",
+  "addressValue": "Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.",
+  "emailTitle": "Offizielle E-Mail-Adresse",
+  "phoneTitle": "Telefon & Mobile Money",
+  "whatsappTitle": "WhatsApp-Hilfe",
+  "formTitle": "Schreiben Sie uns eine Nachricht",
+  "formName": "Vollständiger Name",
+  "formEmail": "E-Mail-Adresse",
+  "formPhone": "Telefonnummer",
+  "formSubject": "Betreff der Nachricht",
+  "formMessage": "Ihre Nachricht",
+  "formSend": "Nachricht absenden",
+  "sending": "Wird gesendet...",
+  "successMessage": "Vielen Dank! Ihre Nachricht wurde erfolgreich übermittelt. Unser Team antwortet Ihnen schnellstmöglich.",
+  "errorMessage": "Beim Senden Ihrer Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an.",
+  "officeHours": "Bürozeiten",
+  "officeHoursValue": "Montag bis Freitag, 08:00 bis 16:30 Uhr (Ortszeit Beni, UTC+2)"
+}
+

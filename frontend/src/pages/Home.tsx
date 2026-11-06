@@ -33,7 +33,7 @@ interface HeroItem {
 
 /* ===== HERO SECTION ===== */
 function HeroSection() {
-  const { t } = useI18n();
+  const { t, lang, getLocalizedPath } = useI18n();
   const { data } = useAdminData();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -199,7 +199,7 @@ function HeroSection() {
       onKeyDown={handleKeyDown}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      aria-label="Carousel de projets et actualités"
+      aria-label={t.home.carouselAriaLabel || (lang === 'en' ? 'Projects and news carousel' : 'Carousel de projets et actualités')}
       aria-roledescription="carousel"
     >
       {/* Background Image avec fondu */}
@@ -222,7 +222,7 @@ function HeroSection() {
         <button
           className="hero-a11y-btn"
           onClick={() => goManual(-1)}
-          aria-label="Diapositive précédente"
+          aria-label={t.home.previousSlide || (lang === 'en' ? 'Previous slide' : 'Diapositive précédente')}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -247,7 +247,7 @@ function HeroSection() {
         <button
           className="hero-a11y-btn"
           onClick={() => goManual(1)}
-          aria-label="Diapositive suivante"
+          aria-label={t.home.nextSlide || (lang === 'en' ? 'Next slide' : 'Diapositive suivante')}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -261,7 +261,7 @@ function HeroSection() {
           key={`slide-${currentIndex}`}
           role="group"
           aria-roledescription="slide"
-          aria-label={`${currentIndex + 1} sur ${totalSlides}`}
+          aria-label={lang === 'en' ? `${currentIndex + 1} of ${totalSlides}` : `${currentIndex + 1} sur ${totalSlides}`}
           className="hero-slide-container hero-text-anim"
         >
           {/* Bloc de texte */}
@@ -279,11 +279,11 @@ function HeroSection() {
           {/* Bouton Lire plus — à droite */}
           <div className="hero-btn-wrapper hero-btn-anim">
             <Link
-              to={currentSlide.link}
-              aria-label={`Lire plus : ${currentSlide.rawTitle}`}
+              to={getLocalizedPath(currentSlide.link)}
+              aria-label={lang === 'en' ? `Read more: ${currentSlide.rawTitle}` : `Lire plus : ${currentSlide.rawTitle}`}
               className="hero-read-more-btn group"
             >
-              <span>Lire plus</span>
+              <span>{lang === 'en' ? 'Read more' : 'Lire plus'}</span>
               <svg
                 className="w-4 h-4 ml-2.5 transition-transform duration-200 group-hover:translate-x-1 shrink-0"
                 fill="none"
@@ -302,7 +302,7 @@ function HeroSection() {
       {/* Overlapping CTA Button */}
       <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-20 px-4">
         <div className="container-ba flex items-center justify-center">
-          <Link to="/support" className="btn btn-blue btn-lg group shadow-lg">
+          <Link to={getLocalizedPath("/support")} className="btn btn-blue btn-lg group shadow-lg">
             <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
@@ -318,15 +318,22 @@ function HeroSection() {
 
 /* ===== ABOUT SECTION (INSPIRED BY IDDC) ===== */
 function AboutSection() {
+  const { lang, getLocalizedPath } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollReveal();
 
-  const paragraphs = [
+  const paragraphs = lang === 'en' ? [
+    "The Congolese Agency for the Promotion of the Rights of Persons with Disabilities (ACPDPH) is a national, non-political, non-profit NGO founded on December 3, 2018 in Beni, North Kivu province, Democratic Republic of the Congo.",
+    "Our mission is to promote the rights, inclusion, and empowerment of persons with disabilities by fostering equal opportunities, access to essential services, and full participation in social, economic, and community life.",
+    "Through a community-based human rights approach, our interventions focus on inclusive education, healthcare, protection, humanitarian assistance, combating gender-based violence, and economic empowerment.",
+    "We strive for an inclusive, equitable, and supportive society where every person with a disability can fully exercise their rights, develop their potential, and actively contribute to community development.",
+    "Our vision: building a society free from disability-based discrimination, where every person with a disability thrives in socio-economic well-being."
+  ] : [
     "L'Agence Congolaise de Promotion des Droits des Personnes Handicapées (ACPDPH) est une ONG nationale, apolitique et sans but lucratif, créée le 3 décembre 2018 à Beni, dans la province du Nord-Kivu, en République démocratique du Congo.",
     "Notre mission est de promouvoir les droits, l'inclusion et l'autonomisation des personnes handicapées, en favorisant l'égalité des chances, l'accès aux services essentiels et la pleine participation à la vie sociale, économique et communautaire.",
     "À travers une approche communautaire fondée sur les droits humains, nous intervenons notamment dans l'éducation inclusive, la santé, la protection, l'assistance humanitaire, la lutte contre les violences basées sur le genre et l'autonomisation économique.",
     "Nous œuvrons pour une société inclusive, juste et solidaire, dans laquelle chaque personne handicapée peut exercer pleinement ses droits, développer son potentiel et contribuer activement au développement de sa communauté.",
-    "Notre vision : bâtir une société sans discrimination fondée sur le handicap, où chaque personne handicapée vit dans un état de bien-être socio-économique.",
-  ]
+    "Notre vision : bâtir une société sans discrimination fondée sur le handicap, où chaque personne handicapée vit dans un état de bien-être socio-économique."
+  ];
 
   return (
     <section
@@ -346,12 +353,12 @@ function AboutSection() {
               id="about-heading"
               className="about-heading-block"
             >
-              <span className="about-line-light" aria-hidden="true">À propos</span>
-              <span className="sr-only">À propos de l'ACPDPH</span>
+              <span className="about-line-light" aria-hidden="true">{lang === 'en' ? 'About Us' : 'À propos'}</span>
+              <span className="sr-only">{lang === 'en' ? 'About ACPDPH' : "À propos de l'ACPDPH"}</span>
             </h2>
             <img
               src="/images/a-propos-equipe.jpg"
-              alt="Équipe de l'ACPDPH à l'issue d'un atelier de formation à l'entrepreneuriat pour femmes et filles handicapées déplacées internes"
+              alt={lang === 'en' ? "ACPDPH team after an entrepreneurship workshop for displaced women and girls with disabilities" : "Équipe de l'ACPDPH à l'issue d'un atelier de formation à l'entrepreneuriat pour femmes et filles handicapées déplacées internes"}
               loading="lazy"
               decoding="async"
               width={1200}
@@ -368,11 +375,11 @@ function AboutSection() {
               ))}
             </div>
             <Link
-              to="/about"
+              to={getLocalizedPath("/about")}
               className="about-cta-btn"
-              aria-label="Lire plus sur l'ACPDPH"
+              aria-label={lang === 'en' ? "Read more about ACPDPH" : "Lire plus sur l'ACPDPH"}
             >
-              Lire plus
+              {lang === 'en' ? 'Read more' : 'Lire plus'}
             </Link>
           </div>
 
@@ -384,7 +391,7 @@ function AboutSection() {
 
 /* ===== IMPACT COUNTERS (DE-AI RULES APPLIED: 1 PRIMARY, 3 SECONDARY, THE NUMBER IS THE HERO) ===== */
 function ImpactSection() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollReveal();
   const { data } = useAdminData();
 
@@ -403,7 +410,9 @@ function ImpactSection() {
         <div className="w-full mb-10 impact-title-offset">
           <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-center" style={{ color: '#1F4FDB' }}>{t.impact.title}</h2>
           <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
-            Des avancées concrètes, mesurables et durables pour l'inclusion des personnes handicapées en République Démocratique du Congo. À travers nos programmes intégrés d'accompagnement juridique, de réadaptation fonctionnelle, d'éducation inclusive et d'insertion socio-économique, nous œuvrons sans relâche pour transformer le quotidien des personnes vulnérables et de leurs familles. Chaque action menée sur le terrain renforce l'autonomie, restaure la dignité humaine et favorise une participation citoyenne équitable et respectueuse des droits fondamentaux.
+            {lang === 'en'
+              ? "Concrete, measurable, and lasting progress for the inclusion of persons with disabilities in the Democratic Republic of the Congo. Through our integrated programs of legal assistance, functional rehabilitation, inclusive education, and socio-economic integration, we work tirelessly to improve the lives of vulnerable individuals and their families. Each action on the ground strengthens autonomy, restores human dignity, and promotes equitable citizen participation respectful of fundamental rights."
+              : "Des avancées concrètes, mesurables et durables pour l'inclusion des personnes handicapées en République Démocratique du Congo. À travers nos programmes intégrés d'accompagnement juridique, de réadaptation fonctionnelle, d'éducation inclusive et d'insertion socio-économique, nous œuvrons sans relâche pour transformer le quotidien des personnes vulnérables et de leurs familles. Chaque action menée sur le terrain renforce l'autonomie, restaure la dignité humaine et favorise une participation citoyenne équitable et respectueuse des droits fondamentaux."}
           </p>
         </div>
 
@@ -414,8 +423,8 @@ function ImpactSection() {
           <div className="lg:col-span-5 flex">
             <PrimaryCounterCard 
               value={primaryItem.value} 
-              label={primaryItem.label} 
-              description="Bénéficiaires directs et familles accompagnés vers l'accès aux soins, à l'éducation inclusive, à l'autonomie et aux droits fondamentaux."
+              label={lang === 'en' && primaryItem.label_en ? primaryItem.label_en : primaryItem.label} 
+              description={lang === 'en' ? 'Direct beneficiaries and families supported towards access to healthcare, inclusive education, autonomy and fundamental rights.' : "Bénéficiaires directs et familles accompagnés vers l'accès aux soins, à l'éducation inclusive, à l'autonomie et aux droits fondamentaux."}
             />
           </div>
 
@@ -439,13 +448,14 @@ function ImpactSection() {
 
 /* Primary Hero Card */
 function PrimaryCounterCard({ value, label, description }: { value: number; label: string; description: string }) {
+  const { lang } = useI18n();
   const { count, ref } = useCountUp(value, 2200);
 
   return (
     <div ref={ref} className="card w-full flex flex-col justify-between">
       <div>
         <div className="flex justify-end mb-6">
-          <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>Région Nord-Kivu</span>
+          <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? 'North Kivu Region' : 'Région Nord-Kivu'}</span>
         </div>
 
         <div className="mb-4">
@@ -490,7 +500,7 @@ function SecondaryCounterCard({ value, label }: { value: number; label: string; 
 
 /* ===== 4 PILLARS SECTION (STAGGERED WITH ANIME.JS) ===== */
 function PillarsSection() {
-  const { t } = useI18n();
+  const { t, lang, getLocalized, getLocalizedPath } = useI18n();
   const { data } = useAdminData();
   const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
     variant: 'stagger-cards',
@@ -506,7 +516,9 @@ function PillarsSection() {
         <div className="w-full mb-10">
           <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-center" style={{ color: '#1F4FDB' }}>{t.pillars.title}</h2>
           <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
-            L'ACPDPH déploie une approche globale et multisectorielle structurée autour d'axes d'intervention prioritaires pour garantir l'épanouissement intégral, l'égalité des chances et la pleine participation citoyenne des personnes en situation de handicap. De la promotion des droits et de l'accessibilité universelle du cadre bâti jusqu'à l'accès prioritaire à l'éducation inclusive, aux soins adaptés et à l'autonomie financière, nous construisons des solutions pérennes pour surmonter les barrières discriminatoires et promouvoir une société congolaise juste et solidaire.
+            {lang === 'en'
+              ? "ACPDPH deploys a comprehensive and multisectoral approach structured around priority intervention axes to ensure holistic fulfillment, equal opportunities, and full citizen participation for persons with disabilities. From rights advocacy and universal physical accessibility to inclusive education, adapted healthcare, and economic autonomy, we build lasting solutions to overcome discriminatory barriers and foster a just Congolese society."
+              : "L'ACPDPH déploie une approche globale et multisectorielle structurée autour d'axes d'intervention prioritaires pour garantir l'épanouissement intégral, l'égalité des chances et la pleine participation citoyenne des personnes en situation de handicap. De la promotion des droits et de l'accessibilité universelle du cadre bâti jusqu'à l'accès prioritaire à l'éducation inclusive, aux soins adaptés et à l'autonomie financière, nous construisons des solutions pérennes pour surmonter les barrières discriminatoires et promouvoir une société congolaise juste et solidaire."}
           </p>
         </div>
 
@@ -514,7 +526,7 @@ function PillarsSection() {
           {pillars.map((pillar, i) => (
             <Link
               key={pillar.id || i}
-              to="/pillars"
+              to={getLocalizedPath("/pillars")}
               className="pillar-card card card-cover group flex flex-col"
               style={{ padding: 0 }}
             >
@@ -527,15 +539,15 @@ function PillarsSection() {
                 />
                 <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.55)' }} />
                 <div className="absolute bottom-4 left-5 right-5 z-10">
-                  <h3 className="font-heading text-xl font-bold leading-tight" style={{ color: '#fff' }}>{pillar.title}</h3>
+                  <h3 className="font-heading text-xl font-bold leading-tight" style={{ color: '#fff' }}>{getLocalized(pillar, 'title')}</h3>
                 </div>
               </div>
 
               {/* Corps */}
               <div style={{ padding: '20px 24px 24px', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <p style={{ color: '#000000', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>{pillar.description}</p>
+                <p style={{ color: '#000000', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>{getLocalized(pillar, 'description')}</p>
                 <div className="card-footer">
-                  <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>En savoir plus</span>
+                  <span style={{ color: '#6B7280', fontSize: '0.75rem' }}>{lang === 'en' ? 'Learn more' : 'En savoir plus'}</span>
                   <div className="flex items-center gap-2 font-bold group-hover:translate-x-1.5 transition-transform duration-200" style={{ color: '#1D4ED8', fontSize: '0.875rem' }}>
                     <span>{t.pillars.learn_more}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -556,8 +568,10 @@ function PillarsSection() {
 interface ValueItem {
   id: string;
   name: string;
+  name_en?: string;
   icon: () => React.ReactNode;
   explanation: string;
+  explanation_en?: string;
   link: string;
 }
 
@@ -629,46 +643,62 @@ const VALUES_DATA: ValueItem[] = [
   {
     id: "professionnalisme",
     name: "Professionnalisme",
+    name_en: "Professionalism",
     icon: IconProfessionnalisme,
     explanation:
       "L'ACPDPH applique une rigueur exemplaire, de la transparence et des standards éthiques élevés dans la conduite de tous ses projets sur le terrain. Nos interventions reposent sur une gestion responsable des ressources, une expertise technique éprouvée et une obligation constante de redevabilité envers nos bénéficiaires et nos partenaires institutionnels. Cette exigence garantit un impact durable et mesurable pour l'inclusion des personnes en situation de handicap.",
+    explanation_en:
+      "ACPDPH applies exemplary rigor, transparency, and high ethical standards across all field initiatives. Our interventions rely on responsible resource management, verified technical expertise, and continuous accountability towards our beneficiaries and institutional partners.",
     link: "/about",
   },
   {
     id: "solidarite",
     name: "Solidarité",
+    name_en: "Solidarity",
     icon: IconSolidarite,
     explanation:
       "Nous croyons fermement à la force de l'entraide communautaire et à l'action collective pour surmonter les barrières de l'exclusion. L'ACPDPH mobilise les personnes vivant avec handicap, leurs familles et les acteurs locaux dans un esprit de fraternité et de soutien mutuel. En unissant nos forces au quotidien, nous construisons un filet de protection sociale et favorisons une véritable résilience communautaire.",
+    explanation_en:
+      "We firmly believe in community mutual aid and collective action to overcome barriers of exclusion. ACPDPH unites persons with disabilities, their families, and local actors in a spirit of mutual support and resilience.",
     link: "/about",
   },
   {
     id: "non-discrimination",
     name: "Non-discrimination",
+    name_en: "Non-discrimination",
     icon: IconNonDiscrimination,
     explanation:
       "L'égalité absolue de traitement et l'égalité des chances pour chaque individu constituent le fondement inaliénable de notre engagement. Nous luttons vigoureusement contre tous les préjugés, les stigmatisations et les disparités d'accès qui marginalisent les personnes handicapées dans la société congolaise. Chaque citoyen, sans distinction aucune, a le droit légitime de participer pleinement à la vie publique, économique et citoyenne.",
+    explanation_en:
+      "Equal treatment and equal opportunities for every individual constitute the cornerstone of our commitment. We actively combat prejudice, stigma, and accessibility disparities that marginalize persons with disabilities.",
     link: "/about",
   },
   {
     id: "dignite-humaine",
     name: "Respect de la dignité humaine",
+    name_en: "Respect for human dignity",
     icon: IconDigniteHumaine,
     explanation:
       "Chaque personne possède une valeur intrinsèque inestimable et des droits universels qui doivent être reconnus, protégés et promus sans réserve. Notre approche place l'individu au cœur de nos actions en valorisant son autonomie, sa voix et sa capacité d'autodétermination. Préserver et restaurer la dignité de chacun est au centre de notre combat pour la justice sociale.",
+    explanation_en:
+      "Every individual possesses intrinsic value and universal human rights that must be acknowledged, protected, and championed. Our rights-based approach places each person at the center by empowering their self-determination.",
     link: "/about",
   },
   {
     id: "bien-etre",
     name: "Bien-être",
+    name_en: "Well-being",
     icon: IconBienEtre,
     explanation:
       "L'épanouissement global de la personne, tant sur le plan physique et psychologique que social et économique, guide nos programmes intégrés. Nous facilitons l'accès aux soins de santé adaptés, à la réadaptation fonctionnelle, à l'éducation inclusive et aux opportunités de subsistance autonome. Favoriser le bien-être, c'est offrir à chacun la possibilité de mener une vie équilibrée, autonome et digne.",
+    explanation_en:
+      "Holistic fulfillment across physical, psychosocial, and socio-economic dimensions guides our integrated programs. We facilitate access to adapted healthcare, functional rehabilitation, inclusive education, and sustainable livelihoods.",
     link: "/about",
   },
 ];
 
 function ValuesSection() {
+  const { lang } = useI18n();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [displayIndex, setDisplayIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -742,7 +772,7 @@ function ValuesSection() {
           className="font-heading font-bold text-[#1F4FDB] text-center mb-[26px] leading-tight"
           style={{ fontSize: "clamp(2.4rem, 4vw, 3.4rem)" }}
         >
-          Nos valeurs
+          {lang === 'en' ? 'Our Values' : 'Nos valeurs'}
         </h2>
 
         {/* 2. Disposition à deux colonnes (grid-template-columns: 1fr 1.02fr; gap: 40px) */}
@@ -752,7 +782,7 @@ function ValuesSection() {
           <div className="w-full">
             <div
               role="tablist"
-              aria-label="Nos valeurs"
+              aria-label={lang === 'en' ? 'Our Values' : 'Nos valeurs'}
               className="grid grid-cols-2 gap-4 values-grid-staggered justify-items-start"
             >
               {VALUES_DATA.map((val, idx) => {
@@ -782,7 +812,7 @@ function ValuesSection() {
                       } text-[14px] sm:text-[15px] lg:text-[16px]`}
                       style={{ fontFamily: "'Montserrat', sans-serif" }}
                     >
-                      {val.name}
+                      {lang === 'en' ? (val.name_en || val.name) : val.name}
                     </span>
                   </button>
                 );
@@ -813,12 +843,12 @@ function ValuesSection() {
                   className="font-bold text-[#C4540A] text-[22px] md:text-[24px] mb-4 leading-snug"
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                 >
-                  {currentVal.name}
+                  {lang === 'en' ? (currentVal.name_en || currentVal.name) : currentVal.name}
                 </h3>
 
                 {/* Explication : 16px, gris foncé, interligne ~1.9, largeur <= 65ch */}
                 <p className="text-[#000000] text-[16px] leading-[1.9] max-w-[65ch] text-justify">
-                  {currentVal.explanation}
+                  {lang === 'en' ? (currentVal.explanation_en || currentVal.explanation) : currentVal.explanation}
                 </p>
               </div>
             </div>
@@ -834,6 +864,7 @@ function ValuesSection() {
 
 /* ===== PROJECTS PREVIEW (IDDC CARD DESIGN) ===== */
 function ProjectsPreviewSection() {
+  const { t, lang, getLocalized, getLocalizedPath } = useI18n();
   const { data } = useAdminData();
   const { ref: containerRef } = useAnimeReveal<HTMLUListElement>({
     variant: 'stagger-cards',
@@ -860,17 +891,17 @@ function ProjectsPreviewSection() {
       <div className="container-ba">
         <div className="mb-10 w-full">
           <div className="relative flex items-center justify-center mb-4">
-            <h2 id="projects-heading" className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>Nos Projets</h2>
-            <Link to="/projects" className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
-              Tous les projets
+            <h2 id="projects-heading" className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>{t.projects.title || (lang === 'en' ? 'Our Projects' : 'Nos Projets')}</h2>
+            <Link to={getLocalizedPath("/projects")} className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
+              {t.projects.filterAll || (lang === 'en' ? 'All projects' : 'Tous les projets')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
           </div>
           <div className="flex justify-center sm:hidden mb-4">
-            <Link to="/projects" className="btn btn-outline btn-sm">
-              Tous les projets
+            <Link to={getLocalizedPath("/projects")} className="btn btn-outline btn-sm">
+              {t.projects.filterAll || (lang === 'en' ? 'All projects' : 'Tous les projets')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -884,7 +915,7 @@ function ProjectsPreviewSection() {
             return (
               <li key={proj.id} className="project-card-item">
                 <Link
-                  to={`/projects/${proj.id}`}
+                  to={getLocalizedPath(`/projects/${proj.id}`)}
                   className="project-card-link"
                   aria-label={`${proj.title}, ${dateInfo.accessible}`}
                 >
@@ -909,7 +940,7 @@ function ProjectsPreviewSection() {
                   {/* Panneau coloré bleu (#1F4FDB) */}
                   <div className="project-card-body">
                     <h3 className="project-card-title">
-                      {proj.title}
+                      {getLocalized(proj, 'title')}
                     </h3>
                     <time dateTime={dateInfo.iso} className="project-card-date">
                       {dateInfo.display}
@@ -927,7 +958,7 @@ function ProjectsPreviewSection() {
 
 /* ===== NEWS PREVIEW (STAGGERED WITH ANIME.JS) ===== */
 function NewsPreviewSection() {
-  const { t } = useI18n();
+  const { t, lang, getLocalized, getLocalizedPath } = useI18n();
   const { data } = useAdminData();
   const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
     variant: 'stagger-cards',
@@ -943,7 +974,7 @@ function NewsPreviewSection() {
         <div className="mb-8 w-full">
           <div className="relative flex items-center justify-center mb-4">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>{t.news.title}</h2>
-            <Link to="/news" className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
+            <Link to={getLocalizedPath("/news")} className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
               {t.news.all_news}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -951,7 +982,7 @@ function NewsPreviewSection() {
             </Link>
           </div>
           <div className="flex justify-center sm:hidden mb-4">
-            <Link to="/news" className="btn btn-outline btn-sm">
+            <Link to={getLocalizedPath("/news")} className="btn btn-outline btn-sm">
               {t.news.all_news}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -959,7 +990,9 @@ function NewsPreviewSection() {
             </Link>
           </div>
           <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
-            Suivez au quotidien nos actions de terrain, nos prises de position publiques, nos ateliers de sensibilisation et les témoignages inspirants de résilience portés par nos membres. À travers nos publications, articles et plaidoyers institutionnels réguliers, l'ACPDPH informe la société civile, interpelle les pouvoirs publics et partage les progrès accomplis dans la promotion et la protection des droits des personnes en situation de handicap en République Démocratique du Congo.
+            {lang === 'en'
+              ? "Follow our field actions, public statements, awareness workshops, and inspiring resilience stories led by our members. Through regular publications, articles, and institutional advocacy, ACPDPH informs civil society, engages public authorities, and shares progress achieved in promoting and protecting the rights of persons with disabilities in the DRC."
+              : "Suivez au quotidien nos actions de terrain, nos prises de position publiques, nos ateliers de sensibilisation et les témoignages inspirants de résilience portés par nos membres. À travers nos publications, articles et plaidoyers institutionnels réguliers, l'ACPDPH informe la société civile, interpelle les pouvoirs publics et partage les progrès accomplis dans la promotion et la protection des droits des personnes en situation de handicap en République Démocratique du Congo."}
           </p>
         </div>
 
@@ -967,7 +1000,7 @@ function NewsPreviewSection() {
           {articles.map((article, i) => (
             <Link
               key={article.id || i}
-              to={`/news/${article.id}`}
+              to={getLocalizedPath(`/news/${article.id}`)}
               className="news-card-item card card-cover group flex flex-col"
               style={{ padding: 0 }}
             >
@@ -997,10 +1030,10 @@ function NewsPreviewSection() {
                   </div>
 
                   <h3 className="font-heading font-bold line-clamp-2 mb-2" style={{ color: '#111827', fontSize: '1rem', lineHeight: 1.35 }}>
-                    {article.title}
+                    {getLocalized(article, 'title')}
                   </h3>
 
-                  <p className="line-clamp-2 mb-4" style={{ color: '#000000', fontSize: '0.85rem', lineHeight: 1.5 }}>{article.excerpt}</p>
+                  <p className="line-clamp-2 mb-4" style={{ color: '#000000', fontSize: '0.85rem', lineHeight: 1.5 }}>{getLocalized(article, 'excerpt')}</p>
                 </div>
 
                 <div className="card-footer">
@@ -1022,7 +1055,7 @@ function NewsPreviewSection() {
 
 /* ===== CTA SECTION (ANIME.JS REVEAL) ===== */
 function CTASection() {
-  const { t } = useI18n();
+  const { t, getLocalizedPath } = useI18n();
   const { ref: containerRef } = useAnimeReveal<HTMLDivElement>({
     variant: 'fade-up',
     duration: 800,
@@ -1044,13 +1077,13 @@ function CTASection() {
           {t.cta.subtitle}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/act" className="btn btn-blue btn-lg">
+          <Link to={getLocalizedPath("/support")} className="btn btn-blue btn-lg">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
             {t.cta.donate}
           </Link>
-          <Link to="/about" className="btn btn-outline btn-lg border-white/30 text-white hover:border-ba-blue hover:text-ba-blue">
+          <Link to={getLocalizedPath("/about")} className="btn btn-outline btn-lg border-white/30 text-white hover:border-ba-blue hover:text-ba-blue">
             {t.cta.join}
           </Link>
         </div>

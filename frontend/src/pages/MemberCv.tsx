@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAdminData } from '../context/adminData';
+import { useI18n, getLocalizedPath } from '../i18n';
 import type { MemberCv } from '../types';
 import { generateSlug } from '../utils/slugify';
 import { apiFetch } from '../services/api';
@@ -9,6 +10,7 @@ import { resolveImageUrl } from '../utils/imageUrl';
 export default function MemberCvPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data, getCvBySlug } = useAdminData();
+  const { lang, getLocalized } = useI18n();
   const [cv, setCv] = useState<MemberCv | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -20,7 +22,7 @@ export default function MemberCvPage() {
       return;
     }
 
-    // 1. Chercher d'abord dans le context local (chargé depuis Atlas / fallback)
+    // 1. Chercher d'abord dans le context local (charge depuis Atlas / fallback)
     const localCv = getCvBySlug(slug) || (data.cvs || []).find((c) => c.slug === slug || generateSlug(c.memberId || '') === slug);
 
     if (localCv) {
@@ -29,7 +31,7 @@ export default function MemberCvPage() {
       return;
     }
 
-    // 2. Requête API backend pour récupérer le CV publié
+    // 2. Requete API backend pour recuperer le CV publie
     let isMounted = true;
     apiFetch<MemberCv>(`/cvs/${encodeURIComponent(slug)}`)
       .then((res) => {
@@ -54,12 +56,14 @@ export default function MemberCvPage() {
     };
   }, [slug, data.cvs, getCvBySlug]);
 
+  const backGovernancePath = getLocalizedPath('/governance', lang);
+
   if (loading) {
     return (
       <div className="min-h-screen pt-32 pb-20 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900">
         <div className="w-10 h-10 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
         <span className="mt-4 text-sm font-semibold text-slate-600 dark:text-slate-400">
-          Chargement du curriculum vitae...
+          {lang === 'en' ? 'Loading biographical profile...' : lang === 'it' ? 'Caricamento del curriculum vitae...' : lang === 'de' ? 'Lebenslauf wird geladen...' : 'Chargement du curriculum vitae...'}
         </span>
       </div>
     );
@@ -74,49 +78,79 @@ export default function MemberCvPage() {
           </svg>
         </div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
-          Ce CV n&apos;est pas disponible.
+          {lang === 'en' ? 'This profile is not available.' : lang === 'it' ? 'Questo profilo non è disponibile.' : lang === 'de' ? 'Dieses Profil ist nicht verfügbar.' : "Ce CV n'est pas disponible."}
         </h1>
         <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md">
-          Le profil demandé n&apos;a pas encore été publié ou a été temporairement retiré par l&apos;administration.
+          {lang === 'en'
+            ? 'The requested profile has not been published yet or is temporarily unavailable.'
+            : lang === 'it'
+            ? "Il profilo richiesto non è ancora stato pubblicato o è temporaneamente non disponibile."
+            : lang === 'de'
+            ? "Das angeforderte Profil wurde noch nicht veröffentlicht oder ist vorübergehend nicht verfügbar."
+            : "Le profil demandé n'a pas encore été publié ou a été temporairement retiré par l'administration."}
         </p>
         <Link
-          to="/gouvernance"
+          to={backGovernancePath}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
-          Retour à la gouvernance
+          {lang === 'en' ? 'Back to governance' : lang === 'it' ? 'Torna alla governance' : lang === 'de' ? 'Zurück zur Governance' : 'Retour à la gouvernance'}
         </Link>
       </div>
     );
   }
 
-  // Filtrage des coordonnées selon la visibilité
+  // Filtrage des coordonnees selon la visibilite
   const showPhone = Boolean(cv.visibility?.phone && cv.contact?.phone);
   const showEmail = Boolean(cv.visibility?.email && cv.contact?.email);
   const showAddress = Boolean(cv.visibility?.address && cv.contact?.address);
   const hasContactInfo = showPhone || showEmail || showAddress;
 
-  // Sections actives
-  const hasAbout = Boolean(cv.about && cv.about.trim().length > 0);
-  const hasSkills = Boolean(cv.skills && cv.skills.length > 0);
+  // Localisation des champs textuels du CV
+  const roleText = getLocalized(cv, 'role');
+  const aboutText = getLocalized(cv, 'about');
+  const skillsList = (() => {
+    const langField = `skills_${lang}` as keyof typeof cv;
+    const arr = cv[langField] as string[] | undefined;
+    if (arr && arr.length > 0) return arr;
+    if (lang !== 'en' && cv.skills_en && cv.skills_en.length > 0) return cv.skills_en;
+    return cv.skills || [];
+  })();
+  const experiencesList = (() => {
+    const langField = `experiences_${lang}` as keyof typeof cv;
+    const arr = cv[langField] as any[] | undefined;
+    if (arr && arr.length > 0) return arr;
+    if (lang !== 'en' && cv.experiences_en && cv.experiences_en.length > 0) return cv.experiences_en;
+    return cv.experiences || [];
+  })();
+  const educationList = (() => {
+    const langField = `education_${lang}` as keyof typeof cv;
+    const arr = cv[langField] as any[] | undefined;
+    if (arr && arr.length > 0) return arr;
+    if (lang !== 'en' && cv.education_en && cv.education_en.length > 0) return cv.education_en;
+    return cv.education || [];
+  })();
+
+  const hasAbout = Boolean(aboutText && aboutText.trim().length > 0);
+  const hasSkills = Boolean(skillsList && skillsList.length > 0);
   const hasLanguages = Boolean(cv.languages && cv.languages.length > 0);
-  const hasExperiences = Boolean(cv.experiences && cv.experiences.length > 0);
-  const hasEducation = Boolean(cv.education && cv.education.length > 0);
+  const hasExperiences = Boolean(experiencesList && experiencesList.length > 0);
+  const hasEducation = Boolean(educationList && educationList.length > 0);
 
   return (
     <div className="pt-24 sm:pt-28 pb-20 bg-slate-200 dark:bg-slate-950 min-h-screen">
       {/* Barre d'outils au-dessus du CV */}
       <div className="max-w-[900px] mx-auto px-4 mb-4 flex items-center justify-between no-print">
         <Link
-          to="/gouvernance"
+          to={backGovernancePath}
           className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
-          Retour à la gouvernance
+          {lang === 'en' ? 'Back to governance' : lang === 'it' ? 'Torna alla governance' : lang === 'de' ? 'Zurück zur Governance' : 'Retour à la gouvernance'}
         </Link>
       </div>
 
@@ -127,23 +161,23 @@ export default function MemberCvPage() {
           minHeight: '1270px',
         }}
       >
-        {/* ── Entête Desktop (Haut gauche : Nom / Haut droit : Forme + Photo) ── */}
+        {/* ── Entete Desktop (Haut gauche : Nom / Haut droit : Forme + Photo) ── */}
         <div className="relative pt-10 sm:pt-12 px-6 sm:px-10 pb-6 hidden md:block">
-          {/* Haut Droit : Grande forme bleu marine collée en haut à droite */}
+          {/* Haut Droit : Grande forme bleu marine collee en haut a droite */}
           <div
             className="absolute top-0 right-0 w-[42%] h-[230px] rounded-b-[100px] z-0"
             style={{ backgroundColor: 'var(--cv-navy, #1F3757)' }}
             aria-hidden="true"
           />
 
-          {/* Photo en arche / pilule débordant en bas de la forme */}
+          {/* Photo en arche / pilule debordant en bas de la forme */}
           <div
             className="absolute right-[8%] top-[30px] w-[24%] max-w-[200px] aspect-[0.7] rounded-full border-[3px] border-white z-10 overflow-hidden shadow-lg bg-slate-100 flex items-center justify-center"
           >
             {cv.photo ? (
               <img
                 src={resolveImageUrl(cv.photo)}
-                alt={`Photo de ${cv.givenNames} ${cv.familyNames}`}
+                alt={lang === 'en' ? `Photo of ${cv.givenNames} ${cv.familyNames}` : lang === 'it' ? `Foto di ${cv.givenNames} ${cv.familyNames}` : lang === 'de' ? `Foto von ${cv.givenNames} ${cv.familyNames}` : `Photo de ${cv.givenNames} ${cv.familyNames}`}
                 className="w-full h-full object-cover object-top"
                 onError={(e) => {
                   (e.currentTarget as HTMLElement).style.display = 'none';
@@ -162,7 +196,7 @@ export default function MemberCvPage() {
             </div>
           </div>
 
-          {/* Haut Gauche : Prénom(s) fin + Nom(s) gras + Fonction */}
+          {/* Haut Gauche : Prenom(s) fin + Nom(s) gras + Fonction */}
           <div className="max-w-[54%] pr-4 z-10 relative">
             <h1 className="font-josefin font-light text-4xl lg:text-[54px] tracking-tight uppercase leading-[0.95] text-slate-800 m-0">
               {cv.givenNames}
@@ -174,12 +208,12 @@ export default function MemberCvPage() {
               {cv.familyNames}
             </h2>
             <p className="font-josefin font-semibold text-black uppercase tracking-[0.15em] text-xs lg:text-sm mt-3 leading-snug">
-              {cv.role}
+              {roleText}
             </p>
           </div>
         </div>
 
-        {/* ── Entête Mobile (< 768px) ─────────────────────────────────────────── */}
+        {/* ── Entete Mobile (< 768px) ─────────────────────────────────────────── */}
         <div
           className="md:hidden pt-8 pb-6 px-6 text-center text-white"
           style={{ backgroundColor: 'var(--cv-navy, #1F3757)' }}
@@ -188,7 +222,7 @@ export default function MemberCvPage() {
             {cv.photo ? (
               <img
                 src={resolveImageUrl(cv.photo)}
-                alt={`Photo de ${cv.givenNames} ${cv.familyNames}`}
+                alt={lang === 'en' ? `Photo of ${cv.givenNames} ${cv.familyNames}` : lang === 'it' ? `Foto di ${cv.givenNames} ${cv.familyNames}` : lang === 'de' ? `Foto von ${cv.givenNames} ${cv.familyNames}` : `Photo de ${cv.givenNames} ${cv.familyNames}`}
                 className="w-full h-full object-cover object-top"
                 onError={(e) => {
                   (e.currentTarget as HTMLElement).style.display = 'none';
@@ -213,28 +247,28 @@ export default function MemberCvPage() {
             {cv.familyNames}
           </h2>
           <p className="font-josefin text-xs uppercase tracking-[0.15em] text-blue-200 font-semibold m-0">
-            {cv.role}
+            {roleText}
           </p>
         </div>
 
-        {/* ── Corps du CV (Colonnes Desktop / Empilé Mobile) ──────────────────── */}
+        {/* ── Corps du CV (Colonnes Desktop / Empile Mobile) ──────────────────── */}
         <div className="flex flex-col md:flex-row items-stretch">
           {/* ── COLONNE GAUCHE (Bleu marine) ── */}
           <aside
             className="w-full md:w-[38%] text-white p-6 sm:p-8 md:pl-[6%] md:pr-6 md:rounded-tr-[130px] flex flex-col gap-8 shrink-0 md:min-h-[850px]"
             style={{ backgroundColor: 'var(--cv-navy, #1F3757)' }}
           >
-            {/* 1. À PROPOS */}
+            {/* 1. A PROPOS */}
             {hasAbout && (
               <section aria-labelledby="cv-about">
                 <h3
                   id="cv-about"
                   className="font-montserrat font-bold text-base lg:text-[19px] uppercase tracking-wider text-white mb-3"
                 >
-                  À PROPOS
+                  {lang === 'en' ? 'ABOUT' : lang === 'it' ? 'CHI SONO' : lang === 'de' ? 'ÜBER MICH' : 'À PROPOS'}
                 </h3>
                 <p className="font-montserrat text-xs lg:text-[13px] leading-relaxed text-slate-100 whitespace-pre-line m-0">
-                  {cv.about}
+                  {aboutText}
                 </p>
               </section>
             )}
@@ -313,17 +347,17 @@ export default function MemberCvPage() {
               </section>
             )}
 
-            {/* 3. COMPÉTENCES */}
+            {/* 3. COMPETENCES */}
             {hasSkills && (
               <section aria-labelledby="cv-skills">
                 <h3
                   id="cv-skills"
                   className="font-montserrat font-bold text-base lg:text-[19px] uppercase tracking-wider text-white mb-3"
                 >
-                  COMPÉTENCES
+                  {lang === 'en' ? 'SKILLS' : lang === 'it' ? 'COMPETENZE' : lang === 'de' ? 'KOMPETENZEN' : 'COMPÉTENCES'}
                 </h3>
                 <ul className="list-disc list-outside ml-4 space-y-2 text-xs lg:text-[13px] text-slate-100 leading-relaxed font-montserrat">
-                  {cv.skills.map((skill, idx) => (
+                  {skillsList.map((skill, idx) => (
                     <li key={idx}>{skill}</li>
                   ))}
                 </ul>
@@ -337,23 +371,22 @@ export default function MemberCvPage() {
                   id="cv-languages"
                   className="font-montserrat font-bold text-base lg:text-[19px] uppercase tracking-wider text-white mb-4"
                 >
-                  LANGUES
+                  {lang === 'en' ? 'LANGUAGES' : lang === 'it' ? 'LINGUE' : lang === 'de' ? 'SPRACHEN' : 'LANGUES'}
                 </h3>
                 <div className="flex flex-wrap items-center gap-6">
-                  {cv.languages.map((lang, idx) => {
+                  {cv.languages.map((item, idx) => {
                     const radius = 22;
                     const circumference = 2 * Math.PI * radius;
-                    const validLevel = Math.max(0, Math.min(100, lang.level || 0));
+                    const validLevel = Math.max(0, Math.min(100, item.level || 0));
                     const strokeDashoffset = circumference - (validLevel / 100) * circumference;
 
                     return (
                       <div key={idx} className="flex flex-col items-center gap-1.5">
                         <span className="font-montserrat font-semibold text-xs text-slate-100">
-                          {lang.name}
+                          {item.name}
                         </span>
                         <div className="relative w-14 h-14 flex items-center justify-center">
                           <svg className="w-14 h-14 -rotate-90" viewBox="0 0 54 54">
-                            {/* Cercle arrière-plan */}
                             <circle
                               cx="27"
                               cy="27"
@@ -362,7 +395,6 @@ export default function MemberCvPage() {
                               strokeWidth="6"
                               fill="transparent"
                             />
-                            {/* Anneau de niveau */}
                             <circle
                               cx="27"
                               cy="27"
@@ -389,10 +421,9 @@ export default function MemberCvPage() {
 
           {/* ── COLONNE DROITE (Fond blanc) ── */}
           <main className="w-full md:w-[62%] py-8 md:py-10 pl-6 md:pl-10 pr-6 md:pr-0 flex flex-col gap-10">
-            {/* EXPÉRIENCE */}
+            {/* EXPERIENCE */}
             {hasExperiences && (
               <section aria-labelledby="cv-experience">
-                {/* Bande titre avec contour gris-bleu arrondie à gauche */}
                 <div
                   className="border-y-2 border-l-2 rounded-l-full py-2 pl-6 pr-4 mb-6"
                   style={{ borderColor: '#BCC7D2' }}
@@ -402,19 +433,17 @@ export default function MemberCvPage() {
                     className="font-montserrat font-bold text-base md:text-lg uppercase tracking-widest m-0"
                     style={{ color: 'var(--cv-navy, #1F3757)' }}
                   >
-                    EXPÉRIENCE
+                    {lang === 'en' ? 'EXPERIENCE' : lang === 'it' ? 'ESPERIENZA' : lang === 'de' ? 'ERFAHRUNG' : 'EXPÉRIENCE'}
                   </h3>
                 </div>
 
                 <div className="space-y-6 pr-6">
-                  {cv.experiences.map((exp, idx) => (
+                  {experiencesList.map((exp, idx) => (
                     <article key={idx} className="flex flex-col">
-                      {/* Intitulé du poste */}
                       <span className="font-montserrat font-bold text-xs uppercase tracking-wider text-slate-600">
                         {exp.title}
                       </span>
 
-                      {/* Organisation et Période alignée à droite */}
                       <div className="flex flex-wrap items-baseline justify-between gap-2 mt-0.5 mb-2">
                         <h4 className="font-montserrat font-bold text-base md:text-[19px] text-slate-900 leading-snug m-0">
                           {exp.organization}
@@ -424,10 +453,9 @@ export default function MemberCvPage() {
                         </span>
                       </div>
 
-                      {/* Liste de puces */}
                       {exp.bullets && exp.bullets.length > 0 && (
                         <ul className="list-disc list-outside ml-4 space-y-1 text-xs md:text-[13px] text-slate-700 leading-relaxed font-montserrat">
-                          {exp.bullets.map((bullet, bIdx) => (
+                          {exp.bullets.map((bullet: string, bIdx: number) => (
                             <li key={bIdx}>{bullet}</li>
                           ))}
                         </ul>
@@ -441,7 +469,6 @@ export default function MemberCvPage() {
             {/* FORMATION */}
             {hasEducation && (
               <section aria-labelledby="cv-formation">
-                {/* Bande titre avec contour gris-bleu arrondie à gauche */}
                 <div
                   className="border-y-2 border-l-2 rounded-l-full py-2 pl-6 pr-4 mb-6"
                   style={{ borderColor: '#BCC7D2' }}
@@ -451,14 +478,13 @@ export default function MemberCvPage() {
                     className="font-montserrat font-bold text-base md:text-lg uppercase tracking-widest m-0"
                     style={{ color: 'var(--cv-navy, #1F3757)' }}
                   >
-                    FORMATION
+                    {lang === 'en' ? 'EDUCATION' : lang === 'it' ? 'FORMAZIONE' : lang === 'de' ? 'AUSBILDUNG' : 'FORMATION'}
                   </h3>
                 </div>
 
                 <div className="space-y-5 pr-6">
-                  {cv.education.map((edu, idx) => (
+                  {educationList.map((edu, idx) => (
                     <article key={idx} className="flex flex-col">
-                      {/* Établissement et Période alignée à droite */}
                       <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
                         <h4 className="font-montserrat font-bold text-base md:text-[19px] text-slate-900 leading-snug m-0">
                           {edu.institution}
@@ -468,7 +494,6 @@ export default function MemberCvPage() {
                         </span>
                       </div>
 
-                      {/* Diplôme ou formation */}
                       <p className="font-montserrat text-xs md:text-sm text-slate-600 m-0 leading-normal">
                         {edu.degree}
                       </p>
@@ -483,4 +508,3 @@ export default function MemberCvPage() {
     </div>
   );
 }
-

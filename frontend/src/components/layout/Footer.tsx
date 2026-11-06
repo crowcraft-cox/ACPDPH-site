@@ -10,7 +10,7 @@ const isEmailValid = (v: string) =>
 
 /* ─── Footer ─────────────────────────────────────────── */
 export default function Footer() {
-  const { t } = useI18n();
+  const { t, lang, getLocalizedPath } = useI18n();
   const { data, addSubscriber } = useAdminData();
 
   const [email, setEmail]               = useState('');
@@ -29,7 +29,10 @@ export default function Footer() {
     if (honeypotRef.current?.value) return;
 
     if (!isEmailValid(email)) {
-      setNewsletterMsg({ type: 'error', text: t.footer.newsletter_error_email ?? 'Entrez une adresse e-mail valide.' });
+      setNewsletterMsg({
+        type: 'error',
+        text: t.footer.newsletterErrorEmail || t.footer.newsletter_error_email || (lang === 'en' ? 'Please enter a valid email address.' : 'Entrez une adresse e-mail valide.'),
+      });
       return;
     }
 
@@ -42,12 +45,15 @@ export default function Footer() {
 
       if (res.success) {
         setSubscribed(true);
-        setNewsletterMsg({ type: 'success', text: 'Merci, vous êtes inscrit(e) !' });
+        setNewsletterMsg({
+          type: 'success',
+          text: t.footer.newsletterSuccess || (lang === 'en' ? 'Thank you, your subscription is confirmed!' : 'Merci, vous êtes inscrit(e) !'),
+        });
         setEmail('');
       } else {
         setNewsletterMsg({
           type: 'error',
-          text: res.message || "Erreur lors de l'inscription.",
+          text: res.message || t.footer.newsletterErrorGeneric || (lang === 'en' ? 'An error occurred during subscription.' : "Erreur lors de l'inscription."),
         });
       }
     }, 400);
@@ -55,12 +61,12 @@ export default function Footer() {
 
   /* ── Données ── */
   const navLinks = [
-    { path: '/',             label: t.nav.home },
-    { path: '/about',        label: t.nav.about },
-    { path: '/governance',   label: t.nav.governance  || 'Gouvernance & Équipe' },
-    { path: '/projects',     label: t.nav.projects },
-    { path: '/news',         label: t.nav.news },
-    { path: '/contact',      label: t.nav.contact },
+    { path: '/',             label: t.nav?.home || (lang === 'en' ? 'Home' : 'Accueil') },
+    { path: '/about',        label: t.nav?.about || (lang === 'en' ? 'About us' : 'Qui sommes-nous') },
+    { path: '/governance',   label: t.nav?.governance || (lang === 'en' ? 'Governance' : 'Gouvernance & Équipe') },
+    { path: '/projects',     label: t.nav?.projects || (lang === 'en' ? 'Our projects' : 'Nos projets') },
+    { path: '/news',         label: t.nav?.news || (lang === 'en' ? 'News' : 'Actualités') },
+    { path: '/contact',      label: t.nav?.contact || 'Contact' },
   ];
 
   const socialLinks = [
@@ -77,7 +83,7 @@ export default function Footer() {
     emailTouched && !isEmailValid(email) && !subscribed && !newsletterMsg;
 
   return (
-    <footer className="footer-root" aria-label="Pied de page">
+    <footer className="footer-root" aria-label={lang === 'en' ? 'Footer' : 'Pied de page'}>
 
       {/* ── Niveau 1 : trois colonnes ──────────────────── */}
       <div className="footer-main">
@@ -86,7 +92,9 @@ export default function Footer() {
 
             {/* Colonne 1 – Notre bureau */}
             <div>
-              <h3 className="footer-col-title">Notre bureau</h3>
+              <h3 className="footer-col-title">
+                {t.footer.headquarters || (lang === 'en' ? 'Our office' : 'Notre bureau')}
+              </h3>
               <ul className="footer-contact-list">
                 <li>
                   <span className="footer-contact-icon" aria-hidden="true">
@@ -123,12 +131,14 @@ export default function Footer() {
 
             {/* Colonne 2 – Liens rapides */}
             <div>
-              <h3 className="footer-col-title">Liens rapides</h3>
-              <nav aria-label="Liens du pied de page">
+              <h3 className="footer-col-title">
+                {t.footer.quickLinks || (lang === 'en' ? 'Quick links' : 'Liens rapides')}
+              </h3>
+              <nav aria-label={lang === 'en' ? 'Footer navigation links' : 'Liens du pied de page'}>
                 <ul className="footer-nav-list">
                   {navLinks.map(link => (
                     <li key={link.path}>
-                      <Link to={link.path} className="footer-nav-link">
+                      <Link to={getLocalizedPath(link.path)} className="footer-nav-link">
                         {link.label}
                       </Link>
                     </li>
@@ -139,7 +149,9 @@ export default function Footer() {
 
             {/* Colonne 3 – Suivez-nous + newsletter */}
             <div className="footer-col-social">
-              <h3 className="footer-col-title">Suivez-nous</h3>
+              <h3 className="footer-col-title">
+                {t.footer.followUs || (lang === 'en' ? 'Follow us' : 'Suivez-nous')}
+              </h3>
 
               <div className="footer-social-row">
                 {socialLinks.map(s => (
@@ -159,7 +171,7 @@ export default function Footer() {
               {/* Newsletter */}
               <div>
                 <label htmlFor="footer-email-input" className="footer-newsletter-label">
-                  {t.footer.newsletter_title}
+                  {t.footer.newsletterTitle || t.footer.newsletter_title}
                 </label>
 
                 <form onSubmit={handleNewsletter} noValidate>
@@ -181,7 +193,7 @@ export default function Footer() {
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       onBlur={() => setEmailTouched(true)}
-                      placeholder="nom@exemple.org"
+                      placeholder={t.footer.newsletterPlaceholder || 'nom@exemple.org'}
                       className="footer-newsletter-input"
                       autoComplete="email"
                       required
@@ -194,7 +206,7 @@ export default function Footer() {
                       disabled={loading || subscribed}
                       className="footer-newsletter-btn"
                     >
-                      {loading ? '...' : subscribed ? 'Inscrit(e)' : t.footer.newsletter_submit}
+                      {loading ? '...' : subscribed ? (t.footer.newsletterSubscribed || 'Inscrit(e)') : (t.footer.newsletterSubmit || t.footer.newsletter_submit)}
                     </button>
                   </div>
 
@@ -212,7 +224,7 @@ export default function Footer() {
                       </p>
                     ) : showEmailError ? (
                       <p role="alert" className="footer-newsletter-hint footer-newsletter-error">
-                        Entrez une adresse e-mail valide.
+                        {t.footer.newsletterErrorEmail || (lang === 'en' ? 'Please enter a valid email address.' : 'Entrez une adresse e-mail valide.')}
                       </p>
                     ) : null}
                   </div>
@@ -228,11 +240,11 @@ export default function Footer() {
       <div className="footer-bar">
         <div className="container-ba footer-bar-inner footer-bar-inner--centered">
           <p className="footer-bar-copy">
-            &copy; {new Date().getFullYear()} ACPDPH. {t.footer.rights}
+            &copy; {new Date().getFullYear()} ACPDPH. {t.footer.rightsReserved || t.footer.rights}
           </p>
           <div className="footer-bar-links">
-            <Link to="/legal"   className="footer-bar-link">{t.footer.terms}</Link>
-            <Link to="/privacy" className="footer-bar-link">{t.footer.privacy}</Link>
+            <Link to={getLocalizedPath('/legal')}   className="footer-bar-link">{t.footer.termsOfService || t.footer.terms}</Link>
+            <Link to={getLocalizedPath('/privacy')} className="footer-bar-link">{t.footer.privacyPolicy || t.footer.privacy}</Link>
           </div>
         </div>
       </div>

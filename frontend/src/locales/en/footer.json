@@ -1,0 +1,22 @@
+{
+  "description": "The Congolese Agency for the Promotion of the Rights of Persons with Disabilities (ACPDPH) works for rights advocacy, universal accessibility, inclusive education, healthcare and socio-economic empowerment across the Democratic Republic of Congo.",
+  "navigation": "Navigation",
+  "legal": "Documents & Legal",
+  "privacyPolicy": "Privacy policy",
+  "termsOfService": "Terms of service",
+  "statutes": "ACPDPH Statutes",
+  "internalRegulations": "Internal Regulations",
+  "newsletterTitle": "Subscribe to our newsletter",
+  "newsletterSubtitle": "Receive our latest news, field reports and advocacy updates directly.",
+  "newsletterPlaceholder": "Your email address",
+  "newsletterSubmit": "Subscribe",
+  "newsletterSubscribed": "Subscribed",
+  "newsletterSuccess": "Thank you, your subscription is confirmed!",
+  "newsletterErrorEmail": "Please enter a valid email address.",
+  "newsletterErrorGeneric": "An error occurred during subscription.",
+  "headquarters": "Our headquarters",
+  "address": "Quartier KASANGA-PAIDA, Commune de Ruwenzori, city of Beni, North Kivu, DRC.",
+  "followUs": "Follow us",
+  "quickLinks": "Quick links",
+  "rightsReserved": "All rights reserved."
+}

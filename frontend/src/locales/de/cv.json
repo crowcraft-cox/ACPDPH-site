@@ -1,0 +1,21 @@
+{
+  "loading": "Biografisches Profil wird geladen...",
+  "notFoundTitle": "Dieser Lebenslauf ist nicht verfügbar.",
+  "notFoundDesc": "Das angeforderte Profil wurde noch nicht veröffentlicht oder ist vorübergehend nicht erreichbar.",
+  "backToGovernance": "Zurück zur Governance",
+  "photoAlt": "Foto von {{name}}",
+  "about": "Über mich",
+  "contact": "Kontakt",
+  "skills": "Kompetenzen",
+  "languages": "Sprachen",
+  "experience": "Berufserfahrung",
+  "formation": "Ausbildung",
+  "phone": "Telefon",
+  "email": "E-Mail",
+  "address": "Anschrift",
+  "none": "Keine Angabe",
+  "print": "Profil drucken",
+  "download": "Vorlage herunterladen (.docx)",
+  "verifiedProfile": "Offiziell beglaubigtes ACPDPH-Profil"
+}
+

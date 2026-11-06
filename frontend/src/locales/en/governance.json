@@ -1,0 +1,44 @@
+{
+  "title": "Governance",
+  "subtitle": "Discover the statutory bodies and leadership team that guide, supervise, and implement the actions of ACPDPH with transparency, integrity, and dedication.",
+  "generalAssembly": {
+    "title": "General Assembly",
+    "p1": "The General Assembly is the supreme and sovereign governing body of ACPDPH. It brings together founding and active members to set institutional directions and long-term strategic priorities.",
+    "p2": "It is responsible for approving strategic policies, adopting annual certified financial and narrative reports, electing members of the Board of Directors, and deciding on major organizational matters.",
+    "p3": "It convenes in ordinary session once a year and guarantees democratic, participatory, transparent, and inclusive governance."
+  },
+  "board": {
+    "title": "Board of Directors",
+    "intro": "The Board of Directors oversees the execution of General Assembly resolutions and steers the organization's strategic vision. It is composed of five dedicated leaders driving the mission of ACPDPH:",
+    "conclusion": "Through proactive leadership, the Board of Directors accompanies ACPDPH toward the realization of an inclusive society where persons with disabilities enjoy full rights."
+  },
+  "audit": {
+    "title": "Oversight Committee",
+    "intro": "The Oversight Committee is an internal supervisory body elected by the General Assembly. It ensures statutory compliance, accountability, and the sound financial and asset management of ACPDPH. Its members are:"
+  },
+  "secretariat": {
+    "title": "Executive Secretariat",
+    "intro": "The Executive Secretariat is the operational arm responsible for day-to-day administration, technical project coordination, and the execution of field programs. The Executive Secretariat team includes:"
+  },
+  "viewCv": "View biographical profile",
+  "noMembers": "No members listed in this section.",
+  "executiveLeadership": "Executive Leadership",
+  "roles": {
+    "boardPresident": "Initiator and President of the Board of Directors",
+    "boardVicePresident": "Vice-President of the Board of Directors",
+    "boardSecretary": "Secretary of the Board of Directors",
+    "boardTreasurer": "Treasurer of the Board of Directors",
+    "boardAdvisor": "Advisor of the Board of Directors",
+    "auditPresident": "Chairperson of the Oversight Committee",
+    "auditSecretary": "Reporting Secretary",
+    "auditMember": "Oversight Member",
+    "nationalExecutiveSecretary": "National Executive Secretary",
+    "programsDirector": "Director of Programs",
+    "accountant": "Accountant",
+    "cashier": "Cashier",
+    "logistician": "Logistician",
+    "communicationsOfficer": "Communications Officer",
+    "signLanguageInterpreter": "Sign Language Interpreter",
+    "communityWorker": "Community Worker"
+  }
+}

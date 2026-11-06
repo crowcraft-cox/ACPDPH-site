@@ -46,10 +46,22 @@ const statusColors: Record<string, string> = {
   'En cours':          'bg-blue-500/20 text-blue-300 border border-blue-500/40',
   'Achevé':            'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
   'En planification':  'bg-amber-500/20 text-amber-300 border border-amber-500/40',
+  'Ongoing':           'bg-blue-500/20 text-blue-300 border border-blue-500/40',
+  'Completed':         'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
+  'Planning':          'bg-amber-500/20 text-amber-300 border border-amber-500/40',
+};
+
+const getStatusLabel = (status: string, lang: string) => {
+  if (lang === 'en') {
+    if (status === 'En cours') return 'Ongoing';
+    if (status === 'Achevé') return 'Completed';
+    if (status === 'En planification') return 'Planning';
+  }
+  return status;
 };
 
 export default function ProjectDetail() {
-  const { t } = useI18n();
+  const { t, lang, getLocalized, getLocalizedPath } = useI18n();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data } = useAdminData();
@@ -63,15 +75,25 @@ export default function ProjectDetail() {
   if (!project) {
     return (
       <div className="pt-24 sm:pt-32 container-ba pb-32 text-center">
-        <p className="text-ba-text-secondary text-xl mb-8">Projet introuvable.</p>
-        <Link to="/projects" className="btn btn-primary">← Retour aux projets</Link>
+        <p className="text-ba-text-secondary text-xl mb-8">
+          {lang === 'en' ? 'Project not found.' : 'Projet introuvable.'}
+        </p>
+        <Link to={getLocalizedPath('/projects')} className="btn btn-primary">
+          ← {t.projects.back_to_projects}
+        </Link>
       </div>
     );
   }
 
+  const projectTitle = getLocalized(project, 'title');
+  const projectDescription = getLocalized(project, 'description');
+  const projectLocation = getLocalized(project, 'location');
+  const projectType = getLocalized(project, 'type');
+  const statusDisplay = getStatusLabel(project.status, lang);
+
   const allPhotos = project.images && project.images.length > 0
     ? project.images
-    : project.image ? [{ id: '0', url: project.image, caption: project.title }] : [];
+    : project.image ? [{ id: '0', url: project.image, caption: projectTitle }] : [];
 
   return (
     <div className="min-h-screen">
@@ -81,7 +103,7 @@ export default function ProjectDetail() {
         {project.image ? (
           <img
             src={project.image}
-            alt={project.title}
+            alt={projectTitle}
             className="w-full h-full object-cover"
             style={{ display: 'block' }}
           />
@@ -101,8 +123,8 @@ export default function ProjectDetail() {
 
         {/* Back Button */}
         <button
-          onClick={() => navigate('/projects')}
-          className="absolute top-6 left-6 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full border border-white/20 transition-all duration-200"
+          onClick={() => navigate(getLocalizedPath('/projects'))}
+          className="absolute top-6 left-6 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full border border-white/20 transition-all duration-200 cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -116,15 +138,15 @@ export default function ProjectDetail() {
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${project.color || 'bg-ba-blue'} text-white`}>
-                {project.type}
+                {projectType}
               </span>
               <span className={`text-xs font-semibold px-3 py-1.5 rounded-full ${statusColors[project.status] || 'bg-gray-500/30 text-gray-300 border border-gray-500/40'}`}>
-                {project.status}
+                {statusDisplay}
               </span>
             </div>
 
             <h1 className="font-heading text-3xl md:text-5xl font-bold text-white leading-tight mb-3 drop-shadow-lg">
-              {project.title}
+              {projectTitle}
             </h1>
 
             <div className="flex items-center gap-2 text-white/80 text-sm font-medium">
@@ -132,7 +154,7 @@ export default function ProjectDetail() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
               </svg>
-              {project.location}
+              {projectLocation}
             </div>
           </div>
         </div>
@@ -148,14 +170,16 @@ export default function ProjectDetail() {
               <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
               {t.projects.about_project}
             </h2>
-            {project.description ? (
-              <ProjectDescription text={project.description} images={project.images} />
+            {projectDescription ? (
+              <ProjectDescription text={projectDescription} images={project.images} />
             ) : (
-              <p className="text-ba-text-secondary italic">Aucune description disponible pour ce projet.</p>
+              <p className="text-ba-text-secondary italic">
+                {lang === 'en' ? 'No description available for this project.' : 'Aucune description disponible pour ce projet.'}
+              </p>
             )}
           </section>
 
-          {/* Photo Gallery (only if more than 1 photo and NOT already all embedded inline) */}
+          {/* Photo Gallery */}
           {allPhotos.length > 1 && (
             <section className="mb-16">
               <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
@@ -192,7 +216,7 @@ export default function ProjectDetail() {
           {/* Back CTA */}
           <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link
-              to="/projects"
+              to={getLocalizedPath('/projects')}
               className="flex items-center gap-2 text-ba-text-secondary hover:text-ba-blue transition-colors font-medium"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -201,7 +225,7 @@ export default function ProjectDetail() {
               {t.projects.back_to_all_projects}
             </Link>
             <Link
-              to="/contact"
+              to={getLocalizedPath('/contact')}
               className="btn btn-blue text-sm"
             >
               {t.projects.contact_us_about} →

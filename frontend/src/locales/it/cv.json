@@ -1,0 +1,21 @@
+{
+  "loading": "Caricamento profilo biografico...",
+  "notFoundTitle": "Questo CV non è disponibile.",
+  "notFoundDesc": "Il profilo richiesto non è ancora stato pubblicato o è temporaneamente non disponibile.",
+  "backToGovernance": "Torna alla governance",
+  "photoAlt": "Foto di {{name}}",
+  "about": "Informazioni",
+  "contact": "Contatto",
+  "skills": "Competenze",
+  "languages": "Lingue",
+  "experience": "Esperienza",
+  "formation": "Formazione",
+  "phone": "Telefono",
+  "email": "Email",
+  "address": "Indirizzo",
+  "none": "Nessuna indicazione",
+  "print": "Stampa scheda",
+  "download": "Scarica modello (.docx)",
+  "verifiedProfile": "Profilo ufficiale certificato ACPDPH"
+}
+

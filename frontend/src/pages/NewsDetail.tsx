@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAdminData } from '../context/adminData';
+import { useI18n } from '../i18n';
 
 /* Renders article text with [photo:N] inline images — same as ProjectDescription */
 function NewsContent({ text, images }: { text: string; images?: { id: string; url: string; caption?: string }[] }) {
@@ -42,6 +43,7 @@ function NewsContent({ text, images }: { text: string; images?: { id: string; ur
 }
 
 export default function NewsDetail() {
+  const { lang, getLocalized, getLocalizedPath } = useI18n();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data } = useAdminData();
@@ -55,28 +57,36 @@ export default function NewsDetail() {
   if (!article) {
     return (
       <div style={{ paddingTop: '150px' }} className="container-ba pb-32 text-center">
-        <p className="text-ba-text-secondary text-xl mb-8">Article introuvable.</p>
-        <Link to="/news" className="btn btn-primary">← Retour aux actualités</Link>
+        <p className="text-ba-text-secondary text-xl mb-8">
+          {lang === 'en' ? 'Article not found.' : 'Article introuvable.'}
+        </p>
+        <Link to={getLocalizedPath('/news')} className="btn btn-primary">
+          ← {lang === 'en' ? 'Back to news' : 'Retour aux actualités'}
+        </Link>
       </div>
     );
   }
 
+  const articleTitle = getLocalized(article, 'title');
+  const articleCategory = getLocalized(article, 'category');
+  const articleExcerpt = getLocalized(article, 'excerpt');
+  const articleContent = getLocalized(article, 'content') || articleExcerpt;
+
   const allPhotos = article.images && article.images.length > 0
     ? article.images
-    : article.image ? [{ id: '0', url: article.image, caption: article.title }] : [];
+    : article.image ? [{ id: '0', url: article.image, caption: articleTitle }] : [];
 
-  const mainContent = article.content || article.excerpt;
   const badgeColor = 'bg-ba-blue';
 
   return (
     <div className="min-h-screen">
 
-      {/* ── HERO COVER — même structure que ProjectDetail ── */}
+      {/* ── HERO COVER ── */}
       <div className="relative w-full" style={{ height: 'min(70vh, 560px)', marginTop: '80px' }}>
         {article.image ? (
           <img
             src={article.image}
-            alt={article.title}
+            alt={articleTitle}
             className="w-full h-full object-cover"
             style={{ display: 'block' }}
           />
@@ -96,13 +106,13 @@ export default function NewsDetail() {
 
         {/* Back Button */}
         <button
-          onClick={() => navigate('/news')}
-          className="absolute top-6 left-6 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full border border-white/20 transition-all duration-200"
+          onClick={() => navigate(getLocalizedPath('/news'))}
+          className="absolute top-6 left-6 flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full border border-white/20 transition-all duration-200 cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
-          Retour aux actualités
+          {lang === 'en' ? 'Back to news' : 'Retour aux actualités'}
         </button>
 
         {/* Hero Text */}
@@ -111,7 +121,7 @@ export default function NewsDetail() {
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${badgeColor} text-white`}>
-                {article.category}
+                {articleCategory}
               </span>
               <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/10 text-white border border-white/20 backdrop-blur-sm flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -122,19 +132,19 @@ export default function NewsDetail() {
             </div>
 
             <h1 className="font-heading text-3xl md:text-5xl font-bold text-white leading-tight mb-3 drop-shadow-lg">
-              {article.title}
+              {articleTitle}
             </h1>
 
-            {article.excerpt && (
+            {articleExcerpt && (
               <p className="text-white/75 text-base md:text-lg max-w-3xl leading-relaxed line-clamp-2">
-                {article.excerpt}
+                {articleExcerpt}
               </p>
             )}
           </div>
         </div>
       </div>
 
-      {/* ── CONTENT — même structure que ProjectDetail ── */}
+      {/* ── CONTENT ── */}
       <div className="container-ba py-16">
         <div className="w-full">
 
@@ -142,21 +152,23 @@ export default function NewsDetail() {
           <section className="mb-16">
             <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
               <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
-              À propos de cet article
+              {lang === 'en' ? 'About this article' : 'À propos de cet article'}
             </h2>
-            {mainContent ? (
-              <NewsContent text={mainContent} images={article.images} />
+            {articleContent ? (
+              <NewsContent text={articleContent} images={article.images} />
             ) : (
-              <p className="text-ba-text-secondary italic">Aucun contenu disponible pour cet article.</p>
+              <p className="text-ba-text-secondary italic">
+                {lang === 'en' ? 'No content available for this article.' : 'Aucun contenu disponible pour cet article.'}
+              </p>
             )}
           </section>
 
-          {/* Galerie photos (si plus d'1 photo) — même structure que ProjectDetail */}
+          {/* Galerie photos */}
           {allPhotos.length > 1 && (
             <section className="mb-16">
               <h2 className="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
                 <span className="w-1 h-8 rounded-full bg-ba-blue inline-block" />
-                Galerie de photos
+                {lang === 'en' ? 'Photo gallery' : 'Galerie de photos'}
                 <span className="text-sm font-normal text-ba-text-secondary ml-2">
                   ({allPhotos.length} photo{allPhotos.length > 1 ? 's' : ''})
                 </span>
@@ -185,22 +197,22 @@ export default function NewsDetail() {
             </section>
           )}
 
-          {/* Back CTA — même structure que ProjectDetail */}
+          {/* Back CTA */}
           <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link
-              to="/news"
+              to={getLocalizedPath('/news')}
               className="flex items-center gap-2 text-ba-text-secondary hover:text-ba-blue transition-colors font-medium"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
-              Toutes les actualités
+              {lang === 'en' ? 'All news' : 'Toutes les actualités'}
             </Link>
             <Link
-              to="/act"
+              to={getLocalizedPath('/support')}
               className="btn btn-primary text-sm"
             >
-              Soutenir nos actions →
+              {lang === 'en' ? 'Support our mission' : 'Soutenir nos actions'} →
             </Link>
           </div>
 

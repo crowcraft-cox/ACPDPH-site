@@ -1,0 +1,50 @@
+{
+  "title": "Le nostre aree di intervento",
+  "subtitle": "Cinque assi strategici di intervento per costruire un'inclusione durevole, garantire le pari opportunità e sostenere l'autonomia delle persone con disabilità nella RDC.",
+  "protection": {
+    "title": "Diritti & Advocacy giuridica",
+    "desc": "Promozione e difesa attiva dei diritti fondamentali delle persone con disabilità, divulgazione delle leggi nazionali e dei trattati internazionali, e contrasto risoluto a ogni forma di discriminazione ed esclusione sociale.",
+    "points": [
+      "Assistenza e accompagnamento legale gratuito per le persone con disabilità vittime di abusi.",
+      "Advocacy istituzionale presso tribunali e autorità amministrative per l'applicazione delle norme di tutela.",
+      "Campagne regolari di sensibilizzazione comunitaria per contrastare i pregiudizi."
+    ]
+  },
+  "accessibility": {
+    "title": "Accessibilità universale",
+    "desc": "Advocacy e realizzazioni concrete per l'accessibilità delle infrastrutture pubbliche, della viabilità urbana, dei mezzi di trasporto e degli strumenti di comunicazione per tutte le disabilità.",
+    "points": [
+      "Audit di accessibilità architettonica di scuole, strutture ospedaliere ed edifici amministrativi.",
+      "Installazione e realizzazione di rampe d'accesso, porte allargate e servizi igienici accessibili.",
+      "Promozione dell'accessibilità digitale e di supporti informativi accessibili."
+    ]
+  },
+  "education": {
+    "title": "Educazione inclusiva & Formazione",
+    "desc": "Integrazione scolastica di bambini e giovani con disabilità, formazione continua dei docenti su metodologie didattiche inclusive e fornitura di materiali didattici adeguati.",
+    "points": [
+      "Scolarizzazione inclusiva ed erogazione di borse di studio complete per minori vulnerabili.",
+      "Formazione del personale docente sulla didattica inclusiva e sull'accoglienza personalizzata.",
+      "Dotazione di kit didattici specializzati (braille, supporti visivi e testi adattati)."
+    ]
+  },
+  "health": {
+    "title": "Salute, Ausili & Riabilitazione",
+    "desc": "Accompagnamento sanitario, riabilitazione fisica e funzionale, supporto psicosociale e fornitura di ausili tecnici alla mobilità (stampelle, tricicli, sedie a rotelle, protesi).",
+    "points": [
+      "Distribuzione di ausili ortopedici, tricicli a trazione manuale e sedie a rotelle.",
+      "Sedute regolari di riabilitazione motoria e accompagnamento psicosociale individualizzato.",
+      "Orientamento e presa in carico medica specialistica per i casi più complessi."
+    ]
+  },
+  "empowerment": {
+    "title": "Empowerment socio-economico",
+    "desc": "Formazione professionale, rafforzamento delle competenze imprenditoriali, sostegno alle attività generatrici di reddito e inserimento lavorativo duraturo.",
+    "points": [
+      "Laboratori pratici di avviamento al lavoro (sartoria, artigianato, calzatura, digitale).",
+      "Assegnazione di kit di avvio attività e micro-sovvenzioni per attività generatrici di reddito.",
+      "Accompagnamento all'impiego e sensibilizzazione delle aziende per assunzioni inclusive."
+    ]
+  }
+}
+

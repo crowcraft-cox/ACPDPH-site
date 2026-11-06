@@ -1,0 +1,8 @@
+{
+  "pageNotFoundTitle": "Page not found (Error 404)",
+  "pageNotFoundDesc": "The page you are looking for does not exist, has been relocated, or its URL has changed.",
+  "serverErrorTitle": "An error occurred",
+  "serverErrorDesc": "Our server encountered a momentary issue. Please refresh the page or try again in a few moments.",
+  "backHome": "Return to homepage",
+  "contactSupport": "Contact technical team"
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Contactez-nous",
+  "subtitle": "Notre équipe est à votre écoute au siège social de Beni pour toute question, collaboration ou besoin d'accompagnement.",
+  "addressTitle": "Adresse & Siège Social",
+  "addressValue": "Quartier KASANGA-PAÏDA, Commune de Ruwenzori, ville de Beni, Nord-Kivu, RDC.",
+  "emailTitle": "Courriel officiel",
+  "phoneTitle": "Téléphone & Mobile Money",
+  "whatsappTitle": "Assistance WhatsApp",
+  "formTitle": "Envoyez-nous un message",
+  "formName": "Nom complet",
+  "formEmail": "Adresse courriel",
+  "formPhone": "Numéro de téléphone",
+  "formSubject": "Objet du message",
+  "formMessage": "Votre message",
+  "formSend": "Envoyer le message",
+  "sending": "Envoi en cours...",
+  "successMessage": "Merci ! Votre message a été transmis avec succès. Notre équipe vous répondra dans les meilleurs délais.",
+  "errorMessage": "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer ou nous joindre directement par téléphone.",
+  "officeHours": "Heures d'ouverture des bureaux",
+  "officeHoursValue": "Du Lundi au Vendredi, de 08h00 à 16h30 (Heure locale de Beni, UTC+2)"
+}

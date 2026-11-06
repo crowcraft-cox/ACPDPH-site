@@ -1,0 +1,23 @@
+{
+  "home": "Accueil",
+  "about": "Qui sommes-nous",
+  "governance": "Gouvernance",
+  "domains": "Domaines d'intervention",
+  "projects": "Nos projets",
+  "news": "Actualités",
+  "partners": "Nos partenaires",
+  "jobs": "Offres & Emplois",
+  "jobsShort": "Emplois",
+  "gallery": "Galeries",
+  "contact": "Contact",
+  "support": "Nous soutenir",
+  "donate": "Faire un don",
+  "organization": "Organisation",
+  "menu": "Menu",
+  "openMenu": "Ouvrir le menu de navigation",
+  "closeMenu": "Fermer le menu de navigation",
+  "switchLanguage": "Changer de langue",
+  "currentLanguage": "Langue actuelle : Français",
+  "highContrast": "Contraste élevé",
+  "skipToContent": "Aller au contenu principal"
+}

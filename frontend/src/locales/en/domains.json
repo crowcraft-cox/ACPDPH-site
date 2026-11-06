@@ -1,0 +1,49 @@
+{
+  "title": "Our intervention areas",
+  "subtitle": "Five strategic pillars of intervention to foster sustainable inclusion, equal opportunities, and self-reliance for persons with disabilities across the DRC.",
+  "protection": {
+    "title": "Rights & Legal advocacy",
+    "desc": "Promoting and actively defending fundamental human rights, popularizing domestic legislation and international treaties, and combating discrimination and exclusion.",
+    "points": [
+      "Free legal counsel and guidance for persons with disabilities facing rights violations.",
+      "Institutional advocacy targeting municipal authorities and legal bodies for policy enforcement.",
+      "Community awareness campaigns to eradicate disability-related prejudice and stigma."
+    ]
+  },
+  "accessibility": {
+    "title": "Universal accessibility",
+    "desc": "Advocacy and concrete interventions for physical accessibility across public buildings, roads, public transit, and inclusive communication channels.",
+    "points": [
+      "Architectural accessibility audits of partner schools, clinics, and municipal facilities.",
+      "Installation and renovation of access ramps, widened entryways, and adapted restrooms.",
+      "Promoting digital accessibility and adapted communication materials for all disabilities."
+    ]
+  },
+  "education": {
+    "title": "Inclusive education & Training",
+    "desc": "School enrollment of children and youth with disabilities, educator training in inclusive pedagogy, and distribution of tailored learning materials.",
+    "points": [
+      "Inclusive enrollment and educational scholarships for vulnerable children with disabilities.",
+      "Teacher training in differentiated learning methodologies and inclusive classroom management.",
+      "Provision of specialized didactic materials (Braille, tactile supplies, and adapted textbooks)."
+    ]
+  },
+  "health": {
+    "title": "Health, Rehabilitation & Mobility aids",
+    "desc": "Healthcare support, physical and functional rehabilitation, psychosocial accompaniment, and provision of assistive devices and mobility aids.",
+    "points": [
+      "Distribution of orthopedic devices, hand-pedaled tricycles, crutches, and adapted wheelchairs.",
+      "Regular physical therapy sessions and personalized psychosocial counseling.",
+      "Medical referral pathways for specialized clinical treatments and rehabilitation care."
+    ]
+  },
+  "empowerment": {
+    "title": "Socio-economic empowerment",
+    "desc": "Vocational skills training, entrepreneurship coaching, support for income-generating activities, and long-term socio-professional integration.",
+    "points": [
+      "Practical vocational workshops in viable trades (tailoring, crafts, shoe repair, digital skills).",
+      "Starter toolkits and seed micro-grants for autonomous income-generating activities.",
+      "Career mentoring and private-sector advocacy for inclusive recruitment practices."
+    ]
+  }
+}
