@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- ACCUEIL -->
+  <url>
+    <loc>https://acpdph.org/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://acpdph.org/en</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://acpdph.org/it</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://acpdph.org/de</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- QUI SOMMES-NOUS -->
+  <url>
+    <loc>https://acpdph.org/about</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/about" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/about" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/about" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/about" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- GOUVERNANCE -->
+  <url>
+    <loc>https://acpdph.org/governance</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/governance" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/governance" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/governance" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/governance" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/governance" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- DOMAINES D'INTERVENTION -->
+  <url>
+    <loc>https://acpdph.org/pillars</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/pillars" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/pillars" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/pillars" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/pillars" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/pillars" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- NOS PROJETS -->
+  <url>
+    <loc>https://acpdph.org/projects</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/projects" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/projects" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/projects" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/projects" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/projects" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ACTUALITES -->
+  <url>
+    <loc>https://acpdph.org/news</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/news" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/news" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/news" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/news" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/news" />
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- NOS PARTENAIRES -->
+  <url>
+    <loc>https://acpdph.org/partners</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/partners" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/partners" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/partners" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/partners" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/partners" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- OFFRES & EMPLOIS -->
+  <url>
+    <loc>https://acpdph.org/careers</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/careers" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/careers" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/careers" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/careers" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/careers" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- NOUS SOUTENIR -->
+  <url>
+    <loc>https://acpdph.org/support</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/support" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/support" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/support" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/support" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/support" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- CONTACT -->
+  <url>
+    <loc>https://acpdph.org/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/contact" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/contact" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/contact" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/contact" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- GALERIE -->
+  <url>
+    <loc>https://acpdph.org/galerie</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://acpdph.org/galerie" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://acpdph.org/en/gallery" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://acpdph.org/it/gallery" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://acpdph.org/de/gallery" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://acpdph.org/galerie" />
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>

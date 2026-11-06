@@ -316,7 +316,7 @@ router.post('/', (req: Request, res: Response, next: any) => {
       }
 
       // 8. E-mail d'accusé de réception automatique au candidat (DANS LA LANGUE DU VISITEUR)
-      const visitorLang = req.body.lang === 'en' ? 'en' : 'fr';
+      const visitorLang = req.body.lang === 'en' ? 'en' : req.body.lang === 'it' ? 'it' : req.body.lang === 'de' ? 'de' : 'fr';
       try {
         if (visitorLang === 'en') {
           await sendEmail({
@@ -345,6 +345,70 @@ router.post('/', (req: Request, res: Response, next: any) => {
                   <p style="font-size: 12px; color: #94A3B8; margin: 0;">
                     ACPDPH NGO – Congolese Agency for the Promotion of the Rights of Persons with Disabilities<br/>
                     Beni, North Kivu, Democratic Republic of the Congo
+                  </p>
+                </div>
+              </div>
+            `,
+          });
+        } else if (visitorLang === 'it') {
+          await sendEmail({
+            to: email.trim().toLowerCase(),
+            subject: `Conferma di ricezione della candidatura – ACPDPH ONG`,
+            text: `Gentile ${prenom} ${nom},\n\nAbbiamo ricevuto con successo la vostra candidatura per la posizione di "${jobTitle}".\nIl nostro team di reclutamento esaminera la vostra candidatura con la massima attenzione. Solo i candidati selezionati saranno contattati.\n\nCordiali saluti,\nACPDPH ONG`,
+            html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1E293B; max-width: 600px;">
+                <div style="background-color: #2350D9; padding: 20px; border-radius: 8px 8px 0 0; color: #FFFFFF;">
+                  <h2 style="margin: 0; font-size: 20px;">Candidatura ricevuta con successo</h2>
+                </div>
+                <div style="border: 1px solid #E2E8F0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px; background: #FFFFFF;">
+                  <p>Gentile <strong>${prenom} ${nom}</strong>,</p>
+                  <p>Vi ringraziamo per l'interesse dimostrato nei confronti di <strong>ACPDPH ONG</strong>. Confermiamo la ricezione della vostra candidatura per la posizione di:</p>
+                  <div style="background: #F1F5F9; padding: 12px; border-radius: 6px; margin: 15px 0;">
+                    <strong style="color: #2350D9; font-size: 15px;">${jobTitle}</strong><br/>
+                    <span style="font-size: 12px; color: #64748B;">Numero di riferimento candidatura: <strong style="font-family: monospace; color: #0F172A;">${reference}</strong></span>
+                  </div>
+                  <p style="font-size: 14px; color: #475569;">
+                    Il nostro team di selezione esaminera le vostre qualifiche con la massima cura. Solo i candidati preselezionati saranno contattati per le fasi successive di valutazione.
+                  </p>
+                  <p style="font-size: 14px; color: #475569;">
+                    L'ACPDPH garantisce pari opportunita e una valutazione equa per tutti i candidati.
+                  </p>
+                  <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 20px 0;" />
+                  <p style="font-size: 12px; color: #94A3B8; margin: 0;">
+                    ACPDPH ONG – Agenzia Congolese per la Promozione dei Diritti delle Persone con Disabilita<br/>
+                    Beni, Nord Kivu, Repubblica Democratica del Congo
+                  </p>
+                </div>
+              </div>
+            `,
+          });
+        } else if (visitorLang === 'de') {
+          await sendEmail({
+            to: email.trim().toLowerCase(),
+            subject: `Eingangsbestatigung Ihrer Bewerbung – ACPDPH NGO`,
+            text: `Sehr geehrte(r) ${prenom} ${nom},\n\nwir haben Ihre Bewerbung fur die Stelle "${jobTitle}" erfolgreich erhalten.\nUnser Personalteam wird Ihre Bewerbungsunterlagen sorgfaltig prufen. Nur in die engere Wahl gezogene Bewerber werden fur die nachsten Schritte kontaktiert.\n\nMit freundlichen Grussen,\nACPDPH NGO`,
+            html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1E293B; max-width: 600px;">
+                <div style="background-color: #2350D9; padding: 20px; border-radius: 8px 8px 0 0; color: #FFFFFF;">
+                  <h2 style="margin: 0; font-size: 20px;">Bewerbung erfolgreich eingegangen</h2>
+                </div>
+                <div style="border: 1px solid #E2E8F0; border-top: none; padding: 24px; border-radius: 0 0 8px 8px; background: #FFFFFF;">
+                  <p>Sehr geehrte(r) <strong>${prenom} ${nom}</strong>,</p>
+                  <p>vielen Dank fur Ihr Interesse an einer Mitarbeit bei der <strong>ACPDPH NGO</strong>. Wir bestatigen den Eingang Ihrer Bewerbung fur die Stelle:</p>
+                  <div style="background: #F1F5F9; padding: 12px; border-radius: 6px; margin: 15px 0;">
+                    <strong style="color: #2350D9; font-size: 15px;">${jobTitle}</strong><br/>
+                    <span style="font-size: 12px; color: #64748B;">Referenznummer der Bewerbung: <strong style="font-family: monospace; color: #0F172A;">${reference}</strong></span>
+                  </div>
+                  <p style="font-size: 14px; color: #475569;">
+                    Unser Rekrutierungsteam wird Ihre Unterlagen mit grosser Sorgfalt prufen. Nur ausgewahlte Kandidatinnen und Kandidaten werden fur die nachsten Schritte kontaktiert.
+                  </p>
+                  <p style="font-size: 14px; color: #475569;">
+                    Die ACPDPH gewahrleistet Chancengleichheit und faire Behandlung fur alle Bewerberinnen und Bewerber.
+                  </p>
+                  <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 20px 0;" />
+                  <p style="font-size: 12px; color: #94A3B8; margin: 0;">
+                    ACPDPH NGO – Kongolesische Agentur fur die Forderung der Rechte von Menschen mit Behinderungen<br/>
+                    Beni, Nord-Kivu, Demokratische Republik Kongo
                   </p>
                 </div>
               </div>

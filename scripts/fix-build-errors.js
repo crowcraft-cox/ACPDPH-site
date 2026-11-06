@@ -118,3 +118,4 @@ writeFileSync('frontend/src/pages/MemberCv.tsx', mcC, 'utf8');
 console.log('Fixed MemberCv.tsx bullet types');
 
 console.log('\nAll fixes applied.');
+

@@ -19,3 +19,4 @@ for (const file of files) {
     console.log('Context:', c.substring(idx, idx + 300));
   }
 }
+

@@ -29,3 +29,4 @@ if (!jd.includes("import { useI18n, getLocalized }")) {
 // The formatDeadline signature already fixed to 'string', should work
 // But lang comes from useI18n which returns Lang — string is broader, OK
 console.log('JobDetail.tsx should be fine with string type');
+
