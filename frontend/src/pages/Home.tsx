@@ -5,6 +5,7 @@ import { useScrollReveal, useCountUp, useAnimeReveal } from '../hooks/useScrollR
 import { useAdminData } from '../context/adminData';
 import { buildHeroHookTitle } from '../utils/heroHook';
 import { formatProjectDate } from '../utils/dateFormatter';
+import { BoutonAction } from '../components/BoutonAction';
 
 export default function Home() {
   return (
@@ -987,26 +988,10 @@ function ProjectsPreviewSection() {
       aria-labelledby="projects-heading"
     >
       <div className="container-ba">
-        <div className="mb-10 w-full">
-          <div className="relative flex items-center justify-center mb-4">
-            <h2 id="projects-heading" className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>
-              {t.projects.title || (lang === 'en' ? 'Our Projects' : lang === 'it' ? 'I nostri progetti' : lang === 'de' ? 'Unsere Projekte' : 'Nos Projets')}
-            </h2>
-            <Link to={getLocalizedPath("/projects")} className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
-              {t.projects.filterAll || (lang === 'en' ? 'All projects' : lang === 'it' ? 'Tutti i progetti' : lang === 'de' ? 'Alle Projekte' : 'Tous les projets')}
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-          <div className="flex justify-center sm:hidden mb-4">
-            <Link to={getLocalizedPath("/projects")} className="btn btn-outline btn-sm">
-              {t.projects.filterAll || (lang === 'en' ? 'All projects' : lang === 'it' ? 'Tutti i progetti' : lang === 'de' ? 'Alle Projekte' : 'Tous les projets')}
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
+        <div className="mb-10 w-full text-center">
+          <h2 id="projects-heading" className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>
+            {t.projects.title || (lang === 'en' ? 'Our Projects' : lang === 'it' ? 'I nostri progetti' : lang === 'de' ? 'Unsere Projekte' : 'Nos Projets')}
+          </h2>
         </div>
 
         <ul ref={containerRef} role="list" className="projects-grid">
@@ -1051,6 +1036,13 @@ function ProjectsPreviewSection() {
             );
           })}
         </ul>
+
+        {/* Bouton en bas de section, centré horizontalement */}
+        <div className="mt-8 sm:mt-10 flex justify-center">
+          <BoutonAction to={getLocalizedPath("/projects")} fullWidthMobile>
+            {(t as any).home?.projects_all || t.projects?.filterAll || (lang === 'en' ? 'All projects' : lang === 'it' ? 'Tutti i progetti' : lang === 'de' ? 'Alle Projekte' : 'Tous les projets')}
+          </BoutonAction>
+        </div>
       </div>
     </section>
   );
@@ -1071,24 +1063,8 @@ function NewsPreviewSection() {
   return (
     <section className="section-padding">
       <div className="container-ba">
-        <div className="mb-8 w-full">
-          <div className="relative flex items-center justify-center mb-4">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-center" style={{ color: '#1F4FDB' }}>{t.news.title}</h2>
-            <Link to={getLocalizedPath("/news")} className="btn btn-outline btn-sm shrink-0 absolute right-0 hidden sm:flex">
-              {t.news.all_news}
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-          <div className="flex justify-center sm:hidden mb-4">
-            <Link to={getLocalizedPath("/news")} className="btn btn-outline btn-sm">
-              {t.news.all_news}
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
+        <div className="mb-8 w-full text-center">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-center mb-4" style={{ color: '#1F4FDB' }}>{t.news.title}</h2>
           <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
             {lang === 'en'
               ? "Follow our field actions, public statements, awareness workshops, and inspiring resilience stories led by our members. Through regular publications, articles, and institutional advocacy, ACPDPH informs civil society, engages public authorities, and shares progress achieved in promoting and protecting the rights of persons with disabilities in the DRC."
@@ -1151,6 +1127,13 @@ function NewsPreviewSection() {
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Bouton en bas de section, centré horizontalement */}
+        <div className="mt-8 sm:mt-10 flex justify-center">
+          <BoutonAction to={getLocalizedPath("/news")} fullWidthMobile>
+            {t.news.all_news}
+          </BoutonAction>
         </div>
       </div>
     </section>

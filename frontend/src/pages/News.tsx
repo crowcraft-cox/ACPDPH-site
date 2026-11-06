@@ -3,6 +3,7 @@ import { useI18n } from '../i18n';
 import { useScrollReveal, useAnimeReveal } from '../hooks/useScrollReveal';
 import { useAdminData } from '../context/adminData';
 import { formatNewsDate } from '../utils/dateFormatter';
+import { BoutonAction } from '../components/BoutonAction';
 
 export default function News() {
   const { t, lang, getLocalized, getLocalizedPath } = useI18n();
@@ -95,15 +96,9 @@ export default function News() {
 
                   {/* Bouton LIRE PLUS aligne a droite */}
                   <div className="mt-auto flex items-center justify-end border-t border-slate-100 pt-4">
-                    <Link
-                      to={getLocalizedPath(`/news/${article.id}`)}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider text-white bg-[#C2530A] hover:bg-[#A84508] transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C2530A] focus-visible:ring-offset-2 group/btn"
-                    >
-                      <span>{t.common.readMore}</span>
-                      <svg className="w-3.5 h-3.5 transition-transform duration-150 group-hover/btn:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                      </svg>
-                    </Link>
+                    <BoutonAction to={getLocalizedPath(`/news/${article.id}`)}>
+                      {t.common.readMore}
+                    </BoutonAction>
                   </div>
                 </div>
               </article>
