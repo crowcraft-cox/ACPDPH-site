@@ -1024,7 +1024,7 @@ function ProjectsPreviewSection() {
 
         <ul ref={containerRef} role="list" className="projects-grid">
           {projects.map((proj) => {
-            const dateInfo = formatProjectDate(proj.date);
+            const dateInfo = formatProjectDate(proj.date, lang);
             return (
               <li key={proj.id} className="project-card-item">
                 <Link

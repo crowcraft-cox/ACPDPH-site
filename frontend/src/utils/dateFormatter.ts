@@ -1,4 +1,4 @@
-export function formatProjectDate(dateStr?: string) {
+export function formatProjectDate(dateStr?: string, lang: string = 'fr') {
   let d: Date;
   if (dateStr) {
     // If format is YYYY-MM-DD
@@ -24,11 +24,18 @@ export function formatProjectDate(dateStr?: string) {
   const iso = `${year}-${month}-${day}`;
   const display = `${day}.${month}.${year}`;
 
-  const monthsFr = [
-    'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-    'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
-  ];
-  const accessible = `${day} ${monthsFr[d.getMonth()]} ${year}`;
+  const localeMap: Record<string, string> = {
+    fr: 'fr-FR',
+    en: 'en-US',
+    it: 'it-IT',
+    de: 'de-DE',
+  };
+
+  const accessible = new Intl.DateTimeFormat(localeMap[lang] || 'fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(d);
 
   return { iso, display, accessible };
 }

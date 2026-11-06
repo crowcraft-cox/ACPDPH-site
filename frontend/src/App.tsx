@@ -186,10 +186,15 @@ function MainLayout() {
                 <Route path="/it/careers" element={<Careers />} />
                 <Route path="/it/careers/:id" element={<JobDetail />} />
                 <Route path="/it/careers/:id/apply" element={<JobApplication />} />
+                <Route path="/it/careers/:id/postuler" element={<JobApplication />} />
+                <Route path="/it/offres-emplois" element={<Careers />} />
+                <Route path="/it/offres-emplois/:id" element={<JobDetail />} />
+                <Route path="/it/offres-emplois/:id/postuler" element={<JobApplication />} />
                 <Route path="/it/news" element={<News />} />
                 <Route path="/it/news/:id" element={<NewsDetail />} />
                 <Route path="/it/contact" element={<Contact />} />
                 <Route path="/it/gallery" element={<Gallery />} />
+                <Route path="/it/galerie" element={<Gallery />} />
 
                 {/* Routes Allemandes (préfixe /de) */}
                 <Route path="/de" element={<Home />} />
@@ -208,10 +213,15 @@ function MainLayout() {
                 <Route path="/de/careers" element={<Careers />} />
                 <Route path="/de/careers/:id" element={<JobDetail />} />
                 <Route path="/de/careers/:id/apply" element={<JobApplication />} />
+                <Route path="/de/careers/:id/postuler" element={<JobApplication />} />
+                <Route path="/de/offres-emplois" element={<Careers />} />
+                <Route path="/de/offres-emplois/:id" element={<JobDetail />} />
+                <Route path="/de/offres-emplois/:id/postuler" element={<JobApplication />} />
                 <Route path="/de/news" element={<News />} />
                 <Route path="/de/news/:id" element={<NewsDetail />} />
                 <Route path="/de/contact" element={<Contact />} />
                 <Route path="/de/gallery" element={<Gallery />} />
+                <Route path="/de/galerie" element={<Gallery />} />
 
                 {/* Page 404 */}
                 <Route path="*" element={<NotFound />} />

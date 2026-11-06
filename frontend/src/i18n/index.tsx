@@ -206,6 +206,8 @@ function updateDocumentLanguageMeta(currentLang: Lang) {
  * en: en → fr
  * it: it → en → fr
  * de: de → en → fr
+ * Un champ vide ou contenant seulement des espaces compte comme manquant.
+ * En developpement, un avertissement console signale chaque repli.
  */
 export function getLocalized(item: any, field: string, lang: Lang = 'fr'): any {
   if (!item) return '';
@@ -218,12 +220,12 @@ export function getLocalized(item: any, field: string, lang: Lang = 'fr'): any {
 
     if (l === 'fr') {
       val = item[field];
-      if (val === undefined || val === null || val === '') {
+      if (val === undefined || val === null || (typeof val === 'string' && val.trim() === '')) {
         val = item[`${field}_fr`];
       }
     } else {
       val = item[`${field}_${l}`];
-      if (val === undefined || val === null || val === '') {
+      if (val === undefined || val === null || (typeof val === 'string' && val.trim() === '')) {
         // Support de camelCase eventuel
         const capitalized = l.charAt(0).toUpperCase() + l.slice(1);
         val = item[`${field}${capitalized}`];
@@ -233,13 +235,22 @@ export function getLocalized(item: any, field: string, lang: Lang = 'fr'): any {
     if (val !== undefined && val !== null) {
       if (typeof val === 'string') {
         if (val.trim() !== '') {
+          if (import.meta.env?.DEV && l !== lang) {
+            console.warn(`[i18n] Repli pour "${field}": [${lang}] -> [${l}]`);
+          }
           return val;
         }
       } else if (Array.isArray(val)) {
         if (val.length > 0) {
+          if (import.meta.env?.DEV && l !== lang) {
+            console.warn(`[i18n] Repli pour "${field}": [${lang}] -> [${l}]`);
+          }
           return val;
         }
       } else {
+        if (import.meta.env?.DEV && l !== lang) {
+          console.warn(`[i18n] Repli pour "${field}": [${lang}] -> [${l}]`);
+        }
         return val;
       }
     }

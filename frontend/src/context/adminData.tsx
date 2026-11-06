@@ -682,6 +682,50 @@ async function saveToCloud(newData: AdminData): Promise<boolean> {
   }
 }
 
+/**
+ * Fusionne les listes d'entites chargees depuis MongoDB avec les traductions par defaut
+ * Garantit que si les champs _en, _it, _de sont absents ou vides en base, ils heritent
+ * des traductions certifiees officielles de DEFAULT_DATA sans ecraser les modifications admin.
+ */
+function mergeListWithDefaults<T extends { id?: string }>(
+  cloudList: T[] | undefined,
+  defaultList: T[]
+): T[] {
+  if (!Array.isArray(cloudList) || cloudList.length === 0) {
+    return defaultList;
+  }
+  return cloudList.map((cloudItem) => {
+    const defaultItem = defaultList.find((d) => d.id === cloudItem.id);
+    if (!defaultItem) return cloudItem;
+
+    const merged: any = { ...defaultItem, ...cloudItem };
+
+    for (const key of Object.keys(defaultItem)) {
+      if (
+        key.endsWith('_en') ||
+        key.endsWith('_it') ||
+        key.endsWith('_de') ||
+        key.startsWith('bulletPoints_') ||
+        key.startsWith('needsReview_')
+      ) {
+        const cloudVal = (cloudItem as any)[key];
+        const defaultVal = (defaultItem as any)[key];
+
+        const isCloudEmpty =
+          cloudVal === undefined ||
+          cloudVal === null ||
+          (typeof cloudVal === 'string' && cloudVal.trim() === '') ||
+          (Array.isArray(cloudVal) && cloudVal.length === 0);
+
+        if (isCloudEmpty && defaultVal !== undefined && defaultVal !== null) {
+          merged[key] = defaultVal;
+        }
+      }
+    }
+    return merged;
+  });
+}
+
 export function AdminDataProvider({ children }: { children: ReactNode }) {
   // ── État principal — données chargées depuis MongoDB Atlas ──
   const [data, setData] = useState<AdminData>(DEFAULT_DATA);
@@ -731,13 +775,25 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
           const cloudCvs = Array.isArray((res.data as any).cvs)
             ? (res.data as any).cvs
             : (DEFAULT_DATA.cvs || []);
+
+          const mergedImpact = mergeListWithDefaults(res.data.impact, DEFAULT_DATA.impact);
+          const mergedPillars = mergeListWithDefaults(res.data.pillars, DEFAULT_DATA.pillars);
+          const mergedNews = mergeListWithDefaults(res.data.news, DEFAULT_DATA.news);
+          const mergedProjects = mergeListWithDefaults(res.data.projects, DEFAULT_DATA.projects);
+          const mergedJobs = mergeListWithDefaults(cloudJobs, DEFAULT_DATA.jobs || []);
+          const mergedGovMembers = mergeListWithDefaults(cloudGovMembers, DEFAULT_DATA.governanceMembers || DEFAULT_GOVERNANCE_MEMBERS);
+
           setData({
             ...res.data,
+            impact: mergedImpact,
+            pillars: mergedPillars,
+            news: mergedNews,
+            projects: mergedProjects,
             contact: mergedContact,
             users: res.data.users || [],
-            jobs: cloudJobs,
+            jobs: mergedJobs,
             bankAccounts: cloudBankAccounts,
-            governanceMembers: cloudGovMembers,
+            governanceMembers: mergedGovMembers,
             cvs: cloudCvs,
           });
           setDbConnected(true);

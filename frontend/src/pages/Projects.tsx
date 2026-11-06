@@ -46,7 +46,7 @@ export default function Projects() {
       <div className="container-ba mb-20">
         <ul ref={cardsContainerRef} role="list" className="projects-grid">
           {displayedProjects.map((proj) => {
-            const dateInfo = formatProjectDate(proj.date);
+            const dateInfo = formatProjectDate(proj.date, lang);
             const projectTitle = getLocalized(proj, 'title');
             return (
               <li key={proj.id} className="project-card-item">
