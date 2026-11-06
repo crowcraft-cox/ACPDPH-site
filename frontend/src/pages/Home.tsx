@@ -472,8 +472,8 @@ function ImpactSection() {
 
       <div ref={sectionRef} className={`container-ba transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="w-full mb-10 impact-title-offset">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-center" style={{ color: '#1F4FDB' }}>{t.impact.title}</h2>
-          <p className="text-base leading-relaxed text-justify w-full" style={{ color: '#000000' }}>
+          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-center text-[#1F4FDB] dark:text-[#60A5FA] impact-title-text">{t.impact.title}</h2>
+          <p className="text-base leading-relaxed text-justify w-full text-black dark:text-white impact-intro-text">
             {lang === 'en'
               ? "Concrete, measurable, and lasting progress for the inclusion of persons with disabilities in the Democratic Republic of the Congo. Through our integrated programs of legal assistance, functional rehabilitation, inclusive education, and socio-economic integration, we work tirelessly to improve the lives of vulnerable individuals and their families. Each action on the ground strengthens autonomy, restores human dignity, and promotes equitable citizen participation respectful of fundamental rights."
               : lang === 'it'

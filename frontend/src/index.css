@@ -988,6 +988,33 @@ a.glass-card:hover,
   }
 }
 
+/* ===== Impact Section Text & Title Colors (Mode Clair / Mode Sombre Sync) ===== */
+.impact-intro-text {
+  color: #000000;
+}
+.dark .impact-intro-text {
+  color: #FFFFFF !important;
+}
+
+.impact-title-text {
+  color: #1F4FDB;
+}
+.dark .impact-title-text {
+  color: #60A5FA !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-ba-surface-elevated: #1f2937;
+  }
+  :root:not(.light) .impact-intro-text {
+    color: #FFFFFF !important;
+  }
+  :root:not(.light) .impact-title-text {
+    color: #60A5FA !important;
+  }
+}
+
 /* ===== Form Inputs — Fond Blanc & Texte Noir + Marge Interne ===== */
 /* Règle globale : tous les champs de formulaire ont fond blanc + texte noir + marge interne aérée */
 input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
